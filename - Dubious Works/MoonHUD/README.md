@@ -1,0 +1,265 @@
+# MoonHUD
+
+Tracks Masser and Secunda, and shows their phases on screen.
+
+Two independent pieces — use either on its own:
+
+- **`MH_tracker.lua`** — a `MoonTracker` interface other mods can call. Reads the
+  engine where it can, falls back gracefully where it can't.
+- **`MH_hud.lua`** — the widget. Built to match TimeHUD and LocationHUD, with the
+  same settings, the same drag/scroll gestures and the same border styles.
+
+Requires OpenMW with the Lua `core.weather` moon bindings (API revision ~62+, so
+0.49 and later). Degrades to a calculated phase on older builds rather than failing.
+
+---
+
+## Install
+
+Copy the `MoonHUD` folder into your data directories, then in the launcher:
+
+1. **Data Files → Data Directories** → add the folder containing `MoonHUD`
+2. **Data Files → Content Files** → tick `moonhud.omwscripts`
+
+Settings live under **Options → Scripts → MoonHUD**.
+
+---
+
+## Settings
+
+Everything TimeHUD and LocationHUD expose is here, plus a **Moons** group.
+
+### General
+
+| Setting | Default | Notes |
+|---|---|---|
+| HUD Display | Always | Always / Interface Only / Hide on Interface / Hide on Dialogue Only / Never |
+| Lock Position | off | Disables click-and-drag |
+| X Position / Y Position | 12 / bottom-left | Also set by dragging the widget |
+| Only display outdoors | off | Tracker keeps running regardless |
+| Only display when a moon is up | off | Uses real sky alpha; needs an active exterior |
+| Visibility Mode | Persistent | Or "On Phase Change" — appears, holds, fades |
+| Hold Duration | 5 s | "On Phase Change" only |
+| Fade Duration | 2 s | "On Phase Change" only |
+
+### Appearance
+
+| Setting | Default |
+|---|---|
+| Font Size | 20 |
+| Text Color | game's `FontColor_color_normal` |
+| Background Opacity | 0.5 |
+| Alignment | Left |
+
+### Moons
+
+| Setting | Default | Notes |
+|---|---|---|
+| **Display Mode** | Icons + Text | **Text / Icons / Icons + Text** |
+| Layout | Vertical | Or Horizontal |
+| Icon Size | 32 px | Atlas cell is 64, so 64 is 1:1 |
+| Icon Spacing | 6 px | |
+| **Atlas Path** | `textures/moonhud/moon_atlas.png` | Point at your own sheet |
+| **Atlas Cell Size** | 64 | Cell width/height in your sheet |
+| Show Masser / Show Secunda | on / on | |
+| Show Moon Names | on | |
+| Phase Names | Descriptive | Descriptive (`Waning Gibbous`) / Simple (`Gibbous`) / Value (`3`) |
+| Dim with sky visibility | off | Fades each icon with that moon's real alpha |
+| Show data source | off | Debug: appends `engine` / `projected` / `formula` / `fixture` |
+| **Show Shade of the Revenant** | on | Adds a third line — see below |
+| Shade Display | Always | Always / Only When Active / Countdown Only |
+| Shade Anchor Month | Last Seed | |
+| Shade Anchor Day | 27 | |
+| Shade Interval | 8 | Days between occurrences |
+| Update Interval | 30 in-game min | Phases move once every 3 days, so this can be lazy |
+
+### Border
+
+Border on/off, style (thin / normal / thick / verythick), colour, padding — the same
+four options and the same textures as TimeHUD, LocationHUD and Quickloot.
+
+> **Colour pickers.** MoonHUD ships with no dependencies, so colours are plain hex
+> text fields. If you have TimeHUD or LocationHUD installed you already have their
+> `SuperColorPicker2` renderer — set `COLOR_RENDERER = 'SuperColorPicker2'` at the
+> top of `MH_settings.lua` for a colour wheel.
+
+---
+
+## Shade of the Revenant
+
+The third data point. Every eighth day, anchored on **27 Last Seed**:
+
+```
+27 Last Seed → 4 Hearthfire → 12 → 20 → 28 → 6 Frostfall → 14 → 22 → 30 Frostfall
+```
+
+**Note it is 27 → 4 → 12, not 27 → 5 → 13.** Last Seed has 31 days, so 27 + 8 lands
+on the 4th of Hearthfire. This matches UESP's Oblivion "days passed" table exactly —
+Oblivion begins on 27 Last Seed, which is where the anchor date comes from, and the
+event there is simply `DaysPassed % 8 == 1`.
+
+Anchoring to a **calendar date** rather than to `DaysPassed` is deliberate: it
+survives save transplants and console time travel, and it doesn't care when your game
+began. Both the anchor and the interval are settings if you want a different cadence.
+
+Because 365 isn't divisible by 8, **the dates don't repeat year to year** — the
+sequence slides by five days each year (365 mod 8 = 5). The first Shade of Morning
+Star falls on the 7th in 3E 427, the 2nd in 428, the 5th in 429, the 8th in 430.
+
+It's pure calendar arithmetic, so it works indoors, in inactive cells, and on engine
+builds with no moon bindings at all.
+
+```lua
+local shade = I.MoonTracker.getShade()
+-- { active = false, daysUntil = 3, date = { year = 427, month = 9, day = 4 },
+--   dateString = '4 Hearthfire', interval = 8 }
+
+I.MoonTracker.isShadeDay()          -- boolean
+I.MoonTracker.upcomingShades(8)     -- next 8 dates as strings
+I.MoonTracker.setShadeConfig{ ANCHOR_DAY = 1, INTERVAL_DAYS = 10 }
+```
+
+Fires `MoonTracker_ShadeOfTheRevenant` on the player when a Shade day begins.
+
+---
+
+## The texture atlas
+
+`textures/moonhud/moon_atlas.png` is **512 × 192**:
+
+```
+        Full  WanGib  ThirdQ  WanCres   New   WaxCres  FirstQ  WaxGib
+row 0   [64]   [64]    [64]    [64]    [64]    [64]    [64]    [64]   ← Masser
+row 1   [64]   [64]    [64]    [64]    [64]    [64]    [64]    [64]   ← Secunda
+row 2   [lit]  [dim]   [dim]   [dim]   [dim]   [dim]   [dim]   [dim]  ← Shade
+```
+
+Row 2 holds the Shade indicator: cell 0 lit, cell 1 dim. Cells 2–7 repeat the dim
+state so indexing that row with anything is safe.
+
+Column order is the engine phase index (0–7). Cells are cut out with
+`ui.texture{ path, offset, size }`, which is OpenMW's documented atlas mechanism, and
+cached — one texture resource per moon/phase pair, created once.
+
+To use your own art, match that layout and change **Atlas Path**. Different cell size
+is fine, just set **Atlas Cell Size** to match. Row assignment lives in
+`MH_constants.lua` under `ATLAS_ROW` if you want more than two moons.
+
+---
+
+## Using the tracker from your own mod
+
+```lua
+local I = require('openmw.interfaces')
+
+local masser = I.MoonTracker.getMoon('Masser')
+-- {
+--   name        = 'Masser',
+--   index       = 1,                                -- 0..7 engine phase index
+--   phase       = core.weather.MOON_PHASE.WaningGibbous,
+--   phaseName   = 'WaningGibbous',
+--   displayName = 'Waning Gibbous',
+--   phaseValue  = 3,                                -- MWScript-compatible 0..4
+--   bucket      = 'Gibbous',
+--   direction   = 'waning',
+--   alpha       = 0.83,                             -- sky visibility, nil indoors
+--   source      = 'engine',
+-- }
+```
+
+| Call | Returns |
+|---|---|
+| `getMoons()` | `{ Masser = info, Secunda = info }` |
+| `getMoon(name)` | one info table, or nil |
+| `daysUntil(name, phaseName)` | whole days until that phase begins; `0` if current |
+| `isFull(name)` / `isNew(name)` | boolean |
+| `inSync()` | true when both moons show the same phase |
+| `getCycleDay()` | 0–23 position in the cycle, or nil while uncalibrated |
+| `getShade()` | Shade state — see below |
+| `isShadeDay()` | boolean |
+| `upcomingShades(n)` | next `n` Shade dates as strings |
+| `setShadeConfig(cfg)` / `getShadeConfig()` | change or read the anchor and interval |
+| `getStatus()` | diagnostics — see below |
+| `resetCalibration()` | wipe and recalibrate, e.g. after console time travel |
+| `constants` | the `MH_constants` table |
+
+Phase changes fire an event on the player:
+
+```lua
+eventHandlers = {
+    MoonTracker_PhaseChanged = function(data)
+        -- data.moon = 'Masser', data.from = 'Full', data.to = 'WaningGibbous'
+        -- data.info = the full info table
+    end,
+    MoonTracker_ShadeOfTheRevenant = function(data)
+        -- data.shade = the getShade() table, fired when a Shade day begins
+    end,
+}
+```
+
+---
+
+## How the fallbacks work
+
+`core.weather.getCurrentMoons()` returns `nil` in interiors and inactive cells, which
+is most of the time in practice. Four tiers cover it:
+
+| Tier | `source` | When | Accuracy |
+|---|---|---|---|
+| 1 | `engine` | Active exterior cell | Exact |
+| 2 | `projected` | Interior, with a prior engine reading | Exact — verified over a 60-day unbroken interior stay |
+| 3 | `formula` | No reading yet (fresh save loaded indoors) | Correct phase, day boundary may be off by one until calibrated |
+| 4 | `fixture` | Day index unavailable | The recorded 382-day log |
+
+**Calibration.** Our day counter (`calendar.gameTime() / time.day`) differs from the
+engine's `DaysPassed` by an unknown but constant offset. The tracker maintains a
+candidate set of all 24 possible offsets and intersects it against every engine
+reading. It narrows within a day or two of outdoor play and is persisted in the save.
+
+Sampling only ever at one time of day leaves **two** adjacent candidates standing —
+"offset K, rolled over" and "offset K+1, not yet rolled over" predict identical
+phases for every day, and no amount of same-hour observation separates them. That is
+the information limit, not a bug; it costs at most one day of precision on boundary
+predictions and collapses to one candidate as soon as you're outdoors both before and
+after moonrise. `getStatus().exact` tells you which you have.
+
+If the day counter jumps (console, another mod, a transplanted save), the candidate
+set empties, calibration restarts from that reading, and it re-converges rather than
+serving stale data.
+
+---
+
+## Tests
+
+`dev/test_tracker.lua` stubs the OpenMW API and exercises the tracker offline —
+**584 assertions**, covering:
+
+- the 382-day fixture against the model (761/764 = 99.6%)
+- calibration convergence, including the two-candidate floor
+- tier-2 projection against ground truth over 260 moon-days (0 disagreements)
+- 60-day interior drift (0 of 120 moon-days)
+- `daysUntil` exact *and* minimal for 4 target phases across 48 start days (192 cases)
+- recovery from a day-counter jump
+- cold start with the engine binding absent entirely
+- calendar round-trip over four years (1460 dates)
+- the Shade sequence against UESP's published dates, and that 5 and 13 Hearthfire
+  are explicitly *not* Shade days
+- exactly one day in eight over three years, and the annual five-day slide
+- a reconfigured anchor and interval
+
+Run with any Lua 5.3+:
+
+```bash
+lua dev/test_tracker.lua
+```
+
+`dev/` is not loaded by the game and can be deleted.
+
+---
+
+## Credits
+
+- Border template module is TimeHUD's / LocationHUD's `makeborder`, reused unchanged
+  so the border styles match.
+- Phase model reverse-engineered from OpenMW `apps/openmw/mwworld/weather.cpp`.
+- The 382-day observation log came from the "Moon Phases" research sheet.

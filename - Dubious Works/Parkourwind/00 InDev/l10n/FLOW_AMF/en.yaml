@@ -1,0 +1,12 @@
+
+name: "FLOW AMF"
+description: |
+  Advanced Movement Framework
+
+SettingsFLOW_AMF: "Movement Settings"
+modSettingsTitle: "FLOW Configuration"
+modSettingsDesc: "Configure movement mechanics."
+
+# Keybinding
+activateInput_name: "Sprint Key"
+activateInput_desc: "The key used to activate sprinting."
