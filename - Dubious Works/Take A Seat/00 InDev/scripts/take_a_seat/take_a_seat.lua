@@ -623,10 +623,6 @@ I.Settings.registerGroup {
 local cameraSettings   = storage.playerSection(SETTINGS_GROUP)
 local cameraOffsetHeld = false
 
--- Set while the first-person body view owns the camera. When it does, the
--- normal per-view offsets below stand aside rather than fighting it.
-local fpvActive = false
-
 local function clearCameraOffset()
     if not cameraOffsetHeld then return end
     camera.setFirstPersonOffset(util.vector3(0, 0, 0))
@@ -638,9 +634,6 @@ local function clearCameraOffset()
 end
 
 local function applyCameraOffset()
-    -- The first-person body view drives distance and focal offset itself; two
-    -- writers on the same properties would flicker.
-    if fpvActive then return end
     if not isSitting or not cameraSettings:get("CAMERA_OFFSET_ENABLED") then
         clearCameraOffset()
         return
@@ -678,233 +671,6 @@ cameraSettings:subscribe(async:callback(function()
 end))
 
 -- ---------------------------------------------------------------------------
--- FIRST PERSON BODY
--- ---------------------------------------------------------------------------
--- Shows your character's seated animation while you are in first person.
---
--- HOW, AND WHY NOT THE OBVIOUS WAY
--- True first person renders an arms-only rig; there is no body to show, and no
--- way to render both rigs at once. So the body view is not first person at all
--- -- it is a third person mode with the camera pulled onto the head.
---
--- Immersive FPV does this with camera.MODE.Static, which stops the engine
--- tracking the player entirely. That forces the mod to hand-drive position,
--- yaw, pitch and roll every frame, and -- because Lua cannot read a bone's
--- world transform (animation.hasBone is the only bone API there is) -- to
--- SIMULATE where the head should be from movement state. That simulation is
--- 86 tuning constants deep and is the source of the clipping and jarring.
---
--- MODE.Preview is documented as "third person mode, but player character
--- doesn't turn to the view direction", which is exactly what a seated pose
--- wants. The engine keeps handling mouse look, so there is nothing to drive
--- per frame: distance and focal offset are set once on sitting down and the
--- view is otherwise the engine's own. Sitting is what makes this work -- the
--- anchor never moves, so there is no head to chase.
---
--- Camera collision is deliberately left alone: at distance 0 the camera sits
--- at the focal point, so there is no gap for collision to pull it through.
---
--- KNOWN COST: without a head-hiding mesh you may see the inside of your own
--- head. Immersive FPV solves this with an invisible-helm item, which needs an
--- ESP; this ships none, so FPV_DISTANCE exists to pull back far enough to
--- clear the skull. Off by default for that reason.
-
-I.Settings.registerGroup {
-    key              = "SettingsTakeASeatFPV",
-    page             = SETTINGS_PAGE,
-    l10n             = "none",
-    name             = "First person body",
-    description      = "Show your character's body while seated in first person."
-                    .. " Experimental.",
-    permanentStorage = true,
-    order            = 1,
-    settings = {
-        {
-            key         = "FPV_BODY_ENABLED",
-            name        = "Show body when seated in first person",
-            description = "Switches to a head-mounted third person view while seated,"
-                       .. " so the sitting animation is visible. You may see the inside"
-                       .. " of your own head; raise the distance below if so.",
-            renderer    = "checkbox",
-            default     = false,
-        },
-        numberSetting("FPV_DISTANCE", "Distance from head",
-            "0 sits exactly on the head. Raise it until your own head stops clipping into view.",
-            0, 0, 120, 1, "u"),
-        numberSetting("FPV_EYE_V", "Eye height offset",
-            "Negative lowers the view. Seated poses usually need a large negative value, since the camera tracks standing head height.",
-            -60, -250, 150, 1, "u"),
-        numberSetting("FPV_EYE_H", "Eye lateral offset",
-            "Positive shifts right.",
-            0, -150, 150, 1, "u"),
-    },
-}
-
-local fpvSettings = storage.playerSection("SettingsTakeASeatFPV")
-local fpvSaved    = nil
-
--- Distinct from CAMERA_TAG: the built-in control toggles are reference counted
--- per tag, so the body view must hold its own or enabling one would release
--- the other's hold.
-local FPV_TAG = "TakeASeatFPV"
-
--- WHY THE BUILT-IN CAMERA SCRIPT HAS TO BE STOOD DOWN, PIECE BY PIECE
---
--- Setting a mode and an offset is not enough on its own. The built-in camera
--- script re-derives all of this every frame, so anything not explicitly
--- disabled gets overwritten and the view falls back to ordinary third person
--- with a mangled offset:
---
---   modeControl              resolves the camera back to a PRIMARY mode.
---                            I.Camera.getPrimaryMode is documented as
---                            returning only FirstPerson or ThirdPerson --
---                            Preview is transient, so without this the mode
---                            is undone almost immediately.
---   thirdPersonOffsetControl re-derives the focal offset, discarding ours.
---   zoom                     changes the base distance out from under us.
---   standingPreview          swings into preview on its own when idle, which
---                            is precisely the state a seated player is in.
---   headBobbing              built-in bob, very visible at distance 0.
---
--- Each is released again by tag on exit.
-
-local function fpvSetControls(disabled)
-    if not I.Camera then return end
-    local fns = disabled
-        and { I.Camera.disableModeControl, I.Camera.disableThirdPersonOffsetControl,
-              I.Camera.disableZoom, I.Camera.disableStandingPreview,
-              I.Camera.disableHeadBobbing }
-        or  { I.Camera.enableModeControl, I.Camera.enableThirdPersonOffsetControl,
-              I.Camera.enableZoom, I.Camera.enableStandingPreview,
-              I.Camera.enableHeadBobbing }
-    for _, fn in ipairs(fns) do
-        if fn then pcall(fn, FPV_TAG) end
-    end
-end
-
-local function fpvApplyFraming()
-    local dist = fpvSettings:get("FPV_DISTANCE") or 0
-    -- Both distances: the base is what zoom and the built-in modifiers work
-    -- from, the preferred is the engine-level request.
-    if I.Camera and I.Camera.setBaseThirdPersonDistance then
-        pcall(I.Camera.setBaseThirdPersonDistance, dist)
-    end
-    pcall(camera.setPreferredThirdPersonDistance, dist)
-    pcall(camera.setFocalPreferredOffset, util.vector2(
-        fpvSettings:get("FPV_EYE_H") or 0,
-        fpvSettings:get("FPV_EYE_V") or -60))
-
-    -- setFocalPreferredOffset SMOOTH-TRANSITIONS by default, every time the
-    -- preferred offset changes. instantTransition must therefore come AFTER
-    -- the offset is set -- calling it before (as the first version did) skips
-    -- the transition that has not started yet and does nothing, so the new
-    -- offset then eases in over time instead of snapping.
-    pcall(camera.instantTransition)
-end
-
--- Reports what the engine actually did with the framing request, which is the
--- only way to tell "the offset was ignored" from "the offset applied but the
--- number is wrong". The real offset is documented as able to differ from the
--- preferred one during a transition or when blocked by an obstacle, and at
--- distance 0 inside a chair an obstacle is entirely plausible.
-local function fpvDebugReport()
-    if not DEBUG then return end
-    async:newUnsavableSimulationTimer(0.35, function()
-        if not fpvActive then return end
-        local okPref, pref = pcall(camera.getFocalPreferredOffset)
-        local okTrk,  trk  = pcall(camera.getTrackedPosition)
-        local okPos,  pos  = pcall(camera.getPosition)
-        local okDist, dist = pcall(camera.getThirdPersonDistance)
-        print(string.format(
-            "[sit] FPV mode=%s  preferredOffset=(%.1f, %.1f)  requested=(%.1f, %.1f)",
-            tostring(camera.getMode()),
-            okPref and pref.x or 0/0, okPref and pref.y or 0/0,
-            fpvSettings:get("FPV_EYE_H") or 0, fpvSettings:get("FPV_EYE_V") or -60))
-        if okTrk and okPos then
-            print(string.format(
-                "[sit] FPV tracked=(%.1f, %.1f, %.1f)  camera=(%.1f, %.1f, %.1f)  dZ=%.1f  dist=%.1f",
-                trk.x, trk.y, trk.z, pos.x, pos.y, pos.z, pos.z - trk.z,
-                okDist and dist or -1))
-        end
-    end)
-end
-
-local function exitFpvBody()
-    if not fpvActive then return end
-    fpvActive = false
-
-    if fpvSaved then
-        if I.Camera and I.Camera.setBaseThirdPersonDistance then
-            pcall(I.Camera.setBaseThirdPersonDistance, fpvSaved.baseDistance)
-        end
-        pcall(camera.setPreferredThirdPersonDistance, fpvSaved.distance)
-        pcall(camera.setFocalPreferredOffset, util.vector2(fpvSaved.offsetX, fpvSaved.offsetY))
-    end
-
-    -- Release the built-in controls BEFORE restoring the mode, so the mode
-    -- change is handled normally rather than while control is suppressed.
-    fpvSetControls(false)
-
-    if camera.getMode() ~= camera.MODE.FirstPerson then
-        camera.setMode(camera.MODE.FirstPerson)
-        camera.instantTransition()
-    end
-    fpvSaved = nil
-
-    -- Hand the camera back to the normal per-view offsets.
-    applyCameraOffset()
-end
-
-local function enterFpvBody()
-    if fpvActive then return end
-    if not fpvSettings:get("FPV_BODY_ENABLED") then return end
-    if not isSitting then return end
-    -- Only meaningful coming FROM first person. In third person the body is
-    -- already visible and there is nothing to do.
-    if camera.getMode() ~= camera.MODE.FirstPerson then return end
-
-    local okDist, dist = pcall(camera.getThirdPersonDistance)
-    local okOff,  off  = pcall(camera.getFocalPreferredOffset)
-    local okBase, base = false, nil
-    if I.Camera and I.Camera.getBaseThirdPersonDistance then
-        okBase, base = pcall(I.Camera.getBaseThirdPersonDistance)
-    end
-    fpvSaved = {
-        distance     = okDist and dist or 192,
-        baseDistance = okBase and base or 192,
-        offsetX      = okOff and off.x or 0,
-        offsetY      = okOff and off.y or 0,
-    }
-
-    -- Release the ordinary seated offset hold first. It uses CAMERA_TAG; the
-    -- body view immediately takes its own hold under FPV_TAG below, so control
-    -- never actually returns to the built-in script in between.
-    clearCameraOffset()
-
-    fpvSetControls(true)
-
-    camera.setMode(camera.MODE.Preview)
-    fpvActive = true
-    fpvApplyFraming()   -- ends with instantTransition, so the offset snaps
-    fpvDebugReport()
-end
-
--- Live retune while seated, so the distance slider can be dialled in against
--- the actual view instead of by standing up and sitting down again.
-fpvSettings:subscribe(async:callback(function()
-    if not isSitting then return end
-    if fpvActive then
-        if not fpvSettings:get("FPV_BODY_ENABLED") then
-            exitFpvBody()
-        else
-            fpvApplyFraming()
-        end
-    else
-        enterFpvBody()
-    end
-end))
-
--- ---------------------------------------------------------------------------
 -- PERSPECTIVE CHANGE
 -- ---------------------------------------------------------------------------
 -- Switching perspective rebuilds the player's animation object and drops
@@ -916,12 +682,6 @@ end))
 -- I.AnimRefresh defers past the skeleton rebuild before calling back; firing
 -- immediately would re-issue onto a skeleton about to be replaced.
 local function onPerspectiveChanged()
-    -- A perspective toggle while the body view is up means the player asked to
-    -- leave it; Preview is no longer the active mode, so stop pretending.
-    if fpvActive and camera.getMode() ~= camera.MODE.Preview then
-        fpvActive = false
-        fpvSaved  = nil
-    end
     -- Runs even when not seated so a lingering offset is released if the sit
     -- ended while the notification was still settling.
     applyCameraOffset()
@@ -956,13 +716,23 @@ local function commitSit(furniture, chairPos, sitPos, yaw)
         furniturePos = chairPos,
     })
 
+    -- Public hook. Add-ons (see the FPV_experimental package) listen for these
+    -- rather than patching this script; nothing here depends on anyone doing so.
+    self.object:sendEvent('TakeASeat_Seated', {
+        furniture = furniture,
+        seatType  = getSeatType(furniture.recordId),
+        animGroup = currentSitAnim,
+    })
+
     isSitting      = true
     sitAnimStarted = false
     resolveActive  = false
     lockControls()
     subscribeRefresh()
     applyCameraOffset()
-    enterFpvBody()
+    -- Immersive FPV (a separate, third-party mod) listens for this to drop its
+    -- simulated eye height while seated. Unrelated to the FPV_experimental
+    -- add-on; harmless when neither is installed.
     self.object:sendEvent('FPV_SetEyeDropOverride', { offset = -60 })
 end
 
@@ -1017,9 +787,10 @@ local function stopSitting()
     isSitting      = false
     sitAnimStarted = false
     abortResolve()
+    self.object:sendEvent('TakeASeat_Stood', {})
+
     releaseControls()
     unsubscribeRefresh()
-    exitFpvBody()
     clearCameraOffset()
     self.object:sendEvent('FPV_SetEyeDropOverride', { offset = 0 })
 
@@ -1129,7 +900,6 @@ local function onLoad(data)
     currentFurniture, originalChairPos, originalChairRot = nil, nil, nil
     resolveToken = resolveToken + 1
     unsubscribeRefresh()
-    exitFpvBody()
     clearCameraOffset()
     -- Sit state does not survive a load: the chair's world transform is not
     -- restored either, which is a known limitation of this mod rather than

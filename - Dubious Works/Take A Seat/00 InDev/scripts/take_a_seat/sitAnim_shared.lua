@@ -356,16 +356,14 @@ return {
     pivotOffset    = pivotOffset,
     fallbackOffset = fallbackOffset,
 
+    -- Defaults for take_a_seat's own settings. The FPV_experimental add-on
+    -- registers and owns its settings separately.
     DEFAULTS = {
         CAMERA_OFFSET_ENABLED = true,
         FP_OFFSET_V           = 0,
         FP_OFFSET_H           = 0,
         TP_OFFSET_V           = -75,
         TP_OFFSET_H           = 0,
-        FPV_BODY_ENABLED      = false,
-        FPV_DISTANCE          = 0,
-        FPV_EYE_V             = -60,
-        FPV_EYE_H             = 0,
         DEBUG                 = false,
     },
 }
