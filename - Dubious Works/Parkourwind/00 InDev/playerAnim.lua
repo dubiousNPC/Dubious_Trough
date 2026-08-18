@@ -62,11 +62,40 @@ local GROUPS = {
     -- states/optional/README.md. Kept here so re-enabling one of them
     -- doesn't require touching this file at all, just uncommenting/adding
     -- its name to the ONE_SHOT_STATES/LOOPING_STATES sets below.
-    Sprint    = { group = "pwrun1", speed = 1 },  -- looping
+    -- [SYNTAX FIX] This entry was previously closed with '}' on the first
+    -- line, leaving priority/blendMask/startKey/stopKey dangling as keys of
+    -- GROUPS ITSELF rather than of Sprint. Valid Lua, but it meant Sprint
+    -- silently lost all four settings AND GROUPS gained four junk numeric
+    -- entries - which made Anim.verifyGroups() throw, since it indexes
+    -- entry.group on every value in the table.
+    Sprint    = {
+        group = "pwrun1", speed = 1,  -- looping
         priority = animation.PRIORITY.Movement + 10,
         blendMask = animation.BLEND_MASK.All,
         startKey = "start",
         stopKey = "stop",
+    },
+
+    -- Directional entries. `variants` replaces `group`; the state selects
+    -- which one via Anim.setVariant() immediately before the transition, so
+    -- group names still appear ONLY in this file.
+    Shimmy = {
+        variants = { left = "shimmyl1", right = "shimmyr1" },
+        speed = 1,
+        priority = animation.PRIORITY.Movement + 20,
+        blendMask = animation.BLEND_MASK.All,
+        startKey = "start",
+        stopKey = "stop",
+    },
+
+    WallBoost = {
+        variants = { left = "pwboostbkl", right = "pwboostbkr" },
+        speed = 1,
+        priority = animation.PRIORITY.Movement + 20,
+        blendMask = animation.BLEND_MASK.All,
+        startKey = "start",
+        stopKey = "stop",
+    },
 
     Roll      = {
         group = "pwroll1", speed = 1,  -- one-shot landing roll
@@ -89,7 +118,8 @@ local GROUPS = {
 -- and the character T-poses for as long as the state is active. That is
 -- exactly what the removed WallJump entry ("pwwalljump") was doing.
 local LOOPING_STATES = { LedgeHang = true, Sprint = true }
-local ONE_SHOT_STATES = { Vault = true, Mantle = true, Roll = true }
+local ONE_SHOT_STATES = { Vault = true, Mantle = true, Roll = true,
+                          Shimmy = true, WallBoost = true }
 
 local FULLBODY_PRIORITY = {
     [animation.BONE_GROUP.RightArm] = animation.PRIORITY.Jump,
@@ -104,6 +134,24 @@ local FULLBODY_BLEND_MASK = animation.BLEND_MASK.LeftArm + animation.BLEND_MASK.
 -- INTERNAL STATE
 -- ==============================================
 local currentGroup = nil
+
+-- Set by a state immediately before returning its own name, to pick between
+-- a GROUPS entry's `variants`. Consumed on the next resolve and cleared, so
+-- a stale direction can't leak into an unrelated transition.
+local pendingVariant = nil
+
+function Anim.setVariant(name)
+    pendingVariant = name
+end
+
+-- Resolves a GROUPS entry to an actual group name, honouring `variants`.
+local function resolveGroup(entry)
+    if not entry then return nil end
+    if entry.variants then
+        return entry.variants[pendingVariant or "right"]
+    end
+    return entry.group
+end
 
 -- =============================================================================
 -- ONE-SHOT GROUP VERIFICATION
@@ -129,15 +177,35 @@ function Anim.verifyGroups()
         return
     end
 
+    -- Collect every group name this file can ever play, flattening variants.
+    -- Guarded on type: a malformed GROUPS table (an entry that isn't a table)
+    -- used to make this throw, since entry.group was indexed outside pcall.
+    local probes = {}
     for stateName, entry in pairs(GROUPS) do
-        local ok, present = pcall(animation.hasGroup, self, entry.group)
-        if not ok then
-            print(string.format("[FLOW][anim] %-10s '%s' -> probe FAILED", stateName, entry.group))
-        elseif present then
-            print(string.format("[FLOW][anim] %-10s '%s' -> OK", stateName, entry.group))
+        if type(entry) == "table" then
+            if entry.variants then
+                for dir, g in pairs(entry.variants) do
+                    probes[#probes + 1] = { stateName .. "/" .. dir, g }
+                end
+            elseif entry.group then
+                probes[#probes + 1] = { stateName, entry.group }
+            end
         else
-            print(string.format("[FLOW][anim] %-10s '%s' -> MISSING (will T-pose or do nothing)",
-                stateName, entry.group))
+            print(string.format("[FLOW][anim] MALFORMED GROUPS entry '%s' (%s, expected table)",
+                tostring(stateName), type(entry)))
+        end
+    end
+
+    for i = 1, #probes do
+        local label, group = probes[i][1], probes[i][2]
+        local ok, present = pcall(animation.hasGroup, self, group)
+        if not ok then
+            print(string.format("[FLOW][anim] %-16s '%s' -> probe FAILED", label, group))
+        elseif present then
+            print(string.format("[FLOW][anim] %-16s '%s' -> OK", label, group))
+        else
+            print(string.format("[FLOW][anim] %-16s '%s' -> MISSING (will T-pose or do nothing)",
+                label, group))
         end
     end
 
@@ -155,15 +223,17 @@ end
 
 local function playGroup(stateName, looping)
     local entry = GROUPS[stateName]
-    if not entry or not entry.group then return end
+    local group = resolveGroup(entry)
+    pendingVariant = nil   -- consumed; never let a direction leak forward
+    if not group then return end
 
-    if currentGroup == entry.group then return end -- already playing, avoid restart stutter
+    if currentGroup == group then return end -- already playing, avoid restart stutter
     stopCurrent()
 
     local autoDisable = entry.autoDisable
     if autoDisable == nil then autoDisable = not looping end
 
-    animation.playBlended(self, entry.group, {
+    animation.playBlended(self, group, {
         startKey = entry.startKey,
         stopKey = entry.stopKey,
         priority = entry.priority or FULLBODY_PRIORITY,
@@ -173,7 +243,7 @@ local function playGroup(stateName, looping)
         forceLoop = looping and true or nil,
         autoDisable = autoDisable,
     })
-    currentGroup = entry.group
+    currentGroup = group
 end
 
 -- ==============================================

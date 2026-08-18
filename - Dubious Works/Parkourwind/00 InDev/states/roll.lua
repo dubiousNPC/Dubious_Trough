@@ -36,7 +36,7 @@ local RollState = BaseState.new("Roll")
 -- ==============================================
 -- CONFIGURATION
 -- ==============================================
-local ROLL_DURATION = 1      -- recovery window before handing back to
+local ROLL_DURATION = 0.45      -- recovery window before handing back to
                                  -- Idle/Sprint. Long enough to read as a
                                  -- deliberate action, short enough not to
                                  -- feel like a stun.

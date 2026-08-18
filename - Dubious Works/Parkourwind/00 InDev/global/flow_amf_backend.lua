@@ -82,6 +82,32 @@ local function onVaultStart(data)
     }
 end
 
+-- Ballistic launch: an initial velocity integrated against gravity every
+-- tick, rather than a lerp to a precomputed point. Used by WallBoost (the
+-- double-jump reimplementation). Ends on landing, on a real collision, or at
+-- maxDuration - not on a fixed timer, so the arc resolves naturally.
+--
+-- Gravity matches Hookshot's derived value so the two mods' fall speeds agree
+-- rather than each inventing its own.
+local M_TO_UNITS = 400
+local GRAVITY = 9.80665 * M_TO_UNITS
+
+local function onBoostStart(data)
+    local id = data.actor.id
+    -- v0 needed to reach apexHeight: v = sqrt(2*g*h). Derived here so GRAVITY
+    -- lives in exactly one place.
+    local v0z = math.sqrt(2 * GRAVITY * data.apexHeight)
+    local push = data.pushVelocity or util.vector3(0, 0, 0)
+
+    ActiveMoves[id] = {
+        type = "Boost",
+        actor = data.actor,
+        velocity = util.vector3(push.x, push.y, v0z),
+        maxDuration = data.maxDuration or 1.5,
+        elapsed = 0,
+    }
+end
+
 local function onMoveCancel(data)
     if data.actor then
         ActiveMoves[data.actor.id] = nil
@@ -136,6 +162,27 @@ local function onUpdate(dt)
                     -- Simple Linear Interpolation for stability
                     nextPos = currentStart + (currentDest - currentStart) * move.progress
                 end
+            elseif move.type == "Boost" then
+                move.elapsed = move.elapsed + dt
+                move.velocity = move.velocity - util.vector3(0, 0, GRAVITY * dt)
+                nextPos = actor.position + move.velocity * dt
+
+                -- Stop as soon as the arc is descending and something solid
+                -- is directly below, so the player lands instead of being
+                -- driven into the floor by the remaining velocity.
+                if move.velocity.z < 0 then
+                    local feet = actor.position
+                    local probe = nearby.castRay(feet, feet - util.vector3(0, 0, 12), {
+                        ignore = actor,
+                        collisionType = COLLISION_MASK,
+                    })
+                    if probe.hit then ActiveMoves[id] = nil end
+                end
+
+                if move.elapsed >= move.maxDuration then
+                    ActiveMoves[id] = nil
+                end
+
             elseif move.type == "Vault" then
                 move.progress = move.progress + (dt / move.duration)
                 if move.progress >= 1.0 then
@@ -165,5 +212,7 @@ return {
         FLOW_Mantle_Cancel = onMoveCancel,
         FLOW_Vault_Cancel = onMoveCancel,
         FLOW_SnapTo = onSnapTo,
+        FLOW_Boost_Start = onBoostStart,
+        FLOW_Boost_Cancel = onMoveCancel,
     }
 }

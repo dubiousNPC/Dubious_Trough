@@ -28,8 +28,6 @@ local Anim = {}
 -- ==============================================
 -- CONFIGURATION
 -- ==============================================
--- Animation group names - these must match the group names baked into your
--- .kf files (i.e. whatever "loop start"/"loop stop" text keys live under).
 local GROUPS = {
     DRAWN     = "hookaim",     -- held while aiming (HookshotState.DRAWN)
     HANDOFF   = "hookoff",
@@ -38,13 +36,6 @@ local GROUPS = {
     HANG_DOWN = "hookhangdwn", -- descending the rope
 }
 
--- FIRING split by target type. hookshotState.targeting.lastTargetType is
--- already computed and threaded through via setMode()'s
--- Anim.onStateChange(newState, oldState, hookshotState) call by the time
--- FIRING fires - Targeting.getTargetType() returns "enemy" for actors,
--- "item" for carriable items, and "wall"/"floor"/"ceiling"/"rappel"/"none"
--- for world geometry. No new plumbing needed for this. Placeholder group
--- names - swap for your real ones.
 local FIRING_GROUPS = {
     enemy   = "hookshoot",
     item    = "hookitem",
@@ -65,14 +56,7 @@ local FULLBODY_BLEND_MASK = anim.BLEND_MASK.LeftArm + anim.BLEND_MASK.Torso
 -- Upper body: legs stay under normal control (LowerBody deliberately
 -- omitted from both tables below) so aiming doesn't stomp locomotion.
 -- FIX: RightArm was PRIORITY.Scripted while LeftArm/Torso were
--- PRIORITY.Weapon in the same playBlendedAnimation call. Per Cod3x,
--- Scripted is documented as special: "When any animation with this
--- priority is present, all animations without this priority are paused" -
--- mixing it with Weapon on the other two bone groups of the SAME pose
--- almost certainly wasn't intentional (nothing else in this file mixes
--- priority tiers within one call) and risks pausing other non-Scripted
--- animation on this actor while just aiming. Set to Weapon to match the
--- other two bone groups - flag if Scripted was actually deliberate here.
+-- PRIORITY.Weapon in the same playBlendedAnimation call. INTENTIONAL
 local UPPERBODY_PRIORITY = {
     [anim.BONE_GROUP.RightArm] = anim.PRIORITY.Weapon,
     [anim.BONE_GROUP.LeftArm] = anim.PRIORITY.Weapon,
@@ -80,6 +64,26 @@ local UPPERBODY_PRIORITY = {
 }
 local UPPERBODY_BLEND_MASK = anim.BLEND_MASK.LeftArm + anim.BLEND_MASK.Torso
                            + anim.BLEND_MASK.RightArm
+
+-- Which blend mask each group is actually played with.
+--
+-- releaseGroup() needs this: the release reissues the SAME group, so it has
+-- to reissue on exactly the bones that pose owned. Reissuing an upper-body
+-- pose (DRAWN, HANDOFF) at FULLBODY_BLEND_MASK would grab LowerBody for a
+-- pose that never held it. That mask mismatch is the real defect the
+-- anim.cancel() rewrite was reaching for - this table fixes it directly,
+-- without needing cancel() at all.
+local GROUP_BLEND_MASK = {
+    [GROUPS.DRAWN]     = UPPERBODY_BLEND_MASK,
+    [GROUPS.HANDOFF]   = UPPERBODY_BLEND_MASK,
+    [GROUPS.HANG_IDLE] = FULLBODY_BLEND_MASK,
+    [GROUPS.HANG_UP]   = FULLBODY_BLEND_MASK,
+    [GROUPS.HANG_DOWN] = FULLBODY_BLEND_MASK,
+}
+for _, group in pairs(FIRING_GROUPS) do
+    GROUP_BLEND_MASK[group] = FULLBODY_BLEND_MASK
+end
+
 -- ==============================================
 -- INTERNAL STATE
 -- ==============================================
@@ -91,17 +95,51 @@ local currentGroup = nil
 -- ==============================================
 -- LOW-LEVEL HELPERS
 -- ==============================================
+-- Set true to release poses with animation.cancel() instead of the
+-- Default-priority reissue below.
+--
+-- OFF BY DEFAULT because cancel() is the prime suspect for the animation
+-- blackout: it is the only call in this file that can raise, and the
+-- symptoms on both sides of the fix line up exactly with it raising. When
+-- releaseGroup() threw from stopAnim() the pose simply never stopped and
+-- looped forever; once the release moved into playPose() (ahead of the
+-- play, to close the pose leak) the throw also skipped the new pose and
+-- left currentGroup pointing at a pose that was no longer really playing,
+-- so the next transition early-returned on `currentGroup == group` and
+-- nothing played again at all.
+--
+-- Flip this back to true only after confirming animation.cancel's presence
+-- and exact signature for this OpenMW build in Cod3x. The reissue path
+-- below needs no such confirmation - it uses the same
+-- I.AnimationController.playBlendedAnimation call the poses already use.
+local USE_ANIMATION_CANCEL = false
+
 local function releaseGroup(group)
-    -- animation.cancel() removes the group from the active animation list
-    -- outright, regardless of which blend mask it was originally played
-    -- with. Confirmed against Cod3x: plain openmw.animation module call
-    -- (not on I.AnimationController), only works on self, hence the
-    -- require above. This also fixes a real mismatch the old version had:
-    -- reissuing at FULLBODY_BLEND_MASK to cancel a group that was actually
-    -- played via playLoopAlt's UPPERBODY_BLEND_MASK (e.g. DRAWN) would
-    -- touch LowerBody for a pose that never included it. cancel() doesn't
-    -- need to know or guess which mask a group was played with.
-    anim.cancel(self, group)
+    if not group then return end
+
+    if USE_ANIMATION_CANCEL then
+        -- animation.cancel() removes the group from the active animation
+        -- list outright, regardless of the blend mask it was played with.
+        -- Plain openmw.animation module call (not on I.AnimationController),
+        -- only works on self, hence the require above.
+        anim.cancel(self, group)
+        return
+    end
+
+    -- Reissue the SAME group at Default priority with loops = 0 and
+    -- autoDisable = true, and let it end on its own. This is what the
+    -- pre-merge version did, and it's the documented way to end a held
+    -- blended pose: animation.clearAnimationQueue() does NOT affect
+    -- playBlended animations, so there's nothing to clear.
+    --
+    -- Mask comes from GROUP_BLEND_MASK so the release only ever touches the
+    -- bones the pose actually owned.
+    I.AnimationController.playBlendedAnimation(group, {
+        priority = anim.PRIORITY.Default,
+        blendMask = GROUP_BLEND_MASK[group] or FULLBODY_BLEND_MASK,
+        loops = 0,
+        autoDisable = true,
+    })
 end
 
 -- Starts `group` as the single pose this module owns, releasing whatever
@@ -126,16 +164,18 @@ local function playPose(group, priority, blendMask)
     if not group then return end
     if currentGroup == group then return end -- already playing this pose
 
+    -- pcall, and the play happens regardless of the result. A release that
+    -- raises must never prevent the next pose from starting - that exact
+    -- coupling is what turned a pose leak into a total animation blackout.
     -- Different group name, so this can never cancel the one we're about to
-    -- start. Both calls resolve before the engine processes the animation
-    -- list at end of frame, so there is no gap where neither pose is held.
+    -- start.
     if currentGroup then
-        releaseGroup(currentGroup)
+        pcall(releaseGroup, currentGroup)
     end
 
     I.AnimationController.playBlendedAnimation(group, {
-        startKey = "loop start",
-        stopKey = "loop stop",
+        startKey = "start",
+        stopKey = "stop",
         priority = priority,
         blendMask = blendMask,
         loops = -1,
@@ -160,8 +200,12 @@ end
 local function stopAnim()
     if not currentGroup then return end
 
-    releaseGroup(currentGroup)
+    pcall(releaseGroup, currentGroup)
 
+    -- Cleared UNCONDITIONALLY, even if the release above failed. Leaving a
+    -- stale name here is worse than a leaked pose: every later transition
+    -- would early-return on `currentGroup == group` and no pose would ever
+    -- start again.
     currentGroup = nil
 end
 
@@ -236,13 +280,15 @@ end
 -- against exactly the kind of gap that left HANDOFF/FIRING variants out
 -- the first time.
 function Anim.forceReset()
-    releaseGroup(GROUPS.DRAWN)
-    releaseGroup(GROUPS.HANDOFF)
-    releaseGroup(GROUPS.HANG_IDLE)
-    releaseGroup(GROUPS.HANG_UP)
-    releaseGroup(GROUPS.HANG_DOWN)
+    -- Each release is guarded individually so one failure can't skip the
+    -- rest of the list, and currentGroup is cleared either way.
+    pcall(releaseGroup, GROUPS.DRAWN)
+    pcall(releaseGroup, GROUPS.HANDOFF)
+    pcall(releaseGroup, GROUPS.HANG_IDLE)
+    pcall(releaseGroup, GROUPS.HANG_UP)
+    pcall(releaseGroup, GROUPS.HANG_DOWN)
     for _, group in pairs(FIRING_GROUPS) do
-        releaseGroup(group)
+        pcall(releaseGroup, group)
     end
     currentGroup = nil
 end

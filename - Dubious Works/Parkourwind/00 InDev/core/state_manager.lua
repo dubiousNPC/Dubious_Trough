@@ -1,14 +1,31 @@
 local ui = require('openmw.ui')
 local Anim = require('playerAnim')
+local Settings = require('settings')
 
 local StateManager = {
     -- Registry of all available states
     states = {},
     activeState = nil,
     
-    -- Configuration
-    debugMode = true
+    -- Configuration. Read from the settings menu rather than hardcoded: this
+    -- was pinned true, so the per-transition console line below fired for
+    -- every player regardless of the debug setting used everywhere else.
+    debugMode = false
 }
+
+-- Transitions that are part of a continuous action rather than a new one.
+-- Shimmy hands back to LedgeHang after every single step, so a held direction
+-- re-enters LedgeHang about once per second -- without this the "LEDGE GRAB"
+-- banner and the console line repeat for the whole traverse.
+local CONTINUATION = {
+    LedgeHang = { Shimmy = true },
+    Shimmy    = { LedgeHang = true, Shimmy = true },
+}
+
+local function isContinuation(nextStateName, prevStateName)
+    local from = CONTINUATION[nextStateName]
+    return from ~= nil and from[prevStateName] == true
+end
 
 -- Initialize with list of state files
 function StateManager.init(stateModules)
@@ -61,15 +78,20 @@ function StateManager.setState(nextStateName, syncData)
     -- API themselves, see playerAnim.lua.
     Anim.onStateChange(nextStateName, prevStateName)
 
-    -- Visual Feedback for Parkour Actions
-    if nextStateName == "Vault" or nextStateName == "Mantle" then
-        ui.showMessage(">>> ACTION: " .. string.upper(nextStateName) .. " <<<", { showInDialogue = false })
-    elseif nextStateName == "LedgeHang" then
-        ui.showMessage(">>> ACTION: LEDGE GRAB <<<", { showInDialogue = false })
+    -- Visual Feedback for Parkour Actions. Announce the START of an action,
+    -- not every internal step of one.
+    local continuation = isContinuation(nextStateName, prevStateName)
+    if not continuation then
+        if nextStateName == "Vault" or nextStateName == "Mantle" then
+            ui.showMessage(">>> ACTION: " .. string.upper(nextStateName) .. " <<<", { showInDialogue = false })
+        elseif nextStateName == "LedgeHang" then
+            ui.showMessage(">>> ACTION: LEDGE GRAB <<<", { showInDialogue = false })
+        end
     end
 
-    -- Console logging for debugging history
-    if StateManager.debugMode then
+    -- Console logging for debugging history. Continuations are skipped for the
+    -- same reason, so a traverse does not bury the transitions worth seeing.
+    if Settings.debugMode() and not continuation then
         ui.printToConsole("[FLOW:FSM] Transition > " .. nextStateName, ui.CONSOLE_COLOR.Success)
     end
 end

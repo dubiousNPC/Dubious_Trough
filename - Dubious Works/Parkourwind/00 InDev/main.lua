@@ -23,6 +23,8 @@ local MantleState = require('states/mantle')
 local VaultState = require('states/vault')
 local LedgeHangState = require('states/ledge_hang')
 local RollState = require('states/roll')
+local ShimmyState = require('states/shimmy')
+local WallBoostState = require('states/wall_boost')
 -- WallJump has been removed entirely - it never worked as intended and
 -- was the source of the repeating on-screen message and the T-pose (its
 -- configured animation group had no matching clip, and its one-shot
@@ -38,7 +40,9 @@ local REGISTERED_STATES = {
     MantleState,
     VaultState,
     LedgeHangState,
-    RollState
+    RollState,
+    ShimmyState,
+    WallBoostState
 }
 
 -- =================================================================

@@ -17,6 +17,7 @@ local nearby = require('openmw.nearby')
 local camera = require('openmw.camera')
 local Sensor = require('core/sensor')
 local SensorExt = require('core/optional/sensor_ext')
+local ShimmyState = require('states/shimmy')
 
 local LedgeHangState = BaseState.new("LedgeHang")
 
@@ -83,12 +84,21 @@ function LedgeHangState:enter(syncData)
     applyGravityHack(true)
     
     -- 2. Snap Position & Rotation
-    if SensorExt.data.targetPos then
+    --
+    -- A lip handed back by Shimmy wins over the sensor. Returning from a step
+    -- the sensor may not re-detect on that exact frame -- updateLedgeHang
+    -- clears targetPos at the top of every call -- and without this the whole
+    -- snap block below was skipped, leaving wallNormal stale from the previous
+    -- step and the body un-anchored.
+    local resumeLip, resumeNormal = ShimmyState.consumeResultLip()
+    local lipSource = resumeLip or SensorExt.data.targetPos
+
+    if lipSource then
         -- [CRITICAL] Cache the target position so we don't lose it if the sensor misses next frame
-        cachedTargetPos = SensorExt.data.targetPos
+        cachedTargetPos = lipSource
 
         local forward = util.transform.rotateZ(mwSelf.rotation:getYaw()):apply(util.vector3(0,1,0))
-        wallNormal = SensorExt.data.wallNormal or -forward 
+        wallNormal = resumeNormal or SensorExt.data.wallNormal or -forward
         
         local hangPos = cachedTargetPos - util.vector3(0, 0, HANG_OFFSET_Z)
         hangPos = hangPos + (wallNormal * WALL_OFFSET)
@@ -125,6 +135,24 @@ end
 
 function LedgeHangState:update(dt, syncData, inputData)
     timeInState = timeInState + dt
+
+    -- 0. SHIMMY - lateral input, no jump involved, so it cannot contend with
+    -- the jump-gated branches below. The destination is probed BEFORE the
+    -- transition so a blocked step never starts an animation or a move.
+    local lateralInput = inputData.moveVector.x
+    if math.abs(lateralInput) > 0.1 and wallNormal and cachedTargetPos then
+        local dir = (lateralInput > 0) and 1 or -1
+        -- probeStep needs BOTH the body (clearance sweep) and the lip
+        -- (continuation probe); passing only the body made it always fail.
+        local newLip = ShimmyState.probeStep(mwSelf.position, cachedTargetPos, wallNormal, dir)
+        if newLip then
+            -- The lip rides along with the step. Assigning it to
+            -- cachedTargetPos here would be pointless: exit() runs before the
+            -- next enter() and nils it.
+            ShimmyState.setStep(dir, wallNormal, newLip)
+            return "Shimmy"
+        end
+    end
 
     -- 1. WALL KICK / JUMP AWAY
     --
