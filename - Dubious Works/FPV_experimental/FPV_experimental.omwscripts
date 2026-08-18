@@ -1,0 +1,9 @@
+# Take a Seat -- First Person Body  (EXPERIMENTAL ADD-ON)
+#
+# Requires Take a Seat. Load this AFTER it.
+#
+# Attaches only by listening for TakeASeat_Seated / TakeASeat_Stood, so Take a
+# Seat has no knowledge of this package and behaves identically without it.
+#
+# Optional: SuperSettingsRenderers gives the numeric settings real sliders.
+PLAYER: scripts/TakeASeat_FPV/fpv_body.lua
