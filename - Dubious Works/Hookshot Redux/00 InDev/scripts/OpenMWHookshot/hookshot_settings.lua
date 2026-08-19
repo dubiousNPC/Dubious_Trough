@@ -35,7 +35,9 @@ settings.MOD_VERSION = "0.4.3-beta"
 -- "Hook shot") - previously only the ARMO passed the gate, so the
 -- clothing variant silently did nothing.
 settings.GLOVE_RECORD_IDS = {
-    "dbs_hookshot_ar",
+    "dbs_hookshot_adv",
+    "dbs_hookshot_item",
+    "dbs_hookshot_mando",
     "dbs_hookshot",
 }
 
