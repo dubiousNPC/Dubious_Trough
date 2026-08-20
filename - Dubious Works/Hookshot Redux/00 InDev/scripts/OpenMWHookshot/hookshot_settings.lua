@@ -37,8 +37,8 @@ settings.MOD_VERSION = "0.4.3-beta"
 settings.GLOVE_RECORD_IDS = {
     "dbs_hookshot_adv",
     "dbs_hookshot_item",
-    "dbs_hookshot_mando",
-    "dbs_hookshot",
+    "dbs_hs_mandalore",
+    "dbs_hookshot_ar",
 }
 
 -- ITEM_TARGET_RECORD_IDS gates the item-targeting feature specifically:
