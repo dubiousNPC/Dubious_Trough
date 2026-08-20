@@ -181,14 +181,34 @@ end
 -- =============================================================================
 local GRAVITY_MAGNITUDE = 200
 
+-- The two halves of this have DIFFERENT repeat semantics, which is easy to
+-- miss because one call does both:
+--
+--   I.Controls.override*Controls(bool)  - a plain setter, idempotent, a
+--                                         repeated call costs nothing.
+--   activeEffects:modify(+/-mag, ...)   - CUMULATIVE. Two enables and one
+--                                         disable leaves the player levitating
+--                                         by 200 permanently.
+--
+-- So the levitate half is flag-guarded and the control half is not, matching
+-- ledge_hang.lua's applyGravityHack. Enter/exit are paired through
+-- StateManager.setState today and the magnitude does balance across a
+-- traverse, but the guard makes an unpaired call harmless instead of
+-- permanent.
+local suspensionApplied = false
+
 local function applySuspension(enable)
-    local ok, effects = pcall(types.Actor.activeEffects, mwSelf)
-    if ok and effects then
-        pcall(function()
-            effects:modify(enable and GRAVITY_MAGNITUDE or -GRAVITY_MAGNITUDE,
-                           core.magic.EFFECT_TYPE.Levitate)
-        end)
+    if enable ~= suspensionApplied then
+        local ok, effects = pcall(types.Actor.activeEffects, mwSelf)
+        if ok and effects then
+            pcall(function()
+                effects:modify(enable and GRAVITY_MAGNITUDE or -GRAVITY_MAGNITUDE,
+                               core.magic.EFFECT_TYPE.Levitate)
+            end)
+        end
+        suspensionApplied = enable
     end
+
     I.Controls.overrideMovementControls(enable)
     I.Controls.overrideCombatControls(enable)
 end

@@ -136,7 +136,11 @@ function WallRunState:enter(syncData)
     I.Controls.overrideMovementControls(true) 
     
     anim.playBlended(mwSelf, 'runforward', {
-        priority = anim.PRIORITY.Movement + 10,
+        -- Weapon(7), not Movement + 10. The enum ends at Scripted(13), so the
+        -- old value (15) was off the end of it. See the PRIORITY TIERS note in
+        -- playerAnim.lua; this file plays its own animation directly, so the
+        -- constant is repeated rather than imported.
+        priority = anim.PRIORITY.Weapon,
         loops = -1,
         speed = 1.35,
         blendMask = anim.BLEND_MASK.LowerBody, 

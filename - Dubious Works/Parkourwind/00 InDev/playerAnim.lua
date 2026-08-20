@@ -44,18 +44,46 @@ local Anim = {}
 -- with this exact tuning (before that got centralized here, which was
 -- the actual cause of LedgeHang's custom animation not reliably
 -- showing - two competing playBlended calls racing each other).
+-- =============================================================================
+-- PRIORITY TIERS
+--
+-- [BUGFIX] These were PRIORITY_FLOW / + 20, i.e. 15 and 25.
+-- The documented enum runs Default(0) .. Scripted(13), so both were off the
+-- end of it. A scalar priority is a legal FORM ("a single #Priority value
+-- assigned to all bone groups") but 15 and 25 are not #Priority values, and
+-- crucially they do NOT inherit Scripted's special behaviour -- that is tied
+-- to the exact value 13, not to "big number".
+--
+-- Mapped onto real enum entries that preserve the two tiers:
+--
+--   FLOW       = Weapon (7) - above Jump(4), Movement(5) and Hit(6), so a
+--                parkour pose outranks locomotion and hit reactions.
+--   FLOW_MAJOR = Block  (8) - above FLOW, for moves that must win outright
+--                against anything FLOW itself is doing.
+--
+-- Both deliberately sit BELOW Knockdown(9) and Death(12), so being knocked
+-- down or killed still interrupts a parkour move, and below Scripted(13),
+-- whose documented side effect is pausing every non-Scripted animation on the
+-- actor for as long as it is present.
+--
+-- If a pose must dominate absolutely, use animation.PRIORITY.Scripted and
+-- accept that pause. Do not go back to arithmetic on the enum.
+-- =============================================================================
+local PRIORITY_FLOW       = animation.PRIORITY.Weapon
+local PRIORITY_FLOW_MAJOR = animation.PRIORITY.Block
+
 local GROUPS = {
     Vault     = { group = "pwvault1",       speed = 1 },  -- one-shot, plays over the vault's physics duration
     Mantle    = {
         group = "pwmantle1", speed = 1,  -- kf has pwmantle1/2/3; "pwmantle" does not exist
-        priority = animation.PRIORITY.Movement + 10,
+        priority = PRIORITY_FLOW,
         blendMask = animation.BLEND_MASK.All,
         autoDisable = false,  -- hold the last frame instead of reverting mid-climb if
                                -- the clip is shorter than the height-scaled duration
     },
     LedgeHang = {
         group = "pwwallhangidle", speed = 1,  -- looping hang pose
-        priority = animation.PRIORITY.Movement + 20,
+        priority = PRIORITY_FLOW_MAJOR,
         blendMask = animation.BLEND_MASK.All,
     },
 
@@ -71,7 +99,7 @@ local GROUPS = {
     -- entry.group on every value in the table.
     Sprint    = {
         group = "pwrun1", speed = 1,  -- looping
-        priority = animation.PRIORITY.Movement + 10,
+        priority = PRIORITY_FLOW,
         blendMask = animation.BLEND_MASK.All,
         startKey = "start",
         stopKey = "stop",
@@ -83,7 +111,7 @@ local GROUPS = {
     Shimmy = {
         variants = { left = "pwshimmyl1", right = "pwshimmyr1" },
         speed = 1,
-        priority = animation.PRIORITY.Movement + 20,
+        priority = PRIORITY_FLOW_MAJOR,
         blendMask = animation.BLEND_MASK.All,
         startKey = "start",
         stopKey = "stop",
@@ -92,7 +120,7 @@ local GROUPS = {
     WallBoost = {
         variants = { left = "pwboostbkl", right = "pwboostbkr" },
         speed = 1,
-        priority = animation.PRIORITY.Movement + 20,
+        priority = PRIORITY_FLOW_MAJOR,
         blendMask = animation.BLEND_MASK.All,
         startKey = "start",
         stopKey = "stop",
@@ -100,7 +128,7 @@ local GROUPS = {
 
     Roll      = {
         group = "pwroll1", speed = 1,  -- one-shot landing roll
-        priority = animation.PRIORITY.Movement + 20,
+        priority = PRIORITY_FLOW_MAJOR,
         blendMask = animation.BLEND_MASK.All,
         startKey = "start",
         stopKey = "stop",
@@ -275,16 +303,26 @@ local lastRequest = nil
 
 reissue = function()
     if not lastRequest then return end
+    -- [BUGFIX] Restore the direction before replaying. playGroup() clears
+    -- pendingVariant as soon as it resolves, so by the time AnimRefresh fires
+    -- it is nil and resolveGroup() falls back to "right" -- a POV press
+    -- mid-shimmy replayed pwshimmyr1 no matter which way the player was
+    -- actually moving. Same for WallBoost.
+    pendingVariant = lastRequest.variant
     currentGroup = nil   -- force playGroup past its "already playing" guard
     playGroup(lastRequest.state, lastRequest.looping)
 end
 
 function Anim.onStateChange(newState, oldState)
+    -- Captured before playGroup() consumes it, so the reissue above can put
+    -- it back.
+    local variant = pendingVariant
+
     if ONE_SHOT_STATES[newState] then
-        lastRequest = { state = newState, looping = false }
+        lastRequest = { state = newState, looping = false, variant = variant }
         playGroup(newState, false)
     elseif LOOPING_STATES[newState] then
-        lastRequest = { state = newState, looping = true }
+        lastRequest = { state = newState, looping = true, variant = variant }
         playGroup(newState, true)
     else
         lastRequest = nil
