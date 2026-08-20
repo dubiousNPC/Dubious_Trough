@@ -48,6 +48,30 @@ local MAX_VAULTABLE_RISE = 150.0
 -- the arc's upper path catches those before committing.
 local CLEARANCE_PROBE_Z = 0.65      -- fraction of the apex rise to probe at
 
+-- [SAFETY 3] Destination validation. Everything above vets the PATH; nothing
+-- vetted the DESTINATION. At the outer edge of the sensor's range the landing
+-- point is furthest from the probes that approved it, which is exactly where
+-- failures were reported - and indoors a bad destination is on the far side
+-- of a wall, so the consequence is a clip-through rather than a stumble.
+local DEST_FLOOR_PROBE = 220.0   -- how far below landPos to look for a floor
+local DEST_HEAD_PROBE = 90.0     -- headroom needed above landPos
+local DEST_FLOOR_TOLERANCE = 60.0 -- how far the found floor may sit below landPos
+
+-- Apex scaling with distance. Deliberately SMALL and hard-capped: in practice
+-- vault distances barely vary, so an aggressive scale would mostly just launch
+-- the player higher for no reason. This exists to give the longest arcs a
+-- little more margin, not to reshape the move.
+local APEX_DIST_REFERENCE = 120.0 -- distance at which no extra lift is added
+local APEX_DIST_GAIN = 0.12       -- extra lift per unit beyond that
+local APEX_DIST_BONUS_MAX = 30.0  -- hard ceiling on the extra lift
+
+-- [SAFETY 4] Descending-half cage. The cage was removed wholesale because it
+-- clamped the ASCENT, where the player legitimately starts flush against the
+-- obstacle being crossed. The descent has no such excuse: by then the
+-- obstacle is behind and anything in the way is a genuine obstruction. Only
+-- the second half of the arc is checked, so the original failure cannot recur.
+local DESCENT_CAGE_START = 0.55  -- progress fraction after which the cage applies
+
 -- After a refusal, suppress Vault briefly. Idle/Airborne re-evaluate every
 -- frame off the same Sensor data, so without this the state would be
 -- entered and rejected repeatedly - and because Vault is in
@@ -124,6 +148,15 @@ function VaultState:enter(syncData)
     -- Clamp Apex to be at least a minimum jump height relative to start
     apexZ = math.max(apexZ, startPos.z + MIN_APEX_RISE)
 
+    -- Small distance-proportional bonus, capped. See APEX_DIST_* above for
+    -- why this is deliberately conservative.
+    local spanXY = util.vector3(rawLandPos.x - startPos.x, rawLandPos.y - startPos.y, 0):length()
+    if spanXY > APEX_DIST_REFERENCE then
+        local bonus = math.min(APEX_DIST_BONUS_MAX,
+                               (spanXY - APEX_DIST_REFERENCE) * APEX_DIST_GAIN)
+        apexZ = apexZ + bonus
+    end
+
     local midPoint = (startPos + rawLandPos) * 0.5
     local apexPos = util.vector3(midPoint.x, midPoint.y, apexZ)
 
@@ -135,6 +168,37 @@ function VaultState:enter(syncData)
     local probeEnd = util.vector3(rawLandPos.x, rawLandPos.y, probeZ)
 
     if nearby.castRay(probeStart, probeEnd, PROFILE_RAY_OPTS).hit then
+        blockedUntil = core.getRealTime() + BLOCK_DURATION
+        self.abort = true
+        return
+    end
+
+    -- [SAFETY 3] Is the destination somewhere a person can actually stand?
+    -- Two probes: a floor beneath it, and headroom above it. A landing point
+    -- with no floor under it means the sensor resolved something on the far
+    -- side of geometry - the interior wall-clip case.
+    local destTop = rawLandPos + util.vector3(0, 0, DEST_HEAD_PROBE)
+    local destFloorEnd = rawLandPos - util.vector3(0, 0, DEST_FLOOR_PROBE)
+
+    local floorRes = nearby.castRay(destTop, destFloorEnd, PROFILE_RAY_OPTS)
+    if not floorRes.hit then
+        blockedUntil = core.getRealTime() + BLOCK_DURATION
+        self.abort = true
+        return
+    end
+
+    -- The floor must be at roughly the height the sensor claimed. A floor far
+    -- below means the "landing spot" is really a drop the player didn't ask
+    -- for.
+    if (rawLandPos.z - floorRes.hitPos.z) > DEST_FLOOR_TOLERANCE then
+        blockedUntil = core.getRealTime() + BLOCK_DURATION
+        self.abort = true
+        return
+    end
+
+    -- Headroom: refuse if the player would materialise inside a ceiling.
+    local headRes = nearby.castRay(rawLandPos, destTop, PROFILE_RAY_OPTS)
+    if headRes.hit then
         blockedUntil = core.getRealTime() + BLOCK_DURATION
         self.abort = true
         return
@@ -159,6 +223,7 @@ function VaultState:enter(syncData)
         startPos = startPos,
         apexPos = apexPos,
         landPos = safeLandPos, -- Send the Air Drop position
+        cageFrom = DESCENT_CAGE_START,
         duration = estimatedDuration
     })
 

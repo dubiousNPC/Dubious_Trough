@@ -6,6 +6,7 @@ local I = require('openmw.interfaces')
 local core = require('openmw.core') 
 local ui = require('openmw.ui')
 local camera = require('openmw.camera')
+local nearby = require('openmw.nearby')
 local Sensor = require('core/sensor') 
 local EngineSync = require('core/engine_sync')
 
@@ -26,6 +27,29 @@ local CAM_ROLL_MAG = 2.0  -- Degrees to roll during effort
 
 -- Internal State
 local targetPos = nil
+
+-- [FIX] Refusal suppression, mirroring vault.lua's isBlocked().
+--
+-- Mantle had no equivalent, so once the destination validation started
+-- refusing a target, Idle/Airborne re-entered Mantle on the very next frame
+-- off the same unchanged Sensor data, aborted again, and thrashed
+-- Airborne->Mantle->Airborne indefinitely. Two costs: pwmantle1 is a
+-- ONE_SHOT so it re-fired on every entry, and - the reported symptom -
+-- LedgeHang's check in airborne.lua only runs on frames where Airborne is
+-- actually the active state, so the thrash was stealing every other frame
+-- from it. That is why LedgeHang became harder to trigger near obstacles
+-- Mantle was quietly refusing.
+local BLOCK_DURATION = 0.6
+local blockedUntil = 0
+
+function MantleState.isBlocked()
+    return core.getRealTime() < blockedUntil
+end
+
+local function refuse(state)
+    blockedUntil = core.getRealTime() + BLOCK_DURATION
+    state.abort = true
+end
 local timeInState = 0
 local totalDuration = 0
 local startPitch = 0
@@ -97,6 +121,31 @@ function MantleState:enter(syncData)
     end
     
     -- 1. Calculate Duration based on Height
+    -- [SAFETY] Destination validation, same rationale as vault.lua's: the
+    -- checks above vet the obstacle, nothing vetted where the player ends up.
+    -- At the outer edge of sensor range the target is furthest from what
+    -- approved it, and indoors a bad target sits on the far side of a wall -
+    -- which is how a mantle turns into a clip-through and a fall.
+    local DEST_HEAD_PROBE = 90.0
+    local DEST_FLOOR_PROBE = 200.0
+    local DEST_FLOOR_TOLERANCE = 60.0
+    local DEST_RAY_OPTS = {
+        ignore = mwSelf,
+        collisionType = nearby.COLLISION_TYPE.World + nearby.COLLISION_TYPE.HeightMap
+    }
+
+    local destTop = targetPos + util.vector3(0, 0, DEST_HEAD_PROBE)
+    local floorRes = nearby.castRay(destTop, targetPos - util.vector3(0, 0, DEST_FLOOR_PROBE),
+                                    DEST_RAY_OPTS)
+    if not floorRes.hit or (targetPos.z - floorRes.hitPos.z) > DEST_FLOOR_TOLERANCE then
+        refuse(self)
+        return
+    end
+    if nearby.castRay(targetPos, destTop, DEST_RAY_OPTS).hit then
+        refuse(self)
+        return
+    end
+
     local heightDiff = math.abs(targetPos.z - startPos.z)
     totalDuration = math.max(MIN_DURATION, heightDiff / CLIMB_SPEED_UNITS_PER_SEC)
     
@@ -121,6 +170,9 @@ function MantleState:enter(syncData)
         startPos = startPos,
         risePos = risePos,
         targetPos = targetPos,
+        cageFrom = 1,   -- phase-gated in the backend: phase 2 only, never the
+                         -- vertical rise up the wall face
+
         duration = totalDuration -- Send explicit duration to sync physics
     })
     

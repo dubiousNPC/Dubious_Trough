@@ -10,6 +10,7 @@ local SensorExt = require('core/optional/sensor_ext')
 local RollState = require('states/roll')
 local InputManager = require('core/input')
 local VaultState = require('states/vault')
+local MantleState = require('states/mantle')
 
 local AirborneState = BaseState.new("Airborne")
 
@@ -57,7 +58,22 @@ local AGILITY_BONUS = 70
 -- How far below hand height the ledge lip may still be and count as
 -- grabbable. Pure forgiveness margin - at 0 the grab can never move the
 -- player downward at all, which reads as slightly too strict in play.
-local LEDGE_GRAB_TOLERANCE = 20
+-- How far ABOVE the eventual hang position the player may already be and
+-- still be allowed to grab. The gate exists only to stop a grab yanking the
+-- player back DOWN onto a ledge they have already cleared - it is not meant
+-- to be a height requirement.
+--
+-- [FIX] The previous form compared the lip against hand height
+-- (position.z + GRAB_HEIGHT - 20), i.e. it demanded the lip sit more than 115
+-- units above the feet. That is far stricter than the "don't get pulled down"
+-- rule it was standing in for, and it silently rejected perfectly good
+-- chest-and-head-height ledges. Comparing against the hang position instead
+-- expresses the actual intent.
+local LEDGE_MAX_DROP = 50
+
+-- Mirrors HANG_OFFSET_Z in states/ledge_hang.lua: how far below the lip the
+-- grab actually places the player. If that changes, change this too.
+local LEDGE_HANG_DROP = 125
 
 -- Forward stick/key threshold at the moment of the tap, mirroring
 -- surfAnimations' deadzone treatment of pself.controls.movement.
@@ -216,17 +232,18 @@ function AirborneState:update(dt, syncData, inputData)
             -- smoothing lag - and the lip position is already sitting in
             -- SensorExt.data from the scan that just reported the hang.
             --
-            -- Requiring the lip to be above hand height means the grab can
-            -- only ever pull the player UP, never yank them back down to a
-            -- ledge they have already cleared.
-            local handsZ = mwSelf.position.z + SensorExt.GRAB_HEIGHT - LEDGE_GRAB_TOLERANCE
-            if SensorExt.data.targetPos.z > handsZ then
+            -- The rule is simply: refuse only if grabbing would drop the
+            -- player more than LEDGE_MAX_DROP. See that constant for why an
+            -- earlier hand-height form was far too strict.
+            -- Where the grab would put us, versus where we are now.
+            local hangZ = SensorExt.data.targetPos.z - LEDGE_HANG_DROP
+            if mwSelf.position.z <= hangZ + LEDGE_MAX_DROP then
                 return "LedgeHang"
             end
         end
 
         -- C. Mantling (Medium obstacles)
-        if Sensor.data.interaction == "Mantle" then
+        if Sensor.data.interaction == "Mantle" and not MantleState.isBlocked() then
             return "Mantle"
         end
     end

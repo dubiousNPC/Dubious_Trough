@@ -3,6 +3,7 @@ local types = require('openmw.types')
 local mwSelf = require('openmw.self')
 local Sensor = require('core/sensor')
 local VaultState = require('states/vault')
+local MantleState = require('states/mantle')
 
 local IdleState = BaseState.new("Idle")
 
@@ -18,7 +19,7 @@ function IdleState:update(dt, syncData, inputData)
 
         if Sensor.data.interaction == "Vault" and not VaultState.isBlocked() then
             if fat > 5 then return "Vault" end
-        elseif Sensor.data.interaction == "Mantle" then
+        elseif Sensor.data.interaction == "Mantle" and not MantleState.isBlocked() then
             if fat > 10 then return "Mantle" end
         end
     end

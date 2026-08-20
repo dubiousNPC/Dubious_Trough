@@ -42,11 +42,26 @@ function InputManager.update()
         return
     end
 
-    -- Movement Vector
-    InputManager.intents.moveVector = util.vector2(
-        self.controls.sideMovement,
-        self.controls.movement
-    )
+    -- Movement Vector.
+    --
+    -- [BUGFIX] Read from the raw ACTIONS, not self.controls. Once a state
+    -- calls I.Controls.overrideMovementControls(true) the engine stops
+    -- writing player input into self.controls - the script owns those fields
+    -- from then on - so self.controls.sideMovement/movement read back as
+    -- whatever the script last wrote, i.e. 0.
+    --
+    -- LedgeHang overrides movement controls on enter(), which meant
+    -- moveVector was pinned at (0,0) for the entire hang. That silently
+    -- disabled every directional branch in that state: Shimmy (moveVector.x)
+    -- never fired at all and never reached the log, and the wall-kick
+    -- (moveVector.y < 0) was equally dead. Action state is unaffected by the
+    -- control override, so it stays correct throughout.
+    local mx, my = 0, 0
+    if input.isActionPressed(input.ACTION.MoveRight) then mx = mx + 1 end
+    if input.isActionPressed(input.ACTION.MoveLeft) then mx = mx - 1 end
+    if input.isActionPressed(input.ACTION.MoveForward) then my = my + 1 end
+    if input.isActionPressed(input.ACTION.MoveBackward) then my = my - 1 end
+    InputManager.intents.moveVector = util.vector2(mx, my)
 
     -- Actions
     local jumpHeld = input.isActionPressed(input.ACTION.Jump)

@@ -44,6 +44,27 @@ local world = require('openmw.world')
 
 local ActiveMoves = {}
 
+-- =============================================================================
+-- NO COLLISION CAGE HERE - AND IT CANNOT LIVE HERE
+--
+-- A previous version added `require('openmw.nearby')` to this file for a
+-- per-tick cage. openmw.nearby is a LOCAL-script module; it does not exist in
+-- the global context. The require failed at load with
+--     Can't start Global[global/flow_amf_backend.lua];
+--     Lua error: module not found: openmw.nearby
+-- which meant this ENTIRE SCRIPT never started. Every FLOW_Vault_Start,
+-- FLOW_Mantle_Start and FLOW_SnapTo event went to a handler that did not
+-- exist, so Vault, Mantle and Shimmy fired their states and played their
+-- animations while nothing ever moved the player. LedgeHang appeared to
+-- survive only because its Levitate effect is applied player-side.
+--
+-- Raycasting is not available in this context at all, so any collision work
+-- must be done PLAYER-SIDE before a move starts - which is where the
+-- destination validation in vault.lua/mantle.lua already lives. Do not
+-- reintroduce a require of openmw.nearby, openmw.camera, or openmw.input in
+-- this file.
+-- =============================================================================
+
 local function bezier(t, p0, p1, p2)
     local u = 1 - t
     local tt = t * t
@@ -60,6 +81,7 @@ local function onMantleStart(data)
     ActiveMoves[id] = {
         type = "Mantle",
         actor = data.actor,
+        cageFrom = data.cageFrom,
         startPos = data.startPos,
         risePos = data.risePos,
         targetPos = data.targetPos,
@@ -74,6 +96,7 @@ local function onVaultStart(data)
     ActiveMoves[id] = {
         type = "Vault",
         actor = data.actor,
+        cageFrom = data.cageFrom,
         startPos = data.startPos,
         apexPos = data.apexPos,
         landPos = data.landPos,
@@ -167,17 +190,10 @@ local function onUpdate(dt)
                 move.velocity = move.velocity - util.vector3(0, 0, GRAVITY * dt)
                 nextPos = actor.position + move.velocity * dt
 
-                -- Stop as soon as the arc is descending and something solid
-                -- is directly below, so the player lands instead of being
-                -- driven into the floor by the remaining velocity.
-                if move.velocity.z < 0 then
-                    local feet = actor.position
-                    local probe = nearby.castRay(feet, feet - util.vector3(0, 0, 12), {
-                        ignore = actor,
-                        collisionType = COLLISION_MASK,
-                    })
-                    if probe.hit then ActiveMoves[id] = nil end
-                end
+                -- Ground detection is done PLAYER-side (states/wall_boost.lua
+                -- watches syncData.isGrounded and cancels), because raycasting
+                -- is unavailable in a global script - see the note at the top
+                -- of this file.
 
                 if move.elapsed >= move.maxDuration then
                     ActiveMoves[id] = nil

@@ -27,6 +27,8 @@ local core = require('openmw.core')
 local mwSelf = require('openmw.self')
 local util = require('openmw.util')
 local nearby = require('openmw.nearby')
+local I = require('openmw.interfaces')
+local types = require('openmw.types')
 local BaseState = require('states/base_state')
 local Anim = require('playerAnim')
 local WallBoostState = require('states/wall_boost')
@@ -163,6 +165,34 @@ function ShimmyState.lastDirection()
     return dir
 end
 
+-- =============================================================================
+-- HANG SUSPENSION
+--
+-- [BUGFIX] LedgeHangState:exit() calls applyGravityHack(false) and releases
+-- both control overrides - it has no idea the state it is handing to is still
+-- part of the same hang. So for the whole one-second step the player had
+-- gravity back and controls returned, and the hang effectively ended mid-
+-- shimmy. That is why a step played its opening frames once and then never
+-- re-armed: the player was no longer hanging by the time it finished.
+--
+-- Shimmy therefore re-asserts the same suspension for its own duration. Both
+-- states applying and removing means a one-frame gap across each transition,
+-- which is harmless here because Shimmy re-snaps position every tick anyway.
+-- =============================================================================
+local GRAVITY_MAGNITUDE = 200
+
+local function applySuspension(enable)
+    local ok, effects = pcall(types.Actor.activeEffects, mwSelf)
+    if ok and effects then
+        pcall(function()
+            effects:modify(enable and GRAVITY_MAGNITUDE or -GRAVITY_MAGNITUDE,
+                           core.magic.EFFECT_TYPE.Levitate)
+        end)
+    end
+    I.Controls.overrideMovementControls(enable)
+    I.Controls.overrideCombatControls(enable)
+end
+
 function ShimmyState:enter(syncData)
     timeInState = 0
     dir = pendingDir
@@ -178,12 +208,15 @@ function ShimmyState:enter(syncData)
     resultLip = pendingLip
     resultNormal = wallNormal
 
+    applySuspension(true)
+
     pendingDir = 0
     pendingWallNormal = nil
     pendingLip = nil
 end
 
 function ShimmyState:exit()
+    applySuspension(false)
     startPos = nil
     endPos = nil
     dir = 0          -- so lastDirection() cannot report a stale step

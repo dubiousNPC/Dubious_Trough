@@ -25,6 +25,7 @@
 
 local self = require('openmw.self')
 local animation = require('openmw.animation')
+local I = require('openmw.interfaces')
 
 local Anim = {}
 
@@ -46,7 +47,7 @@ local Anim = {}
 local GROUPS = {
     Vault     = { group = "pwvault1",       speed = 1 },  -- one-shot, plays over the vault's physics duration
     Mantle    = {
-        group = "pwmantle", speed = 1,
+        group = "pwmantle1", speed = 1,  -- kf has pwmantle1/2/3; "pwmantle" does not exist
         priority = animation.PRIORITY.Movement + 10,
         blendMask = animation.BLEND_MASK.All,
         autoDisable = false,  -- hold the last frame instead of reverting mid-climb if
@@ -80,7 +81,7 @@ local GROUPS = {
     -- which one via Anim.setVariant() immediately before the transition, so
     -- group names still appear ONLY in this file.
     Shimmy = {
-        variants = { left = "shimmyl1", right = "shimmyr1" },
+        variants = { left = "pwshimmyl1", right = "pwshimmyr1" },
         speed = 1,
         priority = animation.PRIORITY.Movement + 20,
         blendMask = animation.BLEND_MASK.All,
@@ -139,6 +140,26 @@ local currentGroup = nil
 -- a GROUPS entry's `variants`. Consumed on the next resolve and cleared, so
 -- a stale direction can't leak into an unrelated transition.
 local pendingVariant = nil
+
+-- =============================================================================
+-- PERSPECTIVE-CHANGE RECOVERY
+--
+-- Switching 1st/3rd person rebuilds the player's animation object, dropping
+-- any scripted animation attached to it - a Vault or LedgeHang pose silently
+-- vanishes mid-move if the player presses the POV key. AnimRefresh notifies
+-- us after the new skeleton has settled; we simply re-issue whatever we
+-- believed was playing.
+--
+-- Only re-issues if a group was actually active, so a player who never
+-- triggers a FLOW animation pays nothing beyond the subscription itself.
+-- =============================================================================
+local reissue = nil   -- forward declaration; defined once playGroup exists
+
+if I.AnimRefresh and I.AnimRefresh.subscribe then
+    I.AnimRefresh.subscribe("FLOW", function()
+        if reissue then reissue() end
+    end)
+end
 
 function Anim.setVariant(name)
     pendingVariant = name
@@ -249,12 +270,24 @@ end
 -- ==============================================
 -- PUBLIC API - called only from core/state_manager.lua's setState()
 -- ==============================================
+-- Remembers the last thing we asked for, so AnimRefresh can replay it.
+local lastRequest = nil
+
+reissue = function()
+    if not lastRequest then return end
+    currentGroup = nil   -- force playGroup past its "already playing" guard
+    playGroup(lastRequest.state, lastRequest.looping)
+end
+
 function Anim.onStateChange(newState, oldState)
     if ONE_SHOT_STATES[newState] then
+        lastRequest = { state = newState, looping = false }
         playGroup(newState, false)
     elseif LOOPING_STATES[newState] then
+        lastRequest = { state = newState, looping = true }
         playGroup(newState, true)
     else
+        lastRequest = nil
         -- Idle, Airborne, or anything else: hand control back to vanilla.
         stopCurrent()
     end

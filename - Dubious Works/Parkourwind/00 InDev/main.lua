@@ -106,7 +106,11 @@ local function onUpdate(dt)
         -- actually exist on this actor. Runs here rather than in onInit
         -- because the player's animation object is reliably present by the
         -- first frame.
-        Anim.verifyGroups()
+        -- Guarded: the log showed "attempt to call field 'verifyGroups'
+        -- (a nil value)" killing onUpdate outright when main.lua and
+        -- playerAnim.lua were from different builds. A diagnostic must never
+        -- be able to take down the update loop.
+        if Anim.verifyGroups then Anim.verifyGroups() end
         if StateManager.getActiveStateName() == "None" then return end
     end
 
