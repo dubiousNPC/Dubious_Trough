@@ -1,0 +1,10 @@
+# ForceChoke
+#
+# SharedRay is bundled and version-guards itself, so if another mod in your
+# load order ships a newer copy only that one runs. It must load before
+# player.lua, which reads the crosshair target from it.
+PLAYER: scripts/SharedRay/SharedRay_v2.lua
+
+GLOBAL: scripts/forcechoke/global.lua
+PLAYER: scripts/forcechoke/player.lua
+NPC CREATURE: scripts/forcechoke/target.lua
