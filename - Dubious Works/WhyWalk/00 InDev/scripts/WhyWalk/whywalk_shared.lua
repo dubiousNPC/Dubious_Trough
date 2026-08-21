@@ -148,11 +148,37 @@ M.BLACKLIST = {
 -- PER-TYPE TUNING
 -- ---------------------------------------------------------------------------
 -- saddle: where the rider sits relative to the mount, in mount-local axes.
+--         This is the THIRD PERSON pose -- the body's true seated position.
+-- saddleFP: OPTIONAL first person override, same shape. Omit to reuse
+--         `saddle` (previous behaviour).
+--
+--         WHY THE TWO DIFFER. In third person the body is what you see, so
+--         `saddle` is simply where the rider belongs. In first person the
+--         body is invisible and all that matters is where the HEAD lands,
+--         because setFirstPersonOffset is documented as the offset between
+--         the character's head and the camera -- offset zero puts the camera
+--         at the head. The pinned position is the rider's FEET, so the first
+--         person camera ends up roughly saddle.up + head height above the
+--         mount origin. At up = 130 that is far above any horse, and the only
+--         knob to correct it (FP_OFFSET_V) walks the camera DOWN THROUGH the
+--         mount's neck and shoulders -- the reported first person clipping.
+--
+--         The fix is to move the BODY rather than the camera, which is what
+--         Sturdy Steed's SimpleHorseRiding222 MWScript does: it carries two
+--         saddle poses per creature and picks between them on PCGet3rdPerson,
+--             set sdlFwd3 to 8      set sdlUp3 to 80    ; third person
+--             set sdlFwd1 to 12     set sdlUp1 to 47    ; first person
+--         i.e. first person sits LOWER (so the head lands at eye level rather
+--         than above it) and slightly FURTHER FORWARD (so the view clears the
+--         neck instead of looking into it). The ratios below follow that:
+--         about 0.6x the height and a small forward nudge. They are a starting
+--         point measured off a horse; re-tune per mount.
 -- speed:  world units/sec at full gallop; walk/reverse derive from it, so
 --         there is one number per mount to tune (Devilish's approach).
 -- flying: skips ground clamping entirely.
 local DEFAULT_PROFILE = {
-    saddle  = { forward = -10, right = 0, up = 130 },
+    saddle   = { forward = -10, right = 0, up = 130 },
+    saddleFP = { forward = -4,  right = 0, up = 78  },
     speed   = 600,
     walkMul = 230 / 520,
     revMul  = 115 / 520,
@@ -164,17 +190,22 @@ local DEFAULT_PROFILE = {
 M.PROFILE = {
     -- VERIFIED offsets/speed from Devilish Guar Riding config.lua
     [T.GUAR] = {
-        saddle = { forward = -10, right = 0, up = 130 },
+        saddle   = { forward = -10, right = 0, up = 130 },
+        saddleFP = { forward = -4,  right = 0, up = 78  },
         speed = 600, walkMul = 230 / 520, revMul = 115 / 520,
         turnRate = 2.6, flying = false,
         jump = { up = 480, gravity = 900, maxFall = 950 },
     },
     [T.HORSE] = {
-        saddle = { forward = -10, right = 0, up = 130 },
+        saddle   = { forward = -10, right = 0, up = 130 },
+        saddleFP = { forward = -4,  right = 0, up = 78  },
         speed = 700, walkMul = 230 / 520, revMul = 115 / 520,
         turnRate = 2.4, flying = false,
         jump = { up = 480, gravity = 900, maxFall = 950 },
     },
+    -- saddleFP omitted below: these fall back to `saddle`, i.e. exactly the
+    -- previous behaviour, until each is measured. Add one per mount as you
+    -- tune it rather than shipping guessed numbers for all nine.
     [T.BOAR]     = { saddle = { forward = -8,  right = 0, up = 95  }, speed = 520, turnRate = 3.0 },
     [T.NIX]      = { saddle = { forward = -6,  right = 0, up = 110 }, speed = 640, turnRate = 3.2 },
     [T.STRIDENT] = { saddle = { forward = -12, right = 0, up = 150 }, speed = 760, turnRate = 2.2 },
@@ -272,6 +303,11 @@ function M.profileFor(mountType)
     -- out every field.
     return {
         saddle   = p.saddle   or DEFAULT_PROFILE.saddle,
+        -- Falls back to this profile's OWN third person saddle, not the
+        -- default profile's: a mount with a measured saddle but no measured
+        -- first person pose must keep its own geometry, and reverting it to a
+        -- generic 78 would be worse than the too-high view it replaces.
+        saddleFP = p.saddleFP or p.saddle or DEFAULT_PROFILE.saddle,
         speed    = p.speed    or DEFAULT_PROFILE.speed,
         walkMul  = p.walkMul  or DEFAULT_PROFILE.walkMul,
         revMul   = p.revMul   or DEFAULT_PROFILE.revMul,

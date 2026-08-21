@@ -313,6 +313,17 @@ reissue = function()
     playGroup(lastRequest.state, lastRequest.looping)
 end
 
+-- Re-fire the current one-shot without a state change. playGroup short-
+-- circuits when the requested group is already current, which is right for
+-- ordinary transitions but wrong for a repeating step animation - so clear
+-- the guard first. Used by states/shimmy.lua, which now loops internally
+-- rather than bouncing through LedgeHang between steps.
+function Anim.replay()
+    if not lastRequest then return end
+    currentGroup = nil
+    playGroup(lastRequest.state, lastRequest.looping)
+end
+
 function Anim.onStateChange(newState, oldState)
     -- Captured before playGroup() consumes it, so the reissue above can put
     -- it back.

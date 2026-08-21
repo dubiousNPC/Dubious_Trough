@@ -170,6 +170,16 @@ end
 -- GEOMETRY
 -- ---------------------------------------------------------------------------
 
+-- Which saddle pose applies right now. Third person shows the body, so it
+-- uses the true seated position; first person only cares where the HEAD lands,
+-- so it uses the lower//further-forward pose (see saddleFP in
+-- whywalk_shared.lua for the full reasoning). Profiles without a measured
+-- saddleFP get their own saddle back, so this is a no-op for them.
+local function saddleFor(s)
+    if s.firstPerson then return s.profile.saddleFP or s.profile.saddle end
+    return s.profile.saddle
+end
+
 local function saddlePosition(mountPos, yaw, saddle)
     local sinY, cosY = math.sin(yaw), math.cos(yaw)
     -- forward is +Y in mount-local space, right is +X
@@ -358,15 +368,33 @@ local function onUpdate(dt)
     -- itself under its own AI and we only follow it with the rider.
     if s.freeRide then
         local mountYaw = s.mount.rotation:getYaw()
-        local pos = saddlePosition(s.mount.position, mountYaw, s.profile.saddle)
+        local pos = saddlePosition(s.mount.position, mountYaw, saddleFor(s))
         placeRider(s.player, pos, mountYaw, s.firstPerson)
         return
     end
 
     local pos = stepMovement(s, dt)
+    -- FLAGGED, NOT CHANGED -- verify in game before touching.
+    -- The mount is placed with rotateZ(-s.yaw) while the rider is placed with
+    -- rotateZ(s.yaw) (see the drift-resync branch below). Same yaw, opposite
+    -- signs, in the same function: one of the two must be wrong.
+    --
+    -- Which one is wrong depends on something only a look in game settles.
+    -- By the API, +s.yaw is correct for BOTH: stepMovement derives heading as
+    -- fwd = (sin yaw, cos yaw), which is the standard Morrowind convention
+    -- (0 = +Y, increasing toward +X), and Cod3x documents rotateZ(a) as
+    -- rotate(a, vector3(0,0,-1)) -- rotation about -Z, which maps +Y to
+    -- exactly that fwd. So rotateZ(s.yaw) is the transform whose forward IS
+    -- the travel direction, and the negation here mirrors the mount.
+    --
+    -- BUT a negation here is also exactly what you would write to compensate
+    -- for a creature NIF whose mesh faces -Y, which is not unheard of. If the
+    -- mount visibly faces its travel direction as-is, this negation is load
+    -- bearing and correcting it to +s.yaw would spin every mount around.
+    -- Check a horse and a guar walking away from you before deciding.
     s.mount:teleport(s.mount.cell or '', pos, util.transform.rotateZ(-s.yaw))
 
-    local riderPos = saddlePosition(pos, s.yaw, s.profile.saddle)
+    local riderPos = saddlePosition(pos, s.yaw, saddleFor(s))
 
     -- Hard resync guard: if the rider has drifted far from where it should be
     -- (cell load, physics shove, another mod teleporting the player) snap
