@@ -53,7 +53,6 @@ M.GROUPS = {
     masks    = 'cake_wear_face',
     smokes   = 'cake_wear_face',
     eyewear  = 'cake_wear_face',
-    ears     = 'cake_wear_head',
     scarves  = 'cake_wear_neck',
     belts    = 'cake_wear_waist',
     bags     = 'cake_wear_waist',

@@ -1,4 +1,4 @@
-# CAKE — Compelling Alternative Koala-Echidna
+# CAKE — Cosmetic Attachment Kit for Equipment
 
 Wearable accessories — lanterns, masks, eyewear, scarves, belts, bags — that
 occupy no equipment slot and cost nothing per frame.

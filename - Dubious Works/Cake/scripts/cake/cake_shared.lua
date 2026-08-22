@@ -2,7 +2,7 @@
 --[[
     cake_shared.lua -- single source of truth for CAKE
 
-    Generated from CAKE.esp / CAKE34.esp and from the node names in
+    Generated from the corrected CAKE402 plugin and from the node names in
     meshes/dbs/xbase_anim_dbs.nif. Nothing in this file is typed by hand, so
     the registry cannot drift from the plugins and skeleton it describes.
 
@@ -143,14 +143,6 @@ M.CATEGORIES = {
         boneFallback = 'head',
         conflicts    = { 'masks' },
         count        = 2,
-    },
-    ears      = {
-        label        = 'Ears',
-        vfxId        = 'cake_ears',
-        bone         = 'Bip01 earsDBS',
-        boneFallback = 'head',
-        conflicts    = {  },
-        count        = 1,
     },
 }
 
@@ -302,9 +294,6 @@ M.ITEMS = {
     -- smokes (2)
     ['dbs_01cigar']               = { eq = 'dbs_01cigar_eq', category = 'smokes', model = 'ep/_01cigar.nif' },
     ['dbs_02cigar']               = { eq = 'dbs_02cigar_eq', category = 'smokes', model = 'ep/_0cigar.nif' },
-
-    -- ears (1)
-    ['dbs_1bear']                 = { eq = 'dbs_1bear_eq', category = 'ears', model = 'armoredtails/tailsnow_b.nif' },
 
 }
 
