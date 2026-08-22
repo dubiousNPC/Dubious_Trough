@@ -1,0 +1,28 @@
+# CAKE -- Cosmetic Attachment Kit for Equipment
+#
+# The original CAKE archive shipped no .omwscripts file at all, so neither of
+# its two Lua files was ever registered by the engine.
+
+# Bundled shared libraries, listed before the scripts that use them.
+#
+# SuperSelect3 is the dropdown renderer for the skeleton setting. It is
+# shipped alongside rather than copied into cake_settings.lua, the same way
+# AnimRefresh is. It must load BEFORE cake_settings.lua: it advertises itself
+# by writing to the InstalledSettingsRenderers storage section as it loads,
+# and cake_settings.lua reads that flag at registration time to decide between
+# this renderer and the engine's built-in `select`. Entries within one
+# .omwscripts file run in the order written, so this ordering is load-bearing.
+#
+# If SuperSettingsRenderers is also installed standalone, delete the line
+# below and the scripts/SuperSettingsRenderers folder from this mod; the
+# standalone copy provides the same renderer and CAKE will find it.
+MENU: scripts/SuperSettingsRenderers/SuperSelect3.lua
+
+MENU: scripts/cake/cake_settings.lua
+
+GLOBAL: scripts/cake/cake_global.lua
+
+PLAYER: scripts/cake/AnimRefresh_v1.lua
+PLAYER: scripts/cake/cake_player.lua
+
+NPC: scripts/cake/cake_npc.lua

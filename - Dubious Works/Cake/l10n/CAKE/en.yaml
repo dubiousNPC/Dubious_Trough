@@ -1,0 +1,20 @@
+settings_modName: "CAKE"
+settings_modDesc: "Cosmetic Attachment Kit for Equipment. Wearable accessories that occupy no equipment slot."
+
+settings_general: "General"
+
+setting_skeleton: "Extra-bone skeleton"
+setting_skeleton_desc: "Accessories attach to bones that only exist with xbase_anim_dbs.nif installed. Auto-detect probes for them and falls back to a vanilla bone when they are missing."
+
+auto: "Auto-detect"
+dbs: "xbase_anim_dbs.nif"
+vanilla: "Vanilla skeleton only"
+
+setting_shownpcs: "Show on NPCs"
+setting_shownpcs_desc: "Show accessories worn by other actors. Turning this off strips them immediately."
+
+setting_showfirstperson: "Show in first person"
+setting_showfirstperson_desc: "Face-worn accessories clip through the camera in first person, which is why this is off by default."
+
+setting_equipanim: "Play equipping animations"
+setting_equipanim_desc: "Requires animation files that this mod does not ship. Has no effect until they are installed."
