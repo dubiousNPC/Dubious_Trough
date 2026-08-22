@@ -1,4 +1,4 @@
-# CAKE — Compelling Atlternative Koala-Echidna
+# CAKE — Compelling Alternative Koala-Echidna
 
 Wearable accessories — lanterns, masks, eyewear, scarves, belts, bags — that
 occupy no equipment slot and cost nothing per frame.
