@@ -1,0 +1,6 @@
+MENU: scripts/SuperSettingsRenderers/SuperSlider6.lua
+MENU: scripts/SuperSettingsRenderers/SuperColorPicker4.lua
+MENU: scripts/SuperSettingsRenderers/SuperKeybind2.lua
+MENU: scripts/SuperSettingsRenderers/SuperSelect3.lua
+MENU: scripts/SuperSettingsRenderers/optionalRenderer1.lua
+PLAYER: scripts/bscompass/BSC_p.lua
