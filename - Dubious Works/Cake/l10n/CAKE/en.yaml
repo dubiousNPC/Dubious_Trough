@@ -10,8 +10,8 @@ auto: "Auto-detect"
 dbs: "xbase_anim_dbs.nif"
 vanilla: "Vanilla skeleton only"
 
-setting_shownpcs: "Show on NPCs"
-setting_shownpcs_desc: "Show accessories worn by other actors. Turning this off strips them immediately."
+setting_shownpcs: "NPCs wear accessories"
+setting_shownpcs_desc: "Let other actors wear CAKE accessories they are carrying. Turning this off strips them immediately and stops NPCs equipping anything; your own items are unaffected."
 
 setting_showfirstperson: "Show in first person"
 setting_showfirstperson_desc: "Face-worn accessories clip through the camera in first person, which is why this is off by default."

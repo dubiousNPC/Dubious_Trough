@@ -47,7 +47,7 @@ for eqid, a in assign.items():
     items[base] = {
         'eq': eqid,
         'category': a['category'],
-        'model': (recs[eqid].get('model') or recs[base].get('model') or '').replace('\\', '/'),
+        'model': recs[eqid].get('model') or recs[base].get('model') or '',
         'name': recs[eqid].get('name') or recs[base].get('name') or '',
     }
 
@@ -58,7 +58,7 @@ W('''---@omw-context shared
 --[[
     cake_shared.lua -- single source of truth for CAKE
 
-    Generated from CAKE.esp / CAKE34.esp and from the node names in
+    Generated from the corrected CAKE402 plugin and from the node names in
     meshes/dbs/xbase_anim_dbs.nif. Nothing in this file is typed by hand, so
     the registry cannot drift from the plugins and skeleton it describes.
 
@@ -136,6 +136,16 @@ M.DEFAULT_SKELETON = 'auto'
 
 M.CATEGORIES = {
 ''')
+# A category with no items is dead weight, and worse than dead: cake_anim.lua
+# validates its group keys against CATEGORIES and errors on an unknown one, so
+# an empty category left behind by a reclassification is a load failure waiting
+# to happen. Drop them here rather than remembering to prune by hand.
+EMPTY = [c for c in CATEGORIES if not any(v['category'] == c for v in items.values())]
+for c in EMPTY:
+    del CATEGORIES[c]
+if EMPTY:
+    print('dropped empty categories: %s' % ', '.join(EMPTY))
+
 for cat, (bone, fb) in CATEGORIES.items():
     n = sum(1 for v in items.values() if v['category'] == cat)
     W("    %-9s = {\n" % cat)
@@ -153,8 +163,10 @@ W('''}
 -- ---------------------------------------------------------------------------
 -- ITEMS
 -- ---------------------------------------------------------------------------
--- Keyed by the BASE record id (lowercase). `eq` is the worn record, `model`
--- is the mesh attached while worn.
+-- Keyed by the BASE record id (lowercase, because OpenMW compares record ids
+-- lowercase). `eq` is the worn record. `model` is reproduced verbatim from the
+-- record, case and separators untouched: most of these meshes are supplied by
+-- other mods and the path belongs to them.
 
 M.ITEMS = {
 ''')
@@ -163,8 +175,14 @@ for cat in CATEGORIES:
     W("    -- %s (%d)\n" % (cat, len(sel)))
     for k in sel:
         v = items[k]
+        # Model path is emitted EXACTLY as the record states it -- original
+        # case, original backslashes. Most of these meshes ship with other
+        # mods (Tamriel_Data, OAAB, Project Cyrodiil and others), so the path
+        # is their property, not ours to normalise. Lua needs the backslash
+        # escaped in a quoted string; that is the only change made.
+        model = v['model'].replace('\\', '\\\\')
         W("    ['%s']%s= { eq = '%s', category = '%s', model = '%s' },\n"
-          % (k.lower(), ' ' * max(1, 26 - len(k)), v['eq'].lower(), cat, v['model'].lower()))
+          % (k.lower(), ' ' * max(1, 26 - len(k)), v['eq'].lower(), cat, model))
     W("\n")
 
 W('''}

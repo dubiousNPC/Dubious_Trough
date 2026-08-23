@@ -102,11 +102,20 @@ local function onUse(item, actor)
     return false
 end
 
----A worn record that leaves the player's inventory -- dropped, sold, put in a
----container -- has to become its base form again, or the world is littered
----with items stuck in their "currently being worn" state.
+---Convert loose `_eq` records in the cell back to their base form.
+---
+---This used to be load-bearing: worn state was inferred from inventory
+---presence, so an `_eq` record in a chest was an item you put on by looting
+---it, and this sweep was the only thing preventing that. cake_player now keeps
+---explicit activation-set state, so looting one does nothing and using one
+---converts it back on its own. The sweep is world hygiene now, not correctness.
+---
+---It is still the most expensive operation in the mod -- every Miscellaneous
+---object in the cell, plus a getAll on every container -- so it is called only
+---when cake_player's reconcile finds a worn record has actually gone missing.
+---Sun's Dusk triggers its equivalent the same way.
 local function convertLooseInCell(player)
-    if not player then return end
+    if not player or not player:isValid() then return end
     local cell = player.cell
     if not cell then return end
 

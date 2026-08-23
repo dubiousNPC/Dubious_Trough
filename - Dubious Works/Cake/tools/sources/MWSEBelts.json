@@ -1,0 +1,808 @@
+[
+  {
+    "type": "Header",
+    "flags": [
+      0,
+      0
+    ],
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "",
+    "description": "",
+    "num_objects": 29,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ],
+      [
+        "Tribunal.esm",
+        4565686
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "beltmerchantbarrel",
+    "name": "Barrel",
+    "mesh": "o\\Contain_barrel_01.NIF",
+    "encumbrance": 50.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -4,
+        "commonbelt1"
+      ],
+      [
+        -4,
+        "commonbelt2"
+      ],
+      [
+        -4,
+        "commonbelt3"
+      ],
+      [
+        -4,
+        "commonbelt4"
+      ],
+      [
+        -4,
+        "commonbelt5"
+      ],
+      [
+        1,
+        "Erabenimsun"
+      ],
+      [
+        -3,
+        "expensivebelt1"
+      ],
+      [
+        -3,
+        "expensivebelt2"
+      ],
+      [
+        -3,
+        "expensivebelt3"
+      ],
+      [
+        -1,
+        "exquistebelt"
+      ],
+      [
+        -2,
+        "extravagantbelt1"
+      ],
+      [
+        -2,
+        "extravagantbelt2"
+      ],
+      [
+        1,
+        "heartfire"
+      ]
+    ]
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "cbelt1",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_common_1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "cbelt2",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_common_2.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "cbelt3",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_common_3.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "cbelt4",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_common_4.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "cbelt5",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_common_5.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "erabinbelt",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\erabin.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "expbelt1",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_expensive_1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "expbelt2",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_expensive_2.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "expbelt3",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_expensive_3.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "exqbelt",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_exquisite_1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "extravbelt1",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_extravagant_1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "extravbelt2",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_extravagant_2.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "hfirebelt",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "Belts\\belt_hfire.nif"
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "beltmerchant",
+    "name": "Eltster Hastien",
+    "mesh": "base_anim.nif",
+    "race": "Breton",
+    "class": "Trader Service",
+    "faction": "",
+    "head": "b_n_breton_m_head_03",
+    "hair": "b_n_breton_m_hair_03",
+    "npc_flags": 8,
+    "data": {
+      "level": 1,
+      "stats": {
+        "attributes": [
+          50,
+          50,
+          50,
+          30,
+          30,
+          30,
+          50,
+          40
+        ],
+        "skills": [
+          20,
+          10,
+          10,
+          10,
+          20,
+          10,
+          10,
+          10,
+          10,
+          5,
+          5,
+          10,
+          10,
+          15,
+          40,
+          15,
+          10,
+          15,
+          30,
+          30,
+          15,
+          5,
+          5,
+          5,
+          30,
+          30,
+          15
+        ],
+        "health": 40,
+        "magicka": 100,
+        "fatigue": 160
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 600
+    },
+    "inventory": [
+      [
+        1,
+        "expensive_pants_01_z"
+      ],
+      [
+        1,
+        "expensive_shirt_01_u"
+      ],
+      [
+        1,
+        "expensive_shoes_01"
+      ],
+      [
+        1,
+        "exquistebelt"
+      ]
+    ],
+    "spells": [
+      "almsivi intervention",
+      "divine intervention",
+      "absorb health",
+      "absorb health [ranged]",
+      "detect_key"
+    ],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 0,
+      "services": 6
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 0,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 0,
+        "idle6": 0,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "commonbelt1",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 2,
+      "health": 100,
+      "enchantment": 10,
+      "armor_rating": 0
+    },
+    "name": "Wearable Common Belt",
+    "mesh": "c\\C_belt_Common_1.nif",
+    "icon": "c\\tx_belt_common01.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "cbelt1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "commonbelt2",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 2,
+      "health": 100,
+      "enchantment": 10,
+      "armor_rating": 0
+    },
+    "name": "Wearable Common Belt",
+    "mesh": "c\\C_belt_Common_2.nif",
+    "icon": "c\\tx_belt_common02.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "cbelt2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "commonbelt3",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 2,
+      "health": 100,
+      "enchantment": 10,
+      "armor_rating": 0
+    },
+    "name": "Wearable Common Belt",
+    "mesh": "c\\C_belt_Common_3.nif",
+    "icon": "c\\tx_belt_common03.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "cbelt3",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "commonbelt4",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 2,
+      "health": 100,
+      "enchantment": 10,
+      "armor_rating": 0
+    },
+    "name": "Wearable Common Belt",
+    "mesh": "c\\C_belt_Common_4.nif",
+    "icon": "c\\tx_belt_common04.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "cbelt4",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "commonbelt5",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 2,
+      "health": 100,
+      "enchantment": 10,
+      "armor_rating": 0
+    },
+    "name": "Wearable Common Belt",
+    "mesh": "c\\C_belt_Common_5.nif",
+    "icon": "c\\tx_belt_common05.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "cbelt5",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Erabenimsun",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 400,
+      "health": 100,
+      "enchantment": 50,
+      "armor_rating": 0
+    },
+    "name": "Wearable Erabenimsun Belt",
+    "mesh": "c\\c_belt_erabin.nif",
+    "icon": "c\\tx_belt_erabinimsum.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "erabinbelt",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "expensivebelt1",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 10,
+      "health": 100,
+      "enchantment": 50,
+      "armor_rating": 0
+    },
+    "name": "Wearable Expensive Belt",
+    "mesh": "c\\C_belt_Expensive_1.nif",
+    "icon": "c\\tx_belt_expensive01.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "expbelt1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "expensivebelt2",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 10,
+      "health": 100,
+      "enchantment": 50,
+      "armor_rating": 0
+    },
+    "name": "Wearable Expensive Belt",
+    "mesh": "c\\C_belt_Expensive_2.nif",
+    "icon": "c\\tx_belt_expensive02.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "expbelt2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "expensivebelt3",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 10,
+      "health": 100,
+      "enchantment": 50,
+      "armor_rating": 0
+    },
+    "name": "Wearable Expensive Belt",
+    "mesh": "c\\C_belt_Expensive_3.nif",
+    "icon": "c\\tx_belt_expensive03.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "expbelt3",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "exquistebelt",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 80,
+      "health": 100,
+      "enchantment": 400,
+      "armor_rating": 0
+    },
+    "name": "Wearable Exquisite Belt",
+    "mesh": "c\\C_belt_Exquisite_1.nif",
+    "icon": "c\\tx_belt_exquisite01.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "exqbelt",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "extravagantbelt1",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 40,
+      "health": 100,
+      "enchantment": 200,
+      "armor_rating": 0
+    },
+    "name": "Wearable Extravagant Belt",
+    "mesh": "c\\C_belt_Extravagant_1.nif",
+    "icon": "c\\tx_belt_extravagant01.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "extravbelt1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "extravagantbelt2",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 40,
+      "health": 100,
+      "enchantment": 200,
+      "armor_rating": 0
+    },
+    "name": "Wearable Extravagant Belt",
+    "mesh": "c\\c_belt_extravagant_2.nif",
+    "icon": "c\\tx_belt_extravagant02.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "extravbelt2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "heartfire",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 0.5,
+      "value": 1000,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Belt of Heartfire",
+    "mesh": "c\\artifact_belt_hfire_01.nif",
+    "icon": "c\\tx_belt_heartfire_01.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "hfirebelt",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Balmora, Milie Hastien: Fine Clothier",
+    "data": {
+      "flags": 5,
+      "grid": [
+        1321040,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 1,
+        "id": "beltmerchant",
+        "temporary": false,
+        "translation": [
+          37.74389,
+          233.87424,
+          8.175552
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.88319
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 2,
+        "id": "beltmerchantbarrel",
+        "temporary": true,
+        "translation": [
+          -90.655106,
+          357.28928,
+          -62.252045
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "beltmerchant",
+        "health_left": 0
+      }
+    ]
+  }
+]

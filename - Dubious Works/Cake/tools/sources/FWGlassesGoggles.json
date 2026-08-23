@@ -1,0 +1,1145 @@
+[
+  {
+    "type": "Header",
+    "flags": [
+      0,
+      0
+    ],
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "",
+    "description": "",
+    "num_objects": 43,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ],
+      [
+        "Tribunal.esm",
+        4565686
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_rvglassbarrel_01",
+    "name": "Barrel",
+    "mesh": "o\\Contain_barrel_01.NIF",
+    "encumbrance": 50.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        5,
+        "_RV_Blindfold1"
+      ],
+      [
+        5,
+        "_RV_Eyepatch1L"
+      ],
+      [
+        5,
+        "_RV_Eyepatch1R"
+      ],
+      [
+        5,
+        "_RV_Glasses1"
+      ],
+      [
+        5,
+        "_RV_Glasses1s"
+      ],
+      [
+        5,
+        "_RV_Glasses2"
+      ],
+      [
+        5,
+        "_RV_Glasses2s"
+      ],
+      [
+        5,
+        "_RV_Glasses3"
+      ],
+      [
+        5,
+        "_RV_Glasses4"
+      ],
+      [
+        5,
+        "_RV_Glasses4s"
+      ],
+      [
+        5,
+        "_RV_Goggles1"
+      ],
+      [
+        5,
+        "_RV_Goggles2"
+      ],
+      [
+        5,
+        "_RV_Goggles3"
+      ],
+      [
+        5,
+        "_RV_Goggles4"
+      ],
+      [
+        5,
+        "_RV_Goggles5"
+      ],
+      [
+        5,
+        "_RV_Goggles6"
+      ],
+      [
+        5,
+        "_RV_Goggles7"
+      ],
+      [
+        5,
+        "_RV_Goggles8"
+      ],
+      [
+        5,
+        "_RV_Lenses1"
+      ],
+      [
+        5,
+        "_RV_Lenses2"
+      ]
+    ]
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Blindfold1_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\blindfold1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Eyepatch1L_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\eyepatch1L.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Eyepatch1R_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\eyepatch1R.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses1_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\glasses1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses1s_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\glasses1s.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses2_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\glasses2.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses2s_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\glasses2s.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses3_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\glasses3.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses4_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\glasses4.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses4s_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\glasses4s.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles1_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\goggles1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles2_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\goggles2.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles3_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\goggles3.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles4_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\goggles4.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles5_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\goggles5.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles6_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\goggles6.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles7_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\goggles7.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles8_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\goggles8.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Lenses1_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Lenses1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Lenses2_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Lenses2.nif"
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_glassesman",
+    "name": "Collatinus Clanler",
+    "race": "Imperial",
+    "class": "Trader Service",
+    "faction": "",
+    "head": "b_n_imperial_m_head_02",
+    "hair": "B_N_Imperial_M_Hair_06",
+    "npc_flags": 8,
+    "data": {
+      "level": 4,
+      "stats": {
+        "attributes": [
+          55,
+          45,
+          35,
+          36,
+          44,
+          42,
+          67,
+          40
+        ],
+        "skills": [
+          24,
+          12,
+          12,
+          12,
+          30,
+          22,
+          12,
+          12,
+          12,
+          5,
+          5,
+          5,
+          5,
+          5,
+          33,
+          5,
+          5,
+          0,
+          33,
+          33,
+          18,
+          40,
+          5,
+          5,
+          12,
+          43,
+          23
+        ],
+        "health": 63,
+        "magicka": 90,
+        "fatigue": 168
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 800
+    },
+    "inventory": [
+      [
+        1,
+        "_RV_Glasses1"
+      ],
+      [
+        1,
+        "extravagant_pants_02"
+      ],
+      [
+        1,
+        "extravagant_shirt_01_h"
+      ],
+      [
+        1,
+        "extravagant_shoes_02"
+      ]
+    ],
+    "spells": [],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 100,
+      "services": 13983
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 0,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 10,
+        "idle6": 10,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Blindfold1",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.1,
+      "value": 20,
+      "health": 300,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Blindfold",
+    "mesh": "RV\\blindfold1.nif",
+    "icon": "RV\\Blindfold_1.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Blindfold1_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Eyepatch1L",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.1,
+      "value": 20,
+      "health": 300,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Eyepatch - Left",
+    "mesh": "RV\\blindfold1.nif",
+    "icon": "RV\\Eyepatch1L.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Eyepatch1L_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Eyepatch1R",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.1,
+      "value": 20,
+      "health": 300,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Eyepatch - Right",
+    "mesh": "RV\\blindfold1.nif",
+    "icon": "RV\\Eyepatch1R.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Eyepatch1R_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses1",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Half Moon Spectacles",
+    "mesh": "RV\\glasses1.nif",
+    "icon": "RV\\Glasses_1.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Glasses1_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses1s",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Silver Half Moon Spectacles",
+    "mesh": "RV\\glasses1s.nif",
+    "icon": "RV\\Glasses_1s.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Glasses1s_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses2",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Spectacles",
+    "mesh": "RV\\glasses2.nif",
+    "icon": "RV\\Glasses_2.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Glasses2_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses2s",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Silver Spectacles",
+    "mesh": "RV\\glasses2s.nif",
+    "icon": "RV\\Glasses_2s.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Glasses2s_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses3",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Tinted Spectacles",
+    "mesh": "RV\\glasses3.nif",
+    "icon": "RV\\Glasses_3.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Glasses3_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses4",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Monocle",
+    "mesh": "RV\\glasses4.nif",
+    "icon": "RV\\Glasses_4.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Glasses4_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Glasses4s",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Silver Monocle",
+    "mesh": "RV\\glasses4s.nif",
+    "icon": "RV\\Glasses_4s.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Glasses4s_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles1",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Dark Brotherhood Goggles",
+    "mesh": "RV\\goggles1.nif",
+    "icon": "RV\\Goggles_1.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Goggles1_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles2",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Morag Tong Goggles",
+    "mesh": "RV\\goggles2.nif",
+    "icon": "RV\\Goggles_2.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Goggles2_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles3",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Dust Goggles",
+    "mesh": "RV\\goggles3.nif",
+    "icon": "RV\\Goggles_3.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Goggles3_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles4",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Dwemer Scouter",
+    "mesh": "RV\\goggles4.nif",
+    "icon": "RV\\Goggles_4.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Goggles4_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles5",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Splatter Goggles",
+    "mesh": "RV\\goggles5.nif",
+    "icon": "RV\\Goggles_5.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Goggles5_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles6",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Tinted Goggles",
+    "mesh": "RV\\goggles6.nif",
+    "icon": "RV\\Goggles_6.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Goggles6_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles7",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Dwemer Goggles",
+    "mesh": "RV\\goggles7.nif",
+    "icon": "RV\\Goggles_7.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Goggles7_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Goggles8",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 30,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Ashlander Goggles",
+    "mesh": "RV\\goggles8.nif",
+    "icon": "RV\\Goggles_8.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Goggles8_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Lenses1",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 300,
+      "health": 300,
+      "enchantment": 200,
+      "armor_rating": 1
+    },
+    "name": "Alchemist's Lenses",
+    "mesh": "RV\\Lenses1.nif",
+    "icon": "RV\\Lenses_1.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Lenses1_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Lenses2",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.5,
+      "value": 300,
+      "health": 300,
+      "enchantment": 200,
+      "armor_rating": 1
+    },
+    "name": "Enchanter's Lens",
+    "mesh": "RV\\Lenses2.nif",
+    "icon": "RV\\Lenses_2.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Lenses2_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Balmora, Clagius Clanler: Outfitter",
+    "data": {
+      "flags": 5,
+      "grid": [
+        0,
+        1061158912
+      ]
+    },
+    "water_height": 0.0,
+    "atmosphere_data": {
+      "ambient_color": [
+        75,
+        65,
+        65,
+        0
+      ],
+      "sunlight_color": [
+        80,
+        60,
+        20,
+        0
+      ],
+      "fog_color": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "fog_density": 0.75
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 1,
+        "id": "_RV_glassesman",
+        "temporary": false,
+        "translation": [
+          635.2383,
+          439.336,
+          -110.66474
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          3.3
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 2,
+        "id": "_rvglassbarrel_01",
+        "temporary": true,
+        "translation": [
+          744.896,
+          440.05148,
+          -169.74248
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "_RV_glassesman",
+        "health_left": 0
+      }
+    ]
+  }
+]

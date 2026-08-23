@@ -2,10 +2,19 @@
 --[[
     cake_npc.lua -- worn items on other actors
 
-    Same rule as the player: an actor wears an item exactly when the `_eq`
-    record is in its inventory. No polling -- an NPC's inventory does not
-    change while you are looking at it, so onActive plus explicit refresh
-    events is enough. One inventory walk covers every category.
+    NOT the same rule as the player. cake_player keeps explicit worn state,
+    written only when the player activates an item. An NPC never activates
+    anything, so there is no activation to key off and no per-actor saved state
+    worth carrying for cosmetics -- an NPC wears an item exactly when the `_eq`
+    record is in its inventory.
+
+    That inference is sound HERE for the reason it was unsound for the player:
+    nothing else can put an `_eq` record into an NPC's inventory. The player
+    reaches their own bag constantly; an NPC's contents are authored.
+
+    No polling -- an NPC's inventory does not change while you are looking at
+    it, so onActive plus explicit refresh events is enough. One inventory walk
+    covers every category.
 ]]
 
 local self    = require('openmw.self')

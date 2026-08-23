@@ -22,6 +22,11 @@ local function has(id) for _,x in ipairs(inv) do if x.recordId==id then return x
 local invObj = {
     getAll=function(_,_) return inv end,
     find=function(_,id) return has(id) end,
+    countOf=function(_,id)
+        local n=0
+        for _,x in ipairs(inv) do if x.recordId==id then n=n+x.count end end
+        return n
+    end,
 }
 
 local sections={}
@@ -94,6 +99,11 @@ end
 
 for b in pairs(shared.allBones) do world.bones[b]=true end
 
+-- Player first, so the global script's sendEvent can be routed into it. The
+-- new model has cake_global as the only writer of cake_player's worn state, so
+-- testing them apart tests neither.
+local P = dofile(DIR..'cake_player.lua')
+
 print('cake_global integration')
 local G = dofile(DIR..'cake_global.lua')
 G.engineHandlers.onInit()
@@ -103,7 +113,10 @@ check('registration is idempotent', #itemHandlers==1, #itemHandlers)
 check('showNpcs seeded', section('Cake_global'):get('showNpcs')==true)
 
 local onUse = itemHandlers[1]
-local actor = { sendEvent=function(_,n,d) world.actorEvents[#world.actorEvents+1]={n=n,d=d} end }
+local actor = { sendEvent=function(_,n,d)
+    world.actorEvents[#world.actorEvents+1]={n=n,d=d}
+    local h = P.eventHandlers[n]; if h then h(d) end
+end }
 
 check('unknown item passes through', onUse(mkItem('iron_helmet'), actor)==nil)
 
@@ -126,12 +139,12 @@ check('using a worn item converts it back',
       has(mask2)~=nil and has(shared.ITEMS[mask2].eq)==nil)
 
 print('cake_player integration')
-local P = dofile(DIR..'cake_player.lua')
 check('no onFrame handler', P.engineHandlers.onFrame==nil)
 check('no onUpdate handler', P.engineHandlers.onUpdate==nil, 'polling is what was removed')
 
 P.engineHandlers.onActive()
-check('worn lantern attached', world.vfx['cake_lanterns']~=nil)
+check('worn lantern attached', world.vfx['cake_lanterns']~=nil,
+      'activation set the state, onActive drew it')
 check('attached to the DBS bone', world.vfx['cake_lanterns'].bone=='Bip01 L hipDBS',
       world.vfx['cake_lanterns'].bone)
 check('model comes straight from the record, no _skins derivation',
@@ -172,12 +185,49 @@ check('vanilla profile uses fallback even when the DBS bone exists',
       world.vfx['cake_lanterns'].bone=='Bip01 Pelvis', world.vfx['cake_lanterns'].bone)
 section('Settings_cake_main'):set('SKELETON','auto')
 
--- removing the worn record clears the display, with no saved state to desync
-for i,x in ipairs(inv) do if x.recordId==shared.ITEMS[lantern].eq then table.remove(inv,i) break end end
+-- THE REGRESSION THIS ARCHITECTURE EXISTS TO PREVENT.
+-- Worn state used to be inferred from an `_eq` record being in the inventory,
+-- which made looting one identical to putting it on.
+world.vfx={}
 P.interface.refresh()
-check('display follows the inventory with no stored state',
-      world.vfx['cake_lanterns']==nil)
+local before = world.vfx['cake_masks']
+addItem(shared.ITEMS[mask].eq)          -- as if looted from a chest
+P.engineHandlers.onActive()
+check('looting an _eq record does NOT equip it',
+      world.vfx['cake_masks']==before and P.interface.getWorn()['masks']==nil,
+      'presence in the bag must not equal wearing')
+for i,x in ipairs(inv) do if x.recordId==shared.ITEMS[mask].eq then table.remove(inv,i) break end end
+
+-- reconcile: state leads, the inventory audits
+world.globalEvents={}
+for i,x in ipairs(inv) do if x.recordId==shared.ITEMS[lantern].eq then table.remove(inv,i) break end end
+P.engineHandlers.onActive()
+check('an entry whose record vanished is reconciled away',
+      P.interface.getWorn()['lanterns']==nil)
+check('display follows the reconciled state', world.vfx['cake_lanterns']==nil)
+local swept=false
+for _,e in ipairs(world.globalEvents) do if e.name=='Cake_ConvertInCell' then swept=true end end
+check('losing a record triggers the cell sweep exactly then', swept,
+      'the sweep is the most expensive op in the mod')
+
+world.globalEvents={}
+P.engineHandlers.onActive()
+local swept2=false
+for _,e in ipairs(world.globalEvents) do if e.name=='Cake_ConvertInCell' then swept2=true end end
+check('a clean reconcile does not sweep', not swept2)
+
 check('unsubscribed once nothing is worn', animRefresh.subs['CAKE']==nil)
+
+-- persistence
+addItem(lantern); onUse(has(lantern), actor)
+local saved = P.engineHandlers.onSave()
+check('onSave returns the worn table', type(saved)=='table' and type(saved.worn)=='table')
+P.engineHandlers.onLoad({worn={}})
+check('onLoad replaces state', next(P.interface.getWorn())==nil)
+P.engineHandlers.onLoad(saved)
+check('onLoad restores state', P.interface.getWorn()['lanterns']~=nil)
+P.engineHandlers.onLoad(nil)
+check('onLoad tolerates a missing/garbage payload', next(P.interface.getWorn())==nil)
 
 print('cake_npc integration')
 local N = dofile(DIR..'cake_npc.lua')

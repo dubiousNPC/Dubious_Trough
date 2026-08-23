@@ -1,0 +1,987 @@
+[
+  {
+    "type": "Header",
+    "flags": [
+      0,
+      0
+    ],
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "",
+    "description": "",
+    "num_objects": 35,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ],
+      [
+        "Tribunal.esm",
+        4565686
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_scarf_container",
+    "name": "Barrel",
+    "mesh": "o\\Contain_barrel_01.NIF",
+    "encumbrance": 500.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        3,
+        "_RV_Scarf01"
+      ],
+      [
+        3,
+        "_RV_Scarf02"
+      ],
+      [
+        3,
+        "_RV_Scarf03"
+      ],
+      [
+        3,
+        "_RV_Scarf04"
+      ],
+      [
+        3,
+        "_RV_Scarf05"
+      ],
+      [
+        3,
+        "_RV_Scarf06"
+      ],
+      [
+        3,
+        "_RV_Scarf07"
+      ],
+      [
+        3,
+        "_RV_Scarf08"
+      ],
+      [
+        3,
+        "_RV_Scarf09"
+      ],
+      [
+        3,
+        "_RV_Scarf10"
+      ],
+      [
+        3,
+        "_RV_Scarf11"
+      ],
+      [
+        3,
+        "_RV_Scarf12"
+      ],
+      [
+        3,
+        "_RV_Scarf13"
+      ],
+      [
+        3,
+        "_RV_Scarf14"
+      ],
+      [
+        3,
+        "_RV_Scarf15"
+      ],
+      [
+        3,
+        "_RV_Scarf16"
+      ]
+    ]
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_01",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_02",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf2.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_03",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf3.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_04",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf4.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_05",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf5.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_06",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf6.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_07",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf7.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_08",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf8.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_09",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf9.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_10",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf10.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_11",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf11.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_12",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf12.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_13",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf13.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_14",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf14.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_15",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf15.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_16",
+    "data": {
+      "part": "Neck",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\scarf16.nif"
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf_merchant",
+    "name": "Endlyn Teneran",
+    "mesh": "base_anim_female.nif",
+    "script": "nolore",
+    "race": "Dark Elf",
+    "class": "Clothier",
+    "faction": "",
+    "head": "b_n_dark elf_f_head_03",
+    "hair": "b_n_dark elf_f_hair_07",
+    "npc_flags": 9,
+    "data": {
+      "level": 12,
+      "stats": {
+        "attributes": [
+          63,
+          68,
+          39,
+          74,
+          65,
+          37,
+          64,
+          40
+        ],
+        "skills": [
+          26,
+          6,
+          6,
+          6,
+          26,
+          11,
+          6,
+          6,
+          11,
+          6,
+          16,
+          6,
+          6,
+          6,
+          11,
+          6,
+          6,
+          1,
+          52,
+          52,
+          52,
+          100,
+          27,
+          22,
+          52,
+          52,
+          36
+        ],
+        "health": 94,
+        "magicka": 136,
+        "fatigue": 213
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 400
+    },
+    "inventory": [
+      [
+        1,
+        "_RV_Scarf07"
+      ],
+      [
+        1,
+        "expensive_amulet_02"
+      ],
+      [
+        1,
+        "expensive_belt_02"
+      ],
+      [
+        1,
+        "expensive_glove_left_01"
+      ],
+      [
+        1,
+        "expensive_glove_right_01"
+      ],
+      [
+        1,
+        "expensive_ring_02"
+      ],
+      [
+        1,
+        "expensive_shoes_02"
+      ],
+      [
+        1,
+        "expensive_skirt_03"
+      ],
+      [
+        1,
+        "extravagant_pants_01"
+      ],
+      [
+        1,
+        "extravagant_shirt_02"
+      ]
+    ],
+    "spells": [],
+    "ai_data": {
+      "hello": 40,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 30,
+      "services": 6
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 0,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 50,
+        "idle3": 50,
+        "idle4": 40,
+        "idle5": 10,
+        "idle6": 0,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf01",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Leather Scarf",
+    "mesh": "RV\\scarf1 gnd.nif",
+    "icon": "RV\\scarf1.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_01",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf02",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Brown Leather Scarf",
+    "mesh": "RV\\scarf2.nif",
+    "icon": "RV\\scarf2.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_02",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf03",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Green Leather Scarf",
+    "mesh": "RV\\scarf3.nif",
+    "icon": "RV\\scarf3.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_03",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf04",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Blue Leather Scarf",
+    "mesh": "RV\\scarf4.nif",
+    "icon": "RV\\scarf4.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_04",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf05",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Grey Cloth Scarf",
+    "mesh": "RV\\scarf5.nif",
+    "icon": "RV\\scarf5.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_05",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf06",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 50,
+      "health": 200,
+      "enchantment": 70,
+      "armor_rating": 1
+    },
+    "name": "Expensive Hlaalu Scarf",
+    "mesh": "RV\\scarf6.nif",
+    "icon": "RV\\scarf6.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_06",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf07",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 50,
+      "health": 200,
+      "enchantment": 70,
+      "armor_rating": 1
+    },
+    "name": "Expensive Redoran Scarf",
+    "mesh": "RV\\scarf7.nif",
+    "icon": "RV\\scarf7.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_07",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf08",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 50,
+      "health": 200,
+      "enchantment": 70,
+      "armor_rating": 1
+    },
+    "name": "Expensive Telvanni Scarf",
+    "mesh": "RV\\scarf8.nif",
+    "icon": "RV\\scarf8.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_08",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf09",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 50,
+      "health": 200,
+      "enchantment": 70,
+      "armor_rating": 1
+    },
+    "name": "Expensive Scarf",
+    "mesh": "RV\\scarf9.nif",
+    "icon": "RV\\scarf9.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_09",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf10",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 50,
+      "health": 200,
+      "enchantment": 70,
+      "armor_rating": 1
+    },
+    "name": "Expensive Ashlander Scarf",
+    "mesh": "RV\\scarf10.nif",
+    "icon": "RV\\scarf10.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_10",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf11",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Brown Cloth Scarf",
+    "mesh": "RV\\scarf11.nif",
+    "icon": "RV\\scarf11.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_11",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf12",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Ashlander Cloth Scarf",
+    "mesh": "RV\\scarf12.nif",
+    "icon": "RV\\scarf12.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_12",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf13",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Imperial Leather Scarf",
+    "mesh": "RV\\scarf13.nif",
+    "icon": "RV\\scarf13.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_13",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf14",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Morag Tong Cloth Scarf",
+    "mesh": "RV\\scarf14.nif",
+    "icon": "RV\\scarf14.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_14",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf15",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 20,
+      "health": 150,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Dunmer Warrior Cloth Scarf",
+    "mesh": "RV\\scarf15 gnd.nif",
+    "icon": "RV\\scarf15.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_15",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Scarf16",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 50,
+      "health": 200,
+      "enchantment": 70,
+      "armor_rating": 1
+    },
+    "name": "Expensive Oceanic Scarf",
+    "mesh": "RV\\scarf16 gnd.nif",
+    "icon": "RV\\scarf16.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Neck",
+        "male_bodypart": "_RV_Scarf_16",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Ald-ruhn, Bivale Teneran: Clothier",
+    "data": {
+      "flags": 5,
+      "grid": [
+        1315920,
+        1061158912
+      ]
+    },
+    "water_height": 0.0,
+    "atmosphere_data": {
+      "ambient_color": [
+        65,
+        65,
+        65,
+        0
+      ],
+      "sunlight_color": [
+        80,
+        40,
+        20,
+        0
+      ],
+      "fog_color": [
+        80,
+        20,
+        20,
+        0
+      ],
+      "fog_density": 0.75
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 1,
+        "id": "_RV_Scarf_merchant",
+        "temporary": false,
+        "translation": [
+          229.92262,
+          582.6049,
+          -120.8987
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          4.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 2,
+        "id": "_RV_scarf_container",
+        "temporary": true,
+        "translation": [
+          189.16632,
+          491.67136,
+          -176.71556
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "_RV_Scarf_merchant",
+        "health_left": 0
+      }
+    ]
+  }
+]

@@ -81,5 +81,34 @@ check('naive sub(1,-4) would NOT have found these bases',
       M.ITEMS[('dbs_glantern2_eq'):sub(1,-4)] == nil
       or M.baseOf('dbs_glantern2_eq') == 'dbs_glantern2')
 
+-- Mesh paths belong to the mods that ship them (Tamriel_Data, OAAB, Project
+-- Cyrodiil and others). They must reach addVfx exactly as the record states
+-- them: no lowercasing, no separator rewriting. Three earlier passes of this
+-- pipeline silently normalised them.
+local altered = {}
+for id, e in pairs(M.ITEMS) do
+    if e.model ~= e.model:gsub('/', '\\') and e.model:find('/') then
+        altered[#altered+1] = id .. ' (' .. e.model .. ')'
+    end
+end
+check('no model path had its separators rewritten to /', #altered==0,
+      table.concat(altered, ', '))
+
+local lowered = {}
+for id, e in pairs(M.ITEMS) do
+    if e.model == e.model:lower() and e.model:find('[Bb]elts') == nil then
+        -- only a problem if the source record had mixed case; spot-check the
+        -- known mixed-case families instead of asserting on all of them
+    end
+end
+check('mixed-case paths keep their case',
+      (M.ITEMS['dbs_rv_ashmask1_h'] or {}).model == 'RV\\Ashmask1.nif',
+      (M.ITEMS['dbs_rv_ashmask1_h'] or {}).model)
+check('external-mod paths keep their case',
+      (M.ITEMS['dbs_lantern0aabdwrn'] or {}).model == 'OAAB\\l\\dwrv_lantern.nif',
+      (M.ITEMS['dbs_lantern0aabdwrn'] or {}).model)
+check('backslash survives as a real character at runtime',
+      ((M.ITEMS['dbs_lantern0aabdwrn'] or {}).model or ''):find('\\', 1, true) ~= nil)
+
 print(fails==0 and 'ALL PASS' or (fails..' FAILURES'))
 if fails>0 then os.exit(1) end

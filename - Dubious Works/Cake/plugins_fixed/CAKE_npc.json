@@ -1,0 +1,4519 @@
+[
+ {
+  "type": "Header",
+  "flags": [
+   0,
+   0
+  ],
+  "version": 1.3,
+  "file_type": "Esp",
+  "author": "",
+  "description": "",
+  "num_objects": 43,
+  "masters": [
+   [
+    "Morrowind.esm",
+    79837557
+   ],
+   [
+    "Tribunal.esm",
+    4565686
+   ],
+   [
+    "Bloodmoon.esm",
+    9631798
+   ]
+  ]
+ },
+ {
+  "type": "Static",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "emptylantern",
+  "mesh": "BMar\\emptylantern.nif"
+ },
+ {
+  "type": "Static",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "emptylantern2",
+  "mesh": "BMar\\emptylantern2.nif"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "keyforiegnchest",
+  "data": {
+   "weight": 0.0,
+   "value": 300,
+   "flags": 1
+  },
+  "name": "Ja'danha's Key",
+  "mesh": "m\\Key_Standard_01.NIF",
+  "icon": "m\\Tx_key_standard_01.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "MovihaFatarokey",
+  "data": {
+   "weight": 0.0,
+   "value": 0,
+   "flags": 1
+  },
+  "name": "Moviha Fataro's Key",
+  "mesh": "m\\Key_Temple_01.NIF",
+  "icon": "m\\Tx_key_temple_01.tga"
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_rvglassbarrel_01",
+  "name": "Barrel",
+  "mesh": "o\\Contain_barrel_01.NIF",
+  "encumbrance": 50.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    5,
+    "_RV_Blindfold1"
+   ],
+   [
+    5,
+    "_RV_Eyepatch1L"
+   ],
+   [
+    5,
+    "_RV_Eyepatch1R"
+   ],
+   [
+    5,
+    "_RV_Glasses1"
+   ],
+   [
+    5,
+    "_RV_Glasses1s"
+   ],
+   [
+    5,
+    "_RV_Glasses2"
+   ],
+   [
+    5,
+    "_RV_Glasses2s"
+   ],
+   [
+    5,
+    "_RV_Glasses3"
+   ],
+   [
+    5,
+    "_RV_Glasses4"
+   ],
+   [
+    5,
+    "_RV_Glasses4s"
+   ],
+   [
+    5,
+    "_RV_Goggles1"
+   ],
+   [
+    5,
+    "_RV_Goggles2"
+   ],
+   [
+    5,
+    "_RV_Goggles3"
+   ],
+   [
+    5,
+    "_RV_Goggles4"
+   ],
+   [
+    5,
+    "_RV_Goggles5"
+   ],
+   [
+    5,
+    "_RV_Goggles6"
+   ],
+   [
+    5,
+    "_RV_Goggles7"
+   ],
+   [
+    5,
+    "_RV_Goggles8"
+   ],
+   [
+    5,
+    "_RV_Lenses1"
+   ],
+   [
+    5,
+    "_RV_Lenses2"
+   ]
+  ]
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_maskbarrel",
+  "name": "Barrel",
+  "mesh": "o\\Contain_barrel_01.NIF",
+  "encumbrance": 500.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    4,
+    "dbs_RV_Ashmask1_H"
+   ],
+   [
+    4,
+    "dbs_RV_Ashmask2_H"
+   ],
+   [
+    4,
+    "dbs_RV_Ashmask3_H"
+   ],
+   [
+    4,
+    "dbs_RV_Daedramask1_H"
+   ],
+   [
+    4,
+    "dbs_RV_Daedramask2_H"
+   ],
+   [
+    4,
+    "dbs_RV_Daedramask3_H"
+   ],
+   [
+    4,
+    "dbs_RV_Daedramask4_H"
+   ],
+   [
+    4,
+    "dbs_RV_Facewrap1_H"
+   ],
+   [
+    4,
+    "dbs_RV_Facewrap2_H"
+   ],
+   [
+    4,
+    "dbs_RV_Facewrap3_H"
+   ],
+   [
+    4,
+    "dbs_RV_Facewrap4_H"
+   ],
+   [
+    4,
+    "dbs_RV_Facewrap5_H"
+   ],
+   [
+    4,
+    "dbs_RV_Facewrap6_H"
+   ],
+   [
+    4,
+    "dbs_RV_Facewrap7_H"
+   ],
+   [
+    4,
+    "dbs_RV_Facewrap8_H"
+   ],
+   [
+    4,
+    "dbs_RV_Orcishmask1_H"
+   ],
+   [
+    4,
+    "dbs_RV_Orcishmask2_H"
+   ]
+  ]
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_scarf_container",
+  "name": "Barrel",
+  "mesh": "o\\Contain_barrel_01.NIF",
+  "encumbrance": 500.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    3,
+    "dbs_RV_Scarf_01"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_02"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_03"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_04"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_05"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_06"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_07"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_08"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_09"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_10"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_11"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_12"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_13"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_14"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_15"
+   ],
+   [
+    3,
+    "dbs_RV_Scarf_16"
+   ]
+  ]
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "beltmerchantbarrel",
+  "name": "Barrel",
+  "mesh": "o\\Contain_barrel_01.NIF",
+  "encumbrance": 50.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    -4,
+    "dbs_cbelt1"
+   ],
+   [
+    -4,
+    "dbs_cbelt2"
+   ],
+   [
+    -4,
+    "dbs_cbelt3"
+   ],
+   [
+    -4,
+    "dbs_cbelt4"
+   ],
+   [
+    -4,
+    "dbs_cbelt5"
+   ],
+   [
+    1,
+    "dbs_erabinbelt"
+   ],
+   [
+    -3,
+    "dbs_expbelt1"
+   ],
+   [
+    -3,
+    "dbs_expbelt2"
+   ],
+   [
+    -3,
+    "dbs_expbelt3"
+   ],
+   [
+    -1,
+    "dbs_exqbelt"
+   ],
+   [
+    -2,
+    "dbs_extravbelt1"
+   ],
+   [
+    -2,
+    "dbs_extravbelt2"
+   ],
+   [
+    1,
+    "dbs_hfirebelt"
+   ]
+  ]
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "foriegnlanternchest",
+  "name": "Chest",
+  "mesh": "o\\Contain_Com_Chest_02.NIF",
+  "encumbrance": 200.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    -1,
+    "dbs_cavelant"
+   ],
+   [
+    -1,
+    "dbs_colov2"
+   ],
+   [
+    -1,
+    "dbs_colov3"
+   ],
+   [
+    -1,
+    "dbs_colov4"
+   ],
+   [
+    -1,
+    "dbs_colov5"
+   ],
+   [
+    -1,
+    "dbs_orclan1"
+   ],
+   [
+    -1,
+    "dbs_orclan2"
+   ],
+   [
+    -1,
+    "dbs_TravLantern1"
+   ],
+   [
+    -1,
+    "dbs_TravLantern2"
+   ],
+   [
+    -1,
+    "dbs_woodlan"
+   ]
+  ]
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "glasslanternchest",
+  "name": "Wooden Chest",
+  "mesh": "o\\contain_chest10.nif",
+  "encumbrance": 175.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    -2,
+    "dbs_GLantern2"
+   ],
+   [
+    -2,
+    "dbs_GLantern6"
+   ],
+   [
+    -2,
+    "dbs_GLanterngrn"
+   ],
+   [
+    -2,
+    "dbs_GLanternred"
+   ],
+   [
+    -2,
+    "dbs_GLanternyel"
+   ],
+   [
+    -2,
+    "dbs_TRIndorilLan1"
+   ],
+   [
+    -2,
+    "dbs_TRIndorilLan2"
+   ],
+   [
+    -2,
+    "dbs_TRIndorilLan3"
+   ],
+   [
+    -2,
+    "dbs_TRIndorilGRLan1"
+   ],
+   [
+    -2,
+    "dbs_TRIndorilGRLan2"
+   ],
+   [
+    -2,
+    "dbs_TRIndorilGRLan3"
+   ],
+   [
+    -2,
+    "dbs_TRIndorilPurLan1"
+   ],
+   [
+    -2,
+    "dbs_TRIndorilPurLan2"
+   ],
+   [
+    -2,
+    "dbs_TRIndorilPurLan3"
+   ]
+  ]
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "lanternchest",
+  "name": "Large Chest",
+  "mesh": "o\\contain_chest10.nif",
+  "encumbrance": 150.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    1,
+    "dbs_ash1"
+   ],
+   [
+    1,
+    "dbs_ash2"
+   ],
+   [
+    1,
+    "dbs_ash3"
+   ],
+   [
+    1,
+    "dbs_ash4"
+   ],
+   [
+    1,
+    "dbs_ash5"
+   ],
+   [
+    1,
+    "dbs_ash6"
+   ],
+   [
+    1,
+    "dbs_ash7"
+   ],
+   [
+    1,
+    "dbs_cavelant"
+   ],
+   [
+    1,
+    "dbs_colov2"
+   ],
+   [
+    1,
+    "dbs_colov3"
+   ],
+   [
+    1,
+    "dbs_colov4"
+   ],
+   [
+    1,
+    "dbs_colov5"
+   ],
+   [
+    1,
+    "dbs_GLantern2"
+   ],
+   [
+    1,
+    "dbs_GLantern6"
+   ],
+   [
+    1,
+    "dbs_GLanterngrn"
+   ],
+   [
+    1,
+    "dbs_GLanternred"
+   ],
+   [
+    1,
+    "dbs_GLanternyel"
+   ],
+   [
+    1,
+    "dbs_TRIndorilLan1"
+   ],
+   [
+    1,
+    "dbs_TRIndorilLan2"
+   ],
+   [
+    1,
+    "dbs_TRIndorilLan3"
+   ],
+   [
+    1,
+    "dbs_TRIndorilGRLan1"
+   ],
+   [
+    1,
+    "dbs_TRIndorilGRLan2"
+   ],
+   [
+    1,
+    "dbs_TRIndorilGRLan3"
+   ],
+   [
+    1,
+    "dbs_TRIndorilPurLan1"
+   ],
+   [
+    1,
+    "dbs_TRIndorilPurLan2"
+   ],
+   [
+    1,
+    "dbs_TRIndorilPurLan3"
+   ],
+   [
+    1,
+    "dbs_Lantern0AABDwrn"
+   ],
+   [
+    1,
+    "dbs_LanternPap1"
+   ],
+   [
+    1,
+    "dbs_LanternPap10"
+   ],
+   [
+    1,
+    "dbs_LanternPap11"
+   ],
+   [
+    1,
+    "dbs_LanternPap14"
+   ],
+   [
+    1,
+    "dbs_LanternPap5"
+   ],
+   [
+    1,
+    "dbs_LanternPap7"
+   ],
+   [
+    1,
+    "dbs_LanternPapblu1"
+   ],
+   [
+    1,
+    "dbs_LanternPapblu4"
+   ],
+   [
+    1,
+    "dbs_LanternPapgrn1"
+   ],
+   [
+    1,
+    "dbs_LanternPapgrn4"
+   ],
+   [
+    1,
+    "dbs_LanternPappur1"
+   ],
+   [
+    1,
+    "dbs_LanternPappur4"
+   ],
+   [
+    1,
+    "dbs_LanternPapyel1"
+   ],
+   [
+    1,
+    "dbs_LanternPapyel4"
+   ],
+   [
+    1,
+    "dbs_orclan1"
+   ],
+   [
+    1,
+    "dbs_orclan2"
+   ],
+   [
+    1,
+    "dbs_TravLantern1"
+   ],
+   [
+    1,
+    "dbs_TravLantern2"
+   ],
+   [
+    1,
+    "dbs_woodlan"
+   ]
+  ]
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "paperlanternchest",
+  "name": "Chest",
+  "mesh": "o\\Contain_Com_Chest_02.NIF",
+  "encumbrance": 200.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    -2,
+    "dbs_LanternPap1"
+   ],
+   [
+    -2,
+    "dbs_LanternPap10"
+   ],
+   [
+    -2,
+    "dbs_LanternPap11"
+   ],
+   [
+    -2,
+    "dbs_LanternPap14"
+   ],
+   [
+    -2,
+    "dbs_LanternPap5"
+   ],
+   [
+    -2,
+    "dbs_LanternPap7"
+   ],
+   [
+    -2,
+    "dbs_LanternPapblu1"
+   ],
+   [
+    -2,
+    "dbs_LanternPapblu4"
+   ],
+   [
+    -2,
+    "dbs_LanternPapgrn1"
+   ],
+   [
+    -2,
+    "dbs_LanternPapgrn4"
+   ],
+   [
+    -2,
+    "dbs_LanternPappur1"
+   ],
+   [
+    -2,
+    "dbs_LanternPappur4"
+   ],
+   [
+    -2,
+    "dbs_LanternPapyel1"
+   ],
+   [
+    -2,
+    "dbs_LanternPapyel4"
+   ]
+  ]
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "satchelchest01",
+  "name": "satchel Chest",
+  "mesh": "o\\Contain_Com_Chest_02.NIF",
+  "encumbrance": 400.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    -1,
+    "dbs_aa_fannypack"
+   ],
+   [
+    -1,
+    "dbs_aa_fpkpch"
+   ],
+   [
+    -1,
+    "dbs_aa_fpktbg_l"
+   ],
+   [
+    1,
+    "dbs_aa_satchel_m"
+   ],
+   [
+    -1,
+    "dbs_aa_thighbag_l"
+   ],
+   [
+    -1,
+    "dbs_aa_ubelt"
+   ],
+   [
+    -1,
+    "dbs_aa_waistbag"
+   ]
+  ]
+ },
+ {
+  "type": "Container",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1pasheevasack",
+  "name": "tail Sack",
+  "mesh": "o\\contain_sack00.nif",
+  "encumbrance": 1000.0,
+  "container_flags": 8,
+  "inventory": [
+   [
+    -1,
+    "dbs_1adamantail"
+   ],
+   [
+    -1,
+    "dbs_1armunantail"
+   ],
+   [
+    -1,
+    "dbs_1bonemoldtail"
+   ],
+   [
+    -1,
+    "dbs_1ceph"
+   ],
+   [
+    -1,
+    "dbs_1chain"
+   ],
+   [
+    -1,
+    "dbs_1chitintail"
+   ],
+   [
+    -1,
+    "dbs_1chuzei"
+   ],
+   [
+    -1,
+    "dbs_1dreugh"
+   ],
+   [
+    -1,
+    "dbs_1dust"
+   ],
+   [
+    -1,
+    "dbs_1gahjulantail"
+   ],
+   [
+    1,
+    "dbs_1glasstail"
+   ],
+   [
+    -1,
+    "dbs_1gold"
+   ],
+   [
+    -1,
+    "dbs_1impsteel"
+   ],
+   [
+    -1,
+    "dbs_1irontail"
+   ],
+   [
+    -1,
+    "dbs_1mole"
+   ],
+   [
+    -1,
+    "dbs_1nettail"
+   ],
+   [
+    -1,
+    "dbs_1orctail"
+   ],
+   [
+    -1,
+    "dbs_1scale"
+   ],
+   [
+    -1,
+    "dbs_1steeltail"
+   ],
+   [
+    -1,
+    "dbs_1watch"
+   ]
+  ]
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_0cigar",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 2,
+   "part_type": "Skin"
+  },
+  "name": "Orc",
+  "mesh": "ep\\_0cigar.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_01cigar",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 2,
+   "part_type": "Skin"
+  },
+  "name": "Orc",
+  "mesh": "ep\\_0cigar.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Blindfold1_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\blindfold1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Eyepatch1L_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\eyepatch1L.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Eyepatch1R_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\eyepatch1R.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses1_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\glasses1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses1s_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\glasses1s.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses2_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\glasses2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses2s_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\glasses2s.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses3_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\glasses3.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses4_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\glasses4.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses4s_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\glasses4s.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles1_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\goggles1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles2_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\goggles2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles3_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\goggles3.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles4_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\goggles4.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles5_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\goggles5.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles6_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\goggles6.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles7_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\goggles7.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles8_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\goggles8.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Lenses1_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Lenses1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Lenses2_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Lenses2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Ashmask1_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Ashmask1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Ashmask2_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Ashmask2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Ashmask3_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Ashmask3.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Daedramask1_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Daedramask1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Daedramask2_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\Daedramask2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Daedramask3_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\Daedramask3.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Daedramask4_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\Daedramask4.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Facewrap1_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Facewrap1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Facewrap2_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Facewrap2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Facewrap3_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Facewrap3.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Facewrap4_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\Facewrap4.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Facewrap5_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\Facewrap5.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Facewrap6_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\Facewrap6.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Facewrap7_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\Facewrap7.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Facewrap8_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\Facewrap8.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Orcishmask1_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "",
+  "mesh": "RV\\Orcishmask1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Orcishmask2_H",
+  "data": {
+   "part": "Hair",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\Orcishmask2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_01",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_02",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_03",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf3.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_04",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf4.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_05",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf5.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_06",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf6.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_07",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf7.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_08",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf8.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_09",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf9.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_10",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf10.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_11",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf11.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_12",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf12.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_13",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf13.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_14",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf14.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_15",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf15.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Scarf_16",
+  "data": {
+   "part": "Neck",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "RV\\scarf16.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "cbelt1",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_common_1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "cbelt2",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_common_2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "cbelt3",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_common_3.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "cbelt4",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_common_4.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "cbelt5",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_common_5.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "erabinbelt",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\erabin.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "expbelt1",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_expensive_1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "expbelt2",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_expensive_2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "expbelt3",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_expensive_3.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "exqbelt",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_exquisite_1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "extravbelt1",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_extravagant_1.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "extravbelt2",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_extravagant_2.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "hfirebelt",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "Belts\\belt_hfire.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "ash1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_ashl_lantern_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "ash2",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_ashl_lantern_02.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "ash3",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_ashl_lantern_03.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "ash4",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_ashl_lantern_04.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "ash5",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_ashl_lantern_05.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "ash6",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_ashl_lantern_06.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "ash7",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_ashl_lantern_07.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "cavelant",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "OAAB\\l\\cavern_Lantern.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "colov2",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "pc\\l\\pc_col_lantern_02.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "colov3",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "pc\\l\\pc_col_lantern_03.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "colov4",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "pc\\l\\pc_col_lantern_04.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "colov5",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "pc\\l\\pc_col_lantern_05.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "GLantern2",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_de_lantern_02.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "GLantern6",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_de_lantern_06.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "GLanterngrn",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantgl_grn01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "GLanternred",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantgl_red02.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "GLanternyel",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantgl_yel01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "Lantern0AABDwrn",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "OAAB\\l\\dwrv_lantern.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPap1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_de_lantern_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPap10",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_de_lantern_10.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPap11",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_de_lantern_11.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPap14",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_de_lantern_14.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPap5",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_de_lantern_05.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPap7",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_de_lantern_07.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPapblu1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantern_blu_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPapblu4",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantern_blu_04.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPapgrn1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantern_grn_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPapgrn4",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantern_grn_04.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPappur1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantern_prp_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPappur4",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantern_prp_04.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPapyel1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantern_ylw_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "LanternPapyel4",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\tr_l_de_lantern_ylw_04.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "orclan1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "sky\\l\\sky_lgt_orc_lantn_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "orclan2",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "sky\\l\\sky_lgt_orc_lantn_02.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TravLantern1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_com_lantern_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TravLantern2",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "l\\light_com_lantern_02.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TRIndorilGRLan1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\TR_l_de_MhLant_gr_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TRIndorilGRLan2",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\TR_l_de_MhLant_gr_02.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TRIndorilGRLan3",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\TR_l_de_MhLant_gr_03.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TRIndorilLan1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\TR_l_de_MhLant_whi_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TRIndorilLan2",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\TR_l_de_MhLant_whi_02.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TRIndorilLan3",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\TR_l_de_MhLant_whi_03.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TRIndorilPurLan1",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\TR_l_de_MhLant_pr_01.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TRIndorilPurLan2",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\TR_l_de_MhLant_pr_02.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "TRIndorilPurLan3",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "tr\\l\\TR_l_de_MhLant_pr_03.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "woodlan",
+  "data": {
+   "part": "Hand",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "sky\\l\\sky_light_nord_lat_04.nif"
+ },
+ {
+  "type": "Enchantment",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "Lantern",
+  "data": {
+   "enchant_type": "ConstantEffect",
+   "enchant_cost": 0,
+   "max_charge": 0,
+   "flags": 0
+  },
+  "effects": [
+   {
+    "magic_effect": "Light",
+    "skill": "None",
+    "attribute": "None",
+    "range": 0,
+    "area": 0,
+    "duration": 1,
+    "min_magnitude": 10,
+    "max_magnitude": 10
+   }
+  ]
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_fannypack",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_fannypack_b.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_fannypack_l",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_fannypack_l.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_fannypack_r",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_fannypack_r.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_fpkpch",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_fpackpouch.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_fpktbg_l",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_fpktbg_l.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_fpktbg_r",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_fpktbg_r.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_satchel_f",
+  "data": {
+   "part": "Clavicle",
+   "vampire": 0,
+   "female": 1,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_satchel_f.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_satchel_m",
+  "data": {
+   "part": "Clavicle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_satchel_m.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_thighbag_l",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_thighbag_l.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_thighbag_r",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_thighbag_r.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_ubelt",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_utilitybelt.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_waistbag",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_waistbag_b.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_waistbag_l",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_waistbag_l.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "aa_waistbag_r",
+  "data": {
+   "part": "Groin",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "frummyonda\\fy_waistbag_r.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1adamantail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailadaman.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1almaind",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailalma.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1argdomina",
+  "data": {
+   "part": "Chest",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\arg_dominacuir.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1argdominaf",
+  "data": {
+   "part": "Chest",
+   "vampire": 0,
+   "female": 1,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\arg_dominacuir.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1armunantail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailarmunan.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1bear",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailsnow_b.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1bonemoldtail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailbonemold.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1ceph",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailceph.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1chain",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailchain.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1chitintail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailchitin.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1chuzei",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailchuzei.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1daetail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\taildaedric.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1darkbro",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\taildb.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1dominatail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\taildomina.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1dreugh",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\taildreugh.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1dust",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\taildust.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1dwetail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\taildwemer.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1ebonytail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailebony.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1gahjulantail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailgahjulan.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1glasstail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailglass.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1gold",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailgold.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1helseth",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailhels.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1icetail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailice.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1impsteel",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailimperial.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1indoriltail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailindoril.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1irontail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailiron.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1mole",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailmole.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1nettail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailnetch.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1nordtail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailnord.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1orctail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailorcish.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1scale",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailscale.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1steeltail",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailsteel.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1templar",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailtemplar.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1watch",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailwatch.nif"
+ },
+ {
+  "type": "Bodypart",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "1wolf",
+  "data": {
+   "part": "Ankle",
+   "vampire": 0,
+   "female": 0,
+   "part_type": "Armor"
+  },
+  "name": "Argonian",
+  "mesh": "ArmoredTails\\tailwolf.nif"
+ },
+ {
+  "type": "Enchantment",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "fy_satchels_20",
+  "data": {
+   "enchant_type": "ConstantEffect",
+   "enchant_cost": 0,
+   "max_charge": 0,
+   "flags": 0
+  },
+  "effects": [
+   {
+    "magic_effect": "Feather",
+    "skill": "None",
+    "attribute": "None",
+    "range": 0,
+    "area": 0,
+    "duration": 1,
+    "min_magnitude": 20,
+    "max_magnitude": 20
+   }
+  ]
+ },
+ {
+  "type": "Enchantment",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "fy_satchels_30",
+  "data": {
+   "enchant_type": "ConstantEffect",
+   "enchant_cost": 0,
+   "max_charge": 0,
+   "flags": 0
+  },
+  "effects": [
+   {
+    "magic_effect": "Feather",
+    "skill": "None",
+    "attribute": "None",
+    "range": 0,
+    "area": 0,
+    "duration": 1,
+    "min_magnitude": 30,
+    "max_magnitude": 30
+   }
+  ]
+ },
+ {
+  "type": "Enchantment",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "fy_satchels_50",
+  "data": {
+   "enchant_type": "ConstantEffect",
+   "enchant_cost": 0,
+   "max_charge": 0,
+   "flags": 0
+  },
+  "effects": [
+   {
+    "magic_effect": "Feather",
+    "skill": "None",
+    "attribute": "None",
+    "range": 0,
+    "area": 0,
+    "duration": 1,
+    "min_magnitude": 50,
+    "max_magnitude": 50
+   }
+  ]
+ },
+ {
+  "type": "Enchantment",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "fy_satchels_70",
+  "data": {
+   "enchant_type": "ConstantEffect",
+   "enchant_cost": 0,
+   "max_charge": 0,
+   "flags": 0
+  },
+  "effects": [
+   {
+    "magic_effect": "Feather",
+    "skill": "None",
+    "attribute": "None",
+    "range": 0,
+    "area": 0,
+    "duration": 1,
+    "min_magnitude": 70,
+    "max_magnitude": 70
+   }
+  ]
+ },
+ {
+  "type": "Npc",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_glassesman",
+  "name": "Collatinus Clanler",
+  "race": "Imperial",
+  "class": "Trader Service",
+  "faction": "",
+  "head": "b_n_imperial_m_head_02",
+  "hair": "B_N_Imperial_M_Hair_06",
+  "npc_flags": 8,
+  "data": {
+   "level": 4,
+   "stats": {
+    "attributes": [
+     55,
+     45,
+     35,
+     36,
+     44,
+     42,
+     67,
+     40
+    ],
+    "skills": [
+     24,
+     12,
+     12,
+     12,
+     30,
+     22,
+     12,
+     12,
+     12,
+     5,
+     5,
+     5,
+     5,
+     5,
+     33,
+     5,
+     5,
+     0,
+     33,
+     33,
+     18,
+     40,
+     5,
+     5,
+     12,
+     43,
+     23
+    ],
+    "health": 63,
+    "magicka": 90,
+    "fatigue": 168
+   },
+   "disposition": 50,
+   "reputation": 0,
+   "rank": 0,
+   "gold": 800
+  },
+  "inventory": [
+   [
+    1,
+    "_RV_Glasses1"
+   ],
+   [
+    1,
+    "extravagant_pants_02"
+   ],
+   [
+    1,
+    "extravagant_shirt_01_h"
+   ],
+   [
+    1,
+    "extravagant_shoes_02"
+   ],
+   [
+    1,
+    "expensive_pants_03"
+   ],
+   [
+    1,
+    "expensive_shirt_03"
+   ],
+   [
+    1,
+    "expensive_shoes_03"
+   ],
+   [
+    -2,
+    "sc_almsiviintervention"
+   ],
+   [
+    -2,
+    "sc_argentglow"
+   ],
+   [
+    -2,
+    "sc_drathiswinterguest"
+   ],
+   [
+    -2,
+    "sc_heartwise"
+   ],
+   [
+    -2,
+    "sc_ondusisunhinging"
+   ],
+   [
+    -2,
+    "sc_summonskeletalservant"
+   ],
+   [
+    -2,
+    "sc_vigor"
+   ],
+   [
+    -2,
+    "sc_vitality"
+   ]
+  ],
+  "spells": [],
+  "ai_data": {
+   "hello": 30,
+   "fight": 30,
+   "flee": 30,
+   "alarm": 100,
+   "services": 13983
+  },
+  "ai_packages": [
+   {
+    "type": "Wander",
+    "distance": 0,
+    "duration": 5,
+    "game_hour": 0,
+    "idle2": 60,
+    "idle3": 20,
+    "idle4": 10,
+    "idle5": 10,
+    "idle6": 10,
+    "idle7": 0,
+    "idle8": 0,
+    "idle9": 0,
+    "reset": 1
+   }
+  ],
+  "travel_destinations": []
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Blindfold1",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.1,
+   "value": 20,
+   "health": 300,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Blindfold",
+  "mesh": "RV\\blindfold1.nif",
+  "icon": "RV\\Blindfold_1.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Blindfold1_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Eyepatch1L",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.1,
+   "value": 20,
+   "health": 300,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Eyepatch - Left",
+  "mesh": "RV\\blindfold1.nif",
+  "icon": "RV\\Eyepatch1L.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Eyepatch1L_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Eyepatch1R",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.1,
+   "value": 20,
+   "health": 300,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Eyepatch - Right",
+  "mesh": "RV\\blindfold1.nif",
+  "icon": "RV\\Eyepatch1R.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Eyepatch1R_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses1",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Half Moon Spectacles",
+  "mesh": "RV\\glasses1.nif",
+  "icon": "RV\\Glasses_1.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Glasses1_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses1s",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Silver Half Moon Spectacles",
+  "mesh": "RV\\glasses1s.nif",
+  "icon": "RV\\Glasses_1s.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Glasses1s_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses2",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Spectacles",
+  "mesh": "RV\\glasses2.nif",
+  "icon": "RV\\Glasses_2.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Glasses2_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses2s",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Silver Spectacles",
+  "mesh": "RV\\glasses2s.nif",
+  "icon": "RV\\Glasses_2s.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Glasses2s_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses3",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Tinted Spectacles",
+  "mesh": "RV\\glasses3.nif",
+  "icon": "RV\\Glasses_3.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Glasses3_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses4",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Monocle",
+  "mesh": "RV\\glasses4.nif",
+  "icon": "RV\\Glasses_4.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Glasses4_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Glasses4s",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Silver Monocle",
+  "mesh": "RV\\glasses4s.nif",
+  "icon": "RV\\Glasses_4s.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Glasses4s_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles1",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Dark Brotherhood Goggles",
+  "mesh": "RV\\goggles1.nif",
+  "icon": "RV\\Goggles_1.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Goggles1_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles2",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Morag Tong Goggles",
+  "mesh": "RV\\goggles2.nif",
+  "icon": "RV\\Goggles_2.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Goggles2_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles3",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Dust Goggles",
+  "mesh": "RV\\goggles3.nif",
+  "icon": "RV\\Goggles_3.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Goggles3_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles4",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Dwemer Scouter",
+  "mesh": "RV\\goggles4.nif",
+  "icon": "RV\\Goggles_4.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Goggles4_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles5",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Splatter Goggles",
+  "mesh": "RV\\goggles5.nif",
+  "icon": "RV\\Goggles_5.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Goggles5_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles6",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Tinted Goggles",
+  "mesh": "RV\\goggles6.nif",
+  "icon": "RV\\Goggles_6.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Goggles6_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles7",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Dwemer Goggles",
+  "mesh": "RV\\goggles7.nif",
+  "icon": "RV\\Goggles_7.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Goggles7_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Goggles8",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 30,
+   "health": 100,
+   "enchantment": 20,
+   "armor_rating": 1
+  },
+  "name": "Ashlander Goggles",
+  "mesh": "RV\\goggles8.nif",
+  "icon": "RV\\Goggles_8.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Goggles8_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Lenses1",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 300,
+   "health": 300,
+   "enchantment": 200,
+   "armor_rating": 1
+  },
+  "name": "Alchemist's Lenses",
+  "mesh": "RV\\Lenses1.nif",
+  "icon": "RV\\Lenses_1.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Lenses1_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Armor",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "_RV_Lenses2",
+  "data": {
+   "armor_type": "Helmet",
+   "weight": 0.5,
+   "value": 300,
+   "health": 300,
+   "enchantment": 200,
+   "armor_rating": 1
+  },
+  "name": "Enchanter's Lens",
+  "mesh": "RV\\Lenses2.nif",
+  "icon": "RV\\Lenses_2.tga",
+  "biped_objects": [
+   {
+    "biped_object_type": "Hair",
+    "male_bodypart": "_RV_Lenses2_H",
+    "female_bodypart": null
+   }
+  ]
+ },
+ {
+  "type": "Cell",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "Balmora, Clagius Clanler: Outfitter",
+  "data": {
+   "flags": 5,
+   "grid": [
+    0,
+    1061158912
+   ]
+  },
+  "water_height": 0.0,
+  "atmosphere_data": {
+   "ambient_color": [
+    75,
+    65,
+    65,
+    0
+   ],
+   "sunlight_color": [
+    80,
+    60,
+    20,
+    0
+   ],
+   "fog_color": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "fog_density": 0.75
+  },
+  "references": [
+   {
+    "mast_index": 0,
+    "refr_index": 1,
+    "id": "_RV_glassesman",
+    "temporary": false,
+    "translation": [
+     635.2383,
+     439.336,
+     -110.66474
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     3.3
+    ]
+   },
+   {
+    "mast_index": 0,
+    "refr_index": 2,
+    "id": "_rvglassbarrel_01",
+    "temporary": true,
+    "translation": [
+     635.2383,
+     439.336,
+     -110.66474
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "owner": "_RV_glassesman",
+    "health_left": 0
+   },
+   {
+    "mast_index": 0,
+    "refr_index": 3,
+    "id": "_RV_maskbarrel",
+    "temporary": true,
+    "translation": [
+     635.2383,
+     439.336,
+     -120.66474
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "owner": "_RV_glassesman",
+    "health_left": 0
+   },
+   {
+    "mast_index": 0,
+    "refr_index": 4,
+    "id": "_RV_scarf_container",
+    "temporary": true,
+    "translation": [
+     635.2383,
+     439.336,
+     -130.66474
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "owner": "_RV_glassesman",
+    "health_left": 0
+   },
+   {
+    "mast_index": 0,
+    "refr_index": 5,
+    "id": "beltmerchantbarrel",
+    "temporary": true,
+    "translation": [
+     635.2383,
+     439.336,
+     -140.66474
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "owner": "_RV_glassesman",
+    "health_left": 0
+   },
+   {
+    "mast_index": 0,
+    "refr_index": 6,
+    "id": "lanternchest",
+    "temporary": true,
+    "translation": [
+     635.2383,
+     439.336,
+     -150.66474
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "owner": "_RV_glassesman",
+    "health_left": 0
+   },
+   {
+    "mast_index": 0,
+    "refr_index": 7,
+    "id": "1pasheevasack",
+    "temporary": true,
+    "translation": [
+     635.2383,
+     439.336,
+     -160.66474
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "owner": "_RV_glassesman",
+    "health_left": 0
+   },
+   {
+    "mast_index": 0,
+    "refr_index": 8,
+    "id": "satchelchest01",
+    "temporary": true,
+    "translation": [
+     635.2383,
+     439.336,
+     -170.66474
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "owner": "_RV_glassesman",
+    "health_left": 0
+   }
+  ]
+ }
+]

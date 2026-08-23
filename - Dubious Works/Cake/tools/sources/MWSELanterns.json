@@ -1,0 +1,6744 @@
+[
+  {
+    "type": "Header",
+    "flags": [
+      0,
+      0
+    ],
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "",
+    "description": "",
+    "num_objects": 128,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ],
+      [
+        "Tribunal.esm",
+        4565686
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ],
+      [
+        "Tamriel_Data.esm",
+        11522094
+      ],
+      [
+        "OAAB_Data.esm",
+        1601690
+      ]
+    ]
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "PaperLanScript",
+    "header": {
+      "num_shorts": 1,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 160,
+      "variables_length": 8
+    },
+    "variables": "KLUv/QBYYQAACAAAAGNvdW50ZXIA",
+    "bytecode": "KLUv/QBYHQQAkggdJKApHf8D0P8fZJ2AsrH+zzh8fJqct/s5batCjvRRtim7gkOSDLbVal2KHdjp8PaduKvEnYGtdlqGt7+HQxE1oEc9XzvX2zfirtS5zthfBIEYi3zfijtB4FxfrGYKbxRaMmAh7hwtXRen1Uxzxr53VzsRURIEEAQojE+G1QxEKAM=",
+    "text": "begin PaperLanScript\r\n\r\nshort counter\r\n\r\nif ( MenuMode == 1 )\r\n  return\r\nendif\r\n\r\nif ( counter < 60 )\r\n  set counter to counter + 1\r\n  return\r\nendif\r\n\r\nset counter to 0\r\n\r\nif ( GetLOS Player == 0 )\r\n  if ( GetHealth > 0 )\r\n  if ( GameHour > 20 )\r\n    disable\r\n  elseif ( GameHour < 8 )\r\n    disable\r\n  elseif ( GetCurrentWeather > 3 )\r\n   disable\r\n  else\r\n    enable\r\n  endif\r\n  endif\r\nendif\r\n\r\nend"
+  },
+  {
+    "type": "Static",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "emptylantern",
+    "mesh": "BMar\\emptylantern.nif"
+  },
+  {
+    "type": "Static",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "emptylantern2",
+    "mesh": "BMar\\emptylantern2.nif"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "keyforiegnchest",
+    "data": {
+      "weight": 0.0,
+      "value": 300,
+      "flags": 1
+    },
+    "name": "Ja'danha's Key",
+    "mesh": "m\\Key_Standard_01.NIF",
+    "icon": "m\\Tx_key_standard_01.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "MovihaFatarokey",
+    "data": {
+      "weight": 0.0,
+      "value": 0,
+      "flags": 1
+    },
+    "name": "Moviha Fataro's Key",
+    "mesh": "m\\Key_Temple_01.NIF",
+    "icon": "m\\Tx_key_temple_01.tga"
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "foriegnlanternchest",
+    "name": "Chest",
+    "mesh": "o\\Contain_Com_Chest_02.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "cavernlant"
+      ],
+      [
+        -1,
+        "colovianlant2"
+      ],
+      [
+        -1,
+        "colovianlant3"
+      ],
+      [
+        -1,
+        "colovianlant4"
+      ],
+      [
+        -1,
+        "colovianlant5"
+      ],
+      [
+        -1,
+        "orclantern1"
+      ],
+      [
+        -1,
+        "orclantern2"
+      ],
+      [
+        -1,
+        "TravelLantern1"
+      ],
+      [
+        -1,
+        "TravelLantern2"
+      ],
+      [
+        -1,
+        "woodlantern"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "glasslanternchest",
+    "name": "Wooden Chest",
+    "mesh": "o\\contain_chest10.nif",
+    "encumbrance": 175.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -2,
+        "GlassLantern2"
+      ],
+      [
+        -2,
+        "GlassLantern6"
+      ],
+      [
+        -2,
+        "GlassLanterngrn"
+      ],
+      [
+        -2,
+        "GlassLanternred"
+      ],
+      [
+        -2,
+        "GlassLanternyel"
+      ],
+      [
+        -2,
+        "Indoril1"
+      ],
+      [
+        -2,
+        "Indoril2"
+      ],
+      [
+        -2,
+        "Indoril3"
+      ],
+      [
+        -2,
+        "IndorilGreen1"
+      ],
+      [
+        -2,
+        "IndorilGreen2"
+      ],
+      [
+        -2,
+        "IndorilGreen3"
+      ],
+      [
+        -2,
+        "IndorilPur1"
+      ],
+      [
+        -2,
+        "IndorilPur2"
+      ],
+      [
+        -2,
+        "IndorilPur3"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "lanabibask",
+    "name": "Basket",
+    "mesh": "o\\Contain_Com_Basket_01.NIF",
+    "encumbrance": 50.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "ashl1"
+      ],
+      [
+        -1,
+        "ashl2"
+      ],
+      [
+        -1,
+        "ashl3"
+      ],
+      [
+        -1,
+        "ashl4"
+      ],
+      [
+        -1,
+        "ashl5"
+      ],
+      [
+        -1,
+        "ashl6"
+      ],
+      [
+        -1,
+        "ashl7"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "lanternchest",
+    "name": "Large Chest",
+    "mesh": "o\\contain_chest10.nif",
+    "encumbrance": 150.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        1,
+        "ashl1"
+      ],
+      [
+        1,
+        "ashl2"
+      ],
+      [
+        1,
+        "ashl3"
+      ],
+      [
+        1,
+        "ashl4"
+      ],
+      [
+        1,
+        "ashl5"
+      ],
+      [
+        1,
+        "ashl6"
+      ],
+      [
+        1,
+        "ashl7"
+      ],
+      [
+        1,
+        "cavernlant"
+      ],
+      [
+        1,
+        "colovianlant2"
+      ],
+      [
+        1,
+        "colovianlant3"
+      ],
+      [
+        1,
+        "colovianlant4"
+      ],
+      [
+        1,
+        "colovianlant5"
+      ],
+      [
+        1,
+        "GlassLantern2"
+      ],
+      [
+        1,
+        "GlassLantern6"
+      ],
+      [
+        1,
+        "GlassLanterngrn"
+      ],
+      [
+        1,
+        "GlassLanternred"
+      ],
+      [
+        1,
+        "GlassLanternyel"
+      ],
+      [
+        1,
+        "Indoril1"
+      ],
+      [
+        1,
+        "Indoril2"
+      ],
+      [
+        1,
+        "Indoril3"
+      ],
+      [
+        1,
+        "IndorilGreen1"
+      ],
+      [
+        1,
+        "IndorilGreen2"
+      ],
+      [
+        1,
+        "IndorilGreen3"
+      ],
+      [
+        1,
+        "IndorilPur1"
+      ],
+      [
+        1,
+        "IndorilPur2"
+      ],
+      [
+        1,
+        "IndorilPur3"
+      ],
+      [
+        1,
+        "LanternDwem"
+      ],
+      [
+        1,
+        "LanternPaper1"
+      ],
+      [
+        1,
+        "LanternPaper10"
+      ],
+      [
+        1,
+        "LanternPaper11"
+      ],
+      [
+        1,
+        "LanternPaper14"
+      ],
+      [
+        1,
+        "LanternPaper5"
+      ],
+      [
+        1,
+        "LanternPaper7"
+      ],
+      [
+        1,
+        "LanternPaperblue1"
+      ],
+      [
+        1,
+        "LanternPaperblue4"
+      ],
+      [
+        1,
+        "LanternPapergrn1"
+      ],
+      [
+        1,
+        "LanternPapergrn4"
+      ],
+      [
+        1,
+        "LanternPaperprp1"
+      ],
+      [
+        1,
+        "LanternPaperprp4"
+      ],
+      [
+        1,
+        "LanternPapery1"
+      ],
+      [
+        1,
+        "LanternPapery4"
+      ],
+      [
+        1,
+        "orclantern1"
+      ],
+      [
+        1,
+        "orclantern2"
+      ],
+      [
+        1,
+        "TravelLantern1"
+      ],
+      [
+        1,
+        "TravelLantern2"
+      ],
+      [
+        1,
+        "woodlantern"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "paperlanternchest",
+    "name": "Chest",
+    "mesh": "o\\Contain_Com_Chest_02.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -2,
+        "LanternPaper1"
+      ],
+      [
+        -2,
+        "LanternPaper10"
+      ],
+      [
+        -2,
+        "LanternPaper11"
+      ],
+      [
+        -2,
+        "LanternPaper14"
+      ],
+      [
+        -2,
+        "LanternPaper5"
+      ],
+      [
+        -2,
+        "LanternPaper7"
+      ],
+      [
+        -2,
+        "LanternPaperblue1"
+      ],
+      [
+        -2,
+        "LanternPaperblue4"
+      ],
+      [
+        -2,
+        "LanternPapergrn1"
+      ],
+      [
+        -2,
+        "LanternPapergrn4"
+      ],
+      [
+        -2,
+        "LanternPaperprp1"
+      ],
+      [
+        -2,
+        "LanternPaperprp4"
+      ],
+      [
+        -2,
+        "LanternPapery1"
+      ],
+      [
+        -2,
+        "LanternPapery4"
+      ]
+    ]
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ash1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_ashl_lantern_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ash2",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_ashl_lantern_02.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ash3",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_ashl_lantern_03.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ash4",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_ashl_lantern_04.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ash5",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_ashl_lantern_05.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ash6",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_ashl_lantern_06.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ash7",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_ashl_lantern_07.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "cavelant",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "OAAB\\l\\cavern_Lantern.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "colov2",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "pc\\l\\pc_col_lantern_02.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "colov3",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "pc\\l\\pc_col_lantern_03.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "colov4",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "pc\\l\\pc_col_lantern_04.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "colov5",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "pc\\l\\pc_col_lantern_05.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GLantern2",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_de_lantern_02.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GLantern6",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_de_lantern_06.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GLanterngrn",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantgl_grn01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GLanternred",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantgl_red02.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GLanternyel",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantgl_yel01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Lantern0AABDwrn",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "OAAB\\l\\dwrv_lantern.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPap1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_de_lantern_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPap10",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_de_lantern_10.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPap11",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_de_lantern_11.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPap14",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_de_lantern_14.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPap5",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_de_lantern_05.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPap7",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_de_lantern_07.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapblu1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantern_blu_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapblu4",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantern_blu_04.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapgrn1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantern_grn_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapgrn4",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantern_grn_04.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPappur1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantern_prp_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPappur4",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantern_prp_04.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapyel1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantern_ylw_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapyel4",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\tr_l_de_lantern_ylw_04.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "orclan1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "sky\\l\\sky_lgt_orc_lantn_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "orclan2",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "sky\\l\\sky_lgt_orc_lantn_02.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TravLantern1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_com_lantern_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TravLantern2",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "l\\light_com_lantern_02.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TRIndorilGRLan1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\TR_l_de_MhLant_gr_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TRIndorilGRLan2",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\TR_l_de_MhLant_gr_02.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TRIndorilGRLan3",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\TR_l_de_MhLant_gr_03.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TRIndorilLan1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\TR_l_de_MhLant_whi_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TRIndorilLan2",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\TR_l_de_MhLant_whi_02.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TRIndorilLan3",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\TR_l_de_MhLant_whi_03.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TRIndorilPurLan1",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\TR_l_de_MhLant_pr_01.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TRIndorilPurLan2",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\TR_l_de_MhLant_pr_02.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TRIndorilPurLan3",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "tr\\l\\TR_l_de_MhLant_pr_03.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "woodlan",
+    "data": {
+      "part": "Hand",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "sky\\l\\sky_light_nord_lat_04.nif"
+  },
+  {
+    "type": "Enchantment",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Lantern",
+    "data": {
+      "enchant_type": "ConstantEffect",
+      "enchant_cost": 0,
+      "max_charge": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "Light",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 1,
+        "min_magnitude": 10,
+        "max_magnitude": 10
+      }
+    ]
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "foriegnlanterntrader",
+    "name": "Ja'dahna",
+    "mesh": "base_animKnA.nif",
+    "race": "T_Els_Dagi-raht",
+    "class": "Trader Service",
+    "faction": "",
+    "head": "T_B_Kdr_HeadFemale_01",
+    "hair": "T_B_Kdr_HairFemale_03",
+    "npc_flags": 9,
+    "data": {
+      "level": 1,
+      "stats": {
+        "attributes": [
+          35,
+          40,
+          50,
+          50,
+          50,
+          25,
+          40,
+          40
+        ],
+        "skills": [
+          20,
+          10,
+          10,
+          10,
+          20,
+          10,
+          10,
+          10,
+          15,
+          5,
+          10,
+          5,
+          10,
+          5,
+          30,
+          5,
+          5,
+          15,
+          30,
+          40,
+          30,
+          5,
+          5,
+          5,
+          30,
+          30,
+          20
+        ],
+        "health": 30,
+        "magicka": 80,
+        "fatigue": 160
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 150
+    },
+    "inventory": [
+      [
+        1,
+        "common_robe_04"
+      ],
+      [
+        1,
+        "keyforiegnchest"
+      ]
+    ],
+    "spells": [],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 0,
+      "services": 130
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 0,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 0,
+        "idle6": 0,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "glasslanterntrader",
+    "name": "Indovan Gavlor",
+    "race": "Dark Elf",
+    "class": "Trader Service",
+    "faction": "",
+    "head": "T_B_De_HeadMaleTR_24",
+    "hair": "T_B_De_HairMaleTR_20",
+    "npc_flags": 8,
+    "data": {
+      "level": 1,
+      "stats": {
+        "attributes": [
+          50,
+          40,
+          30,
+          40,
+          50,
+          40,
+          40,
+          40
+        ],
+        "skills": [
+          20,
+          10,
+          10,
+          10,
+          20,
+          15,
+          10,
+          10,
+          15,
+          5,
+          15,
+          5,
+          5,
+          5,
+          35,
+          5,
+          5,
+          15,
+          30,
+          30,
+          15,
+          10,
+          15,
+          10,
+          30,
+          30,
+          15
+        ],
+        "health": 45,
+        "magicka": 80,
+        "fatigue": 160
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 150
+    },
+    "inventory": [
+      [
+        1,
+        "common_pants_04_b"
+      ],
+      [
+        1,
+        "common_shirt_07"
+      ],
+      [
+        1,
+        "common_shoes_05"
+      ]
+    ],
+    "spells": [],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 0,
+      "services": 130
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 512,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 0,
+        "idle6": 0,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "paperlanterntrader",
+    "name": "Moviha Fataro",
+    "mesh": "base_anim_female.nif",
+    "script": "PaperLanScript",
+    "race": "Dark Elf",
+    "class": "Trader Service",
+    "faction": "",
+    "head": "T_B_De_HeadFemTR_11",
+    "hair": "b_n_dark elf_f_hair_21",
+    "npc_flags": 9,
+    "data": {
+      "level": 1,
+      "stats": {
+        "attributes": [
+          50,
+          40,
+          30,
+          40,
+          50,
+          30,
+          50,
+          40
+        ],
+        "skills": [
+          20,
+          10,
+          10,
+          10,
+          20,
+          15,
+          10,
+          10,
+          15,
+          5,
+          15,
+          5,
+          5,
+          5,
+          35,
+          5,
+          5,
+          15,
+          30,
+          30,
+          15,
+          10,
+          15,
+          10,
+          30,
+          30,
+          15
+        ],
+        "health": 40,
+        "magicka": 80,
+        "fatigue": 150
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 250
+    },
+    "inventory": [
+      [
+        1,
+        "common_shirt_04_b"
+      ],
+      [
+        1,
+        "common_shoes_04"
+      ],
+      [
+        1,
+        "common_skirt_06"
+      ],
+      [
+        1,
+        "MovihaFatarokey"
+      ]
+    ],
+    "spells": [],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 0,
+      "services": 130
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 0,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 0,
+        "idle6": 0,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ashl1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 20,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Ashlander Lantern",
+    "mesh": "l\\ash1_gnd.nif",
+    "icon": "lanterns\\ash1.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "ash1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ashl2",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 20,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Ashlander Lantern",
+    "mesh": "l\\ash2_gnd.nif",
+    "icon": "lanterns\\ash2.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "ash2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ashl3",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 20,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Ashlander Lantern",
+    "mesh": "l\\ash3_gnd.nif",
+    "icon": "lanterns\\ash3.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "ash3",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ashl4",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 20,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Ashlander Lantern",
+    "mesh": "l\\ash4_gnd.nif",
+    "icon": "lanterns\\ash4.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "ash4",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ashl5",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 20,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Ashlander Lantern",
+    "mesh": "l\\ash5_gnd.nif",
+    "icon": "lanterns\\ash5.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "ash5",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ashl6",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 20,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Ashlander Lantern",
+    "mesh": "l\\ash6_gnd.nif",
+    "icon": "lanterns\\ash6.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "ash6",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ashl7",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 20,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Ashlander Lantern",
+    "mesh": "l\\ash7_gnd.nif",
+    "icon": "lanterns\\ash7.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "ash7",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "cavernlant",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 8,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Cavern Lantern",
+    "mesh": "OAAB\\l\\cavern_Lantern.nif",
+    "icon": "OAAB\\l\\cavern_Lantern.tga",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "cavelant",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "colovianlant2",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 15,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Colovian Lantern",
+    "mesh": "pc\\l\\pc_col_lantern_02.nif",
+    "icon": "pc\\l\\pc_col_lantern_02.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "colov2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "colovianlant3",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 15,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Colovian Lantern",
+    "mesh": "pc\\l\\pc_col_lantern_03.nif",
+    "icon": "pc\\l\\pc_col_lantern_03.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "colov3",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "colovianlant4",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 15,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Colovian Lantern",
+    "mesh": "pc\\l\\pc_col_lantern_04.nif",
+    "icon": "pc\\l\\pc_col_lantern_04.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "colov4",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "colovianlant5",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 15,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Colovian Lantern",
+    "mesh": "pc\\l\\pc_col_lantern_05.nif",
+    "icon": "pc\\l\\pc_col_lantern_05.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "colov5",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GlassLantern2",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 12,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Glass Lantern",
+    "mesh": "l\\light_de_lantern_02.nif",
+    "icon": "L\\light_de_lantern_02.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "GLantern2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GlassLantern6",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 12,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Glass Lantern",
+    "mesh": "l\\light_de_lantern_06.nif",
+    "icon": "L\\light_de_lantern_06.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "GLantern6",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GlassLanterngrn",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 12,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Glass Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantgl_grn01.nif",
+    "icon": "tr\\l\\tr_l_de_lantg_grn01.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "GLanterngrn",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GlassLanternred",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 12,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Glass Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantgl_red02.nif",
+    "icon": "tr\\l\\tr_l_de_lantg_red02.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "GLanternred",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "GlassLanternyel",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 12,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Glass Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantgl_yel01.nif",
+    "icon": "tr\\l\\tr_l_de_lantg_yel01.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "GLanternyel",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Indoril1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 4.0,
+      "value": 24,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Indoril Lantern",
+    "mesh": "tr\\l\\TR_l_de_MhLant_whi_01.nif",
+    "icon": "tr\\l\\TR_l_de_MhLant_whi_01.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TRIndorilLan1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Indoril2",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 4.0,
+      "value": 24,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Indoril Lantern",
+    "mesh": "tr\\l\\TR_l_de_MhLant_whi_02.nif",
+    "icon": "tr\\l\\TR_l_de_MhLant_whi_02.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TRIndorilLan2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Indoril3",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 4.0,
+      "value": 24,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Indoril Lantern",
+    "mesh": "tr\\l\\TR_l_de_MhLant_whi_03.nif",
+    "icon": "tr\\l\\TR_l_de_MhLant_whi_03.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TRIndorilLan3",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "IndorilGreen1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 4.0,
+      "value": 24,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Indoril Lantern",
+    "mesh": "tr\\l\\TR_l_de_MhLant_gr_01.nif",
+    "icon": "tr\\l\\TR_l_de_MhLant_gr_01.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TRIndorilGRLan1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "IndorilGreen2",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 4.0,
+      "value": 24,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Indoril Lantern",
+    "mesh": "tr\\l\\TR_l_de_MhLant_gr_02.nif",
+    "icon": "tr\\l\\TR_l_de_MhLant_gr_02.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TRIndorilGRLan2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "IndorilGreen3",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 4.0,
+      "value": 24,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Indoril Lantern",
+    "mesh": "tr\\l\\TR_l_de_MhLant_gr_03.nif",
+    "icon": "tr\\l\\TR_l_de_MhLant_gr_03.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TRIndorilGRLan3",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "IndorilPur1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 4.0,
+      "value": 24,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Indoril Lantern",
+    "mesh": "tr\\l\\TR_l_de_MhLant_pr_01.nif",
+    "icon": "tr\\l\\TR_l_de_MhLant_pr_01.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TRIndorilPurLan1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "IndorilPur2",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 4.0,
+      "value": 24,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Indoril Lantern",
+    "mesh": "tr\\l\\TR_l_de_MhLant_pr_02.nif",
+    "icon": "tr\\l\\TR_l_de_MhLant_pr_02.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TRIndorilPurLan2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "IndorilPur3",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 4.0,
+      "value": 24,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Indoril Lantern",
+    "mesh": "tr\\l\\TR_l_de_MhLant_pr_03.nif",
+    "icon": "tr\\l\\TR_l_de_MhLant_pr_03.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TRIndorilPurLan3",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternDwem",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 110,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Dwemer Lantern",
+    "mesh": "OAAB\\l\\dwrv_lantern.nif",
+    "icon": "OAAB\\l\\dwrv_lantern.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "Lantern0AABDwrn",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaper1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "l\\light_de_lantern_01.nif",
+    "icon": "L\\light_de_lantern_01.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPap1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaper10",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "l\\light_de_lantern_10.nif",
+    "icon": "L\\light_de_lantern_10.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPap10",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaper11",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "l\\light_de_lantern_11.nif",
+    "icon": "L\\light_de_lantern_11.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPap11",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaper14",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "l\\light_de_lantern_14.nif",
+    "icon": "L\\light_de_lantern_14.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPap14",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaper5",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "l\\light_de_lantern_05.nif",
+    "icon": "L\\light_de_lantern_05.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPap5",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaper7",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "l\\light_de_lantern_07.nif",
+    "icon": "L\\light_de_lantern_07.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPap7",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaperblue1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantern_blu_01.nif",
+    "icon": "tr\\l\\tr_de_lntrn1_blu.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPapblu1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaperblue4",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantern_blu_04.nif",
+    "icon": "tr\\l\\tr_de_lntrn4_blu.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPapblu4",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapergrn1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantern_grn_01.nif",
+    "icon": "tr\\l\\tr_de_lntrn1_grn.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPapgrn1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapergrn4",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantern_grn_04.nif",
+    "icon": "tr\\l\\tr_de_lntrn4_grn.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPapgrn4",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaperprp1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantern_prp_01.nif",
+    "icon": "tr\\l\\tr_de_lntrn1_prp.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPappur1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPaperprp4",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantern_prp_04.nif",
+    "icon": "tr\\l\\tr_de_lntrn4_prp.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPappur4",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapery1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantern_ylw_01.nif",
+    "icon": "tr\\l\\tr_de_lntrn1_ylw.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPapyel1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "LanternPapery4",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Paper Lantern",
+    "mesh": "tr\\l\\tr_l_de_lantern_ylw_04.nif",
+    "icon": "tr\\l\\tr_de_lntrn4_ylw.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "LanternPapyel4",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "orclantern1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 7,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Orc Lantern",
+    "mesh": "sky\\l\\sky_lgt_orc_lantn_01.nif",
+    "icon": "sky\\l\\tx_orc_lantern01.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "orclan1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "orclantern2",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 6.0,
+      "value": 13,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Orc Lantern",
+    "mesh": "sky\\l\\sky_lgt_orc_lantn_02.nif",
+    "icon": "sky\\l\\tx_orc_lantern02.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "orclan2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TravelLantern1",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Travel Lantern",
+    "mesh": "l\\light_com_lantern_01.nif",
+    "icon": "L\\light_com_lantern_01.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TravLantern1",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TravelLantern2",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 3.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Travel Lantern",
+    "mesh": "l\\light_com_lantern_02.nif",
+    "icon": "L\\light_com_lantern_02.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "TravLantern2",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "woodlantern",
+    "data": {
+      "armor_type": "LeftGauntlet",
+      "weight": 5.0,
+      "value": 10,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 0
+    },
+    "name": "Wearable Wooden Lantern",
+    "mesh": "sky\\l\\sky_light_nord_lat_04.nif",
+    "icon": "sky\\l\\tx_light_nord_lat_04.dds",
+    "enchanting": "Lantern",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftHand",
+        "male_bodypart": "woodlan",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Activator",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1lanternban",
+    "name": "Moviha Fataro: Lantern Maker",
+    "mesh": "OAAB\\u\\de_banner_inn_03.nif",
+    "script": "OutsideBanner"
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Seyda Neen",
+    "data": {
+      "flags": 70,
+      "grid": [
+        -2,
+        -9
+      ]
+    },
+    "region": "Bitter Coast Region",
+    "map_color": [
+      202,
+      165,
+      96,
+      0
+    ],
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 1,
+        "id": "Ex_De_Shack_Door",
+        "temporary": false,
+        "translation": [
+          -11641.692,
+          -73020.64,
+          158.30817
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5515977
+        ],
+        "door_destination_coords": [
+          2.6922712,
+          -0.3612671,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "door_destination_cell": "Seyda Neen, Ja'dahna's Shack"
+      },
+      {
+        "mast_index": 1,
+        "refr_index": 321234,
+        "id": "ex_de_shack_03",
+        "temporary": true,
+        "translation": [
+          -11454.518,
+          -73050.31,
+          167.93193
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.0831876
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 2,
+        "id": "ex_de_shack_03",
+        "temporary": true,
+        "translation": [
+          -14022.677,
+          -71522.71,
+          156.31631
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          2.183185
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Balmora",
+    "data": {
+      "flags": 6,
+      "grid": [
+        -3,
+        -2
+      ]
+    },
+    "region": "West Gash Region",
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 3,
+        "id": "paperlanterntrader",
+        "temporary": false,
+        "translation": [
+          -22602.062,
+          -16083.635,
+          504.83362
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.39999998
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 4,
+        "id": "paperlanternchest",
+        "temporary": true,
+        "translation": [
+          -22570.057,
+          -16038.091,
+          519.47614
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.43109632
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0,
+        "lock_level": 75,
+        "key": "MovihaFatarokey"
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 5,
+        "id": "LanternPapery1",
+        "temporary": true,
+        "translation": [
+          -22546.213,
+          -16040.665,
+          594.6845
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.3999999
+        ],
+        "owner": "paperlanterntrader",
+        "charge_left": 0,
+        "health_left": 100
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 6,
+        "id": "LanternPapergrn4",
+        "temporary": true,
+        "translation": [
+          -22595.553,
+          -15992.181,
+          594.23004
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0
+        ],
+        "owner": "paperlanterntrader",
+        "charge_left": 0,
+        "health_left": 100
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 7,
+        "id": "furn_de_ex_table_03",
+        "temporary": true,
+        "translation": [
+          -22559.975,
+          -16018.754,
+          526.2803
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.577925
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 8,
+        "id": "light_de_streetlight_01_128",
+        "temporary": true,
+        "translation": [
+          -22413.145,
+          -16019.491,
+          714.2661
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 9,
+        "id": "light_de_streetlight_01_128",
+        "temporary": true,
+        "translation": [
+          -22653.348,
+          -15908.012,
+          714.2661
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 10,
+        "id": "furn_de_overhang_09",
+        "temporary": true,
+        "translation": [
+          -22577.078,
+          -16058.625,
+          759.2168
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.577925
+        ],
+        "scale": 1.4000001
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 11,
+        "id": "1lanternban",
+        "temporary": true,
+        "translation": [
+          -22539.695,
+          -15975.738,
+          674.56616
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.577925
+        ],
+        "scale": 0.5
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Balmora",
+    "data": {
+      "flags": 70,
+      "grid": [
+        -3,
+        -3
+      ]
+    },
+    "region": "West Gash Region",
+    "map_color": [
+      202,
+      165,
+      96,
+      0
+    ],
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 12,
+        "id": "ex_h_trapdoor_01",
+        "temporary": false,
+        "translation": [
+          -23551.967,
+          -19738.33,
+          1203.8168
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.5850534
+        ],
+        "door_destination_coords": [
+          -3866.5332,
+          5323.6367,
+          -133.92181,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "door_destination_cell": "Balmora, Moviha Fataro's House"
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 13,
+        "id": "hlaalu_loaddoor_ 02",
+        "temporary": false,
+        "translation": [
+          -23300.412,
+          -19546.062,
+          1002.8769
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.0142574
+        ],
+        "door_destination_coords": [
+          -4183.173,
+          5327.7993,
+          -133.92181,
+          0.0,
+          0.0,
+          1.5707964
+        ],
+        "door_destination_cell": "Balmora, Moviha Fataro's House"
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 14,
+        "id": "ex_hlaalu_dsteps_03",
+        "temporary": true,
+        "translation": [
+          -23218.41,
+          -19475.305,
+          901.6753
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.9831882
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 15,
+        "id": "T_De_SetHla_X_Arv_Overhang_02",
+        "temporary": true,
+        "translation": [
+          -23373.816,
+          -19757.049,
+          1218.4143
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.005531
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 16,
+        "id": "Furn_de_rug_big_02",
+        "temporary": true,
+        "translation": [
+          -23343.6,
+          -19699.643,
+          1213.8005
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.0142574
+        ],
+        "scale": 1.45
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 17,
+        "id": "furn_de_r_chair_03",
+        "temporary": true,
+        "translation": [
+          -23266.56,
+          -19801.846,
+          1263.7028
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.883188
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 18,
+        "id": "furn_de_r_chair_03",
+        "temporary": true,
+        "translation": [
+          -23413.746,
+          -19616.393,
+          1263.7028
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.9831867
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 19,
+        "id": "furn_de_r_table_07",
+        "temporary": true,
+        "translation": [
+          -23298.162,
+          -19676.676,
+          1227.6865
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.0142574
+        ],
+        "scale": 0.70000005
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 20,
+        "id": "ex_hlaalu_b_28",
+        "temporary": true,
+        "translation": [
+          -23280.47,
+          -19866.072,
+          964.8523
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.007869
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 21,
+        "id": "T_De_Var_LanternYellow04_256",
+        "temporary": true,
+        "translation": [
+          -23317.023,
+          -19651.49,
+          1283.0742
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.9000002
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 1125515264
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 22,
+        "id": "AB_Mus_DeLyre",
+        "temporary": true,
+        "translation": [
+          -23273.92,
+          -19705.0,
+          1253.3718
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 23,
+        "id": "LanternPaper7",
+        "temporary": true,
+        "translation": [
+          -22503.92,
+          -16024.095,
+          595.04
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "charge_left": 0,
+        "health_left": 100
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 24,
+        "id": "furn_de_lightpost_01",
+        "temporary": true,
+        "translation": [
+          -23262.668,
+          -19401.59,
+          1068.8042
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.5850534
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 25,
+        "id": "light_de_streetlight_01_128",
+        "temporary": true,
+        "translation": [
+          -23239.236,
+          -19382.963,
+          1095.762
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.5850534
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 26,
+        "id": "ex_hlaalu_win_01",
+        "temporary": true,
+        "translation": [
+          -23117.18,
+          -19657.834,
+          1011.3176
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.0142574
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Ahemmusa Camp, Lanabi's Yurt",
+    "data": {
+      "flags": 5,
+      "grid": [
+        0,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 27,
+        "id": "lanabibask",
+        "temporary": true,
+        "translation": [
+          174.74925,
+          397.39746,
+          -230.07103
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": 0.6,
+        "owner": "lanabi",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ToddTest",
+    "data": {
+      "flags": 1,
+      "grid": [
+        0,
+        1065353216
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 28,
+        "id": "lanternchest",
+        "temporary": true,
+        "translation": [
+          2233.158,
+          3103.424,
+          -174.92343
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Vivec, St. Delyn Glassworker's Hall",
+    "data": {
+      "flags": 5,
+      "grid": [
+        2241090,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 29,
+        "id": "glasslanterntrader",
+        "temporary": false,
+        "translation": [
+          3782.1182,
+          3804.5627,
+          15552.931
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.50000006
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 30,
+        "id": "glasslanternchest",
+        "temporary": true,
+        "translation": [
+          3604.0874,
+          3861.6597,
+          15722.697
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "glasslanterntrader",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Balmora, Moviha Fataro's House",
+    "data": {
+      "flags": 5,
+      "grid": [
+        0,
+        1065353216
+      ]
+    },
+    "water_height": 0.0,
+    "atmosphere_data": {
+      "ambient_color": [
+        71,
+        71,
+        71,
+        0
+      ],
+      "sunlight_color": [
+        242,
+        217,
+        217,
+        0
+      ],
+      "fog_color": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "fog_density": 1.0
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 31,
+        "id": "in_hlaalu_loaddoor_01",
+        "temporary": false,
+        "translation": [
+          -4250.533,
+          5323.6367,
+          -133.92181
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          3.1415927
+        ],
+        "door_destination_coords": [
+          -23225.22,
+          -19484.076,
+          990.3814,
+          0.0,
+          -0.0,
+          0.8
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 32,
+        "id": "in_h_trapdoor_01",
+        "temporary": false,
+        "translation": [
+          -3867.714,
+          5307.6562,
+          -2.0475616
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          3.1415927
+        ],
+        "door_destination_coords": [
+          -23467.434,
+          -19836.773,
+          1325.4918,
+          0.0,
+          -0.0,
+          2.4000025
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 33,
+        "id": "in_hlaalu_room_corner",
+        "temporary": true,
+        "translation": [
+          -3866.5332,
+          5323.6367,
+          -133.92181
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          4.712389
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 34,
+        "id": "in_hlaalu_room_side",
+        "temporary": true,
+        "translation": [
+          -3866.5332,
+          5579.636,
+          -133.92181
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.5707964
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 35,
+        "id": "in_hlaalu_room_side",
+        "temporary": true,
+        "translation": [
+          -4122.533,
+          5579.636,
+          -133.92181
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          4.712389
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 36,
+        "id": "in_hlaalu_room_stairsr",
+        "temporary": true,
+        "translation": [
+          -3866.5332,
+          5835.636,
+          -261.9218
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          3.1415927
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 37,
+        "id": "in_hlaalu_room_corner",
+        "temporary": true,
+        "translation": [
+          -4121.956,
+          5835.6323,
+          -133.92181
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.5707964
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 38,
+        "id": "in_hlaalu_doorjamb_load",
+        "temporary": true,
+        "translation": [
+          -4250.533,
+          5323.6367,
+          -133.92181
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          3.141593
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 39,
+        "id": "in_hlaalu_room_corner",
+        "temporary": true,
+        "translation": [
+          -3610.5332,
+          5835.636,
+          -389.92184
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          3.1415927
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 40,
+        "id": "in_hlaalu_room_corner",
+        "temporary": true,
+        "translation": [
+          -3610.5332,
+          5579.636,
+          -389.92184
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          4.712389
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 41,
+        "id": "in_hlaalu_room_corner",
+        "temporary": true,
+        "translation": [
+          -3866.5261,
+          5579.6313,
+          -389.92184
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 42,
+        "id": "in_hlaalu_room_door2",
+        "temporary": true,
+        "translation": [
+          -4122.533,
+          5323.6367,
+          -133.92181
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          4.712389
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 43,
+        "id": "active_de_pr_bed_23",
+        "temporary": true,
+        "translation": [
+          -3843.1384,
+          5550.4795,
+          -468.07147
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 44,
+        "id": "AB_Furn_DeMidRug03Circle",
+        "temporary": true,
+        "translation": [
+          -3630.0652,
+          5827.3413,
+          -512.3678
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 45,
+        "id": "de_r_closet_01_fcloth01",
+        "temporary": true,
+        "translation": [
+          -3562.7737,
+          5598.8467,
+          -433.38266
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.5707964
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 46,
+        "id": "de_r_drawers_01_empty",
+        "temporary": true,
+        "translation": [
+          -3550.9053,
+          5825.841,
+          -464.50604
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.5707964
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 47,
+        "id": "T_Com_Paper_Blue_01",
+        "temporary": true,
+        "translation": [
+          -4142.537,
+          5502.6533,
+          -186.0065
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.2831874
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 48,
+        "id": "T_Com_Paper_Green_01",
+        "temporary": true,
+        "translation": [
+          -4148.157,
+          5551.35,
+          -186.67865
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.983186
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 49,
+        "id": "T_Com_Paper_Purple_01",
+        "temporary": true,
+        "translation": [
+          -4154.6396,
+          5526.345,
+          -186.7647
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.6
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 50,
+        "id": "T_Com_Paper_Red_01",
+        "temporary": true,
+        "translation": [
+          -4132.501,
+          5532.4243,
+          -186.6949
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.5
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 51,
+        "id": "furn_de_r_table_03",
+        "temporary": true,
+        "translation": [
+          -4160.05,
+          5561.616,
+          -222.03775
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5707964
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 52,
+        "id": "furn_de_r_chair_03",
+        "temporary": true,
+        "translation": [
+          -4002.0957,
+          5367.8003,
+          -212.9301
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.2000031
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 53,
+        "id": "T_Com_Paper_Blue_01",
+        "temporary": true,
+        "translation": [
+          -4142.537,
+          5502.6533,
+          -186.84215
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.883186
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 54,
+        "id": "T_Com_Paper_Blue_01",
+        "temporary": true,
+        "translation": [
+          -4142.537,
+          5502.6533,
+          -186.61942
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.20000122
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 55,
+        "id": "T_Com_Paintpot_01",
+        "temporary": true,
+        "translation": [
+          -3799.6582,
+          5596.358,
+          -238.27153
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.083189
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 56,
+        "id": "T_Com_PaintpotG_01",
+        "temporary": true,
+        "translation": [
+          -4167.8506,
+          5570.5566,
+          -181.36485
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 57,
+        "id": "T_Com_PaintpotR_02",
+        "temporary": true,
+        "translation": [
+          -4160.0234,
+          5586.47,
+          -181.19576
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 58,
+        "id": "T_Com_Paper_Purple_01",
+        "temporary": true,
+        "translation": [
+          -4154.0938,
+          5526.5166,
+          -185.88751
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.883186
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 59,
+        "id": "T_Com_Paper_Green_01",
+        "temporary": true,
+        "translation": [
+          -4168.2393,
+          5549.811,
+          -186.67865
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.40000075
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 60,
+        "id": "T_Com_Paper_Red_01",
+        "temporary": true,
+        "translation": [
+          -4167.7505,
+          5505.6655,
+          -186.76411
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.6
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 61,
+        "id": "T_Com_Paper_Red_01",
+        "temporary": true,
+        "translation": [
+          -4167.7505,
+          5505.6655,
+          -186.2026
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.3000001
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 62,
+        "id": "T_Com_Paper_Red_01",
+        "temporary": true,
+        "translation": [
+          -4167.7505,
+          5505.6655,
+          -185.54791
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.7000002
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 63,
+        "id": "T_Com_Paper_Red_01",
+        "temporary": true,
+        "translation": [
+          -4167.7505,
+          5505.6655,
+          -185.23036
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.5
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 64,
+        "id": "T_Com_PaintpotY_02",
+        "temporary": true,
+        "translation": [
+          -4146.802,
+          5598.335,
+          -181.64674
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 65,
+        "id": "T_Com_PaintpotB_02",
+        "temporary": true,
+        "translation": [
+          -4183.4136,
+          5582.116,
+          -181.6709
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 66,
+        "id": "emptylantern",
+        "temporary": true,
+        "translation": [
+          -3807.2974,
+          5548.2227,
+          -84.76058
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.1000001
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 67,
+        "id": "emptylantern2",
+        "temporary": true,
+        "translation": [
+          -3805.325,
+          5604.9126,
+          -109.87374
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.3
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 68,
+        "id": "Light_De_Lantern_01_128",
+        "temporary": true,
+        "translation": [
+          -4187.642,
+          5525.81,
+          -150.85704
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.1000001
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 1125515264
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 69,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -238.09654
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.8000093
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 70,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -238.64352
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.2000103
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 71,
+        "id": "furn_com_r_bookshelf_01",
+        "temporary": true,
+        "translation": [
+          -3805.0415,
+          5558.89,
+          -163.21513
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5707964
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 72,
+        "id": "furn_planter_01",
+        "temporary": true,
+        "translation": [
+          -3822.0103,
+          5422.156,
+          -259.41394
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 73,
+        "id": "AB_Fx_PaintSplatter02",
+        "temporary": true,
+        "translation": [
+          -4095.054,
+          5523.9,
+          -256.53027
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.2
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 74,
+        "id": "furn_planter_04",
+        "temporary": true,
+        "translation": [
+          -4157.8145,
+          5800.0073,
+          -255.01016
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.5707964
+        ],
+        "scale": 0.8
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 75,
+        "id": "Furn_De_r_Table_09",
+        "temporary": true,
+        "translation": [
+          -4018.3906,
+          5284.3184,
+          -228.00883
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 76,
+        "id": "furn_de_r_chair_03",
+        "temporary": true,
+        "translation": [
+          -4049.283,
+          5580.3657,
+          -212.9301
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.2000023
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 77,
+        "id": "furn_planter_01",
+        "temporary": true,
+        "translation": [
+          -3822.0103,
+          5691.425,
+          -259.41394
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 78,
+        "id": "BookSkill_Armorer4",
+        "temporary": true,
+        "translation": [
+          -3798.9592,
+          5621.329,
+          -153.11397
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 79,
+        "id": "bk_tamrielicreligions",
+        "temporary": true,
+        "translation": [
+          -3798.154,
+          5611.9556,
+          -154.11397
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 80,
+        "id": "bk_AedraAndDaedra",
+        "temporary": true,
+        "translation": [
+          -3798.962,
+          5607.1426,
+          -153.11397
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 81,
+        "id": "bk_AncestorsAndTheDunmer",
+        "temporary": true,
+        "translation": [
+          -3799.817,
+          5602.6143,
+          -151.61397
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 82,
+        "id": "bk_LivesOfTheSaints",
+        "temporary": true,
+        "translation": [
+          -3799.2744,
+          5616.636,
+          -153.11397
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 83,
+        "id": "bk_OverviewOfGodsAndWorship",
+        "temporary": true,
+        "translation": [
+          -3799.0396,
+          5625.927,
+          -151.61395
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 84,
+        "id": "bk_RealBarenziah1",
+        "temporary": true,
+        "translation": [
+          -3798.2434,
+          5511.083,
+          -144.87155
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 85,
+        "id": "bk_realbarenziah2",
+        "temporary": true,
+        "translation": [
+          -3798.8052,
+          5506.3364,
+          -144.87155
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 86,
+        "id": "bk_realbarenziah3",
+        "temporary": true,
+        "translation": [
+          -3798.3286,
+          5501.6543,
+          -144.9363
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 87,
+        "id": "bk_realbarenziah4",
+        "temporary": true,
+        "translation": [
+          -3799.316,
+          5496.9526,
+          -144.87154
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 88,
+        "id": "bk_RealBarenziah5",
+        "temporary": true,
+        "translation": [
+          -3799.4868,
+          5491.847,
+          -144.87155
+        ],
+        "rotation": [
+          -1.5707964,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 89,
+        "id": "T_De_BookendPoor_01",
+        "temporary": true,
+        "translation": [
+          -3799.6724,
+          5523.1895,
+          -141.76453
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.683187
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 90,
+        "id": "T_De_BookendPoor_01",
+        "temporary": true,
+        "translation": [
+          -3799.6724,
+          5590.7573,
+          -141.76453
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5707964
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 91,
+        "id": "AB_Misc_CeramicTeapot01",
+        "temporary": true,
+        "translation": [
+          -3804.3088,
+          5571.662,
+          -162.0379
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.0000002
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 92,
+        "id": "AB_Misc_DeTeaBall_01",
+        "temporary": true,
+        "translation": [
+          -3807.4197,
+          5553.9053,
+          -162.59607
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.800001
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 93,
+        "id": "AB_Misc_DeTeaBall_01",
+        "temporary": true,
+        "translation": [
+          -3799.6216,
+          5557.463,
+          -162.59607
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.8000002
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 94,
+        "id": "AB_Misc_DeCeramicCup_02",
+        "temporary": true,
+        "translation": [
+          -3808.363,
+          5537.6006,
+          -162.7102
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.3000001
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 95,
+        "id": "AB_Misc_DeCeramicCup_02",
+        "temporary": true,
+        "translation": [
+          -3797.7678,
+          5545.1396,
+          -162.7102
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 96,
+        "id": "light_de_lantern_10",
+        "temporary": true,
+        "translation": [
+          -3800.8467,
+          5513.18,
+          -85.76304
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.783186
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 1125515264
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 97,
+        "id": "light_de_lantern_14",
+        "temporary": true,
+        "translation": [
+          -3802.2585,
+          5605.506,
+          -171.2477
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.1000025
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 1125515264
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 98,
+        "id": "AB_Misc_DeCeramicFlask_01",
+        "temporary": true,
+        "translation": [
+          -3799.4119,
+          5530.154,
+          -206.13475
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 99,
+        "id": "AB_Misc_DeCeramicPot_01",
+        "temporary": true,
+        "translation": [
+          -3807.1838,
+          5507.9326,
+          -206.22343
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.5
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 100,
+        "id": "misc_de_bowl_orange_green_01",
+        "temporary": true,
+        "translation": [
+          -3807.3762,
+          5554.9336,
+          -198.58353
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.1
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 101,
+        "id": "AB_Misc_DeCeramicCup_01",
+        "temporary": true,
+        "translation": [
+          -3805.6711,
+          5586.279,
+          -206.18092
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.000005
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 102,
+        "id": "AB_Misc_DeCeramicCup_01",
+        "temporary": true,
+        "translation": [
+          -3797.9856,
+          5573.735,
+          -206.18092
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.3
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 103,
+        "id": "T_Com_Paintpot_01",
+        "temporary": true,
+        "translation": [
+          -4176.265,
+          5596.396,
+          -181.7092
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 104,
+        "id": "T_Com_Paintpot_01",
+        "temporary": true,
+        "translation": [
+          -3797.3289,
+          5618.315,
+          -238.27153
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.6
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 105,
+        "id": "T_Com_Paintpot_01",
+        "temporary": true,
+        "translation": [
+          -3806.2732,
+          5500.5566,
+          -238.27153
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.38319
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 106,
+        "id": "T_Com_PaintpotB_02",
+        "temporary": true,
+        "translation": [
+          -3798.9539,
+          5581.205,
+          -238.275
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.79999995
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 107,
+        "id": "T_Com_PaintpotG_02",
+        "temporary": true,
+        "translation": [
+          -3809.3835,
+          5569.88,
+          -238.26959
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.3
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 108,
+        "id": "T_Com_PaintpotY_02",
+        "temporary": true,
+        "translation": [
+          -3796.595,
+          5554.0405,
+          -238.27356
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 109,
+        "id": "T_Com_PaintpotR_02",
+        "temporary": true,
+        "translation": [
+          -3811.866,
+          5545.826,
+          -238.2727
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 110,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -4131.739,
+          5570.999,
+          -186.56813
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.5831866
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 111,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -4131.739,
+          5570.999,
+          -185.808
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.183187
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 112,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -242.48347
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.183187
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 113,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -242.96655
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.5831866
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 114,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -241.33743
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.383189
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 115,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -241.91046
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.78319
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 116,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -240.80502
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          6.183193
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 117,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -240.23201
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.783193
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 118,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -239.69962
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.3000079
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 119,
+        "id": "sc_paper plain",
+        "temporary": true,
+        "translation": [
+          -3802.972,
+          5522.03,
+          -239.1266
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.9000089
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 120,
+        "id": "T_Com_Paintpot_01",
+        "temporary": true,
+        "translation": [
+          -3809.82,
+          5606.919,
+          -238.27153
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.583187
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 121,
+        "id": "misc_imp_silverware_plate_01",
+        "temporary": true,
+        "translation": [
+          -4012.4067,
+          5307.1006,
+          -198.03905
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 122,
+        "id": "T_Imp_SilverWareCup_01",
+        "temporary": true,
+        "translation": [
+          -4033.5464,
+          5287.772,
+          -192.5954
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 123,
+        "id": "T_Imp_SilverWareDish_01",
+        "temporary": true,
+        "translation": [
+          -3994.2002,
+          5277.748,
+          -199.67897
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.683186
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 124,
+        "id": "misc_de_foldedcloth00",
+        "temporary": true,
+        "translation": [
+          -4040.7644,
+          5307.7944,
+          -199.06601
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.3
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 125,
+        "id": "misc_com_silverware_fork",
+        "temporary": true,
+        "translation": [
+          -4037.3865,
+          5310.097,
+          -196.54106
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.5
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 126,
+        "id": "misc_com_silverware_spoon",
+        "temporary": true,
+        "translation": [
+          -4041.2349,
+          5303.9478,
+          -196.48924
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.3
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 127,
+        "id": "ingred_scuttle_01",
+        "temporary": true,
+        "translation": [
+          -4016.7805,
+          5306.3774,
+          -197.40974
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 128,
+        "id": "food_kwama_egg_01",
+        "temporary": true,
+        "translation": [
+          -3988.3752,
+          5282.676,
+          -193.59317
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.3999999
+        ],
+        "scale": 0.5,
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 129,
+        "id": "ingred_bread_01",
+        "temporary": true,
+        "translation": [
+          -3998.1816,
+          5277.4307,
+          -192.6947
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.7000002
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 130,
+        "id": "ingred_crab_meat_01",
+        "temporary": true,
+        "translation": [
+          -4008.899,
+          5308.3433,
+          -196.89738
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.783186
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 131,
+        "id": "light_de_candle_06_64",
+        "temporary": true,
+        "translation": [
+          -4045.9978,
+          5270.026,
+          -189.91959
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 1123024896
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 132,
+        "id": "emptylantern",
+        "temporary": true,
+        "translation": [
+          -4160.485,
+          5473.2,
+          -150.7898
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 133,
+        "id": "emptylantern2",
+        "temporary": true,
+        "translation": [
+          -4169.363,
+          5631.4717,
+          -175.99435
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.4
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 134,
+        "id": "flora_black_anther_01",
+        "temporary": true,
+        "translation": [
+          -3835.9084,
+          5685.8877,
+          -168.0487
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.5831904
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 135,
+        "id": "flora_black_anther_01",
+        "temporary": true,
+        "translation": [
+          -3833.4448,
+          5413.7905,
+          -168.0487
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.0831876
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 136,
+        "id": "flora_bc_mushroom_07",
+        "temporary": true,
+        "translation": [
+          -4138.902,
+          5744.2476,
+          -208.68562
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 137,
+        "id": "flora_bc_mushroom_06",
+        "temporary": true,
+        "translation": [
+          -4166.144,
+          5799.224,
+          -179.74419
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.3
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 138,
+        "id": "flora_bc_mushroom_05",
+        "temporary": true,
+        "translation": [
+          -4158.7266,
+          5826.7773,
+          -192.2171
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.7
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 139,
+        "id": "flora_bc_mushroom_04",
+        "temporary": true,
+        "translation": [
+          -4148.386,
+          5874.0527,
+          -193.99141
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.2
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 140,
+        "id": "flora_bc_mushroom_03",
+        "temporary": true,
+        "translation": [
+          -4163.0225,
+          5727.0723,
+          -191.21523
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 141,
+        "id": "flora_bc_mushroom_01",
+        "temporary": true,
+        "translation": [
+          -4158.638,
+          5771.674,
+          -199.79132
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.3831863
+        ],
+        "scale": 0.8,
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 142,
+        "id": "flora_bc_mushroom_07",
+        "temporary": true,
+        "translation": [
+          -4143.029,
+          5852.637,
+          -204.83508
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.1000001
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 143,
+        "id": "flora_bc_mushroom_08",
+        "temporary": true,
+        "translation": [
+          -4139.784,
+          5796.277,
+          -228.11543
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.5000002
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 144,
+        "id": "flora_bc_mushroom_08",
+        "temporary": true,
+        "translation": [
+          -4164.098,
+          5749.5254,
+          -202.41336
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 145,
+        "id": "AB_Furn_DeRchRug01Circle",
+        "temporary": true,
+        "translation": [
+          -4160.318,
+          5325.622,
+          -257.7775
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": 0.8
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 146,
+        "id": "T_De_Furn_RugSmall_04",
+        "temporary": true,
+        "translation": [
+          -3871.4883,
+          5305.4536,
+          -256.27667
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 147,
+        "id": "T_De_Var_LanternGreen01_256",
+        "temporary": true,
+        "translation": [
+          -3546.3403,
+          5789.7896,
+          -379.8677
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.783186
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 1125515264
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 148,
+        "id": "AB_Misc_HairBrush",
+        "temporary": true,
+        "translation": [
+          -3548.7793,
+          5821.132,
+          -415.09735
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.7
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 149,
+        "id": "AB_Misc_HairSilverComb",
+        "temporary": true,
+        "translation": [
+          -3545.4678,
+          5846.395,
+          -415.76352
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.79999995
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 150,
+        "id": "amulet of light",
+        "temporary": true,
+        "translation": [
+          -3553.8237,
+          5873.37,
+          -415.79492
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0999999
+        ],
+        "owner": "paperlanterntrader",
+        "charge_left": 1103626240,
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 151,
+        "id": "common_belt_05",
+        "temporary": true,
+        "translation": [
+          -3542.2764,
+          5867.9326,
+          -414.2421
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.1000001
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 152,
+        "id": "misc_uni_pillow_01",
+        "temporary": true,
+        "translation": [
+          -3905.0276,
+          5553.0063,
+          -458.57596
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 153,
+        "id": "bk_BlueBookOfRiddles",
+        "temporary": true,
+        "translation": [
+          -3844.614,
+          5557.159,
+          -463.1844
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.6831884
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 154,
+        "id": "AB_Misc_LwVase",
+        "temporary": true,
+        "translation": [
+          -3561.4958,
+          5600.6235,
+          -353.84912
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.6000001
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 155,
+        "id": "urn_03",
+        "temporary": true,
+        "translation": [
+          -3564.4404,
+          5639.6816,
+          -332.77557
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.2000002
+        ],
+        "scale": 0.5,
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 156,
+        "id": "urn_04",
+        "temporary": true,
+        "translation": [
+          -3561.133,
+          5558.351,
+          -331.51758
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.3831863
+        ],
+        "scale": 0.5,
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 157,
+        "id": "T_Rga_PillowDec_02",
+        "temporary": true,
+        "translation": [
+          -3890.2908,
+          5553.26,
+          -458.4075
+        ],
+        "rotation": [
+          0.0,
+          5.77704,
+          0.0
+        ],
+        "owner": "paperlanterntrader",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Seyda Neen, Ja'dahna's Shack",
+    "data": {
+      "flags": 5,
+      "grid": [
+        0,
+        1065353216
+      ]
+    },
+    "water_height": 0.0,
+    "atmosphere_data": {
+      "ambient_color": [
+        71,
+        71,
+        71,
+        0
+      ],
+      "sunlight_color": [
+        242,
+        217,
+        217,
+        0
+      ],
+      "fog_color": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "fog_density": 1.0
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 158,
+        "id": "foriegnlanterntrader",
+        "temporary": false,
+        "translation": [
+          154.20345,
+          74.41275,
+          -113.07787
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.4000072
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 159,
+        "id": "in_de_shack_door",
+        "temporary": false,
+        "translation": [
+          -1.4920273,
+          -72.560486,
+          -28.190903
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        "door_destination_coords": [
+          -11706.728,
+          -73013.11,
+          159.29828,
+          0.0,
+          -0.0,
+          4.6831894
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 160,
+        "id": "in_de_shack_03",
+        "temporary": true,
+        "translation": [
+          52.064728,
+          110.81207,
+          -23.836319
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5707964
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 161,
+        "id": "active_de_bed_30",
+        "temporary": true,
+        "translation": [
+          115.919136,
+          192.1376,
+          -33.145226
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.7462908
+        ],
+        "scale": 0.8,
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 162,
+        "id": "furn_de_shack_post",
+        "temporary": true,
+        "translation": [
+          31.620888,
+          268.1013,
+          -40.97062
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.183193
+        ],
+        "scale": 0.8
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 163,
+        "id": "furn_de_shack_post",
+        "temporary": true,
+        "translation": [
+          199.22975,
+          115.834885,
+          -39.34517
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.183193
+        ],
+        "scale": 0.8
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 164,
+        "id": "furn_de_p_bookshelf_01",
+        "temporary": true,
+        "translation": [
+          -75.1563,
+          175.97722,
+          -45.487427
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5707964
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 165,
+        "id": "foriegnlanternchest",
+        "temporary": true,
+        "translation": [
+          164.8773,
+          -17.689312,
+          -92.98126
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.1831877
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0,
+        "lock_level": 25,
+        "key": "keyforiegnchest"
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 166,
+        "id": "Misc_Uni_Pillow_02",
+        "temporary": true,
+        "translation": [
+          78.78399,
+          226.64091,
+          -44.75805
+        ],
+        "rotation": [
+          6.0803204,
+          6.0899487,
+          0.81972927
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 167,
+        "id": "furn_de_p_table_02",
+        "temporary": true,
+        "translation": [
+          169.65152,
+          247.02618,
+          -84.09778
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0000017
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 168,
+        "id": "misc_com_wood_cup_01",
+        "temporary": true,
+        "translation": [
+          -82.811935,
+          144.498,
+          -28.635595
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 169,
+        "id": "misc_com_wood_cup_02",
+        "temporary": true,
+        "translation": [
+          -62.30269,
+          161.48473,
+          -29.162498
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.6
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 170,
+        "id": "misc_com_wood_fork",
+        "temporary": true,
+        "translation": [
+          -61.7404,
+          147.25824,
+          -33.478607
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.9831877
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 171,
+        "id": "misc_com_wood_knife",
+        "temporary": true,
+        "translation": [
+          -73.47453,
+          224.55763,
+          -29.132067
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.0831866
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 172,
+        "id": "misc_com_wood_spoon_01",
+        "temporary": true,
+        "translation": [
+          -69.73416,
+          141.44315,
+          -34.033974
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.6831865
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 173,
+        "id": "Misc_Com_Wood_Bowl_01",
+        "temporary": true,
+        "translation": [
+          -80.298805,
+          160.57068,
+          -32.17449
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.783187
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 174,
+        "id": "AB_Misc_WoodPlatter",
+        "temporary": true,
+        "translation": [
+          -75.90096,
+          229.33069,
+          -31.037518
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.2000002
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 175,
+        "id": "T_Com_WoodPlate_b01",
+        "temporary": true,
+        "translation": [
+          -67.2634,
+          182.9376,
+          -32.534218
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.6
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 176,
+        "id": "woodlantern",
+        "temporary": true,
+        "translation": [
+          -71.34676,
+          101.14438,
+          -52.00334
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.7
+        ],
+        "owner": "foriegnlanterntrader",
+        "charge_left": 0,
+        "health_left": 100
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 177,
+        "id": "colovianlant3",
+        "temporary": true,
+        "translation": [
+          -76.96966,
+          244.00357,
+          48.557148
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.583187
+        ],
+        "owner": "foriegnlanterntrader",
+        "charge_left": 0,
+        "health_left": 100
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 178,
+        "id": "common_pants_01_z",
+        "temporary": true,
+        "translation": [
+          -76.582954,
+          162.88219,
+          -79.745605
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.1831875
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 179,
+        "id": "common_pants_01",
+        "temporary": true,
+        "translation": [
+          -77.34624,
+          211.01112,
+          -80.100685
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.383189
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 180,
+        "id": "common_robe_01",
+        "temporary": true,
+        "translation": [
+          -77.72869,
+          136.16089,
+          -79.14481
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.283188
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 181,
+        "id": "common_shirt_01",
+        "temporary": true,
+        "translation": [
+          -73.65811,
+          239.11877,
+          -80.41424
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.283188
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 182,
+        "id": "common_skirt_05",
+        "temporary": true,
+        "translation": [
+          -74.82645,
+          187.79317,
+          -79.75627
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5000001
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 183,
+        "id": "light_com_candle_07_128",
+        "temporary": true,
+        "translation": [
+          -76.860954,
+          110.25704,
+          32.77593
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.7
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 184,
+        "id": "light_com_candle_07_128",
+        "temporary": true,
+        "translation": [
+          180.55939,
+          248.12534,
+          -31.718071
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 185,
+        "id": "T_Bk_BeggarPrinceSHOTN",
+        "temporary": true,
+        "translation": [
+          -74.78091,
+          112.32757,
+          -31.23671
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.9831877
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 186,
+        "id": "bookskill_axe2",
+        "temporary": true,
+        "translation": [
+          -72.498924,
+          112.632515,
+          -25.857958
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.1831875
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 187,
+        "id": "colovianlant2",
+        "temporary": true,
+        "translation": [
+          -68.27374,
+          214.86533,
+          43.285362
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.1
+        ],
+        "owner": "foriegnlanterntrader",
+        "charge_left": 0,
+        "health_left": 100
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 188,
+        "id": "colovianlant4",
+        "temporary": true,
+        "translation": [
+          -81.17127,
+          191.58699,
+          48.561718
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.5
+        ],
+        "owner": "foriegnlanterntrader",
+        "charge_left": 0,
+        "health_left": 100
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 189,
+        "id": "colovianlant5",
+        "temporary": true,
+        "translation": [
+          -72.63567,
+          167.29964,
+          40.357517
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.2
+        ],
+        "owner": "foriegnlanterntrader",
+        "charge_left": 0,
+        "health_left": 100
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 190,
+        "id": "common_belt_03",
+        "temporary": true,
+        "translation": [
+          -67.74326,
+          147.65964,
+          11.068012
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.583188
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 191,
+        "id": "common_belt_01",
+        "temporary": true,
+        "translation": [
+          -83.602165,
+          136.19608,
+          11.215389
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.3831897
+        ],
+        "owner": "foriegnlanterntrader",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Greeting 5",
+    "dialogue_type": "Greeting"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2994727846210076587",
+    "prev_id": "",
+    "next_id": "300401331879910639",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "glasslanterntrader",
+    "text": "Interested in some special glass lanterns, %PCName?",
+    "filters": [],
+    "result": "; lanterns"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "300401331879910639",
+    "prev_id": "2994727846210076587",
+    "next_id": "140242842485695466",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "foriegnlanterntrader",
+    "text": "Are you here for Ja'dahna's lanterns?",
+    "filters": [],
+    "result": "; lanterns"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "140242842485695466",
+    "prev_id": "300401331879910639",
+    "next_id": "1288227500790714973",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "paperlanterntrader",
+    "text": "Hello, %PCRace. Do you need lanterns for your travels?",
+    "filters": [],
+    "result": "; lanterns"
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Background",
+    "dialogue_type": "Topic"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "13385246681811814790",
+    "prev_id": "",
+    "next_id": "1684922817326706795",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "glasslanterntrader",
+    "text": "I'm a glass worker here in Vivec. Dunmer glass lanterns are special in how they're made and I am one of the few who know how to make them.",
+    "filters": []
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "1684922817326706795",
+    "prev_id": "13385246681811814790",
+    "next_id": "11567108073096030909",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "foriegnlanterntrader",
+    "text": "Ja'dahna came to Vvardenfell to start a new life. Arrille was kind to Ja'dahna and let her stay and sell her lanterns in his tradehouse before Ja'dahna could afford her own home. Ja'hdahna now sells lanterns from her own home.",
+    "filters": []
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "11567108073096030909",
+    "prev_id": "1684922817326706795",
+    "next_id": "160672180917247765",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "paperlanterntrader",
+    "text": "I'm just a woman trying to get by while preserving part of Dunmer culture.",
+    "filters": []
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "160672180917247765",
+    "prev_id": "11567108073096030909",
+    "next_id": "148814675298839634",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_faction": "Thieves Guild",
+    "player_faction": "Thieves Guild",
+    "text": "%Name hears you. %Name is in the guild.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "T_Local_NPC",
+        "value": {
+          "Integer": 0
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "NotLocal",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "T_Local_NoLore",
+        "value": {
+          "Integer": 0
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "T_Local_Khajiit",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "ClearInfoActor"
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "lanterns",
+    "dialogue_type": "Topic"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "181865142426017555",
+    "prev_id": "",
+    "next_id": "12709100312610210496",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "glasslanterntrader",
+    "text": "Many of the glass lanterns seen around Vvardenfell are made here.",
+    "filters": []
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "12709100312610210496",
+    "prev_id": "181865142426017555",
+    "next_id": "2135816919413831664",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "foriegnlanterntrader",
+    "text": "Ja'dahna sells lanterns from foriegn lands. Does this %PCName wish to buy Ja'dahna's lanterns?",
+    "filters": []
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2135816919413831664",
+    "prev_id": "12709100312610210496",
+    "next_id": "",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 30,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "paperlanterntrader",
+    "text": "I make and sell traditional Dunmer paper lanterns. A lot of the paper lanterns you see here are ones I have made. Interested?",
+    "filters": []
+  }
+]

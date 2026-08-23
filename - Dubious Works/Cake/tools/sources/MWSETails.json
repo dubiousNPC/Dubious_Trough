@@ -1,0 +1,7173 @@
+[
+  {
+    "type": "Header",
+    "flags": [
+      0,
+      0
+    ],
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "",
+    "description": "",
+    "num_objects": 184,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ],
+      [
+        "Tribunal.esm",
+        4565686
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ]
+    ]
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "BolsIndalen",
+    "header": {
+      "num_shorts": 31,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 51,
+      "variables_length": 457
+    },
+    "variables": "KLUv/QBYHQYAogcZHcAlHf//u4Foe3Mu9+KbEJL2pm6NNMWxtvH/u9Jk90RZOXdNk4Vry45D37WxzQh9Eq9ZsNRV2VlYWsqLkXeNyWHyYcETVmZxhK8D/bEWC7lRkmRQqQiZjYXc7FoTCzSVx+8AiSggEBzOpgcqBHQ3aHtgf4OhEnAImxESGCxzqDZEEJg3MA4QFhxuKLiA6IJaAkoJJg25FSBtGGhAckE8oaABrABiCMwFlgP9wNWQTUx8mViyInJgGMjopI4EhrUE",
+    "bytecode": "KLUv/QBYnQEAxAIzAAAABgECDyBzGwAgIT0gRwREYXkAAAUBcxsACBwACCBzHAAgMSArCQEBAQEAhTGd",
+    "text": "begin BolsIndalen\r\n\r\nshort ebonyCuirass\r\nshort ebonyLeftPauldron\r\nshort ebonyRightPauldron\r\nshort ebonyLeftBracer\r\nshort ebonyRightBracer\r\nshort ebonyGreaves\r\nshort ebonyBoots\r\nshort ebonyHelm\r\nshort ebonyTail\r\nshort glassHelm\r\nshort glassBoots\r\nshort glassGreaves\r\nshort glassRightBracer\r\nshort glassLeftBracer\r\nshort glassRightPauldron\r\nshort glassLeftPauldron\r\nshort glassCuirass\r\nshort glassTail\r\nshort adamantiumHelm\r\nshort adamantiumBoots\r\nshort adamantiumGreaves\r\nshort adamantiumRightBracer\r\nshort adamantiumLeftBracer\r\nshort adamantiumRightPauldron\r\nshort adamantiumLeftPauldron\r\nshort adamantiumCuirass\r\nshort currentDay\r\nshort localdaysPassed\r\nshort busy\r\nShort NoLore\r\nshort change\r\n\r\nif ( currentDay != Day )\r\n\tset currentDay to Day\r\n\tset localdaysPassed to localdaysPassed + 1\r\nendif\r\n\r\nend BolsIndalen"
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "BrynjolfrScript",
+    "header": {
+      "num_shorts": 23,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 51,
+      "variables_length": 362
+    },
+    "variables": "KLUv/QBY/QQAMogaHHDFaQNAK61DhQpjd4s0sukUuB+hNI6qqqrCIxmGirolGe7PC9bwSliCzIdwc4leulpzg1a4u1LqUepR6lHqUeqRModYKBL6NxDgcI9GbbXu6MSzKIxBfRNdh3TiYb5llmAPjYCrg1lAERYAQAAEAAoBGwEGYAE4AAoAB5wiAPAIzCRkmMA0QmBNYjZJ8VZgBk7JKacnOEs6xQwD",
+    "bytecode": "KLUv/QBYnQEAxAIzAAAABgECDyBzEwAgIT0gRwREYXkAAAUBcxMACBQACCBzFAAgMSArCQEBAQEAhTGd",
+    "text": "begin BrynjolfrScript\r\n\r\nshort SnowBearCuirass\r\nshort SnowBearLeftPauldron\r\nshort SnowBearRightPauldron\r\nshort SnowBearLeftGauntlet\r\nshort SnowBearRightGauntlet\r\nshort SnowBearGreaves\r\nshort SnowBearBoots\r\nshort SnowBearHelm\r\nshort SnowBearTail\r\nshort SnowWolfCuirass\r\nshort SnowWolfLeftPauldron\r\nshort SnowWolfRightPauldron\r\nshort SnowWolfLeftGauntlet\r\nshort SnowWolfRightGauntlet\r\nshort SnowWolfGreaves\r\nshort SnowWolfBoots\r\nshort SnowWolfHelm\r\nshort SnowWolfTail\r\nshort currentDay\r\nshort localdaysPassed\r\nshort busy\r\nShort NoLore\r\nshort change\r\n\r\n\tif ( currentDay != Day )\r\n\t\tset currentDay to Day\r\n\t\tset localdaysPassed to localdaysPassed + 1\r\nendif\r\n\r\nend BrynjolfrScript\r\n"
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ColonyAenar",
+    "header": {
+      "num_shorts": 14,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 147,
+      "variables_length": 120
+    },
+    "variables": "KLUv/QBY3QIA0gYUFpCpOYAnO10vUVlohLa1iEpod3eXXQo0o0OHxf4WXy1Xgo6rJR2zFeG6GjzTdB7ODOcTQsOnjdTjfJZTLe68IWounH9tFDlNkEwAQDgDkokCACwEaVkpAw==",
+    "bytecode": "KLUv/QBYhQMA8kUWH6ApHf//WPX1DMYkYRIpN7FxQCo8ca/+TBYIaZvOphS27YlAifkEfOmIEMJIBENi0haa2IAei882G+LO26wzbZje8tJGqFAWV4f31gcAJ+dKvYJ1U5zaSgIHAEYVmElAokgYkyiMawijKoypBw==",
+    "text": "Begin ColonyAenar\r\n\r\n;controls timing and variables  for Stalhrim armor crafting\r\n;also contains Journal update for killing all three nords in quest CO_8a\r\n\r\nshort OnPCHitMe\r\nshort scuirass\r\nshort sgreaves\r\nshort slpauld\r\nshort srpauld\r\nshort slbracer\r\nshort srbracer\r\nshort sboots\r\nshort shelm\r\nshort stail\r\nshort busy\r\nshort currentday\r\nshort localdayspassed\r\nshort nolore\r\n\r\nif ( busy == 1 )\r\n\tif ( currentday != day )\r\n\t\tset currentday to day\r\n\t\tset localdayspassed to ( localdayspassed + 1 )\r\n\tendif\r\nendif\r\n\r\nif ( OnPCHitMe == 1 )\r\n\t\"Hidar\"->SetFight 100\r\n\t\"Hidar\"->StartCombat Player\r\n\t\"Graring\"->SetFight 100\r\n\t\"Graring\"->StartCombat Player\r\nendif\r\n\r\n\r\nEnd ColonyAenar"
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "PasheevaSchedule",
+    "header": {
+      "num_shorts": 0,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 193,
+      "variables_length": 0
+    },
+    "bytecode": "KLUv/QBYFQQAggcbJKApHf8D/HdVrhaci4nN5vSX4Hn2nLebTBvhua1OcOtEOlDaAbbVat2LDSh8fSvsaThCYOdiDunrL+JIuEZ78vna6Hx9KeypRjfOlXqTOLeANEXS982wDwLG5yaN8UA3VhPSlfqeXW1ECFkCBgA0udFTPkTNoyiu4Cn+krYJBQ==",
+    "text": "begin PasheevaSchedule\r\n\r\nif ( MenuMode == 1 )\r\n  return\r\nendif\r\n\r\nif ( player->GetLOS \"1Pasheeva\" == 0 )\r\n  if ( \"1Pasheeva\"->GetHealth > 0 )\r\n  if ( GameHour > 19 )\r\n    \"1Pasheeva\"->disable\r\n  elseif ( GameHour < 5 )\r\n    \"1Pasheeva\"->disable\r\n  elseif ( GetCurrentWeather > 3 )\r\n    \"1Pasheeva\"->disable\r\n  else\r\n    \"1Pasheeva\"->enable\r\n  endif\r\n  endif\r\nendif\r\n\r\nend"
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "TemplarTailguardScript",
+    "header": {
+      "num_shorts": 0,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 92,
+      "variables_length": 0
+    },
+    "bytecode": "KLUv/QBYxQIA5ARcAAAABgEHGyBYDBEgdA9JbXBlcmlhbCBMZWdpb24gPj0gNQYBARggWP0QIG8MdGVtcGxhcl90YWlsID09IDDUEAEABwEBJAEJAQkBAQECACiCBXdMMw==",
+    "text": "begin TemplarTailguardScript\r\n\r\nif ( GetPCRank \"Imperial Legion\" >= 5 )\r\n\tif GetItemCount \"templar_tail\" == 0\r\n\t\tAddItem \"templar_tail\" 1\r\n\telse\r\n\t\treturn\r\nelse\r\n\treturn\r\n\tendif\r\nendif\r\n\r\nend"
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1adaman",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "adamantium_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1hlaalu",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "adamantium_tail"
+      ],
+      [
+        -1,
+        "armunan_tail"
+      ],
+      [
+        -1,
+        "bonemold_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1imperial",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "script": "TemplarTailguardScript",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "chain_tail"
+      ],
+      [
+        -1,
+        "impsteel_tail"
+      ],
+      [
+        -1,
+        "scale_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1lefemm",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "golden_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1lefemmdom",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "arg_domina"
+      ],
+      [
+        -1,
+        "domina_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1orc",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "orc_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1pasheevasack",
+    "name": "Sack",
+    "mesh": "o\\contain_sack00.nif",
+    "encumbrance": 1000.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "chitin_tail"
+      ],
+      [
+        -1,
+        "dreugh_tail"
+      ],
+      [
+        -1,
+        "iron_tail"
+      ],
+      [
+        -1,
+        "netch_tail"
+      ],
+      [
+        -1,
+        "steel_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1pasheevasack2",
+    "name": "Sack",
+    "mesh": "o\\contain_sack00.nif",
+    "encumbrance": 1000.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -2,
+        "random_armor_chitin"
+      ],
+      [
+        -2,
+        "random_armor_iron"
+      ],
+      [
+        -2,
+        "random_armor_netch_leather"
+      ],
+      [
+        -2,
+        "random_armor_steel"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1redoran",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "adamantium_tail"
+      ],
+      [
+        -1,
+        "bonemold_tail"
+      ],
+      [
+        -1,
+        "chuzei_tail"
+      ],
+      [
+        -1,
+        "gahjulan_tail"
+      ],
+      [
+        -1,
+        "watch_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1skinkcrate",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "ceph_tail"
+      ],
+      [
+        -1,
+        "dust_tail"
+      ],
+      [
+        -1,
+        "mole_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "2imperial",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "script": "TemplarTailguardScript",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "chain_tail"
+      ],
+      [
+        -1,
+        "impsteel_tail"
+      ],
+      [
+        -1,
+        "scale_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "crate_01_armor_glass",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        1,
+        "glass_tail"
+      ],
+      [
+        3,
+        "random_armor_glass"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "crate_01_armorbonemold_",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        1,
+        "bonemold_boots"
+      ],
+      [
+        1,
+        "bonemold_bracer_left"
+      ],
+      [
+        1,
+        "bonemold_bracer_right"
+      ],
+      [
+        1,
+        "bonemold_cuirass"
+      ],
+      [
+        1,
+        "bonemold_greaves"
+      ],
+      [
+        1,
+        "bonemold_pauldron_l"
+      ],
+      [
+        1,
+        "bonemold_pauldron_r"
+      ],
+      [
+        1,
+        "bonemold_shield"
+      ],
+      [
+        1,
+        "bonemold_tail"
+      ],
+      [
+        1,
+        "bonemold_towershield"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "crate_01_armorchitin_me",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        1,
+        "chitin boots"
+      ],
+      [
+        1,
+        "chitin cuirass"
+      ],
+      [
+        1,
+        "chitin greaves"
+      ],
+      [
+        1,
+        "chitin guantlet - left"
+      ],
+      [
+        1,
+        "chitin guantlet - right"
+      ],
+      [
+        1,
+        "chitin helm"
+      ],
+      [
+        1,
+        "chitin pauldron - left"
+      ],
+      [
+        1,
+        "chitin pauldron - right"
+      ],
+      [
+        1,
+        "chitin_mask_helm"
+      ],
+      [
+        1,
+        "chitin_shield"
+      ],
+      [
+        1,
+        "chitin_tail"
+      ],
+      [
+        1,
+        "chitin_towershield"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "crate_01_armornetch_mel",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "bonemold_armun-an_helm"
+      ],
+      [
+        -1,
+        "bonemold_armun-an_pauldron_l"
+      ],
+      [
+        -1,
+        "bonemold_armun-an_pauldron_r"
+      ],
+      [
+        -1,
+        "netch_leather_boiled_cuirass"
+      ],
+      [
+        -1,
+        "netch_leather_boiled_helm"
+      ],
+      [
+        -1,
+        "netch_leather_boots"
+      ],
+      [
+        -1,
+        "netch_leather_cuirass"
+      ],
+      [
+        -1,
+        "netch_leather_gauntlet_left"
+      ],
+      [
+        -1,
+        "netch_leather_gauntlet_right"
+      ],
+      [
+        -1,
+        "netch_leather_greaves"
+      ],
+      [
+        -1,
+        "netch_leather_helm"
+      ],
+      [
+        -1,
+        "netch_leather_pauldron_left"
+      ],
+      [
+        -1,
+        "netch_leather_pauldron_right"
+      ],
+      [
+        -1,
+        "netch_leather_shield"
+      ],
+      [
+        -1,
+        "netch_leather_towershield"
+      ],
+      [
+        -1,
+        "netch_tail"
+      ]
+    ]
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1adamantail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailadaman.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1almaind",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailalma.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1argdomina",
+    "data": {
+      "part": "Chest",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\arg_dominacuir.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1argdominaf",
+    "data": {
+      "part": "Chest",
+      "vampire": 0,
+      "female": 1,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\arg_dominacuir.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1armunantail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailarmunan.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1bear",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailsnow_b.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1bonemoldtail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailbonemold.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1ceph",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailceph.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1chain",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailchain.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1chitintail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailchitin.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1chuzei",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailchuzei.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1daetail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\taildaedric.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1darkbro",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\taildb.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1dominatail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\taildomina.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1dreugh",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\taildreugh.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1dust",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\taildust.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1dwetail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\taildwemer.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1ebonytail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailebony.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1gahjulantail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailgahjulan.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1glasstail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailglass.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1gold",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailgold.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1helseth",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailhels.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1icetail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailice.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1impsteel",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailimperial.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1indoriltail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailindoril.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1irontail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailiron.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1mole",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailmole.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1nettail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailnetch.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1nordtail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailnord.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1orctail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailorcish.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1scale",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailscale.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1steeltail",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailsteel.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1templar",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailtemplar.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1watch",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailwatch.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1wolf",
+    "data": {
+      "part": "Ankle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "ArmoredTails\\tailwolf.nif"
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      1024
+    ],
+    "id": "1deadarg",
+    "name": "Dead Argonian",
+    "mesh": "base_animKnA.nif",
+    "race": "Argonian",
+    "class": "Acrobat",
+    "faction": "",
+    "head": "b_n_argonian_m_head_03",
+    "hair": "b_n_argonian_m_hair03",
+    "npc_flags": 8,
+    "data": {
+      "level": 1,
+      "stats": {
+        "attributes": [
+          40,
+          40,
+          30,
+          60,
+          50,
+          40,
+          30,
+          40
+        ],
+        "skills": [
+          5,
+          5,
+          10,
+          5,
+          5,
+          5,
+          5,
+          20,
+          45,
+          5,
+          5,
+          15,
+          10,
+          5,
+          10,
+          5,
+          10,
+          35,
+          10,
+          35,
+          35,
+          20,
+          10,
+          35,
+          10,
+          20,
+          20
+        ],
+        "health": 0,
+        "magicka": 80,
+        "fatigue": 170
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 0
+    },
+    "inventory": [
+      [
+        1,
+        "indoril cuirass"
+      ],
+      [
+        1,
+        "indoril left gauntlet"
+      ],
+      [
+        1,
+        "indoril pauldron left"
+      ],
+      [
+        1,
+        "indoril pauldron right"
+      ],
+      [
+        1,
+        "indoril right gauntlet"
+      ],
+      [
+        1,
+        "indoril shield"
+      ],
+      [
+        1,
+        "indoril_tail"
+      ]
+    ],
+    "spells": [],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 0,
+      "services": 0
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 512,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 0,
+        "idle6": 0,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "1Pasheeva",
+    "name": "Pasheeva",
+    "mesh": "base_animKnA.nif",
+    "race": "Argonian",
+    "class": "Smith",
+    "faction": "Twin Lamps",
+    "head": "b_n_argonian_f_head_02",
+    "hair": "b_n_argonian_f_hair05",
+    "npc_flags": 9,
+    "data": {
+      "level": 15,
+      "stats": {
+        "attributes": [
+          95,
+          61,
+          51,
+          67,
+          74,
+          57,
+          38,
+          40
+        ],
+        "skills": [
+          56,
+          56,
+          46,
+          41,
+          56,
+          41,
+          41,
+          23,
+          33,
+          6,
+          6,
+          6,
+          11,
+          6,
+          11,
+          6,
+          11,
+          49,
+          6,
+          6,
+          6,
+          29,
+          6,
+          6,
+          6,
+          6,
+          44
+        ],
+        "health": 160,
+        "magicka": 122,
+        "fatigue": 270
+      },
+      "disposition": 50,
+      "reputation": 2,
+      "rank": 0,
+      "gold": 300
+    },
+    "inventory": [
+      [
+        1,
+        "common_pants_03_b"
+      ],
+      [
+        1,
+        "common_shirt_02"
+      ]
+    ],
+    "spells": [],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 70,
+      "services": 131587
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 0,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 0,
+        "idle6": 0,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      1024
+    ],
+    "id": "2deadarg",
+    "name": "Dead Argonian",
+    "mesh": "base_animKnA.nif",
+    "race": "Argonian",
+    "class": "Acrobat",
+    "faction": "",
+    "head": "b_n_argonian_f_head_02",
+    "hair": "b_n_argonian_f_hair04",
+    "npc_flags": 9,
+    "data": {
+      "level": 1,
+      "stats": {
+        "attributes": [
+          40,
+          40,
+          30,
+          60,
+          50,
+          40,
+          30,
+          40
+        ],
+        "skills": [
+          5,
+          5,
+          10,
+          5,
+          5,
+          5,
+          5,
+          20,
+          45,
+          5,
+          5,
+          15,
+          10,
+          5,
+          10,
+          5,
+          10,
+          35,
+          10,
+          35,
+          35,
+          20,
+          10,
+          35,
+          10,
+          20,
+          20
+        ],
+        "health": 0,
+        "magicka": 80,
+        "fatigue": 170
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 0
+    },
+    "inventory": [
+      [
+        1,
+        "almindoril_tail"
+      ],
+      [
+        1,
+        "Ebony Scimitar"
+      ],
+      [
+        1,
+        "Indoril_MH_Guard_boots"
+      ],
+      [
+        1,
+        "Indoril_MH_Guard_Cuirass"
+      ],
+      [
+        1,
+        "Indoril_MH_Guard_gauntlet_L"
+      ],
+      [
+        1,
+        "Indoril_MH_Guard_gauntlet_R"
+      ],
+      [
+        1,
+        "Indoril_MH_Guard_Greaves"
+      ],
+      [
+        1,
+        "Indoril_MH_Guard_Pauldron_L"
+      ],
+      [
+        1,
+        "Indoril_MH_Guard_Pauldron_R"
+      ],
+      [
+        1,
+        "Indoril_MH_Guard_shield"
+      ]
+    ],
+    "spells": [],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 0,
+      "services": 0
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 512,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 0,
+        "idle6": 0,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "adamantium_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 13.0,
+      "value": 7000,
+      "health": 400,
+      "enchantment": 100,
+      "armor_rating": 40
+    },
+    "name": "Adamantium Tailguard",
+    "mesh": "ArmoredTails\\tailsteel_gnd.nif",
+    "icon": "a\\ArmoredTails\\adaman.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1adamantail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "almindoril_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 60.0,
+      "value": 15000,
+      "health": 700,
+      "enchantment": 20,
+      "armor_rating": 70
+    },
+    "name": "Her Hand Tailguard",
+    "mesh": "ArmoredTails\\tailalma_gnd.nif",
+    "icon": "a\\ArmoredTails\\alma.dds",
+    "script": "OrdinatorUniform",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1almaind",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "arg_domina",
+    "data": {
+      "armor_type": "Cuirass",
+      "weight": 10.0,
+      "value": 90,
+      "health": 360,
+      "enchantment": 12,
+      "armor_rating": 15
+    },
+    "name": "Dominus Cuirass",
+    "mesh": "ArmoredTails\\arg_dom_gnd.nif",
+    "icon": "a\\ArmoredTails\\domina_cuir.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "Chest",
+        "male_bodypart": "1argdomina",
+        "female_bodypart": "1argdominaf"
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "armunan_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 11.0,
+      "value": 100,
+      "health": 150,
+      "enchantment": 70,
+      "armor_rating": 15
+    },
+    "name": "Armun-An Bonemold Tailguard",
+    "mesh": "ArmoredTails\\tarmunan_gnd.nif",
+    "icon": "a\\ArmoredTails\\armanan.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1armunantail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "bear_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 14.0,
+      "value": 5000,
+      "health": 105,
+      "enchantment": 2,
+      "armor_rating": 15
+    },
+    "name": "Snow Bear Tailguard",
+    "mesh": "ArmoredTails\\tailsnow_bgnd.nif",
+    "icon": "a\\ArmoredTails\\bear.dds",
+    "enchanting": "snow shield",
+    "biped_objects": [
+      {
+        "biped_object_type": "RightAnkle",
+        "male_bodypart": "1bear",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "bonemold_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 11.0,
+      "value": 100,
+      "health": 150,
+      "enchantment": 70,
+      "armor_rating": 15
+    },
+    "name": "Bonemold Tailguard",
+    "mesh": "ArmoredTails\\tbmold_gnd.nif",
+    "icon": "a\\ArmoredTails\\bonemold.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1bonemoldtail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ceph_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 8.0,
+      "value": 80,
+      "health": 260,
+      "enchantment": 73,
+      "armor_rating": 8
+    },
+    "name": "Telvanni Cephalopod Tailguard",
+    "mesh": "ArmoredTails\\tailceph_gnd.nif",
+    "icon": "a\\ArmoredTails\\ceph.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1ceph",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "chain_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 10.0,
+      "value": 50,
+      "health": 200,
+      "enchantment": 2,
+      "armor_rating": 7
+    },
+    "name": "Imperial Chain Tailguard",
+    "mesh": "ArmoredTails\\tailchain_gnd.nif",
+    "icon": "a\\ArmoredTails\\chain.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1chain",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "chitin_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 6.0,
+      "value": 13,
+      "health": 100,
+      "enchantment": 44,
+      "armor_rating": 10
+    },
+    "name": "Chitin Tailguard",
+    "mesh": "ArmoredTails\\tchitin_gnd.nif",
+    "icon": "a\\ArmoredTails\\chitin.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1chitintail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "chuzei_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 16.0,
+      "value": 100,
+      "health": 150,
+      "enchantment": 70,
+      "armor_rating": 15
+    },
+    "name": "Chuzei Bonemold Tail",
+    "mesh": "ArmoredTails\\tailchuzei_gnd.nif",
+    "icon": "a\\ArmoredTails\\chuzei.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1chuzei",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "daedric_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 60.0,
+      "value": 20000,
+      "health": 800,
+      "enchantment": 263,
+      "armor_rating": 80
+    },
+    "name": "Daedric Tailguard",
+    "mesh": "ArmoredTails\\tdaedric_gnd.nif",
+    "icon": "a\\ArmoredTails\\daedric.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1daetail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "db_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 2.0,
+      "value": 500,
+      "health": 200,
+      "enchantment": 3,
+      "armor_rating": 30
+    },
+    "name": "Dark Brotherhood Tailguard",
+    "mesh": "ArmoredTails\\taildb_gnd.nif",
+    "icon": "a\\ArmoredTails\\darkbro.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1darkbro",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "domina_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 6.5,
+      "value": 55,
+      "health": 110,
+      "enchantment": 4,
+      "armor_rating": 15
+    },
+    "name": "Domina Tailguard",
+    "mesh": "ArmoredTails\\tdom_gnd.nif",
+    "icon": "a\\ArmoredTails\\domina.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1dominatail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dreugh_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 10.0,
+      "value": 2250,
+      "health": 400,
+      "enchantment": 22,
+      "armor_rating": 40
+    },
+    "name": "Dreugh Tailguard",
+    "mesh": "ArmoredTails\\taildre_gnd.nif",
+    "icon": "a\\ArmoredTails\\dreugh.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1dreugh",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dust_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 10.0,
+      "value": 10,
+      "health": 50,
+      "enchantment": 26,
+      "armor_rating": 8
+    },
+    "name": "Telvanni Dust Adept Tailguard",
+    "mesh": "ArmoredTails\\taildust_gnd.nif",
+    "icon": "a\\ArmoredTails\\dust.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1dust",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dwemer_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 20.0,
+      "value": 300,
+      "health": 200,
+      "enchantment": 88,
+      "armor_rating": 20
+    },
+    "name": "Dwemer Tailguard",
+    "mesh": "ArmoredTails\\tdwemer_gnd.nif",
+    "icon": "a\\ArmoredTails\\dwemer.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1dwetail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ebony_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 40.0,
+      "value": 10000,
+      "health": 600,
+      "enchantment": 175,
+      "armor_rating": 60
+    },
+    "name": "Ebony Tailguard",
+    "mesh": "ArmoredTails\\tebony_gnd.nif",
+    "icon": "a\\ArmoredTails\\ebony.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1ebonytail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "gahjulan_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 11.0,
+      "value": 100,
+      "health": 150,
+      "enchantment": 70,
+      "armor_rating": 15
+    },
+    "name": "Gah-julan Bonemold Tailguard",
+    "mesh": "ArmoredTails\\tgahjulan_gnd.nif",
+    "icon": "a\\ArmoredTails\\gahjulan.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1gahjulantail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "glass_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 3.0,
+      "value": 8000,
+      "health": 500,
+      "enchantment": 100,
+      "armor_rating": 50
+    },
+    "name": "Glass Tailguard",
+    "mesh": "ArmoredTails\\tglass_gnd.nif",
+    "icon": "a\\ArmoredTails\\glass.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1glasstail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "golden_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 10.0,
+      "value": 1200,
+      "health": 360,
+      "enchantment": 5,
+      "armor_rating": 60
+    },
+    "name": "Gold Tailguard",
+    "mesh": "ArmoredTails\\tailgold_gnd.nif",
+    "icon": "a\\ArmoredTails\\gold.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1gold",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "helseth_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 18.0,
+      "value": 2500,
+      "health": 500,
+      "enchantment": 15,
+      "armor_rating": 50
+    },
+    "name": "Royal Guard Tailguard",
+    "mesh": "ArmoredTails\\tailhels_gnd.nif",
+    "icon": "a\\ArmoredTails\\helseth.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1helseth",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ice_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 12.0,
+      "value": 5000,
+      "health": 200,
+      "enchantment": 100,
+      "armor_rating": 50
+    },
+    "name": "Ice Tailguard",
+    "mesh": "ArmoredTails\\tailice_gnd.nif",
+    "icon": "a\\ArmoredTails\\ice.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1icetail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "impsteel_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 19.0,
+      "value": 50,
+      "health": 170,
+      "enchantment": 8,
+      "armor_rating": 16
+    },
+    "name": "Imperial Steel Tailguard",
+    "mesh": "ArmoredTails\\tailimp_gnd.nif",
+    "icon": "a\\ArmoredTails\\imperial.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1impsteel",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "indoril_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 10.0,
+      "value": 2000,
+      "health": 450,
+      "enchantment": 26,
+      "armor_rating": 45
+    },
+    "name": "Indoril Tailguard",
+    "mesh": "ArmoredTails\\tlindoril_gnd.nif",
+    "icon": "a\\ArmoredTails\\indoril.dds",
+    "script": "OrdinatorUniform",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1indoriltail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "iron_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 19.0,
+      "value": 20,
+      "health": 450,
+      "enchantment": 26,
+      "armor_rating": 10
+    },
+    "name": "Iron Tailguard",
+    "mesh": "ArmoredTails\\tailiron_gnd.nif",
+    "icon": "a\\ArmoredTails\\iron.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1irontail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "mole_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 8.0,
+      "value": 13,
+      "health": 60,
+      "enchantment": 200,
+      "armor_rating": 6
+    },
+    "name": "Telvanni Mole Crab Tailguard",
+    "mesh": "ArmoredTails\\tailmole_gnd.nif",
+    "icon": "a\\ArmoredTails\\mole.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1mole",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "netch_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 8.0,
+      "value": 10,
+      "health": 50,
+      "enchantment": 26,
+      "armor_rating": 5
+    },
+    "name": "Netch Tailguard",
+    "mesh": "ArmoredTails\\tailnetch_gnd.nif",
+    "icon": "a\\ArmoredTails\\netch.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1nettail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "nordic_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 20.0,
+      "value": 5000,
+      "health": 500,
+      "enchantment": 85,
+      "armor_rating": 66
+    },
+    "name": "Nordic Tailguard",
+    "mesh": "ArmoredTails\\tailnord_gnd.nif",
+    "icon": "a\\ArmoredTails\\nordic.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1nordtail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "orc_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 17.0,
+      "value": 800,
+      "health": 300,
+      "enchantment": 105,
+      "armor_rating": 30
+    },
+    "name": "Orcish Tailguard",
+    "mesh": "ArmoredTails\\tailorcish_gnd.nif",
+    "icon": "a\\ArmoredTails\\orc.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1orctail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "scale_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 10.0,
+      "value": 130,
+      "health": 200,
+      "enchantment": 20,
+      "armor_rating": 20
+    },
+    "name": "Imperial Dragonscale Tailguard",
+    "mesh": "ArmoredTails\\tailscale_gnd.nif",
+    "icon": "a\\ArmoredTails\\scale.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1scale",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "steel_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 20.0,
+      "value": 40,
+      "health": 150,
+      "enchantment": 88,
+      "armor_rating": 15
+    },
+    "name": "Steel Tailguard",
+    "mesh": "ArmoredTails\\tailsteel_gnd.nif",
+    "icon": "a\\ArmoredTails\\steel.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1steeltail",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "templar_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 20.0,
+      "value": 50,
+      "health": 180,
+      "enchantment": 8,
+      "armor_rating": 18
+    },
+    "name": "Imperial Templar Tailguard",
+    "mesh": "ArmoredTails\\tailtem_gnd.nif",
+    "icon": "a\\ArmoredTails\\templar.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1templar",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "watch_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 6.0,
+      "value": 17,
+      "health": 110,
+      "enchantment": 44,
+      "armor_rating": 11
+    },
+    "name": "Redoran Watchman's Tailguard",
+    "mesh": "ArmoredTails\\tailwathc_gnd.nif",
+    "icon": "a\\ArmoredTails\\watch.dds",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1watch",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "wolf_tail",
+    "data": {
+      "armor_type": "Boots",
+      "weight": 4.0,
+      "value": 5000,
+      "health": 105,
+      "enchantment": 2,
+      "armor_rating": 15
+    },
+    "name": "Snow Wolf Tailguard",
+    "mesh": "ArmoredTails\\tailwolf_gnd.nif",
+    "icon": "a\\ArmoredTails\\wolf.dds",
+    "enchanting": "snow shield",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftAnkle",
+        "male_bodypart": "1wolf",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Activator",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "schedule",
+    "name": "",
+    "mesh": "EditorMarker.nif",
+    "script": "PasheevaSchedule"
+  },
+  {
+    "type": "LevelledItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "random orcish armor",
+    "list_flags": 1,
+    "chance_none": 5,
+    "items": [
+      [
+        "orcish_boots",
+        1
+      ],
+      [
+        "orcish_bracer_left",
+        1
+      ],
+      [
+        "orcish_bracer_right",
+        1
+      ],
+      [
+        "orcish_cuirass",
+        1
+      ],
+      [
+        "orcish_greaves",
+        1
+      ],
+      [
+        "orcish_helm",
+        1
+      ],
+      [
+        "orcish_pauldron_left",
+        1
+      ],
+      [
+        "orcish_pauldron_right",
+        1
+      ],
+      [
+        "orcish_towershield",
+        1
+      ],
+      [
+        "orc_tail",
+        1
+      ]
+    ]
+  },
+  {
+    "type": "LevelledItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "random_armor_bonemold",
+    "list_flags": 1,
+    "chance_none": 0,
+    "items": [
+      [
+        "bonemold_boots",
+        1
+      ],
+      [
+        "bonemold_cuirass",
+        1
+      ],
+      [
+        "bonemold_bracer_right",
+        1
+      ],
+      [
+        "bonemold_bracer_left",
+        1
+      ],
+      [
+        "bonemold_greaves",
+        1
+      ],
+      [
+        "bonemold_helm",
+        1
+      ],
+      [
+        "bonemold_pauldron_l",
+        1
+      ],
+      [
+        "bonemold_pauldron_r",
+        1
+      ],
+      [
+        "bonemold_shield",
+        1
+      ],
+      [
+        "armunan_tail",
+        1
+      ],
+      [
+        "bonemold_tail",
+        1
+      ],
+      [
+        "gahjulan_tail",
+        1
+      ]
+    ]
+  },
+  {
+    "type": "LevelledItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "random_armor_chitin",
+    "list_flags": 1,
+    "chance_none": 0,
+    "items": [
+      [
+        "chitin boots",
+        1
+      ],
+      [
+        "chitin cuirass",
+        1
+      ],
+      [
+        "chitin greaves",
+        1
+      ],
+      [
+        "chitin guantlet - left",
+        1
+      ],
+      [
+        "chitin guantlet - right",
+        1
+      ],
+      [
+        "chitin helm",
+        1
+      ],
+      [
+        "chitin pauldron - left",
+        1
+      ],
+      [
+        "chitin pauldron - right",
+        1
+      ],
+      [
+        "chitin_shield",
+        1
+      ],
+      [
+        "chitin_towershield",
+        1
+      ],
+      [
+        "chitin_tail",
+        1
+      ]
+    ]
+  },
+  {
+    "type": "LevelledItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "random_armor_iron",
+    "list_flags": 1,
+    "chance_none": 10,
+    "items": [
+      [
+        "iron_bracer_left",
+        1
+      ],
+      [
+        "iron_bracer_right",
+        1
+      ],
+      [
+        "iron_cuirass",
+        1
+      ],
+      [
+        "iron_greaves",
+        1
+      ],
+      [
+        "iron_pauldron_left",
+        1
+      ],
+      [
+        "iron_pauldron_right",
+        1
+      ],
+      [
+        "iron_shield",
+        1
+      ],
+      [
+        "iron_towershield",
+        1
+      ],
+      [
+        "iron_tail",
+        1
+      ]
+    ]
+  },
+  {
+    "type": "LevelledItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "random_armor_steel",
+    "list_flags": 1,
+    "chance_none": 0,
+    "items": [
+      [
+        "steel_cuirass",
+        1
+      ],
+      [
+        "steel_gauntlet_left",
+        1
+      ],
+      [
+        "steel_gauntlet_right",
+        1
+      ],
+      [
+        "steel_greaves",
+        1
+      ],
+      [
+        "steel_helm",
+        1
+      ],
+      [
+        "steel_pauldron_left",
+        1
+      ],
+      [
+        "steel_pauldron_right",
+        1
+      ],
+      [
+        "steel_shield",
+        1
+      ],
+      [
+        "steel_towershield",
+        1
+      ],
+      [
+        "steel_tail",
+        1
+      ]
+    ]
+  },
+  {
+    "type": "LevelledItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "random_dwemer_armor",
+    "list_flags": 1,
+    "chance_none": 10,
+    "items": [
+      [
+        "dwemer_boots",
+        1
+      ],
+      [
+        "dwemer_bracer_left",
+        1
+      ],
+      [
+        "dwemer_bracer_right",
+        1
+      ],
+      [
+        "dwemer_cuirass",
+        1
+      ],
+      [
+        "dwemer_greaves",
+        1
+      ],
+      [
+        "dwemer_helm",
+        1
+      ],
+      [
+        "dwemer_pauldron_left",
+        1
+      ],
+      [
+        "dwemer_pauldron_right",
+        1
+      ],
+      [
+        "dwemer_shield",
+        1
+      ],
+      [
+        "dwemer_tail",
+        1
+      ]
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Sadrith Mora",
+    "data": {
+      "flags": 70,
+      "grid": [
+        18,
+        4
+      ]
+    },
+    "region": "Azura's Coast Region",
+    "map_color": [
+      202,
+      165,
+      96,
+      0
+    ],
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 1,
+        "id": "1lefemmdom",
+        "temporary": true,
+        "translation": [
+          151482.64,
+          38980.17,
+          504.76843
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "manicky",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Moonmoth Legion Fort",
+    "data": {
+      "flags": 70,
+      "grid": [
+        -1,
+        -3
+      ]
+    },
+    "region": "West Gash Region",
+    "map_color": [
+      202,
+      165,
+      96,
+      0
+    ],
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 2,
+        "id": "1imperial",
+        "temporary": true,
+        "translation": [
+          -5544.17,
+          -18814.982,
+          571.6208
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "erla",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Ald-ruhn",
+    "data": {
+      "flags": 70,
+      "grid": [
+        -2,
+        6
+      ]
+    },
+    "region": "Ashlands Region",
+    "map_color": [
+      202,
+      165,
+      96,
+      0
+    ],
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 3,
+        "id": "1redoran",
+        "temporary": true,
+        "translation": [
+          -11364.606,
+          57295.3,
+          2544.6543
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "dandera selaro",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 4,
+        "id": "1lefemmdom",
+        "temporary": true,
+        "translation": [
+          -11378.053,
+          57303.83,
+          2539.185
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "dandera selaro",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Buckmoth Legion Fort",
+    "data": {
+      "flags": 70,
+      "grid": [
+        -2,
+        5
+      ]
+    },
+    "region": "Ashlands Region",
+    "map_color": [
+      202,
+      165,
+      96,
+      0
+    ],
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 5,
+        "id": "1imperial",
+        "temporary": true,
+        "translation": [
+          -13643.325,
+          43875.754,
+          1605.8297
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "yambagorn gor-shulor",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "",
+    "data": {
+      "flags": 2,
+      "grid": [
+        -2,
+        -8
+      ]
+    },
+    "region": "Bitter Coast Region",
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 6,
+        "id": "1Pasheeva",
+        "temporary": false,
+        "translation": [
+          -11607.064,
+          -64841.51,
+          445.80032
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.7831893
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 7,
+        "id": "ex_nord_door_02",
+        "temporary": false,
+        "translation": [
+          -11464.801,
+          -64874.37,
+          565.16815
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0
+        ],
+        "door_destination_coords": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "door_destination_cell": "Seyda Neen, Pasheeva's House"
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 8,
+        "id": "ex_nord_doorf_01",
+        "temporary": true,
+        "translation": [
+          -11489.253,
+          -64877.16,
+          562.52637
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0000001
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 9,
+        "id": "ex_nord_house_05",
+        "temporary": true,
+        "translation": [
+          -11250.319,
+          -64799.633,
+          485.851
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0000002
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 10,
+        "id": "ex_nord_win_01",
+        "temporary": true,
+        "translation": [
+          -11311.302,
+          -65001.848,
+          595.224
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 11,
+        "id": "ex_nord_win_01",
+        "temporary": true,
+        "translation": [
+          -11087.965,
+          -65003.34,
+          595.224
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.6831875
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 12,
+        "id": "furn_com_lantern_hook",
+        "temporary": true,
+        "translation": [
+          -11452.137,
+          -64933.055,
+          625.082
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.99483764
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 13,
+        "id": "furn_com_lantern_hook",
+        "temporary": true,
+        "translation": [
+          -11513.088,
+          -64840.504,
+          625.082
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0000737
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 14,
+        "id": "light_com_lantern_02_256",
+        "temporary": true,
+        "translation": [
+          -11520.455,
+          -64847.44,
+          628.97125
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0000737
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 1130102784
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 15,
+        "id": "furn_de_forge_01",
+        "temporary": true,
+        "translation": [
+          -11720.962,
+          -64725.14,
+          435.10443
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.20000073
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 16,
+        "id": "Furn_De_Firepit_F_01_400",
+        "temporary": true,
+        "translation": [
+          -11718.141,
+          -64723.97,
+          576.9908
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.5
+        ],
+        "scale": 0.70000005
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 17,
+        "id": "furn_log_04",
+        "temporary": true,
+        "translation": [
+          -11723.159,
+          -64735.414,
+          541.6344
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.7000002
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 18,
+        "id": "furn_log_04",
+        "temporary": true,
+        "translation": [
+          -11711.113,
+          -64718.484,
+          540.6375
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.2831893
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 19,
+        "id": "furn_log_04",
+        "temporary": true,
+        "translation": [
+          -11721.88,
+          -64722.56,
+          545.06726
+        ],
+        "rotation": [
+          0.0,
+          0.2268928,
+          2.1000001
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 20,
+        "id": "furn_de_bellows_01",
+        "temporary": true,
+        "translation": [
+          -11747.704,
+          -64868.305,
+          439.9875
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.7
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 21,
+        "id": "light_com_lantern_02_256",
+        "temporary": true,
+        "translation": [
+          -11459.684,
+          -64940.066,
+          628.93445
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0000737
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 1130102784
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 22,
+        "id": "1pasheevasack2",
+        "temporary": true,
+        "translation": [
+          -11740.575,
+          -64739.836,
+          457.11597
+        ],
+        "rotation": [
+          6.1848907,
+          5.9684124,
+          2.0095558
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 23,
+        "id": "repair_journeyman_01",
+        "temporary": true,
+        "translation": [
+          -11687.269,
+          -64818.953,
+          490.8258
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.0999997
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 20
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 24,
+        "id": "furn_anvil00",
+        "temporary": true,
+        "translation": [
+          -11470.661,
+          -65104.71,
+          445.1001
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.9168233
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 25,
+        "id": "repair_prongs",
+        "temporary": true,
+        "translation": [
+          -11791.986,
+          -64804.01,
+          490.52173
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.8831887
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 25
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 26,
+        "id": "schedule",
+        "temporary": true,
+        "translation": [
+          -11667.993,
+          -64930.176,
+          382.80273
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 27,
+        "id": "1pasheevasack",
+        "temporary": true,
+        "translation": [
+          -11745.753,
+          -64774.24,
+          459.15018
+        ],
+        "rotation": [
+          3.4079177,
+          0.33270183,
+          1.9737272
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Ald Sotha, Lower Level",
+    "data": {
+      "flags": 1,
+      "grid": [
+        1974295,
+        1065353216
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 28,
+        "id": "db_tail",
+        "temporary": true,
+        "translation": [
+          422.72504,
+          -954.8386,
+          115.25665
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.18319
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Arkngthand, Cells of Hollow Hand",
+    "data": {
+      "flags": 1,
+      "grid": [
+        1579541,
+        1065353216
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 29,
+        "id": "dwemer_tail",
+        "temporary": true,
+        "translation": [
+          4442.8896,
+          3878.14,
+          14511.737
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.983186
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Balmora, Meldor: Armorer",
+    "data": {
+      "flags": 5,
+      "grid": [
+        2241090,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 30,
+        "id": "1hlaalu",
+        "temporary": true,
+        "translation": [
+          -204.13568,
+          1045.2566,
+          562.6454
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "meldor",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 31,
+        "id": "1orc",
+        "temporary": true,
+        "translation": [
+          -126.766594,
+          1077.4971,
+          570.5252
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "meldor",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Buckmoth Legion Fort, Interior",
+    "data": {
+      "flags": 5,
+      "grid": [
+        1320769,
+        1056964608
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 32,
+        "id": "1imperial",
+        "temporary": true,
+        "translation": [
+          -119.136894,
+          885.198,
+          -671.9265
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "yambagorn gor-shulor",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Caldera, Hodlismod: Armorer",
+    "data": {
+      "flags": 5,
+      "grid": [
+        4160,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 1,
+        "refr_index": 164883,
+        "id": "crate_02_steel_weapons",
+        "temporary": true,
+        "translation": [
+          337.66586,
+          82.202095,
+          152.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.40059
+        ],
+        "scale": 0.75000006,
+        "owner": "hodlismod",
+        "health_left": 1
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 33,
+        "id": "1adaman",
+        "temporary": true,
+        "translation": [
+          713.6668,
+          -834.33984,
+          622.59454
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "hodlismod",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Ebonheart, Hawkmoth Legion Garrison",
+    "data": {
+      "flags": 5,
+      "grid": [
+        3289650,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 34,
+        "id": "2imperial",
+        "temporary": true,
+        "translation": [
+          -1261.8115,
+          2220.128,
+          755.5702
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "Sirollus Saccus",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 35,
+        "id": "1lefemm",
+        "temporary": true,
+        "translation": [
+          53.62021,
+          1954.0795,
+          -351.99994
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "Sirollus Saccus",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Gnisis, Fort Darius",
+    "data": {
+      "flags": 5,
+      "grid": [
+        4160,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 36,
+        "id": "1imperial",
+        "temporary": true,
+        "translation": [
+          479.29456,
+          349.81012,
+          62.01459
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "mug gro-dulob",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Koal Cave",
+    "data": {
+      "flags": 7,
+      "grid": [
+        3287060,
+        1065353216
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 37,
+        "id": "dreugh_tail",
+        "temporary": true,
+        "translation": [
+          5008.6157,
+          3480.682,
+          9.627554
+        ],
+        "rotation": [
+          0.27756494,
+          0.11533736,
+          5.9993134
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Moonmoth Legion Fort, Interior",
+    "data": {
+      "flags": 5,
+      "grid": [
+        1123396,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 38,
+        "id": "1imperial",
+        "temporary": true,
+        "translation": [
+          530.5724,
+          -270.8888,
+          -188.71991
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "erla",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Pelagiad, Fort Pelagiad",
+    "data": {
+      "flags": 5,
+      "grid": [
+        595772,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 39,
+        "id": "1imperial",
+        "temporary": true,
+        "translation": [
+          2110.536,
+          -175.01045,
+          88.028015
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "shadbak gra-burbug",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Sadrith Mora, Wolverine Hall: Mage's Guild",
+    "data": {
+      "flags": 5,
+      "grid": [
+        1973790,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 40,
+        "id": "1skinkcrate",
+        "temporary": true,
+        "translation": [
+          -26.053345,
+          1174.1577,
+          -354.7431
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "skinkintreesshade",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Suran, Garothmuk gro-Muzgub: Smith",
+    "data": {
+      "flags": 5,
+      "grid": [
+        2241090,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 41,
+        "id": "1orc",
+        "temporary": true,
+        "translation": [
+          575.9159,
+          57.15425,
+          356.346
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "garothmuk gro-muzgub",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Tel Aruhn, Aryne Telnim: Smith",
+    "data": {
+      "flags": 5,
+      "grid": [
+        1513239,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 42,
+        "id": "1lefemmdom",
+        "temporary": true,
+        "translation": [
+          286.20584,
+          -459.21802,
+          -23.440722
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "aryne telnim",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Tower of Tel Fyr, Hall of Fyr",
+    "data": {
+      "flags": 5,
+      "grid": [
+        3350033,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 43,
+        "id": "daedric_tail",
+        "temporary": true,
+        "translation": [
+          4307.231,
+          4757.04,
+          14914.901
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.70000017
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Vivec, Foreign Quarter Underworks",
+    "data": {
+      "flags": 3,
+      "grid": [
+        1251089,
+        1063675494
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 44,
+        "id": "1deadarg",
+        "temporary": false,
+        "translation": [
+          2474.1826,
+          7146.541,
+          23.653122
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Vivec, Guild of Fighters",
+    "data": {
+      "flags": 5,
+      "grid": [
+        1582155,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 45,
+        "id": "1lefemm",
+        "temporary": true,
+        "translation": [
+          -120.48334,
+          -624.32007,
+          -578.5497
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "lorbumol gro-aglakh",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Vivec, Ralen Tilvur: Smith",
+    "data": {
+      "flags": 5,
+      "grid": [
+        2241090,
+        1061158912
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 46,
+        "id": "1adaman",
+        "temporary": true,
+        "translation": [
+          -234.74562,
+          -859.71747,
+          338.2672
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "ralen tilvur",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Mournhold, Royal Palace: Guards' Quarters",
+    "data": {
+      "flags": 5,
+      "grid": [
+        3223332,
+        1056964608
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 47,
+        "id": "helseth_tail",
+        "temporary": true,
+        "translation": [
+          25.657425,
+          1824.2299,
+          437.742
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.90000004
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Old Mournhold: Abandoned Passageway",
+    "data": {
+      "flags": 1,
+      "grid": [
+        3223332,
+        1065353216
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 48,
+        "id": "2deadarg",
+        "temporary": false,
+        "translation": [
+          -882.2026,
+          377.67532,
+          946.9086
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.783193
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Solstheim, Bloodskal Barrow",
+    "data": {
+      "flags": 1,
+      "grid": [
+        1184274,
+        1056964608
+      ]
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 49,
+        "id": "nordic_tail",
+        "temporary": true,
+        "translation": [
+          -99.89532,
+          -1950.2869,
+          -121.48763
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.583186
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Seyda Neen, Pasheeva's House",
+    "data": {
+      "flags": 5,
+      "grid": [
+        0,
+        1065353216
+      ]
+    },
+    "water_height": 0.0,
+    "atmosphere_data": {
+      "ambient_color": [
+        71,
+        71,
+        71,
+        0
+      ],
+      "sunlight_color": [
+        242,
+        217,
+        217,
+        0
+      ],
+      "fog_color": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "fog_density": 1.0
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 50,
+        "id": "ex_nord_door_01",
+        "temporary": false,
+        "translation": [
+          17.994553,
+          -15.661512,
+          25.47194
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.1415927
+        ],
+        "door_destination_coords": [
+          -11521.665,
+          -64918.617,
+          578.87476,
+          0.0,
+          -0.0,
+          4.101524
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 51,
+        "id": "in_nord_house_03",
+        "temporary": true,
+        "translation": [
+          110.715805,
+          127.45389,
+          166.00404
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 52,
+        "id": "in_nord_doorf_01",
+        "temporary": true,
+        "translation": [
+          7.144203,
+          -32.546112,
+          6.0040207
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 53,
+        "id": "ex_nord_win_01",
+        "temporary": true,
+        "translation": [
+          219.32967,
+          -42.58493,
+          63.719
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          3.1415927
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 54,
+        "id": "NorthMarker",
+        "temporary": true,
+        "translation": [
+          80.51912,
+          171.41656,
+          770.24915
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.2831883
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 55,
+        "id": "ex_nord_win_01",
+        "temporary": true,
+        "translation": [
+          367.93484,
+          154.4608,
+          63.719
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5707964
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 56,
+        "id": "furn_de_p_table_05",
+        "temporary": true,
+        "translation": [
+          310.89975,
+          154.3007,
+          -57.340733
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 57,
+        "id": "furn_de_p_table_04",
+        "temporary": true,
+        "translation": [
+          -88.69522,
+          242.65303,
+          -54.187817
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5707964
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 58,
+        "id": "furn_de_p_chair_02",
+        "temporary": true,
+        "translation": [
+          -19.91645,
+          249.93257,
+          -55.315098
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.3999999
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 59,
+        "id": "furn_de_tapestry_05",
+        "temporary": true,
+        "translation": [
+          -148.46405,
+          67.47423,
+          144.67429
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5707964
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 60,
+        "id": "furn_pottedplant",
+        "temporary": true,
+        "translation": [
+          312.13132,
+          152.70723,
+          -10.503958
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 61,
+        "id": "furn_de_rug_big_05",
+        "temporary": true,
+        "translation": [
+          6.1395187,
+          59.766724,
+          -88.28382
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 62,
+        "id": "light_de_candle_03",
+        "temporary": true,
+        "translation": [
+          -120.208466,
+          181.10901,
+          -16.503307
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5000002
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 1123024896
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 63,
+        "id": "de_drawers_02_empty",
+        "temporary": true,
+        "translation": [
+          258.4519,
+          13.328365,
+          -38.48267
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.1415927
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 64,
+        "id": "light_de_candle_12",
+        "temporary": true,
+        "translation": [
+          198.98225,
+          1.2790375,
+          12.750727
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.8000044
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 1123024896
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 65,
+        "id": "common_pants_03_b",
+        "temporary": true,
+        "translation": [
+          243.73248,
+          21.073822,
+          11.060837
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.40000004
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 66,
+        "id": "common_glove_right_01",
+        "temporary": true,
+        "translation": [
+          219.6139,
+          23.57175,
+          10.061687
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.2
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 67,
+        "id": "common_shirt_04_c",
+        "temporary": true,
+        "translation": [
+          274.1691,
+          18.40891,
+          10.054203
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          6.0832033
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 68,
+        "id": "common_skirt_02",
+        "temporary": true,
+        "translation": [
+          310.69324,
+          14.082003,
+          11.210133
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.30000037
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 69,
+        "id": "common_glove_left_01",
+        "temporary": true,
+        "translation": [
+          205.56766,
+          21.257938,
+          11.125061
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.2
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 70,
+        "id": "common_belt_05",
+        "temporary": true,
+        "translation": [
+          223.8895,
+          1.0734434,
+          8.835915
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.2
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 71,
+        "id": "furn_de_p_bookshelf_01",
+        "temporary": true,
+        "translation": [
+          -109.879364,
+          67.80193,
+          -24.702644
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.5707964
+        ],
+        "scale": 0.8
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 72,
+        "id": "light_de_candle_14",
+        "temporary": true,
+        "translation": [
+          -110.740326,
+          110.75976,
+          24.467068
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.6
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 1123024896
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 73,
+        "id": "bk_OriginOfTheMagesGuild",
+        "temporary": true,
+        "translation": [
+          -106.6102,
+          15.43739,
+          29.749905
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.7415931
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 74,
+        "id": "bk_AncestorsAndTheDunmer",
+        "temporary": true,
+        "translation": [
+          -106.25998,
+          62.156956,
+          23.385244
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          3.6415932
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 75,
+        "id": "bk_varietiesoffaithintheempire",
+        "temporary": true,
+        "translation": [
+          -106.84327,
+          14.724447,
+          23.738472
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.7415931
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 76,
+        "id": "bk_ChildrenOfTheSky",
+        "temporary": true,
+        "translation": [
+          -107.461174,
+          62.937725,
+          29.46852
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          3.1415927
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 77,
+        "id": "bk_AedraAndDaedra",
+        "temporary": true,
+        "translation": [
+          -105.010155,
+          87.892204,
+          30.870193
+        ],
+        "rotation": [
+          0.53633237,
+          -0.0,
+          3.1415973
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 78,
+        "id": "active_de_p_bed_14",
+        "temporary": true,
+        "translation": [
+          231.70535,
+          272.5776,
+          -56.503586
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 79,
+        "id": "repair_journeyman_01",
+        "temporary": true,
+        "translation": [
+          -103.47854,
+          24.740593,
+          -15.87342
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.983188
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 20
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 80,
+        "id": "netch_tail",
+        "temporary": true,
+        "translation": [
+          -105.09491,
+          63.633358,
+          -9.562622
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.1999999
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 50
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 81,
+        "id": "iron_tail",
+        "temporary": true,
+        "translation": [
+          -102.364296,
+          92.79321,
+          -6.9484453
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.70000017
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 450
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 82,
+        "id": "repair_prongs",
+        "temporary": true,
+        "translation": [
+          -111.58041,
+          120.451454,
+          -14.650711
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.9
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 25
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 83,
+        "id": "misc_flask_02",
+        "temporary": true,
+        "translation": [
+          -115.991974,
+          8.565708,
+          -51.416866
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 84,
+        "id": "misc_flask_01",
+        "temporary": true,
+        "translation": [
+          -115.51535,
+          25.827057,
+          -51.55562
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 85,
+        "id": "misc_flask_03",
+        "temporary": true,
+        "translation": [
+          -107.62279,
+          39.341183,
+          -50.295174
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 86,
+        "id": "misc_flask_04",
+        "temporary": true,
+        "translation": [
+          -99.99624,
+          17.155205,
+          -51.756256
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 87,
+        "id": "ingred_netch_leather_01",
+        "temporary": true,
+        "translation": [
+          -110.44677,
+          122.30255,
+          -51.857212
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.1831865
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 88,
+        "id": "ingred_netch_leather_01",
+        "temporary": true,
+        "translation": [
+          -109.357216,
+          62.811962,
+          -51.857212
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.59999996
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 89,
+        "id": "ingred_netch_leather_01",
+        "temporary": true,
+        "translation": [
+          -110.51394,
+          81.47558,
+          -51.857212
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          6.2831855
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 90,
+        "id": "ingred_netch_leather_01",
+        "temporary": true,
+        "translation": [
+          -106.54798,
+          100.98415,
+          -51.857212
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.883187
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 91,
+        "id": "misc_com_wood_bowl_03",
+        "temporary": true,
+        "translation": [
+          -77.58627,
+          242.58197,
+          -19.44883
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.4
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 92,
+        "id": "Misc_Com_Wood_Bowl_05",
+        "temporary": true,
+        "translation": [
+          -98.33959,
+          250.6927,
+          -16.08995
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.883186
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 93,
+        "id": "misc_com_wood_cup_02",
+        "temporary": true,
+        "translation": [
+          -72.33147,
+          257.42676,
+          -15.54747
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 94,
+        "id": "misc_com_wood_fork",
+        "temporary": true,
+        "translation": [
+          -62.199036,
+          268.28687,
+          -17.974398
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          2.1000009
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 95,
+        "id": "misc_com_wood_spoon_01",
+        "temporary": true,
+        "translation": [
+          -66.237595,
+          273.4975,
+          -18.256033
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          1.9000002
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 96,
+        "id": "misc_de_foldedcloth00",
+        "temporary": true,
+        "translation": [
+          -64.99895,
+          270.72073,
+          -20.922432
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.7
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 97,
+        "id": "bk_CantatasOfVivec",
+        "temporary": true,
+        "translation": [
+          -92.004196,
+          297.3018,
+          -19.197662
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          5.1831884
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 98,
+        "id": "BookSkill_Armorer1",
+        "temporary": true,
+        "translation": [
+          -83.32184,
+          191.86833,
+          -18.422157
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          4.4831905
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 99,
+        "id": "misc_uni_pillow_01",
+        "temporary": true,
+        "translation": [
+          303.5294,
+          273.13675,
+          -28.882969
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "1Pasheeva",
+        "health_left": 0
+      }
+    ]
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "snow wolf armor",
+    "dialogue_type": "Topic"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "517618037397510209",
+    "prev_id": "",
+    "next_id": "320493102838524250",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "Your custom piece of armor is ready!  Here you go, %PCName, one expertly crafted Snow Wolf Tailguard.  It came out even better than I expected.  If you need anything else, I'm your man!",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "SnowWolfTail",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->additem \"wold_tail\" 1\r\nset SnowWolfTail to 0\r\nset localDayspassed to 0\r\nset busy to 0\r\nGoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "320493102838524250",
+    "prev_id": "517618037397510209",
+    "next_id": "848823097148716349",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "Your custom Snow Wolf Tailguard isn't ready yet, %PCName.  Come back later.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "SnowWolfTail",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Less",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ],
+    "result": "Goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "848823097148716349",
+    "prev_id": "320493102838524250",
+    "next_id": "14824115881174823039",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "Your custom piece of armor is ready!  Here you go, %PCName, one expertly crafted Snow Wolf Helm.  It came out even better than I expected.  If you need anything else, I'm your man!",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "SnowWolfHelm",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->additem \"BM_wolf_helmet_snow\" 1\r\nset SnowWolfHelm to 0\r\nset localDayspassed to 0\r\nset busy to 0\r\nGoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2028918180152718725",
+    "prev_id": "390417542306632395",
+    "next_id": "13648683174130215",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "Your custom Snow Wolf Cuirass isn't ready yet, %PCName.  Come back later.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "SnowWolfCuirass",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Less",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ],
+    "result": "Goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "13648683174130215",
+    "prev_id": "2028918180152718725",
+    "next_id": "8485224361038919197",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "Aha!  I knew you'd come through, %PCName!  Give me the pelts and gold.  Come back tomorrow, same time, and I'll have your custom Snow Wolf Tailguard ready.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "BM_FurArmor",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "ingred_snowwolf_pelt_unique",
+        "value": {
+          "Integer": 3
+        }
+      },
+      {
+        "slot": "Slot3",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "Gold_001",
+        "value": {
+          "Integer": 3000
+        }
+      }
+    ],
+    "result": "player->removeitem \"ingred_snowwolf_pelt_unique\" 3\r\nplayer->removeitem \"gold_001\" 3000\r\nset SnowWolfTail to 1\r\nset LocalDaysPassed to 0\r\nset busy to 1\r\nGoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "8485224361038919197",
+    "prev_id": "13648683174130215",
+    "next_id": "2905876051391527134",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "You've got my list of armor requirements and prices, %PCName.  It takes a lot of work and a lot of skill to craft such fine armor, and quality like that is going to cost you.  Come back when you have enough gold.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "BM_FurArmor",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "Less",
+        "id": "Gold_001",
+        "value": {
+          "Integer": 3000
+        }
+      }
+    ],
+    "result": "Goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2905876051391527134",
+    "prev_id": "8485224361038919197",
+    "next_id": "16258214972433221663",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "You've got my list of armor requirements and prices, %PCName.  I can't make you a custom piece without the right materials.  Come back when you have enough snow wolf pelts.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "BM_FurArmor",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "Less",
+        "id": "ingred_snowwolf_pelt_unique",
+        "value": {
+          "Integer": 3
+        }
+      }
+    ],
+    "result": "Goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "16258214972433221663",
+    "prev_id": "2905876051391527134",
+    "next_id": "2137324268882516639",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "So be it, %PCName.  Come talk to me again if you change your mind.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 9
+        }
+      }
+    ],
+    "result": "Goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "29386163853098932001",
+    "prev_id": "17064242641141122709",
+    "next_id": "2721026021117127366",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "You bring me the snow wolf pelts and gold, and I'll make a piece of custom snow wolf armor.  I'll have it ready in twenty-four hours.  You've got my list of prices and pelt requirements.  Which piece of armor were you interested in?",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "BM_FurArmor",
+        "value": {
+          "Integer": 10
+        }
+      }
+    ],
+    "result": "Choice \"Snow Wolf Cuirass\" 1 \"Snow Wolf Right Pauldron\" 2 \"Snow Wolf Left Pauldron\" 3 \"Snow Wolf Right Gauntlet\" 4 \"Snow Wolf Left Gauntlet\" 5 \"Snow Wolf Greaves\" 6 \"Snow Wolf Boots\" 7 \"Snow Wolf Helm\" 8 \"Nothing Right Now\" 9 \"Snow Wolf Tailguard\" 10"
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "snow bear armor",
+    "dialogue_type": "Topic"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "31032302801801121476",
+    "prev_id": "",
+    "next_id": "5557145951335732301",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "Your custom piece of armor is ready!  Here you go, %PCName, one expertly crafted Snow Bear Tailguard.  It came out even better than I expected.  If you need anything else, I'm your man!",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "SnowBearTail",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->additem \"bear_tail\" 1\r\nset SnowBearTail to 0\r\nset localDayspassed to 0\r\nset busy to 0\r\nGoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "5557145951335732301",
+    "prev_id": "31032302801801121476",
+    "next_id": "2633819473694823572",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "Your custom Snow Bear Tailguard isn't ready yet, %PCName.  Come back later.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "SnowBearTail",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Less",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ],
+    "result": "Goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2633819473694823572",
+    "prev_id": "5557145951335732301",
+    "next_id": "4702166742190613989",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "Your custom piece of armor is ready!  Here you go, %PCName, one expertly crafted Snow Bear Helm.  It came out even better than I expected.  If you need anything else, I'm your man!",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "SnowBearHelm",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->additem \"BM_bear_helmet_snow\" 1\r\nset SnowBearHelm to 0\r\nset localDayspassed to 0\r\nset busy to 0\r\nGoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "182487591699624308",
+    "prev_id": "15609137332936428952",
+    "next_id": "1191217188723821543",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "Aha!  I knew you'd come through, %PCName!  Give me the pelts and gold.  Come back tomorrow, same time, and I'll have your custom Snow Bear Helm ready.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "BM_FurArmor",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "ingred_snowbear_pelt_unique",
+        "value": {
+          "Integer": 3
+        }
+      },
+      {
+        "slot": "Slot3",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "Gold_001",
+        "value": {
+          "Integer": 3000
+        }
+      }
+    ],
+    "result": "player->removeitem \"ingred_snowbear_pelt_unique\" 3\r\nplayer->removeitem \"gold_001\" 3000\r\nset SnowBearTail to 1\r\nset LocalDaysPassed to 0\r\nset busy to 1\r\nGoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "1191217188723821543",
+    "prev_id": "182487591699624308",
+    "next_id": "17673243702335029524",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "You've got my list of armor requirements and prices, %PCName.  It takes a lot of work and a lot of skill to craft such fine armor, and quality like that is going to cost you.  Come back when you have enough gold.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "BM_FurArmor",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "Less",
+        "id": "Gold_001",
+        "value": {
+          "Integer": 3000
+        }
+      }
+    ],
+    "result": "Goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "17673243702335029524",
+    "prev_id": "1191217188723821543",
+    "next_id": "2361616981187355434",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "You've got my list of armor requirements and prices, %PCName.  I can't make you a custom piece without the right materials.  Come back when you have enough snow bear pelts.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "BM_FurArmor",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "Less",
+        "id": "ingred_snowbear_pelt_unique",
+        "value": {
+          "Integer": 3
+        }
+      }
+    ],
+    "result": "Goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2361616981187355434",
+    "prev_id": "17673243702335029524",
+    "next_id": "31139237591274818592",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "So be it, %PCName.  Come talk to me again if you change your mind.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 9
+        }
+      }
+    ],
+    "result": "Goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "4354257353146619625",
+    "prev_id": "189122828877515431",
+    "next_id": "19687285231110129998",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "brynjolfr",
+    "text": "You bring me the snow bear pelts and gold, and I'll make a piece of custom snow bear armor.  I'll have it ready in twenty-four hours.  You've got my list of prices and pelt requirements.  Which piece of armor were you interested in?",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "BM_FurArmor",
+        "value": {
+          "Integer": 10
+        }
+      }
+    ],
+    "result": "Choice \"Snow Bear Cuirass\" 1 \"Snow Bear Right Pauldron\" 2 \"Snow Bear Left Pauldron\" 3 \"Snow Bear Right Gauntlet\" 4 \"Snow Bear Left Gauntlet\" 5 \"Snow Bear Greaves\" 6 \"Snow Bear Boots\" 7 \"Snow Bear Helm\" 8 \"Nothing Right Now\" 9 \"Snow Bear Tailguard\" 10"
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Stalhrim armor",
+    "dialogue_type": "Topic"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "274556851054532118",
+    "prev_id": "",
+    "next_id": "2558529702968811382",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "Carnius Magius",
+    "text": "Before we go any further, I want to make it clear to you that there's a finite amount of Stalhrim on this island. If you find enough of it, you'll be rewarded enough to certainly cover a full set of armor. I'm not going to keep track of what you've been given and what you haven't - it's your problem if you wind up with ten pairs of boots. Now that we've gotten that out of the way, we can discuss what Stalhrim armor you want as a reward for your hard work.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "CO_8a",
+        "value": {
+          "Integer": 50
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "Armorwarning",
+        "value": {
+          "Integer": 0
+        }
+      }
+    ],
+    "result": "set \"Carnius Magius\".Armorwarning  to 1"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2558529702968811382",
+    "prev_id": "274556851054532118",
+    "next_id": "2262212750238019703",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "Carnius Magius",
+    "text": "Very well. Here you go.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      }
+    ],
+    "result": "player->additem \"ice_tail\" 1\r\nset \"Carnius Magius\".Stalhrimgiven to ( \"Carnius Magius\".Stalhrimgiven - 2 )"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2262212750238019703",
+    "prev_id": "2558529702968811382",
+    "next_id": "1380827950750117623",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "Carnius Magius",
+    "text": "Very well. Here you go.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 9
+        }
+      }
+    ],
+    "result": "player->additem \"BM_Ice_helmet\" 1\r\nset \"Carnius Magius\".Stalhrimgiven to ( \"Carnius Magius\".Stalhrimgiven - 2 )"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "23576130442396221546",
+    "prev_id": "92859362084210883",
+    "next_id": "2028233382939610367",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "Carnius Magius",
+    "text": "You haven't given me enough Stalhrim to consider rewarding you, %PCRank.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "CO_8a",
+        "value": {
+          "Integer": 50
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Less",
+        "id": "Stalhrimgiven",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ]
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2028233382939610367",
+    "prev_id": "23576130442396221546",
+    "next_id": "1152013965172048418",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "aenar",
+    "text": "Here's your tailguard. It should fit you quite well; take good care of it.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "stail",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ],
+    "result": "player->additem \"ice_tail\" 1\r\nset localdayspassed to 0\r\nset busy to 0\r\nset stail to 0\r\nset localdayspassed to 0"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "1152013965172048418",
+    "prev_id": "2028233382939610367",
+    "next_id": "2129022361281342216",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "aenar",
+    "text": "I'm sorry, but your tailguard isn't ready yet. It's going to take a little more time.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "stail",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ]
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2129022361281342216",
+    "prev_id": "1152013965172048418",
+    "next_id": "999015432179526631",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "aenar",
+    "text": "Here's your helmet. It should fit you quite well; take good care of it.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "shelm",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ],
+    "result": "player->additem \"BM_Ice_Helmet\" 1\r\nset localdayspassed to 0\r\nset busy to 0\r\nset shelm to 0\r\nset localdayspassed to 0"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2670666472386515164",
+    "prev_id": "29311300532962426992",
+    "next_id": "11393182954718292",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "aenar",
+    "text": "I'm sorry, but your cuirass isn't ready yet. It's going to take a little more time.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "scuirass",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ]
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "11393182954718292",
+    "prev_id": "2670666472386515164",
+    "next_id": "213677922393231202",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "aenar",
+    "text": "Very well. I shall start work on them. Come back in two days, and it will be ready.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "ingred_raw_Stalhrim_01",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->removeitem \"ingred_raw_stalhrim_01\" 1\r\nset stail to 1\r\nset busy to 1\r\nGoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "213677922393231202",
+    "prev_id": "11393182954718292",
+    "next_id": "9766301701128124175",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "aenar",
+    "text": "You have no raw Stalhrim. I cannot make a tailguard for you.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "Less",
+        "id": "ingred_raw_Stalhrim_01",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ]
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "9766301701128124175",
+    "prev_id": "213677922393231202",
+    "next_id": "23496296792142525823",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "aenar",
+    "text": "Very well. I shall start work on it. Come back in two days, and it will be ready.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 9
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "ingred_raw_Stalhrim_01",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->removeitem \"ingred_raw_stalhrim_01\" 1\r\nset shelm to 1\r\nset busy to 1\r\nGoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "775626314531412084",
+    "prev_id": "17088124251941714401",
+    "next_id": "",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "aenar",
+    "text": "I can craft any piece of armor, provided you have the raw materials. What do you need?",
+    "filters": [],
+    "result": "Choice \"Stalhrim Cuirass\" 2 \"Stalhrim Left Pauldron\"  3 \"Stalhrim Right Pauldron\" 4 \"Stalhrim Left Gauntlet\" 5 \"Stalhrim Right Gauntlet\" 6 \"Stalhrim Greaves\" 7 \"Stalhrim Boots\" 8 \"Stalhrim Helm\" 9 \"Nevermind\" 1 \"Stalhrim Tailguard\" 10"
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "glass armor",
+    "dialogue_type": "Topic"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "1773089782428319762",
+    "prev_id": "",
+    "next_id": "8318256551928217126",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Here's your Custom Glass Tailguard, hand-crafted by yours truly. I'm sure you'll find it satisfactory, and come back if there's anything else you'd like made.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "glassTail",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->additem \"glass_tail\" 1\r\nset glassTail to 0\r\nset localdayspassed to 0\r\nset busy to 0\r\ngoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "8318256551928217126",
+    "prev_id": "1773089782428319762",
+    "next_id": "666621861193830533",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Your Custom Glass Tailguard isn't ready yet. Be patient.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "glassTail",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Less",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "666621861193830533",
+    "prev_id": "8318256551928217126",
+    "next_id": "2264682861129110351",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Here's your Custom Glass Helm, hand-crafted by yours truly. I'm sure you'll find it satisfactory, and come back if there's anything else you'd like made.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "glassHelm",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->additem glass_helm 1\r\nset glassHelm to 0\r\nset localdayspassed to 0\r\nset busy to 0\r\ngoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "11659105722636924045",
+    "prev_id": "808199001589014249",
+    "next_id": "19258176202997215990",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Your Custom Glass Cuirass isn't ready yet. Be patient.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "glassCuirass",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Less",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "19258176202997215990",
+    "prev_id": "11659105722636924045",
+    "next_id": "164572156583759676",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Excellent. Come back in 24 hours, and I will have your Custom Glass Tailguard ready for you.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "MS_Armor_Crafter",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "ingred_raw_glass_01",
+        "value": {
+          "Integer": 9
+        }
+      },
+      {
+        "slot": "Slot3",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "Gold_001",
+        "value": {
+          "Integer": 5600
+        }
+      }
+    ],
+    "result": "player->removeitem ingred_raw_glass_01 9\r\nplayer->removeitem gold_001 5600\r\nset glassTail to 1\r\nset localdayspassed to 0\r\nset busy to 1\r\ngoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "164572156583759676",
+    "prev_id": "19258176202997215990",
+    "next_id": "1036133791595119964",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "You've got my list of armor requirements and prices. You don't have the gold for a Custom Glass Tailguard, and I'm not going to offer any discounts. Come back when you have the gold.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "MS_Armor_Crafter",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "Less",
+        "id": "Gold_001",
+        "value": {
+          "Integer": 5600
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "1036133791595119964",
+    "prev_id": "164572156583759676",
+    "next_id": "2461033342313817073",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "You've got my list of armor requirements and prices. I can't make armor without the necessary materials. Come back when you have the glass we need.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "MS_Armor_Crafter",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "Less",
+        "id": "ingred_raw_glass_01",
+        "value": {
+          "Integer": 9
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2461033342313817073",
+    "prev_id": "1036133791595119964",
+    "next_id": "5032171272106410420",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "All right. But if you change your mind, come talk to me.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 9
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "263468789105227174",
+    "prev_id": "2170328821208208576",
+    "next_id": "1753110833182108840",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "You supply the raw glass and pay for my work, and I provide you with custom glass armor. You've got my list of armor requirements and prices. Which piece of armor were you interested in?",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "MS_Armor_Crafter",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "Choice \"Glass Cuirass\" 1 \"Left Glass Pauldron\" 2 \"Right Glass Pauldron\" 3 \"Left Glass Bracer\" 4 \"Right Glass Bracer\" 5 \"Glass Greaves\" 6 \"Glass Boots\" 7 \"Glass Helm\" 8 \"Nothing right now.\" 9 \"Glass Tailguard\" 10"
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "ebony armor",
+    "dialogue_type": "Topic"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "1694218193241661060",
+    "prev_id": "",
+    "next_id": "278792771451757976",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Here's your Custom Ebony Tailguard, hand-crafted by yours truly. I'm sure you'll find it satisfactory, and come back if there's anything else you'd like made.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "ebonyTail",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->additem \"ebony_tail\" 1\r\nset ebonyTail to 0\r\nset localdayspassed to 0\r\nset busy to 0\r\ngoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "278792771451757976",
+    "prev_id": "1694218193241661060",
+    "next_id": "129077492319428530",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Your Custom Ebony Tailguard isn't ready yet. Be patient.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "ebonyTail",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Less",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "129077492319428530",
+    "prev_id": "278792771451757976",
+    "next_id": "20784309961803221595",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Here's your Custom Ebony Helm, hand-crafted by yours truly. I'm sure you'll find it satisfactory, and come back if there's anything else you'd like made.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "ebonyHelm",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "GreaterEqual",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "player->additem ebony_closed_helm 1\r\nset ebonyHelm to 0\r\nset localdayspassed to 0\r\nset busy to 0\r\ngoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "1143616765211844115",
+    "prev_id": "20874279402849723068",
+    "next_id": "42482152438001367",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Your Custom Ebony Cuirass isn't ready yet. Be patient.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Equal",
+        "id": "ebonyCuirass",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Local",
+        "filter_function": "VariableCompare",
+        "filter_comparison": "Less",
+        "id": "localdaysPassed",
+        "value": {
+          "Integer": 2
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "42482152438001367",
+    "prev_id": "1143616765211844115",
+    "next_id": "54653352549025108",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "Excellent. Come back in 24 hours, and I will have your Custom Ebony Tailguard ready for you.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "MS_Armor_Crafter",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "ingred_raw_ebony_01",
+        "value": {
+          "Integer": 9
+        }
+      },
+      {
+        "slot": "Slot3",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "GreaterEqual",
+        "id": "Gold_001",
+        "value": {
+          "Integer": 5600
+        }
+      }
+    ],
+    "result": "player->removeitem ingred_raw_ebony_01 9\r\nplayer->removeitem gold_001 5600\r\nset ebonyTail to 1\r\nset localdayspassed to 0\r\nset busy to 1\r\ngoodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "54653352549025108",
+    "prev_id": "42482152438001367",
+    "next_id": "322492252330075423",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "You've got my list of armor requirements and prices. You don't have the gold for a Custom Ebony Tailguard, and I'm not going to offer any discounts. Come back when you have the gold.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "MS_Armor_Crafter",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "Less",
+        "id": "Gold_001",
+        "value": {
+          "Integer": 5600
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "322492252330075423",
+    "prev_id": "54653352549025108",
+    "next_id": "3021011540735323847",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "You've got my list of armor requirements and prices. I can't make armor without the necessary materials. Come back when you have the ebony we need.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 10
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "MS_Armor_Crafter",
+        "value": {
+          "Integer": 1
+        }
+      },
+      {
+        "slot": "Slot2",
+        "filter_type": "Item",
+        "filter_function": "ItemType",
+        "filter_comparison": "Less",
+        "id": "ingred_raw_ebony_01",
+        "value": {
+          "Integer": 9
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "3021011540735323847",
+    "prev_id": "322492252330075423",
+    "next_id": "24479167112595025583",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "All right. But if you change your mind, come talk to me.",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "Choice",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 9
+        }
+      }
+    ],
+    "result": "goodbye"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "200603015161304937",
+    "prev_id": "1871113620816814269",
+    "next_id": "29201284541475918122",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "bols indalen",
+    "text": "You supply the ebony ore and pay for my work, and I provide you with custom ebony armor. You've got my list of armor requirements and prices. Which piece of armor were you interested in?",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "MS_Armor_Crafter",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ],
+    "result": "Choice \"Ebony Cuirass\" 1 \"Left Ebony Pauldron\" 2 \"Right Ebony Pauldron\" 3 \"Left Ebony Bracer\" 4 \"Right Ebony Bracer\" 5 \"Ebony Greaves\" 6 \"Ebony Boots\" 7 \"Ebony Helm\" 8 \"Nothing right now.\" 9 \"Ebony Tailguard\" 10"
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Greeting 5",
+    "dialogue_type": "Greeting"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "8267137258497299",
+    "prev_id": "",
+    "next_id": "16344255331947821528",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "1Pasheeva",
+    "text": "Welcome marsh-friend, may I interest you in some of my fine armor?",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Function",
+        "filter_function": "SameRace",
+        "filter_comparison": "Equal",
+        "id": "",
+        "value": {
+          "Integer": 1
+        }
+      }
+    ]
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "16344255331947821528",
+    "prev_id": "8267137258497299",
+    "next_id": "1288227500790714973",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "1Pasheeva",
+    "text": "Welcome, may I interest you in some of my fine armor?",
+    "filters": []
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "1288227500790714973",
+    "prev_id": "16344255331947821528",
+    "next_id": "1450442414429500",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "gindrala hleran",
+    "text": "Pardon me. But there's a very strange man in my house, and he won't leave. Will you go get him out of there, please?",
+    "filters": [
+      {
+        "slot": "Slot0",
+        "filter_type": "Journal",
+        "filter_function": "JournalType",
+        "filter_comparison": "GreaterEqual",
+        "id": "A2_2_6thHouse",
+        "value": {
+          "Integer": 50
+        }
+      },
+      {
+        "slot": "Slot1",
+        "filter_type": "Dead",
+        "filter_function": "DeadType",
+        "filter_comparison": "Equal",
+        "id": "dreamer_02",
+        "value": {
+          "Integer": 0
+        }
+      }
+    ]
+  },
+  {
+    "type": "Dialogue",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Background",
+    "dialogue_type": "Topic"
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "113122581210212953",
+    "prev_id": "",
+    "next_id": "2583529070786213408",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "1Pasheeva",
+    "text": "I'm simply a smith trying to make a living.",
+    "filters": []
+  },
+  {
+    "type": "Info",
+    "flags": [
+      0,
+      0
+    ],
+    "info_id": "2583529070786213408",
+    "prev_id": "113122581210212953",
+    "next_id": "1219922361199448922",
+    "data": {
+      "dialogue_type": "Topic",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "vonos veri",
+    "text": "I am %name, I serve Almalexia as one of Her Hands.",
+    "filters": []
+  }
+]

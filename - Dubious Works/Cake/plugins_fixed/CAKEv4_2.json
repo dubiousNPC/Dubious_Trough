@@ -1,0 +1,5148 @@
+[
+ {
+  "type": "Header",
+  "flags": [
+   0,
+   0
+  ],
+  "version": 1.3,
+  "file_type": "Esp",
+  "author": "",
+  "description": "",
+  "num_objects": 0,
+  "masters": [
+   [
+    "Morrowind.esm",
+    79837557
+   ],
+   [
+    "Tribunal.esm",
+    4565686
+   ],
+   [
+    "Bloodmoon.esm",
+    9631798
+   ],
+   [
+    "Tamriel_Data.esm",
+    16455350
+   ]
+  ]
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Ashmask1_H",
+  "data": {
+   "weight": 0.7,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Dunmer Ashmask",
+  "mesh": "RV\\Ashmask1.nif",
+  "icon": "RV\\ashmask1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Ashmask1_H_eq",
+  "data": {
+   "weight": 0.7,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Dunmer Ashmask",
+  "mesh": "RV\\Ashmask1.nif",
+  "icon": "RV\\ashmask1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Ashmask2_H",
+  "data": {
+   "weight": 1.5,
+   "value": 38,
+   "flags": 0
+  },
+  "name": "Dwemer Ashmask",
+  "mesh": "RV\\Ashmask2.nif",
+  "icon": "RV\\ashmask2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Ashmask2_H_eq",
+  "data": {
+   "weight": 1.5,
+   "value": 38,
+   "flags": 0
+  },
+  "name": "Dwemer Ashmask",
+  "mesh": "RV\\Ashmask2.nif",
+  "icon": "RV\\ashmask2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Ashmask3_H",
+  "data": {
+   "weight": 1.4,
+   "value": 38,
+   "flags": 0
+  },
+  "name": "Visorless Dwemer Ashmask",
+  "mesh": "RV\\Ashmask3.nif",
+  "icon": "RV\\ashmask3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Ashmask3_H_eq",
+  "data": {
+   "weight": 1.4,
+   "value": 38,
+   "flags": 0
+  },
+  "name": "Visorless Dwemer Ashmask",
+  "mesh": "RV\\Ashmask3.nif",
+  "icon": "RV\\ashmask3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Blindfold1_H",
+  "data": {
+   "weight": 0.1,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Blindfold",
+  "mesh": "RV\\blindfold1.nif",
+  "icon": "RV\\Blindfold_1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Blindfold1_H_eq",
+  "data": {
+   "weight": 0.1,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Blindfold",
+  "mesh": "RV\\blindfold1.nif",
+  "icon": "RV\\Blindfold_1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Daedramask1_H",
+  "data": {
+   "weight": 1.0,
+   "value": 62,
+   "flags": 0
+  },
+  "name": "Daedric Facemask 1",
+  "mesh": "RV\\Daedramask1.nif",
+  "icon": "RV\\Daedramask1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Daedramask1_H_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 62,
+   "flags": 0
+  },
+  "name": "Daedric Facemask 1",
+  "mesh": "RV\\Daedramask1.nif",
+  "icon": "RV\\Daedramask1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Daedramask2_H",
+  "data": {
+   "weight": 1.0,
+   "value": 62,
+   "flags": 0
+  },
+  "name": "Daedric Facemask 2",
+  "mesh": "RV\\Daedramask2.nif",
+  "icon": "RV\\Daedramask2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Daedramask2_H_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 62,
+   "flags": 0
+  },
+  "name": "Daedric Facemask 2",
+  "mesh": "RV\\Daedramask2.nif",
+  "icon": "RV\\Daedramask2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Daedramask3_H",
+  "data": {
+   "weight": 1.0,
+   "value": 62,
+   "flags": 0
+  },
+  "name": "Daedric Facemask 3",
+  "mesh": "RV\\Daedramask3.nif",
+  "icon": "RV\\Daedramask3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Daedramask3_H_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 62,
+   "flags": 0
+  },
+  "name": "Daedric Facemask 3",
+  "mesh": "RV\\Daedramask3.nif",
+  "icon": "RV\\Daedramask3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Daedramask4_H",
+  "data": {
+   "weight": 1.0,
+   "value": 62,
+   "flags": 0
+  },
+  "name": "Daedric Facemask 4",
+  "mesh": "RV\\Daedramask4.nif",
+  "icon": "RV\\Daedramask4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Daedramask4_H_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 62,
+   "flags": 0
+  },
+  "name": "Daedric Facemask 4",
+  "mesh": "RV\\Daedramask4.nif",
+  "icon": "RV\\Daedramask4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Eyepatch1L_H",
+  "data": {
+   "weight": 0.1,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Eyepatch - Left",
+  "mesh": "RV\\eyepatch1L.nif",
+  "icon": "RV\\Eyepatch1L.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Eyepatch1L_H_eq",
+  "data": {
+   "weight": 0.1,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Eyepatch - Left",
+  "mesh": "RV\\eyepatch1L.nif",
+  "icon": "RV\\Eyepatch1L.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Eyepatch1R_H",
+  "data": {
+   "weight": 0.1,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Eyepatch - Right",
+  "mesh": "RV\\eyepatch1R.nif",
+  "icon": "RV\\Eyepatch1R.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Eyepatch1R_H_eq",
+  "data": {
+   "weight": 0.1,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Eyepatch - Right",
+  "mesh": "RV\\eyepatch1R.nif",
+  "icon": "RV\\Eyepatch1R.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap1_H",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Morag Tong Facewrap",
+  "mesh": "RV\\Facewrap1.nif",
+  "icon": "RV\\facewrap1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap1_H_eq",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Morag Tong Facewrap",
+  "mesh": "RV\\Facewrap1.nif",
+  "icon": "RV\\facewrap1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap2_H",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Dark Brotherhood Facewrap",
+  "mesh": "RV\\Facewrap2.nif",
+  "icon": "RV\\facewrap2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap2_H_eq",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Dark Brotherhood Facewrap",
+  "mesh": "RV\\Facewrap2.nif",
+  "icon": "RV\\facewrap2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap3_H",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Grey Cloth Facewrap",
+  "mesh": "RV\\Facewrap3.nif",
+  "icon": "RV\\facewrap3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap3_H_eq",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Grey Cloth Facewrap",
+  "mesh": "RV\\Facewrap3.nif",
+  "icon": "RV\\facewrap3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap4_H",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Brown Cloth Facewrap",
+  "mesh": "RV\\Facewrap4.nif",
+  "icon": "RV\\facewrap4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap4_H_eq",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Brown Cloth Facewrap",
+  "mesh": "RV\\Facewrap4.nif",
+  "icon": "RV\\facewrap4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap5_H",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Chitin Cloth Facewrap",
+  "mesh": "RV\\Facewrap5.nif",
+  "icon": "RV\\facewrap5.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap5_H_eq",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Chitin Cloth Facewrap",
+  "mesh": "RV\\Facewrap5.nif",
+  "icon": "RV\\facewrap5.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap6_H",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Orange Cloth Facewrap",
+  "mesh": "RV\\Facewrap6.nif",
+  "icon": "RV\\facewrap6.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap6_H_eq",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Orange Cloth Facewrap",
+  "mesh": "RV\\Facewrap6.nif",
+  "icon": "RV\\facewrap6.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap7_H",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Blue Cloth Facewrap",
+  "mesh": "RV\\Facewrap7.nif",
+  "icon": "RV\\facewrap7.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap7_H_eq",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Blue Cloth Facewrap",
+  "mesh": "RV\\Facewrap7.nif",
+  "icon": "RV\\facewrap7.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap8_H",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Red Cloth Facewrap",
+  "mesh": "RV\\Facewrap8.nif",
+  "icon": "RV\\facewrap8.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Facewrap8_H_eq",
+  "data": {
+   "weight": 0.2,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Red Cloth Facewrap",
+  "mesh": "RV\\Facewrap8.nif",
+  "icon": "RV\\facewrap8.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses1_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Half Moon Spectacles",
+  "mesh": "RV\\glasses1.nif",
+  "icon": "RV\\Glasses_1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses1_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Half Moon Spectacles",
+  "mesh": "RV\\glasses1.nif",
+  "icon": "RV\\Glasses_1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses1s_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Silver Half Moon Spectacles",
+  "mesh": "RV\\glasses1s.nif",
+  "icon": "RV\\Glasses_1s.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses1s_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Silver Half Moon Spectacles",
+  "mesh": "RV\\glasses1s.nif",
+  "icon": "RV\\Glasses_1s.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses2_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Spectacles",
+  "mesh": "RV\\glasses2.nif",
+  "icon": "RV\\Glasses_2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses2_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Spectacles",
+  "mesh": "RV\\glasses2.nif",
+  "icon": "RV\\Glasses_2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses2s_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Silver Spectacles",
+  "mesh": "RV\\glasses2s.nif",
+  "icon": "RV\\Glasses_2s.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses2s_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Silver Spectacles",
+  "mesh": "RV\\glasses2s.nif",
+  "icon": "RV\\Glasses_2s.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses3_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Tinted Spectacles",
+  "mesh": "RV\\glasses3.nif",
+  "icon": "RV\\Glasses_3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses3_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Tinted Spectacles",
+  "mesh": "RV\\glasses3.nif",
+  "icon": "RV\\Glasses_3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses4_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Monocle",
+  "mesh": "RV\\glasses4.nif",
+  "icon": "RV\\Glasses_4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses4_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Monocle",
+  "mesh": "RV\\glasses4.nif",
+  "icon": "RV\\Glasses_4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses4s_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Silver Monocle",
+  "mesh": "RV\\glasses4s.nif",
+  "icon": "RV\\Glasses_4s.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Glasses4s_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Silver Monocle",
+  "mesh": "RV\\glasses4s.nif",
+  "icon": "RV\\Glasses_4s.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles1_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Dark Brotherhood Goggles",
+  "mesh": "RV\\goggles1.nif",
+  "icon": "RV\\Goggles_1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles1_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Dark Brotherhood Goggles",
+  "mesh": "RV\\goggles1.nif",
+  "icon": "RV\\Goggles_1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles2_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Morag Tong Goggles",
+  "mesh": "RV\\goggles2.nif",
+  "icon": "RV\\Goggles_2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles2_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Morag Tong Goggles",
+  "mesh": "RV\\goggles2.nif",
+  "icon": "RV\\Goggles_2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles3_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Dust Goggles",
+  "mesh": "RV\\goggles3.nif",
+  "icon": "RV\\Goggles_3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles3_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Dust Goggles",
+  "mesh": "RV\\goggles3.nif",
+  "icon": "RV\\Goggles_3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles4_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Dwemer Scouter",
+  "mesh": "RV\\goggles4.nif",
+  "icon": "RV\\Goggles_4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles4_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "name": "Dwemer Scouter",
+  "mesh": "RV\\goggles4.nif",
+  "icon": "RV\\Goggles_4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles5_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "mesh": "RV\\goggles5.nif",
+  "name": "Splatter Goggles",
+  "icon": "RV\\Goggles_5.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles5_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "mesh": "RV\\goggles5.nif",
+  "name": "Splatter Goggles",
+  "icon": "RV\\Goggles_5.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles6_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "mesh": "RV\\goggles6.nif",
+  "name": "Tinted Goggles",
+  "icon": "RV\\Goggles_6.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles6_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "mesh": "RV\\goggles6.nif",
+  "name": "Tinted Goggles",
+  "icon": "RV\\Goggles_6.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles7_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "mesh": "RV\\goggles7.nif",
+  "name": "Dwemer Goggles",
+  "icon": "RV\\Goggles_7.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles7_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "mesh": "RV\\goggles7.nif",
+  "name": "Dwemer Goggles",
+  "icon": "RV\\Goggles_7.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles8_H",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "mesh": "RV\\goggles8.nif",
+  "name": "Ashlander Goggles",
+  "icon": "RV\\Goggles_8.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Goggles8_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 8,
+   "flags": 0
+  },
+  "mesh": "RV\\goggles8.nif",
+  "name": "Ashlander Goggles",
+  "icon": "RV\\Goggles_8.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Lenses1_H",
+  "data": {
+   "weight": 0.5,
+   "value": 75,
+   "flags": 0
+  },
+  "name": "Alchemist's Lenses",
+  "mesh": "RV\\Lenses1.nif",
+  "icon": "RV\\Lenses_1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Lenses1_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 75,
+   "flags": 0
+  },
+  "name": "Alchemist's Lenses",
+  "mesh": "RV\\Lenses1.nif",
+  "icon": "RV\\Lenses_1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Lenses2_H",
+  "data": {
+   "weight": 0.5,
+   "value": 75,
+   "flags": 0
+  },
+  "name": "Enchanter's Lens",
+  "mesh": "RV\\Lenses2.nif",
+  "icon": "RV\\Lenses_2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Lenses2_H_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 75,
+   "flags": 0
+  },
+  "name": "Enchanter's Lens",
+  "mesh": "RV\\Lenses2.nif",
+  "icon": "RV\\Lenses_2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Orcishmask1_H",
+  "data": {
+   "weight": 1.0,
+   "value": 50,
+   "flags": 0
+  },
+  "mesh": "RV\\Orcishmask1.nif",
+  "name": "Orcish Facemask 1",
+  "icon": "RV\\Orcishmask1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Orcishmask1_H_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 50,
+   "flags": 0
+  },
+  "mesh": "RV\\Orcishmask1.nif",
+  "name": "Orcish Facemask 1",
+  "icon": "RV\\Orcishmask1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Orcishmask2_H",
+  "data": {
+   "weight": 1.0,
+   "value": 50,
+   "flags": 0
+  },
+  "name": "Orcish Facemask 2",
+  "mesh": "RV\\Orcishmask2.nif",
+  "icon": "RV\\Orcishmask2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Orcishmask2_H_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 50,
+   "flags": 0
+  },
+  "name": "Orcish Facemask 2",
+  "mesh": "RV\\Orcishmask2.nif",
+  "icon": "RV\\Orcishmask2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_01",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Leather Scarf",
+  "mesh": "RV\\scarf1.nif",
+  "icon": "RV\\scarf1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_01_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Leather Scarf",
+  "mesh": "RV\\scarf1.nif",
+  "icon": "RV\\scarf1.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_02",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Brown Leather Scarf",
+  "mesh": "RV\\scarf2.nif",
+  "icon": "RV\\scarf2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_02_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Brown Leather Scarf",
+  "mesh": "RV\\scarf2.nif",
+  "icon": "RV\\scarf2.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_03",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Green Leather Scarf",
+  "mesh": "RV\\scarf3.nif",
+  "icon": "RV\\scarf3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_03_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Green Leather Scarf",
+  "mesh": "RV\\scarf3.nif",
+  "icon": "RV\\scarf3.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_04",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Blue Leather Scarf",
+  "mesh": "RV\\scarf4.nif",
+  "icon": "RV\\scarf4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_04_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Blue Leather Scarf",
+  "mesh": "RV\\scarf4.nif",
+  "icon": "RV\\scarf4.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_05",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Grey Cloth Scarf",
+  "mesh": "RV\\scarf5.nif",
+  "icon": "RV\\scarf5.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_05_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Grey Cloth Scarf",
+  "mesh": "RV\\scarf5.nif",
+  "icon": "RV\\scarf5.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_06",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Hlaalu Scarf",
+  "mesh": "RV\\scarf6.nif",
+  "icon": "RV\\scarf6.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_06_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Hlaalu Scarf",
+  "mesh": "RV\\scarf6.nif",
+  "icon": "RV\\scarf6.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_07",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Redoran Scarf",
+  "mesh": "RV\\scarf7.nif",
+  "icon": "RV\\scarf7.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_07_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Redoran Scarf",
+  "mesh": "RV\\scarf7.nif",
+  "icon": "RV\\scarf7.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_08",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Telvanni Scarf",
+  "mesh": "RV\\scarf8.nif",
+  "icon": "RV\\scarf8.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_08_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Telvanni Scarf",
+  "mesh": "RV\\scarf8.nif",
+  "icon": "RV\\scarf8.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_09",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Scarf",
+  "mesh": "RV\\scarf9.nif",
+  "icon": "RV\\scarf9.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_09_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Scarf",
+  "mesh": "RV\\scarf9.nif",
+  "icon": "RV\\scarf9.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_10",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Ashlander Scarf",
+  "mesh": "RV\\scarf10.nif",
+  "icon": "RV\\scarf10.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_10_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Ashlander Scarf",
+  "mesh": "RV\\scarf10.nif",
+  "icon": "RV\\scarf10.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_11",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Brown Cloth Scarf",
+  "mesh": "RV\\scarf11.nif",
+  "icon": "RV\\scarf11.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_11_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Brown Cloth Scarf",
+  "mesh": "RV\\scarf11.nif",
+  "icon": "RV\\scarf11.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_12",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Ashlander Cloth Scarf",
+  "mesh": "RV\\scarf12.nif",
+  "icon": "RV\\scarf12.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_12_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Ashlander Cloth Scarf",
+  "mesh": "RV\\scarf12.nif",
+  "icon": "RV\\scarf12.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_13",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Imperial Leather Scarf",
+  "mesh": "RV\\scarf13.nif",
+  "icon": "RV\\scarf13.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_13_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Imperial Leather Scarf",
+  "mesh": "RV\\scarf13.nif",
+  "icon": "RV\\scarf13.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_14",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Morag Tong Cloth Scarf",
+  "mesh": "RV\\scarf14.nif",
+  "icon": "RV\\scarf14.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_14_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Morag Tong Cloth Scarf",
+  "mesh": "RV\\scarf14.nif",
+  "icon": "RV\\scarf14.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_15",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Dunmer Warrior Cloth Scarf",
+  "mesh": "RV\\scarf15.nif",
+  "icon": "RV\\scarf15.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_15_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Dunmer Warrior Cloth Scarf",
+  "mesh": "RV\\scarf15.nif",
+  "icon": "RV\\scarf15.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_16",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Oceanic Scarf",
+  "mesh": "RV\\scarf16.nif",
+  "icon": "RV\\scarf16.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_RV_Scarf_16_eq",
+  "data": {
+   "weight": 1.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Expensive Oceanic Scarf",
+  "mesh": "RV\\scarf16.nif",
+  "icon": "RV\\scarf16.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1adamantail",
+  "data": {
+   "weight": 13.0,
+   "value": 1750,
+   "flags": 0
+  },
+  "name": "Adamantium Tailguard",
+  "mesh": "ArmoredTails\\tailadaman.nif",
+  "icon": "a\\ArmoredTails\\adaman.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1adamantail_eq",
+  "data": {
+   "weight": 13.0,
+   "value": 1750,
+   "flags": 0
+  },
+  "name": "Adamantium Tailguard",
+  "mesh": "ArmoredTails\\tailadaman.nif",
+  "icon": "a\\ArmoredTails\\adaman.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1almaind",
+  "data": {
+   "weight": 60.0,
+   "value": 3750,
+   "flags": 0
+  },
+  "name": "Her Hand Tailguard",
+  "mesh": "ArmoredTails\\tailalma.nif",
+  "icon": "a\\ArmoredTails\\alma.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1almaind_eq",
+  "data": {
+   "weight": 60.0,
+   "value": 3750,
+   "flags": 0
+  },
+  "name": "Her Hand Tailguard",
+  "mesh": "ArmoredTails\\tailalma.nif",
+  "icon": "a\\ArmoredTails\\alma.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1armunantail",
+  "data": {
+   "weight": 11.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Armun-An Bonemold Tailguard",
+  "mesh": "ArmoredTails\\tailarmunan.nif",
+  "icon": "a\\ArmoredTails\\armanan.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1armunantail_eq",
+  "data": {
+   "weight": 11.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Armun-An Bonemold Tailguard",
+  "mesh": "ArmoredTails\\tailarmunan.nif",
+  "icon": "a\\ArmoredTails\\armanan.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1bear",
+  "data": {
+   "weight": 14.0,
+   "value": 1250,
+   "flags": 0
+  },
+  "name": "Snow Bear Tailguard",
+  "mesh": "ArmoredTails\\tailsnow_b.nif",
+  "icon": "a\\ArmoredTails\\bear.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1bear_eq",
+  "data": {
+   "weight": 14.0,
+   "value": 1250,
+   "flags": 0
+  },
+  "name": "Snow Bear Tailguard",
+  "mesh": "ArmoredTails\\tailsnow_b.nif",
+  "icon": "a\\ArmoredTails\\bear.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1bonemoldtail",
+  "data": {
+   "weight": 11.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Bonemold Tailguard",
+  "mesh": "ArmoredTails\\tailbonemold.nif",
+  "icon": "a\\ArmoredTails\\bonemold.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1bonemoldtail_eq",
+  "data": {
+   "weight": 11.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Bonemold Tailguard",
+  "mesh": "ArmoredTails\\tailbonemold.nif",
+  "icon": "a\\ArmoredTails\\bonemold.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1ceph",
+  "data": {
+   "weight": 8.0,
+   "value": 20,
+   "flags": 0
+  },
+  "name": "Telvanni Cephalopod Tailguard",
+  "mesh": "ArmoredTails\\tailceph.nif",
+  "icon": "a\\ArmoredTails\\ceph.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1ceph_eq",
+  "data": {
+   "weight": 8.0,
+   "value": 20,
+   "flags": 0
+  },
+  "name": "Telvanni Cephalopod Tailguard",
+  "mesh": "ArmoredTails\\tailceph.nif",
+  "icon": "a\\ArmoredTails\\ceph.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1chain",
+  "data": {
+   "weight": 10.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Imperial Chain Tailguard",
+  "mesh": "ArmoredTails\\tailchain.nif",
+  "icon": "a\\ArmoredTails\\chain.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1chain_eq",
+  "data": {
+   "weight": 10.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Imperial Chain Tailguard",
+  "mesh": "ArmoredTails\\tailchain.nif",
+  "icon": "a\\ArmoredTails\\chain.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1chitintail",
+  "data": {
+   "weight": 6.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Chitin Tailguard",
+  "mesh": "ArmoredTails\\tailchitin.nif",
+  "icon": "a\\ArmoredTails\\chitin.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1chitintail_eq",
+  "data": {
+   "weight": 6.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Chitin Tailguard",
+  "mesh": "ArmoredTails\\tailchitin.nif",
+  "icon": "a\\ArmoredTails\\chitin.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1chuzei",
+  "data": {
+   "weight": 16.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Chuzei Bonemold Tail",
+  "mesh": "ArmoredTails\\tailchuzei.nif",
+  "icon": "a\\ArmoredTails\\chuzei.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1chuzei_eq",
+  "data": {
+   "weight": 16.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Chuzei Bonemold Tail",
+  "mesh": "ArmoredTails\\tailchuzei.nif",
+  "icon": "a\\ArmoredTails\\chuzei.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1daetail",
+  "data": {
+   "weight": 60.0,
+   "value": 5000,
+   "flags": 0
+  },
+  "name": "Daedric Tailguard",
+  "mesh": "ArmoredTails\\taildaedric.nif",
+  "icon": "a\\ArmoredTails\\daedric.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1daetail_eq",
+  "data": {
+   "weight": 60.0,
+   "value": 5000,
+   "flags": 0
+  },
+  "name": "Daedric Tailguard",
+  "mesh": "ArmoredTails\\taildaedric.nif",
+  "icon": "a\\ArmoredTails\\daedric.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1darkbro",
+  "data": {
+   "weight": 2.0,
+   "value": 125,
+   "flags": 0
+  },
+  "name": "Dark Brotherhood Tailguard",
+  "mesh": "ArmoredTails\\taildb.nif",
+  "icon": "a\\ArmoredTails\\darkbro.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1darkbro_eq",
+  "data": {
+   "weight": 2.0,
+   "value": 125,
+   "flags": 0
+  },
+  "name": "Dark Brotherhood Tailguard",
+  "mesh": "ArmoredTails\\taildb.nif",
+  "icon": "a\\ArmoredTails\\darkbro.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1dreugh",
+  "data": {
+   "weight": 10.0,
+   "value": 562,
+   "flags": 0
+  },
+  "name": "Dreugh Tailguard",
+  "mesh": "ArmoredTails\\taildreugh.nif",
+  "icon": "a\\ArmoredTails\\dreugh.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1dreugh_eq",
+  "data": {
+   "weight": 10.0,
+   "value": 562,
+   "flags": 0
+  },
+  "name": "Dreugh Tailguard",
+  "mesh": "ArmoredTails\\taildreugh.nif",
+  "icon": "a\\ArmoredTails\\dreugh.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1dust",
+  "data": {
+   "weight": 10.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Telvanni Dust Adept Tailguard",
+  "mesh": "ArmoredTails\\taildust.nif",
+  "icon": "a\\ArmoredTails\\dust.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1dust_eq",
+  "data": {
+   "weight": 10.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Telvanni Dust Adept Tailguard",
+  "mesh": "ArmoredTails\\taildust.nif",
+  "icon": "a\\ArmoredTails\\dust.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1dwetail",
+  "data": {
+   "weight": 20.0,
+   "value": 75,
+   "flags": 0
+  },
+  "name": "Dwemer Tailguard",
+  "mesh": "ArmoredTails\\taildwemer.nif",
+  "icon": "a\\ArmoredTails\\dwemer.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1dwetail_eq",
+  "data": {
+   "weight": 20.0,
+   "value": 75,
+   "flags": 0
+  },
+  "name": "Dwemer Tailguard",
+  "mesh": "ArmoredTails\\taildwemer.nif",
+  "icon": "a\\ArmoredTails\\dwemer.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1ebonytail",
+  "data": {
+   "weight": 40.0,
+   "value": 2500,
+   "flags": 0
+  },
+  "name": "Ebony Tailguard",
+  "mesh": "ArmoredTails\\tailebony.nif",
+  "icon": "a\\ArmoredTails\\ebony.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1ebonytail_eq",
+  "data": {
+   "weight": 40.0,
+   "value": 2500,
+   "flags": 0
+  },
+  "name": "Ebony Tailguard",
+  "mesh": "ArmoredTails\\tailebony.nif",
+  "icon": "a\\ArmoredTails\\ebony.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1gahjulantail",
+  "data": {
+   "weight": 11.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Gah-julan Bonemold Tailguard",
+  "mesh": "ArmoredTails\\tailgahjulan.nif",
+  "icon": "a\\ArmoredTails\\gahjulan.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1gahjulantail_eq",
+  "data": {
+   "weight": 11.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Gah-julan Bonemold Tailguard",
+  "mesh": "ArmoredTails\\tailgahjulan.nif",
+  "icon": "a\\ArmoredTails\\gahjulan.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1glasstail",
+  "data": {
+   "weight": 3.0,
+   "value": 2000,
+   "flags": 0
+  },
+  "name": "Glass Tailguard",
+  "mesh": "ArmoredTails\\tailglass.nif",
+  "icon": "a\\ArmoredTails\\glass.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1glasstail_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2000,
+   "flags": 0
+  },
+  "name": "Glass Tailguard",
+  "mesh": "ArmoredTails\\tailglass.nif",
+  "icon": "a\\ArmoredTails\\glass.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1gold",
+  "data": {
+   "weight": 10.0,
+   "value": 300,
+   "flags": 0
+  },
+  "name": "Gold Tailguard",
+  "mesh": "ArmoredTails\\tailgold.nif",
+  "icon": "a\\ArmoredTails\\gold.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1gold_eq",
+  "data": {
+   "weight": 10.0,
+   "value": 300,
+   "flags": 0
+  },
+  "name": "Gold Tailguard",
+  "mesh": "ArmoredTails\\tailgold.nif",
+  "icon": "a\\ArmoredTails\\gold.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1helseth",
+  "data": {
+   "weight": 18.0,
+   "value": 625,
+   "flags": 0
+  },
+  "name": "Royal Guard Tailguard",
+  "mesh": "ArmoredTails\\tailhels.nif",
+  "icon": "a\\ArmoredTails\\helseth.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1helseth_eq",
+  "data": {
+   "weight": 18.0,
+   "value": 625,
+   "flags": 0
+  },
+  "name": "Royal Guard Tailguard",
+  "mesh": "ArmoredTails\\tailhels.nif",
+  "icon": "a\\ArmoredTails\\helseth.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1icetail",
+  "data": {
+   "weight": 12.0,
+   "value": 1250,
+   "flags": 0
+  },
+  "name": "Ice Tailguard",
+  "mesh": "ArmoredTails\\tailice.nif",
+  "icon": "a\\ArmoredTails\\ice.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1icetail_eq",
+  "data": {
+   "weight": 12.0,
+   "value": 1250,
+   "flags": 0
+  },
+  "name": "Ice Tailguard",
+  "mesh": "ArmoredTails\\tailice.nif",
+  "icon": "a\\ArmoredTails\\ice.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1impsteel",
+  "data": {
+   "weight": 19.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Imperial Steel Tailguard",
+  "mesh": "ArmoredTails\\tailimperial.nif",
+  "icon": "a\\ArmoredTails\\imperial.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1impsteel_eq",
+  "data": {
+   "weight": 19.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Imperial Steel Tailguard",
+  "mesh": "ArmoredTails\\tailimperial.nif",
+  "icon": "a\\ArmoredTails\\imperial.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1indoriltail",
+  "data": {
+   "weight": 10.0,
+   "value": 500,
+   "flags": 0
+  },
+  "name": "Indoril Tailguard",
+  "mesh": "ArmoredTails\\tailindoril.nif",
+  "icon": "a\\ArmoredTails\\indoril.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1indoriltail_eq",
+  "data": {
+   "weight": 10.0,
+   "value": 500,
+   "flags": 0
+  },
+  "name": "Indoril Tailguard",
+  "mesh": "ArmoredTails\\tailindoril.nif",
+  "icon": "a\\ArmoredTails\\indoril.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1irontail",
+  "data": {
+   "weight": 19.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Iron Tailguard",
+  "mesh": "ArmoredTails\\tailiron.nif",
+  "icon": "a\\ArmoredTails\\iron.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1irontail_eq",
+  "data": {
+   "weight": 19.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Iron Tailguard",
+  "mesh": "ArmoredTails\\tailiron.nif",
+  "icon": "a\\ArmoredTails\\iron.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1mole",
+  "data": {
+   "weight": 8.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Telvanni Mole Crab Tailguard",
+  "mesh": "ArmoredTails\\tailmole.nif",
+  "icon": "a\\ArmoredTails\\mole.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1mole_eq",
+  "data": {
+   "weight": 8.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Telvanni Mole Crab Tailguard",
+  "mesh": "ArmoredTails\\tailmole.nif",
+  "icon": "a\\ArmoredTails\\mole.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1nettail",
+  "data": {
+   "weight": 8.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Netch Tailguard",
+  "mesh": "ArmoredTails\\tailnetch.nif",
+  "icon": "a\\ArmoredTails\\netch.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1nettail_eq",
+  "data": {
+   "weight": 8.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Netch Tailguard",
+  "mesh": "ArmoredTails\\tailnetch.nif",
+  "icon": "a\\ArmoredTails\\netch.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1nordtail",
+  "data": {
+   "weight": 20.0,
+   "value": 1250,
+   "flags": 0
+  },
+  "name": "Nordic Tailguard",
+  "mesh": "ArmoredTails\\tailnord.nif",
+  "icon": "a\\ArmoredTails\\nordic.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1nordtail_eq",
+  "data": {
+   "weight": 20.0,
+   "value": 1250,
+   "flags": 0
+  },
+  "name": "Nordic Tailguard",
+  "mesh": "ArmoredTails\\tailnord.nif",
+  "icon": "a\\ArmoredTails\\nordic.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1orctail",
+  "data": {
+   "weight": 17.0,
+   "value": 200,
+   "flags": 0
+  },
+  "name": "Orcish Tailguard",
+  "mesh": "ArmoredTails\\tailorcish.nif",
+  "icon": "a\\ArmoredTails\\orc.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1orctail_eq",
+  "data": {
+   "weight": 17.0,
+   "value": 200,
+   "flags": 0
+  },
+  "name": "Orcish Tailguard",
+  "mesh": "ArmoredTails\\tailorcish.nif",
+  "icon": "a\\ArmoredTails\\orc.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1scale",
+  "data": {
+   "weight": 10.0,
+   "value": 32,
+   "flags": 0
+  },
+  "name": "Imperial Dragonscale Tailguard",
+  "mesh": "ArmoredTails\\tailscale.nif",
+  "icon": "a\\ArmoredTails\\scale.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1scale_eq",
+  "data": {
+   "weight": 10.0,
+   "value": 32,
+   "flags": 0
+  },
+  "name": "Imperial Dragonscale Tailguard",
+  "mesh": "ArmoredTails\\tailscale.nif",
+  "icon": "a\\ArmoredTails\\scale.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1steeltail",
+  "data": {
+   "weight": 20.0,
+   "value": 10,
+   "flags": 0
+  },
+  "name": "Steel Tailguard",
+  "mesh": "ArmoredTails\\tailsteel.nif",
+  "icon": "a\\ArmoredTails\\steel.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1steeltail_eq",
+  "data": {
+   "weight": 20.0,
+   "value": 10,
+   "flags": 0
+  },
+  "name": "Steel Tailguard",
+  "mesh": "ArmoredTails\\tailsteel.nif",
+  "icon": "a\\ArmoredTails\\steel.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1templar",
+  "data": {
+   "weight": 20.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Imperial Templar Tailguard",
+  "mesh": "ArmoredTails\\tailtemplar.nif",
+  "icon": "a\\ArmoredTails\\templar.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1templar_eq",
+  "data": {
+   "weight": 20.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Imperial Templar Tailguard",
+  "mesh": "ArmoredTails\\tailtemplar.nif",
+  "icon": "a\\ArmoredTails\\templar.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1watch",
+  "data": {
+   "weight": 6.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Redoran Watchman's Tailguard",
+  "mesh": "ArmoredTails\\tailwatch.nif",
+  "icon": "a\\ArmoredTails\\watch.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1watch_eq",
+  "data": {
+   "weight": 6.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Redoran Watchman's Tailguard",
+  "mesh": "ArmoredTails\\tailwatch.nif",
+  "icon": "a\\ArmoredTails\\watch.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1wolf",
+  "data": {
+   "weight": 4.0,
+   "value": 1250,
+   "flags": 0
+  },
+  "name": "Snow Wolf Tailguard",
+  "mesh": "ArmoredTails\\tailwolf.nif",
+  "icon": "a\\ArmoredTails\\wolf.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_1wolf_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 1250,
+   "flags": 0
+  },
+  "name": "Snow Wolf Tailguard",
+  "mesh": "ArmoredTails\\tailwolf.nif",
+  "icon": "a\\ArmoredTails\\wolf.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_01cigar",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Cigar 1",
+  "mesh": "ep\\_01cigar.nif"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_01cigar_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Cigar 1",
+  "mesh": "ep\\_01cigar.nif"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_02cigar",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Cigar 2",
+  "mesh": "ep\\_0cigar.nif"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_02cigar_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Cigar 2",
+  "mesh": "ep\\_0cigar.nif"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fannypack",
+  "data": {
+   "weight": 3.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack 1",
+  "mesh": "frummyonda\\fy_fannypack_b.nif",
+  "icon": "frummyonda\\fy_fannypack.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fannypack_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack 1",
+  "mesh": "frummyonda\\fy_fannypack_b.nif",
+  "icon": "frummyonda\\fy_fannypack.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fannypack_l",
+  "data": {
+   "weight": 3.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack 2",
+  "mesh": "frummyonda\\fy_fannypack_l.nif",
+  "icon": "frummyonda\\fy_fannypack.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fannypack_l_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack 2",
+  "mesh": "frummyonda\\fy_fannypack_l.nif",
+  "icon": "frummyonda\\fy_fannypack.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fannypack_r",
+  "data": {
+   "weight": 3.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack 3",
+  "mesh": "frummyonda\\fy_fannypack_r.nif",
+  "icon": "frummyonda\\fy_fannypack.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fannypack_r_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack 3",
+  "mesh": "frummyonda\\fy_fannypack_r.nif",
+  "icon": "frummyonda\\fy_fannypack.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fpkpch",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack with Pouches",
+  "mesh": "frummyonda\\fy_fpackpouch.nif",
+  "icon": "frummyonda\\fy_fannypack.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fpkpch_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack with Pouches",
+  "mesh": "frummyonda\\fy_fpackpouch.nif",
+  "icon": "frummyonda\\fy_fannypack.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fpktbg_l",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack with Thigh Bag 1",
+  "mesh": "frummyonda\\fy_fpktbg_l.nif",
+  "icon": "frummyonda\\fy_fpktbg.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fpktbg_l_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack with Thigh Bag 1",
+  "mesh": "frummyonda\\fy_fpktbg_l.nif",
+  "icon": "frummyonda\\fy_fpktbg.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fpktbg_r",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack with Thigh Bag 2",
+  "mesh": "frummyonda\\fy_fpktbg_r.nif",
+  "icon": "frummyonda\\fy_fpktbg.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_fpktbg_r_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Fannypack with Thigh Bag 2",
+  "mesh": "frummyonda\\fy_fpktbg_r.nif",
+  "icon": "frummyonda\\fy_fpktbg.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_satchel_f",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Satchel 1",
+  "mesh": "frummyonda\\fy_satchel_f.nif",
+  "icon": "frummyonda\\fy_satchel.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_satchel_f_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Satchel 1",
+  "mesh": "frummyonda\\fy_satchel_f.nif",
+  "icon": "frummyonda\\fy_satchel.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_satchel_m",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Satchel 2",
+  "mesh": "frummyonda\\fy_satchel_m.nif",
+  "icon": "frummyonda\\fy_satchel.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_satchel_m_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Satchel 2",
+  "mesh": "frummyonda\\fy_satchel_m.nif",
+  "icon": "frummyonda\\fy_satchel.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_thighbag_l",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Thigh Bag 1",
+  "mesh": "frummyonda\\fy_thighbag_l.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_thighbag_l_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Thigh Bag 1",
+  "mesh": "frummyonda\\fy_thighbag_l.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_thighbag_r",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Thigh Bag 2",
+  "mesh": "frummyonda\\fy_thighbag_r.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_thighbag_r_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Thigh Bag 2",
+  "mesh": "frummyonda\\fy_thighbag_r.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_ubelt",
+  "data": {
+   "weight": 3.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Utility Belt",
+  "mesh": "frummyonda\\fy_utilitybelt.nif",
+  "icon": "frummyonda\\fy_ubelt.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_ubelt_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 12,
+   "flags": 0
+  },
+  "name": "Utility Belt",
+  "mesh": "frummyonda\\fy_utilitybelt.nif",
+  "icon": "frummyonda\\fy_ubelt.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_waistbag",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Waist Bag 1",
+  "mesh": "frummyonda\\fy_waistbag_b.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_waistbag_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Waist Bag 1",
+  "mesh": "frummyonda\\fy_waistbag_b.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_waistbag_l",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Waist Bag 2",
+  "mesh": "frummyonda\\fy_waistbag_l.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_waistbag_l_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Waist Bag 2",
+  "mesh": "frummyonda\\fy_waistbag_l.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_waistbag_r",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Waist Bag 3",
+  "mesh": "frummyonda\\fy_waistbag_r.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_aa_waistbag_r_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 25,
+   "flags": 0
+  },
+  "name": "Waist Bag 3",
+  "mesh": "frummyonda\\fy_waistbag_r.nif",
+  "icon": "frummyonda\\fy_thighbag.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash1",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 1",
+  "mesh": "l\\light_ashl_lantern_01.nif",
+  "icon": "lanterns\\ash1.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash1_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 1",
+  "mesh": "l\\light_ashl_lantern_01.nif",
+  "icon": "lanterns\\ash1.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash2",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 2",
+  "mesh": "l\\light_ashl_lantern_02.nif",
+  "icon": "lanterns\\ash2.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash2_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 2",
+  "mesh": "l\\light_ashl_lantern_02.nif",
+  "icon": "lanterns\\ash2.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash3",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 3",
+  "mesh": "l\\light_ashl_lantern_03.nif",
+  "icon": "lanterns\\ash3.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash3_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 3",
+  "mesh": "l\\light_ashl_lantern_03.nif",
+  "icon": "lanterns\\ash3.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash4",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 4",
+  "mesh": "l\\light_ashl_lantern_04.nif",
+  "icon": "lanterns\\ash4.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash4_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 4",
+  "mesh": "l\\light_ashl_lantern_04.nif",
+  "icon": "lanterns\\ash4.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash5",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 5",
+  "mesh": "l\\light_ashl_lantern_05.nif",
+  "icon": "lanterns\\ash5.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash5_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 5",
+  "mesh": "l\\light_ashl_lantern_05.nif",
+  "icon": "lanterns\\ash5.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash6",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 6",
+  "mesh": "l\\light_ashl_lantern_06.nif",
+  "icon": "lanterns\\ash6.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash6_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 6",
+  "mesh": "l\\light_ashl_lantern_06.nif",
+  "icon": "lanterns\\ash6.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash7",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 7",
+  "mesh": "l\\light_ashl_lantern_07.nif",
+  "icon": "lanterns\\ash7.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_ash7_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 5,
+   "flags": 0
+  },
+  "name": "Wearable Ashlander Lantern 7",
+  "mesh": "l\\light_ashl_lantern_07.nif",
+  "icon": "lanterns\\ash7.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cavelant",
+  "data": {
+   "weight": 5.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Cavern Lantern",
+  "mesh": "OAAB\\l\\cavern_Lantern.nif",
+  "icon": "OAAB\\l\\cavern_Lantern.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cavelant_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Cavern Lantern",
+  "mesh": "OAAB\\l\\cavern_Lantern.nif",
+  "icon": "OAAB\\l\\cavern_Lantern.tga"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt1",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 1",
+  "mesh": "Belts\\belt_common_1.nif",
+  "icon": "c\\tx_belt_common01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt1_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 1",
+  "mesh": "Belts\\belt_common_1.nif",
+  "icon": "c\\tx_belt_common01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt2",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 2",
+  "mesh": "Belts\\belt_common_2.nif",
+  "icon": "c\\tx_belt_common02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt2_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 2",
+  "mesh": "Belts\\belt_common_2.nif",
+  "icon": "c\\tx_belt_common02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt3",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 3",
+  "mesh": "Belts\\belt_common_3.nif",
+  "icon": "c\\tx_belt_common03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt3_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 3",
+  "mesh": "Belts\\belt_common_3.nif",
+  "icon": "c\\tx_belt_common03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt4",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 4",
+  "mesh": "Belts\\belt_common_4.nif",
+  "icon": "c\\tx_belt_common04.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt4_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 4",
+  "mesh": "Belts\\belt_common_4.nif",
+  "icon": "c\\tx_belt_common04.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt5",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 5",
+  "mesh": "Belts\\belt_common_5.nif",
+  "icon": "c\\tx_belt_common05.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_cbelt5_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 1,
+   "flags": 0
+  },
+  "name": "Wearable Common Belt 5",
+  "mesh": "Belts\\belt_common_5.nif",
+  "icon": "c\\tx_belt_common05.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_colov2",
+  "data": {
+   "weight": 5.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Wearable Colovian Lantern 1",
+  "mesh": "pc\\l\\pc_col_lantern_02.nif",
+  "icon": "pc\\l\\pc_col_lantern_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_colov2_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Wearable Colovian Lantern 1",
+  "mesh": "pc\\l\\pc_col_lantern_02.nif",
+  "icon": "pc\\l\\pc_col_lantern_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_colov3",
+  "data": {
+   "weight": 5.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Wearable Colovian Lantern 2",
+  "mesh": "pc\\l\\pc_col_lantern_03.nif",
+  "icon": "pc\\l\\pc_col_lantern_03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_colov3_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Wearable Colovian Lantern 2",
+  "mesh": "pc\\l\\pc_col_lantern_03.nif",
+  "icon": "pc\\l\\pc_col_lantern_03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_colov4",
+  "data": {
+   "weight": 5.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Wearable Colovian Lantern 3",
+  "mesh": "pc\\l\\pc_col_lantern_04.nif",
+  "icon": "pc\\l\\pc_col_lantern_04.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_colov4_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Wearable Colovian Lantern 3",
+  "mesh": "pc\\l\\pc_col_lantern_04.nif",
+  "icon": "pc\\l\\pc_col_lantern_04.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_colov5",
+  "data": {
+   "weight": 5.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Wearable Colovian Lantern 4",
+  "mesh": "pc\\l\\pc_col_lantern_05.nif",
+  "icon": "pc\\l\\pc_col_lantern_05.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_colov5_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 4,
+   "flags": 0
+  },
+  "name": "Wearable Colovian Lantern 4",
+  "mesh": "pc\\l\\pc_col_lantern_05.nif",
+  "icon": "pc\\l\\pc_col_lantern_05.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_erabinbelt",
+  "data": {
+   "weight": 0.5,
+   "value": 100,
+   "flags": 0
+  },
+  "name": "Wearable Erabenimsun Belt",
+  "mesh": "Belts\\erabin.nif",
+  "icon": "c\\tx_belt_erabinimsum.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_erabinbelt_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 100,
+   "flags": 0
+  },
+  "name": "Wearable Erabenimsun Belt",
+  "mesh": "Belts\\erabin.nif",
+  "icon": "c\\tx_belt_erabinimsum.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_expbelt1",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Expensive Belt 1",
+  "mesh": "Belts\\belt_expensive_1.nif",
+  "icon": "c\\tx_belt_expensive01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_expbelt1_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Expensive Belt 1",
+  "mesh": "Belts\\belt_expensive_1.nif",
+  "icon": "c\\tx_belt_expensive01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_expbelt2",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Expensive Belt 2",
+  "mesh": "Belts\\belt_expensive_2.nif",
+  "icon": "c\\tx_belt_expensive02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_expbelt2_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Expensive Belt 2",
+  "mesh": "Belts\\belt_expensive_2.nif",
+  "icon": "c\\tx_belt_expensive02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_expbelt3",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Expensive Belt 3",
+  "mesh": "Belts\\belt_expensive_3.nif",
+  "icon": "c\\tx_belt_expensive03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_expbelt3_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Expensive Belt 3",
+  "mesh": "Belts\\belt_expensive_3.nif",
+  "icon": "c\\tx_belt_expensive03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_exqbelt",
+  "data": {
+   "weight": 0.5,
+   "value": 20,
+   "flags": 0
+  },
+  "name": "Wearable Exquisite Belt",
+  "mesh": "Belts\\belt_exquisite_1.nif",
+  "icon": "c\\tx_belt_exquisite01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_exqbelt_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 20,
+   "flags": 0
+  },
+  "name": "Wearable Exquisite Belt",
+  "mesh": "Belts\\belt_exquisite_1.nif",
+  "icon": "c\\tx_belt_exquisite01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_extravbelt1",
+  "data": {
+   "weight": 0.5,
+   "value": 10,
+   "flags": 0
+  },
+  "name": "Wearable Extravagant Belt 1",
+  "mesh": "Belts\\belt_extravagant_1.nif",
+  "icon": "c\\tx_belt_extravagant01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_extravbelt1_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 10,
+   "flags": 0
+  },
+  "name": "Wearable Extravagant Belt 1",
+  "mesh": "Belts\\belt_extravagant_1.nif",
+  "icon": "c\\tx_belt_extravagant01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_extravbelt2",
+  "data": {
+   "weight": 0.5,
+   "value": 10,
+   "flags": 0
+  },
+  "name": "Wearable Extravagant Belt 2",
+  "mesh": "Belts\\belt_extravagant_2.nif",
+  "icon": "c\\tx_belt_extravagant02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_extravbelt2_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 10,
+   "flags": 0
+  },
+  "name": "Wearable Extravagant Belt 2",
+  "mesh": "Belts\\belt_extravagant_2.nif",
+  "icon": "c\\tx_belt_extravagant02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLantern2",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 1",
+  "mesh": "l\\light_de_lantern_02.nif",
+  "icon": "L\\light_de_lantern_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLantern2_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 1",
+  "mesh": "l\\light_de_lantern_02.nif",
+  "icon": "L\\light_de_lantern_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLantern6",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 2",
+  "mesh": "l\\light_de_lantern_06.nif",
+  "icon": "L\\light_de_lantern_06.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLantern6_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 2",
+  "mesh": "l\\light_de_lantern_06.nif",
+  "icon": "L\\light_de_lantern_06.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLanterngrn",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 3",
+  "mesh": "tr\\l\\tr_l_de_lantgl_grn01.nif",
+  "icon": "tr\\l\\tr_l_de_lantg_grn01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLanterngrn_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 3",
+  "mesh": "tr\\l\\tr_l_de_lantgl_grn01.nif",
+  "icon": "tr\\l\\tr_l_de_lantg_grn01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLanternred",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 4",
+  "mesh": "tr\\l\\tr_l_de_lantgl_red02.nif",
+  "icon": "tr\\l\\tr_l_de_lantg_red02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLanternred_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 4",
+  "mesh": "tr\\l\\tr_l_de_lantgl_red02.nif",
+  "icon": "tr\\l\\tr_l_de_lantg_red02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLanternyel",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 5",
+  "mesh": "tr\\l\\tr_l_de_lantgl_yel01.nif",
+  "icon": "tr\\l\\tr_l_de_lantg_yel01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_GLanternyel_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Glass Lantern 5",
+  "mesh": "tr\\l\\tr_l_de_lantgl_yel01.nif",
+  "icon": "tr\\l\\tr_l_de_lantg_yel01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_hfirebelt",
+  "data": {
+   "weight": 0.5,
+   "value": 250,
+   "flags": 0
+  },
+  "name": "Wearable Belt of Heartfire",
+  "mesh": "Belts\\belt_hfire.nif",
+  "icon": "c\\tx_belt_heartfire_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_hfirebelt_eq",
+  "data": {
+   "weight": 0.5,
+   "value": 250,
+   "flags": 0
+  },
+  "name": "Wearable Belt of Heartfire",
+  "mesh": "Belts\\belt_hfire.nif",
+  "icon": "c\\tx_belt_heartfire_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_Lantern0AABDwrn",
+  "data": {
+   "weight": 3.0,
+   "value": 28,
+   "flags": 0
+  },
+  "name": "Wearable Dwemer Lantern",
+  "mesh": "OAAB\\l\\dwrv_lantern.nif",
+  "icon": "OAAB\\l\\dwrv_lantern.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_Lantern0AABDwrn_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 28,
+   "flags": 0
+  },
+  "name": "Wearable Dwemer Lantern",
+  "mesh": "OAAB\\l\\dwrv_lantern.nif",
+  "icon": "OAAB\\l\\dwrv_lantern.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap1",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 1",
+  "mesh": "l\\light_de_lantern_01.nif",
+  "icon": "L\\light_de_lantern_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap1_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 1",
+  "mesh": "l\\light_de_lantern_01.nif",
+  "icon": "L\\light_de_lantern_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap10",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 2",
+  "mesh": "l\\light_de_lantern_10.nif",
+  "icon": "L\\light_de_lantern_10.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap10_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 2",
+  "mesh": "l\\light_de_lantern_10.nif",
+  "icon": "L\\light_de_lantern_10.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap11",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 3",
+  "mesh": "l\\light_de_lantern_11.nif",
+  "icon": "L\\light_de_lantern_11.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap11_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 3",
+  "mesh": "l\\light_de_lantern_11.nif",
+  "icon": "L\\light_de_lantern_11.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap14",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 4",
+  "mesh": "l\\light_de_lantern_14.nif",
+  "icon": "L\\light_de_lantern_14.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap14_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 4",
+  "mesh": "l\\light_de_lantern_14.nif",
+  "icon": "L\\light_de_lantern_14.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap5",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 5",
+  "mesh": "l\\light_de_lantern_05.nif",
+  "icon": "L\\light_de_lantern_05.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap5_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 5",
+  "mesh": "l\\light_de_lantern_05.nif",
+  "icon": "L\\light_de_lantern_05.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap7",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 6",
+  "mesh": "l\\light_de_lantern_07.nif",
+  "icon": "L\\light_de_lantern_07.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPap7_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 6",
+  "mesh": "l\\light_de_lantern_07.nif",
+  "icon": "L\\light_de_lantern_07.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapblu1",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 7",
+  "mesh": "tr\\l\\tr_l_de_lantern_blu_01.nif",
+  "icon": "tr\\l\\tr_de_lntrn1_blu.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapblu1_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 7",
+  "mesh": "tr\\l\\tr_l_de_lantern_blu_01.nif",
+  "icon": "tr\\l\\tr_de_lntrn1_blu.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapblu4",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 8",
+  "mesh": "tr\\l\\tr_l_de_lantern_blu_04.nif",
+  "icon": "tr\\l\\tr_de_lntrn4_blu.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapblu4_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 8",
+  "mesh": "tr\\l\\tr_l_de_lantern_blu_04.nif",
+  "icon": "tr\\l\\tr_de_lntrn4_blu.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapgrn1",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 9",
+  "mesh": "tr\\l\\tr_l_de_lantern_grn_01.nif",
+  "icon": "tr\\l\\tr_de_lntrn1_grn.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapgrn1_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 9",
+  "mesh": "tr\\l\\tr_l_de_lantern_grn_01.nif",
+  "icon": "tr\\l\\tr_de_lntrn1_grn.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapgrn4",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 10",
+  "mesh": "tr\\l\\tr_l_de_lantern_grn_04.nif",
+  "icon": "tr\\l\\tr_de_lntrn4_grn.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapgrn4_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 10",
+  "mesh": "tr\\l\\tr_l_de_lantern_grn_04.nif",
+  "icon": "tr\\l\\tr_de_lntrn4_grn.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPappur1",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 11",
+  "mesh": "tr\\l\\tr_l_de_lantern_prp_01.nif",
+  "icon": "tr\\l\\tr_de_lntrn1_prp.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPappur1_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 11",
+  "mesh": "tr\\l\\tr_l_de_lantern_prp_01.nif",
+  "icon": "tr\\l\\tr_de_lntrn1_prp.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPappur4",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 12",
+  "mesh": "tr\\l\\tr_l_de_lantern_prp_04.nif",
+  "icon": "tr\\l\\tr_de_lntrn4_prp.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPappur4_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 12",
+  "mesh": "tr\\l\\tr_l_de_lantern_prp_04.nif",
+  "icon": "tr\\l\\tr_de_lntrn4_prp.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapyel1",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 13",
+  "mesh": "tr\\l\\tr_l_de_lantern_ylw_01.nif",
+  "icon": "tr\\l\\tr_de_lntrn1_ylw.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapyel1_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 13",
+  "mesh": "tr\\l\\tr_l_de_lantern_ylw_01.nif",
+  "icon": "tr\\l\\tr_de_lntrn1_ylw.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapyel4",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 14",
+  "mesh": "tr\\l\\tr_l_de_lantern_ylw_04.nif",
+  "icon": "tr\\l\\tr_de_lntrn4_ylw.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_LanternPapyel4_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Paper Lantern 14",
+  "mesh": "tr\\l\\tr_l_de_lantern_ylw_04.nif",
+  "icon": "tr\\l\\tr_de_lntrn4_ylw.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_orclan1",
+  "data": {
+   "weight": 5.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Orc Lantern 1",
+  "mesh": "sky\\l\\sky_lgt_orc_lantn_01.nif",
+  "icon": "sky\\l\\tx_orc_lantern01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_orclan1_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Orc Lantern 1",
+  "mesh": "sky\\l\\sky_lgt_orc_lantn_01.nif",
+  "icon": "sky\\l\\tx_orc_lantern01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_orclan2",
+  "data": {
+   "weight": 6.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Orc Lantern 2",
+  "mesh": "sky\\l\\sky_lgt_orc_lantn_02.nif",
+  "icon": "sky\\l\\tx_orc_lantern02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_orclan2_eq",
+  "data": {
+   "weight": 6.0,
+   "value": 3,
+   "flags": 0
+  },
+  "name": "Wearable Orc Lantern 2",
+  "mesh": "sky\\l\\sky_lgt_orc_lantn_02.nif",
+  "icon": "sky\\l\\tx_orc_lantern02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TravLantern1",
+  "data": {
+   "weight": 5.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Travel Lantern 1",
+  "mesh": "l\\light_com_lantern_01.nif",
+  "icon": "L\\light_com_lantern_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TravLantern1_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Travel Lantern 1",
+  "mesh": "l\\light_com_lantern_01.nif",
+  "icon": "L\\light_com_lantern_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TravLantern2",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Travel Lantern 2",
+  "mesh": "l\\light_com_lantern_02.nif",
+  "icon": "L\\light_com_lantern_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TravLantern2_eq",
+  "data": {
+   "weight": 3.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Travel Lantern 2",
+  "mesh": "l\\light_com_lantern_02.nif",
+  "icon": "L\\light_com_lantern_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilGRLan1",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 1",
+  "mesh": "tr\\l\\TR_l_de_MhLant_gr_01.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_gr_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilGRLan1_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 1",
+  "mesh": "tr\\l\\TR_l_de_MhLant_gr_01.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_gr_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilGRLan2",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 2",
+  "mesh": "tr\\l\\TR_l_de_MhLant_gr_02.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_gr_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilGRLan2_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 2",
+  "mesh": "tr\\l\\TR_l_de_MhLant_gr_02.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_gr_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilGRLan3",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 3",
+  "mesh": "tr\\l\\TR_l_de_MhLant_gr_03.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_gr_03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilGRLan3_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 3",
+  "mesh": "tr\\l\\TR_l_de_MhLant_gr_03.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_gr_03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilLan1",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 4",
+  "mesh": "tr\\l\\TR_l_de_MhLant_whi_01.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_whi_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilLan1_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 4",
+  "mesh": "tr\\l\\TR_l_de_MhLant_whi_01.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_whi_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilLan2",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 5",
+  "mesh": "tr\\l\\TR_l_de_MhLant_whi_02.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_whi_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilLan2_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 5",
+  "mesh": "tr\\l\\TR_l_de_MhLant_whi_02.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_whi_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilLan3",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 6",
+  "mesh": "tr\\l\\TR_l_de_MhLant_whi_03.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_whi_03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilLan3_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 6",
+  "mesh": "tr\\l\\TR_l_de_MhLant_whi_03.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_whi_03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilPurLan1",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 7",
+  "mesh": "tr\\l\\TR_l_de_MhLant_pr_01.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_pr_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilPurLan1_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 7",
+  "mesh": "tr\\l\\TR_l_de_MhLant_pr_01.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_pr_01.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilPurLan2",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 8",
+  "mesh": "tr\\l\\TR_l_de_MhLant_pr_02.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_pr_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilPurLan2_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 8",
+  "mesh": "tr\\l\\TR_l_de_MhLant_pr_02.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_pr_02.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilPurLan3",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 9",
+  "mesh": "tr\\l\\TR_l_de_MhLant_pr_03.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_pr_03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_TRIndorilPurLan3_eq",
+  "data": {
+   "weight": 4.0,
+   "value": 6,
+   "flags": 0
+  },
+  "name": "Wearable Indoril Lantern 9",
+  "mesh": "tr\\l\\TR_l_de_MhLant_pr_03.nif",
+  "icon": "tr\\l\\TR_l_de_MhLant_pr_03.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_woodlan",
+  "data": {
+   "weight": 5.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Wooden Lantern",
+  "mesh": "sky\\l\\sky_light_nord_lat_04.nif",
+  "icon": "sky\\l\\tx_light_nord_lat_04.dds"
+ },
+ {
+  "type": "MiscItem",
+  "flags": [
+   0,
+   0
+  ],
+  "id": "dbs_woodlan_eq",
+  "data": {
+   "weight": 5.0,
+   "value": 2,
+   "flags": 0
+  },
+  "name": "Wearable Wooden Lantern",
+  "mesh": "sky\\l\\sky_light_nord_lat_04.nif",
+  "icon": "sky\\l\\tx_light_nord_lat_04.dds"
+ }
+]

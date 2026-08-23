@@ -68,8 +68,12 @@ Not one MiscItem has an `icon` field. A Miscellaneous item with no icon renders
 as a blank slot, which for a mod whose entire interaction is "click the thing in
 your inventory" is a hard usability failure.
 
-The ARMO records in CAKE3npcCont *do* have icons (`RV\Blindfold_1.tga`), and the
-archive ships 96 icon files. Those can be reused directly.
+99 of 160 have been filled from icons that ship in the CAKE archive, matched by
+rule and by reusing the icon each equivalent ARMO record already uses. The
+remaining 61 — 39 lanterns, 13 belts, 7 tails, 2 cigars — need icon paths from
+the mods that supply their meshes. Those were left **empty rather than guessed**:
+a wrong path renders blank exactly like an empty one, but also buries a false
+reference in the record. Fill them from the source mods.
 
 ---
 
@@ -105,16 +109,25 @@ a player holding several scarves cannot tell them apart.
 All 160: `weight 0.5`, `value 2`. Harmless, and arguably right for cosmetics —
 flagged only in case it was meant to vary.
 
-### 9. Two undeclared master dependencies
+### 9. Three undeclared master dependencies
 
 Declared: `Morrowind.esm`, `Tribunal.esm`, `Bloodmoon.esm`, `Tamriel_Data.esm`.
 
-Mesh paths resolve as: 114 bundled in the CAKE archive, 20 Tamriel_Data (`tr\`),
-17 vanilla Morrowind (`l\light_*`), **4 Project Cyrodiil (`pc\`), 3 a
-Skyrim-style lantern mod (`sky\`), 2 OAAB_Data (`OAAB\`)**.
+Mesh provenance across the 160 base records:
 
-Those last nine render as missing meshes for anyone without those mods. Either
-declare the masters, bundle the meshes, or drop the nine records.
+| Source | Records | Declared? |
+|---|---|---|
+| CAKE (bundled) | 114 | n/a |
+| Tamriel_Data.esm | 20 | yes |
+| Morrowind.esm (vanilla) | 17 | yes |
+| Project Cyrodiil (`pc\`) | 4 | **no** |
+| Skyrim-style lantern mod (`sky\`) | 3 | **no** |
+| OAAB_Data.esm (`OAAB\`) | 2 | **no** |
+
+These nine records depend on assets those mods supply. **The paths are correct
+and must stay exactly as written** — the fix is to declare the masters (or
+document them as soft requirements), not to alter or remove the records. Full
+per-record listing in `tools/mesh_provenance.json`.
 
 ---
 
@@ -188,8 +201,9 @@ bone — all 123 nodes were read. They belong on the beast skeleton
 4. Fill the 5 empty names, fix the 3 wrong ones, de-duplicate the rest.
 5. Update container and vendor inventories to the final IDs, or the items stay
    unobtainable.
-6. Declare `OAAB_Data.esm` and the `pc\` / `sky\` providers as masters, or drop
-   those 9 records.
+6. Declare `OAAB_Data.esm`, Project Cyrodiil and the `sky\` lantern mod as
+   masters or soft requirements. Do **not** alter or drop those 9 records —
+   their paths point at assets those mods provide and are correct as written.
 
 Once 1, 2 and 5 are done:
 

@@ -1,0 +1,1518 @@
+[
+  {
+    "type": "Header",
+    "flags": [
+      0,
+      0
+    ],
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "",
+    "description": "",
+    "num_objects": 42,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ],
+      [
+        "Tribunal.esm",
+        4565686
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ]
+    ]
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_adjust_fpack",
+    "header": {
+      "num_shorts": 1,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 291,
+      "variables_length": 7
+    },
+    "variables": "KLUv/QBYWQAABwAAAGJ1dHRvbgA=",
+    "bytecode": "KLUv/QBY/QUAAosoLVBNmwOIyMzMEjMzM9MeYv9nN3ZjaZrapKwXFR08NjTNJ0xcIKiCeLNmUtuUAj+ziW/Q8T6siqVyVggFsRqyShS85M6PMFCNf+FEzhURPI+IvCJltQ8oX5qFhXAF/uaHQM/uXCeGRNFcIznBPD3xgQG4QUIS3flIk2MhdacnWldVxYitdCMDcnDCM7MQrk/X/e3uyx9gny7zFb8Di2V+s68QCgDwTIw5FA8sAuQDC2PKszQQC/ABs7Nsgxk=",
+    "text": "begin fy_adjust_fpack\r\n\r\n    Short button\r\n    \r\nif ( OnActivate )\r\nelseif ( button )\r\nelse ; do nothing\r\n\treturn\r\nendif\r\n\r\nif ( button == 0 )\r\n\tMessageBox \"Adjust Fannypack to which side?\" \"Back\" \"Left\" \"Right\"\r\nendif\r\n\r\nset button to GetButtonPressed\r\nif ( button == -1 )\r\n\treturn\r\nelseif ( button == 0 )\r\n\tplayer->AddItem \"fy_fannypack_b\" 1\r\nelseif ( button == 1 )\r\n\tplayer->AddItem \"fy_fannypack_l\" 1\r\nelseif ( button == 2 )\r\n\tplayer->AddItem \"fy_fannypack_r\" 1\r\nendif\r\nplayer->PlaySound \"Item Clothes Up\"\r\n\r\nDisable\r\nSetDelete 1\r\nset button to 0\r\n\r\nEnd fy_adjust_fpack"
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_adjust_ftbag",
+    "header": {
+      "num_shorts": 1,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 238,
+      "variables_length": 7
+    },
+    "variables": "KLUv/QBYWQAABwAAAGJ1dHRvbgA=",
+    "bytecode": "KLUv/QBYrQUA0oonLWBLmwMwINwwDEOGYRgGBeLasaaBS9urWtB2O+3ejqDk3BqoITrLInD3P2ZTCv+yiE+g4TimiKVQVili2AtYGwYc8uZTjB81caJaTFBTQQFug4KVE03sAskVBmHfW4Cf2RnQrzdXGecDc4Wgw0KcAJ9JV1JMmbFS3egsrIxTQmylGBWPgg+cl31vfbrtZ29X/od9ustP7AokdvnMdkcHADRMDCIUDyiipLgBWIJt+LXhDA==",
+    "text": "begin fy_adjust_ftbag\r\n\r\n    Short button\r\n    \r\nif ( OnActivate )\r\nelseif ( button )\r\nelse ; do nothing\r\n\treturn\r\nendif\r\n\r\nif ( button == 0 )\r\n\tMessageBox \"Adjust Thigh Bag to which side?\" \"Left\" \"Right\"\r\nendif\r\n\r\nset button to GetButtonPressed\r\nif ( button == -1 )\r\n\treturn\r\nelseif ( button == 0 )\r\n\tplayer->AddItem \"fy_fpktbg_l\" 1\r\nelseif ( button == 1 )\r\n\tplayer->AddItem \"fy_fpktbg_r\" 1\r\nendif\r\nplayer->PlaySound \"Item Clothes Up\"\r\n\r\nDisable\r\nSetDelete 1\r\nset button to 0\r\n\r\nEnd fy_adjust_ftbag"
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_adjust_thbag",
+    "header": {
+      "num_shorts": 1,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 242,
+      "variables_length": 7
+    },
+    "variables": "KLUv/QBYWQAABwAAAGJ1dHRvbgA=",
+    "bytecode": "KLUv/QBYtQUA8sonLXBL0wH85wsAAISqqgom8XeraMxoy+7xO998gMGRuuAjlwBk5Q4jUbr2V0VSCj+jiV+g0TgeEirfzklq0Is3HQhacuZDGl9y4EOxMO50ItFA24C8yCM91gWUL02COqcB/3I7kFdnngsjxPKM3oNKrPCgKHUr4mboNBU+DLowboROiWEBLRihmVHn1JfK/nX25QewL1X5ipvBhCp/2e4IBwBETAwkFA+A4qW4AViCbfi14Qw=",
+    "text": "begin fy_adjust_thbag\r\n\r\n    Short button\r\n    \r\nif ( OnActivate )\r\nelseif ( button )\r\nelse ; do nothing\r\n\treturn\r\nendif\r\n\r\nif ( button == 0 )\r\n\tMessageBox \"Adjust Thigh Bag to which side?\" \"Left\" \"Right\"\r\nendif\r\n\r\nset button to GetButtonPressed\r\nif ( button == -1 )\r\n\treturn\r\nelseif ( button == 0 )\r\n\tplayer->AddItem \"fy_thighbag_l\" 1\r\nelseif ( button == 1 )\r\n\tplayer->AddItem \"fy_thighbag_r\" 1\r\nendif\r\nplayer->PlaySound \"Item Clothes Up\"\r\n\r\nDisable\r\nSetDelete 1\r\nset button to 0\r\n\r\nEnd fy_adjust_thbag"
+  },
+  {
+    "type": "Script",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_adjustwbag",
+    "header": {
+      "num_shorts": 1,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 288,
+      "variables_length": 7
+    },
+    "variables": "KLUv/QBYWQAABwAAAGJ1dHRvbgA=",
+    "bytecode": "KLUv/QBYBQYAckspLXBr0gHkqqoiAABwujgKGzWhRptIb9vLO4IqPTCap1BbBJ6BXxiJUlp0+ltKAXbkjtogg21oJI5Oyszk8AuXDwXM4afeLEySukKJWiXxNQ6lgyFgGhvXaZNmeeBhiEThEHQBe5UhoJWfphS9iNXEOAhVC0ubKIAyuMvDS5YncZ7JR23yxNcmnohRcWloAmvkEPQa/9jLjyF2QGu8qh9lBxRX9Wr9CQDkTAw4FA+AAuQDIHspDgOWYHuWbTgD",
+    "text": "begin fy_adjustwbag\r\n\r\n    Short button\r\n    \r\nif ( OnActivate )\r\nelseif ( button )\r\nelse ; do nothing\r\n\treturn\r\nendif\r\n\r\nif ( button == 0 )\r\n\tMessageBox \"Adjust Waist Bag to which side?\" \"Back\" \"Left\" \"Right\"\r\nendif\r\n\r\nset button to GetButtonPressed\r\nif ( button == -1 )\r\n\treturn\r\nelseif ( button == 0 )\r\n\tplayer->AddItem \"fy_waistbag_b\" 1\r\nelseif ( button == 1 )\r\n\tplayer->AddItem \"fy_waistbag_l\" 1\r\nelseif ( button == 2 )\r\n\tplayer->AddItem \"fy_waistbag_r\" 1\r\nendif\r\nplayer->PlaySound \"Item Clothes Up\"\r\n\r\nDisable\r\nSetDelete 1\r\nset button to 0\r\n\r\nEnd fy_adjustwbag"
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "com_chest_02_v_trader01",
+    "name": "Chest",
+    "mesh": "o\\Contain_Com_Chest_02.NIF",
+    "encumbrance": 400.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -500,
+        "chitin arrow"
+      ],
+      [
+        -1,
+        "fy_fannypack_b"
+      ],
+      [
+        -1,
+        "fy_fpkpch"
+      ],
+      [
+        -1,
+        "fy_fpktbg_l"
+      ],
+      [
+        -1,
+        "fy_satchel"
+      ],
+      [
+        -1,
+        "fy_thighbag_l"
+      ],
+      [
+        -1,
+        "fy_ubelt"
+      ],
+      [
+        -1,
+        "fy_waistbag_b"
+      ],
+      [
+        2,
+        "p_drain_strength_q"
+      ],
+      [
+        -2,
+        "p_restore_fatigue_b"
+      ],
+      [
+        -2,
+        "p_restore_health_b"
+      ],
+      [
+        -2,
+        "random_armor_iron"
+      ],
+      [
+        -3,
+        "random_armor_netch_leather"
+      ],
+      [
+        -1,
+        "random_armor_steel"
+      ],
+      [
+        -4,
+        "random_com_kitchenware"
+      ],
+      [
+        -3,
+        "random_de_pants"
+      ],
+      [
+        -3,
+        "random_de_shirt"
+      ],
+      [
+        -4,
+        "random_de_shoes_common"
+      ],
+      [
+        -3,
+        "random_iron_weapon"
+      ],
+      [
+        3,
+        "random_potion_bad"
+      ],
+      [
+        -3,
+        "torch"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "com_chest_02_v_trader02",
+    "name": "Chest",
+    "mesh": "o\\Contain_Com_Chest_02.NIF",
+    "encumbrance": 500.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        -1,
+        "fy_fannypack_b"
+      ],
+      [
+        -1,
+        "fy_fpkpch"
+      ],
+      [
+        -1,
+        "fy_fpktbg_l"
+      ],
+      [
+        -1,
+        "fy_satchel"
+      ],
+      [
+        -1,
+        "fy_thighbag_l"
+      ],
+      [
+        -1,
+        "fy_ubelt"
+      ],
+      [
+        -1,
+        "fy_waistbag_b"
+      ],
+      [
+        1,
+        "p_drain_luck_q"
+      ],
+      [
+        1,
+        "p_drain_magicka_q"
+      ],
+      [
+        -2,
+        "p_restore_fatigue_b"
+      ],
+      [
+        -2,
+        "p_restore_health_b"
+      ],
+      [
+        -4,
+        "random_armor_fur"
+      ],
+      [
+        -2,
+        "random_armor_iron"
+      ],
+      [
+        -3,
+        "random_armor_netch_leather"
+      ],
+      [
+        -4,
+        "random_com_kitchenware"
+      ],
+      [
+        -2,
+        "random_de_blueware_01"
+      ],
+      [
+        -3,
+        "random_de_pants"
+      ],
+      [
+        -3,
+        "random_de_shirt"
+      ],
+      [
+        -2,
+        "random_de_shoes_common"
+      ],
+      [
+        -3,
+        "random_iron_weapon"
+      ],
+      [
+        -100,
+        "steel arrow"
+      ],
+      [
+        -100,
+        "steel bolt"
+      ],
+      [
+        -50,
+        "steel throwing knife"
+      ],
+      [
+        -50,
+        "steel throwing star"
+      ],
+      [
+        -3,
+        "torch"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "com_chest_02_v_trader03",
+    "name": "Chest",
+    "mesh": "o\\Contain_Com_Chest_02.NIF",
+    "encumbrance": 500.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        1,
+        "expensive_amulet_01"
+      ],
+      [
+        1,
+        "expensive_amulet_02"
+      ],
+      [
+        1,
+        "expensive_amulet_03"
+      ],
+      [
+        1,
+        "expensive_pants_01"
+      ],
+      [
+        1,
+        "expensive_pants_02"
+      ],
+      [
+        1,
+        "expensive_pants_03"
+      ],
+      [
+        1,
+        "expensive_robe_01"
+      ],
+      [
+        1,
+        "expensive_robe_02"
+      ],
+      [
+        1,
+        "expensive_robe_03"
+      ],
+      [
+        1,
+        "expensive_shirt_01"
+      ],
+      [
+        1,
+        "expensive_shirt_02"
+      ],
+      [
+        1,
+        "expensive_shirt_03"
+      ],
+      [
+        1,
+        "expensive_shoes_01"
+      ],
+      [
+        1,
+        "expensive_shoes_02"
+      ],
+      [
+        1,
+        "expensive_shoes_03"
+      ],
+      [
+        1,
+        "expensive_skirt_01"
+      ],
+      [
+        1,
+        "expensive_skirt_02"
+      ],
+      [
+        1,
+        "expensive_skirt_03"
+      ],
+      [
+        -1,
+        "fy_fannypack_b"
+      ],
+      [
+        -1,
+        "fy_fpkpch"
+      ],
+      [
+        -1,
+        "fy_fpktbg_l"
+      ],
+      [
+        -1,
+        "fy_satchel"
+      ],
+      [
+        -1,
+        "fy_thighbag_l"
+      ],
+      [
+        -1,
+        "fy_ubelt"
+      ],
+      [
+        -1,
+        "fy_waistbag_b"
+      ],
+      [
+        20,
+        "glass arrow"
+      ],
+      [
+        -3,
+        "random_armor_steel"
+      ],
+      [
+        -5,
+        "random_com_kitchenware"
+      ],
+      [
+        -3,
+        "random_steel_weapon"
+      ],
+      [
+        -100,
+        "silver arrow"
+      ],
+      [
+        -100,
+        "silver bolt"
+      ],
+      [
+        1,
+        "silver claymore"
+      ],
+      [
+        1,
+        "silver dagger"
+      ],
+      [
+        -50,
+        "silver dart"
+      ],
+      [
+        1,
+        "silver longsword"
+      ],
+      [
+        1,
+        "silver shortsword"
+      ],
+      [
+        1,
+        "silver staff"
+      ],
+      [
+        -50,
+        "silver throwing star"
+      ],
+      [
+        1,
+        "silver war axe"
+      ],
+      [
+        -1,
+        "steel longsword"
+      ],
+      [
+        -1,
+        "steel shortsword"
+      ],
+      [
+        -1,
+        "steel_shield"
+      ],
+      [
+        -1,
+        "steel_towershield"
+      ],
+      [
+        -3,
+        "torch"
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "crate_01_arrille",
+    "name": "Crate",
+    "mesh": "o\\Contain_crate_01.NIF",
+    "encumbrance": 200.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        1,
+        "chitin boots"
+      ],
+      [
+        -1,
+        "chitin cuirass"
+      ],
+      [
+        1,
+        "chitin guantlet - left"
+      ],
+      [
+        -1,
+        "chitin guantlet - right"
+      ],
+      [
+        1,
+        "chitin pauldron - left"
+      ],
+      [
+        1,
+        "chitin pauldron - right"
+      ],
+      [
+        1,
+        "fur_boots"
+      ],
+      [
+        -1,
+        "fur_cuirass"
+      ],
+      [
+        -1,
+        "fy_fannypack_b"
+      ],
+      [
+        -1,
+        "fy_fpkpch"
+      ],
+      [
+        -1,
+        "fy_fpktbg_l"
+      ],
+      [
+        1,
+        "fy_satchel"
+      ],
+      [
+        -1,
+        "fy_thighbag_l"
+      ],
+      [
+        -1,
+        "fy_ubelt"
+      ],
+      [
+        -1,
+        "fy_waistbag_b"
+      ],
+      [
+        -1,
+        "imperial_chain_coif_helm"
+      ],
+      [
+        1,
+        "imperial_chain_cuirass"
+      ],
+      [
+        -1,
+        "iron_cuirass"
+      ],
+      [
+        1,
+        "iron_gauntlet_left"
+      ],
+      [
+        -1,
+        "iron_gauntlet_right"
+      ],
+      [
+        1,
+        "iron_greaves"
+      ],
+      [
+        1,
+        "iron_helmet"
+      ],
+      [
+        -1,
+        "netch_leather_cuirass"
+      ],
+      [
+        -1,
+        "nordic_ringmail_cuirass"
+      ]
+    ]
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_fannypack",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_fannypack_b.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_fannypack_l",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_fannypack_l.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_fannypack_r",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_fannypack_r.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_fpkpch",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_fpackpouch.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_fpktbg_l",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_fpktbg_l.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_fpktbg_r",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_fpktbg_r.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_satchel_f",
+    "data": {
+      "part": "Clavicle",
+      "vampire": 0,
+      "female": 1,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_satchel_f.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_satchel_m",
+    "data": {
+      "part": "Clavicle",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_satchel_m.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_thighbag_l",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_thighbag_l.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_thighbag_r",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_thighbag_r.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_ubelt",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_utilitybelt.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_waistbag",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_waistbag_b.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_waistbag_l",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_waistbag_l.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "aa_waistbag_r",
+    "data": {
+      "part": "Groin",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "frummyonda\\fy_waistbag_r.nif"
+  },
+  {
+    "type": "Enchantment",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_satchels_20",
+    "data": {
+      "enchant_type": "ConstantEffect",
+      "enchant_cost": 0,
+      "max_charge": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "Feather",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 1,
+        "min_magnitude": 20,
+        "max_magnitude": 20
+      }
+    ]
+  },
+  {
+    "type": "Enchantment",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_satchels_30",
+    "data": {
+      "enchant_type": "ConstantEffect",
+      "enchant_cost": 0,
+      "max_charge": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "Feather",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 1,
+        "min_magnitude": 30,
+        "max_magnitude": 30
+      }
+    ]
+  },
+  {
+    "type": "Enchantment",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_satchels_50",
+    "data": {
+      "enchant_type": "ConstantEffect",
+      "enchant_cost": 0,
+      "max_charge": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "Feather",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 1,
+        "min_magnitude": 50,
+        "max_magnitude": 50
+      }
+    ]
+  },
+  {
+    "type": "Enchantment",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_satchels_70",
+    "data": {
+      "enchant_type": "ConstantEffect",
+      "enchant_cost": 0,
+      "max_charge": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "Feather",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 1,
+        "min_magnitude": 70,
+        "max_magnitude": 70
+      }
+    ]
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      8192
+    ],
+    "id": "arrille",
+    "name": "Arrille",
+    "mesh": "base_anim.nif",
+    "script": "nolore",
+    "race": "High Elf",
+    "class": "Trader Service",
+    "faction": "",
+    "head": "b_n_high elf_m_head_03",
+    "hair": "b_n_high elf_m_hair_01",
+    "npc_flags": 8,
+    "data": {
+      "level": 15,
+      "stats": {
+        "attributes": [
+          66,
+          84,
+          54,
+          56,
+          56,
+          54,
+          83,
+          40
+        ],
+        "skills": [
+          14,
+          52,
+          30,
+          14,
+          38,
+          38,
+          14,
+          14,
+          14,
+          16,
+          16,
+          12,
+          12,
+          12,
+          6,
+          45,
+          16,
+          50,
+          45,
+          6,
+          6,
+          30,
+          6,
+          6,
+          20,
+          45,
+          6
+        ],
+        "health": 141,
+        "magicka": 42,
+        "fatigue": 230
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 800
+    },
+    "inventory": [
+      [
+        1,
+        "expensive_pants_03"
+      ],
+      [
+        1,
+        "expensive_shirt_03"
+      ],
+      [
+        1,
+        "expensive_shoes_03"
+      ],
+      [
+        -5,
+        "ingred_corkbulb_root_01"
+      ],
+      [
+        -5,
+        "ingred_scrib_jerky_01"
+      ],
+      [
+        -5,
+        "ingred_shalk_resin_01"
+      ],
+      [
+        1,
+        "key_arrile"
+      ],
+      [
+        -2,
+        "potion_comberry_brandy_01"
+      ],
+      [
+        -2,
+        "potion_comberry_wine_01"
+      ],
+      [
+        -2,
+        "Potion_Cyro_Whiskey_01"
+      ],
+      [
+        -2,
+        "Potion_Local_Brew_01"
+      ],
+      [
+        -2,
+        "potion_local_liquor_01"
+      ],
+      [
+        -2,
+        "sc_almsiviintervention"
+      ],
+      [
+        -2,
+        "sc_argentglow"
+      ],
+      [
+        -2,
+        "sc_drathiswinterguest"
+      ],
+      [
+        -2,
+        "sc_heartwise"
+      ],
+      [
+        -2,
+        "sc_ondusisunhinging"
+      ],
+      [
+        -2,
+        "sc_summonskeletalservant"
+      ],
+      [
+        -2,
+        "sc_vigor"
+      ],
+      [
+        -2,
+        "sc_vitality"
+      ]
+    ],
+    "spells": [
+      "absorb fatigue",
+      "spark",
+      "jack of trades",
+      "father's hand",
+      "resist magicka",
+      "hearth heal",
+      "fireball",
+      "frostbite"
+    ],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 100,
+      "services": 16383
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 0,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 10,
+        "idle6": 10,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_fannypack_b",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 3.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Fannypack",
+    "mesh": "frummyonda\\fy_fannypack_g.nif",
+    "icon": "frummyonda\\fy_fannypack.dds",
+    "script": "fy_adjust_fpack",
+    "enchanting": "fy_satchels_20",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_fannypack",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_fannypack_l",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 3.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Fannypack",
+    "mesh": "frummyonda\\fy_fannypack_g.nif",
+    "icon": "frummyonda\\fy_fannypack.dds",
+    "script": "fy_adjust_fpack",
+    "enchanting": "fy_satchels_20",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_fannypack_l",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_fannypack_r",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 3.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Fannypack",
+    "mesh": "frummyonda\\fy_fannypack_g.nif",
+    "icon": "frummyonda\\fy_fannypack.dds",
+    "script": "fy_adjust_fpack",
+    "enchanting": "fy_satchels_20",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_fannypack_r",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_fpkpch",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 5.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Fannypack with Pouches",
+    "mesh": "frummyonda\\fy_fannypack_g.nif",
+    "icon": "frummyonda\\fy_fannypack.dds",
+    "enchanting": "fy_satchels_50",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_fpkpch",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_fpktbg_l",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 5.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Fannypack with Thigh Bag",
+    "mesh": "frummyonda\\fy_waistbag_g.nif",
+    "icon": "frummyonda\\fy_fpktbg.dds",
+    "script": "fy_adjust_ftbag",
+    "enchanting": "fy_satchels_50",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_fpktbg_l",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_fpktbg_r",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 5.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Fannypack with Thigh Bag",
+    "mesh": "frummyonda\\fy_waistbag_g.nif",
+    "icon": "frummyonda\\fy_fpktbg.dds",
+    "script": "fy_adjust_ftbag",
+    "enchanting": "fy_satchels_50",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_fpktbg_r",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_satchel",
+    "data": {
+      "armor_type": "LeftPauldron",
+      "weight": 5.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Satchel",
+    "mesh": "frummyonda\\fy_satchel_g.nif",
+    "icon": "frummyonda\\fy_satchel.dds",
+    "enchanting": "fy_satchels_30",
+    "biped_objects": [
+      {
+        "biped_object_type": "LeftPauldron",
+        "male_bodypart": "aa_satchel_m",
+        "female_bodypart": "aa_satchel_f"
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_thighbag_l",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 5.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Thigh Bag",
+    "mesh": "frummyonda\\fy_waistbag_g.nif",
+    "icon": "frummyonda\\fy_thighbag.dds",
+    "script": "fy_adjust_thbag",
+    "enchanting": "fy_satchels_50",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_thighbag_l",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_thighbag_r",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 5.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Thigh Bag",
+    "mesh": "frummyonda\\fy_waistbag_g.nif",
+    "icon": "frummyonda\\fy_thighbag.dds",
+    "script": "fy_adjust_thbag",
+    "enchanting": "fy_satchels_50",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_thighbag_r",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_ubelt",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 3.0,
+      "value": 50,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Utility Belt",
+    "mesh": "frummyonda\\fy_utilitybelt_g.nif",
+    "icon": "frummyonda\\fy_ubelt.dds",
+    "enchanting": "fy_satchels_30",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_ubelt",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_waistbag_b",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 5.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Waist Bag",
+    "mesh": "frummyonda\\fy_waistbag_g.nif",
+    "icon": "frummyonda\\fy_thighbag.dds",
+    "script": "fy_adjustwbag",
+    "enchanting": "fy_satchels_50",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_waistbag",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_waistbag_l",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 5.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Waist Bag",
+    "mesh": "frummyonda\\fy_waistbag_g.nif",
+    "icon": "frummyonda\\fy_thighbag.dds",
+    "script": "fy_adjustwbag",
+    "enchanting": "fy_satchels_50",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_waistbag_l",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "fy_waistbag_r",
+    "data": {
+      "armor_type": "Greaves",
+      "weight": 5.0,
+      "value": 100,
+      "health": 100,
+      "enchantment": 100,
+      "armor_rating": 1
+    },
+    "name": "Waist Bag",
+    "mesh": "frummyonda\\fy_waistbag_g.nif",
+    "icon": "frummyonda\\fy_thighbag.dds",
+    "script": "fy_adjustwbag",
+    "enchanting": "fy_satchels_50",
+    "biped_objects": [
+      {
+        "biped_object_type": "Groin",
+        "male_bodypart": "aa_waistbag_r",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Pelagiad, Mebestien Ence: Trader",
+    "data": {
+      "flags": 5,
+      "grid": [
+        1582155,
+        1061158912
+      ]
+    },
+    "references": []
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Seyda Neen, Arrille's Tradehouse",
+    "data": {
+      "flags": 5,
+      "grid": [
+        2308203,
+        1061158912
+      ]
+    },
+    "references": []
+  }
+]

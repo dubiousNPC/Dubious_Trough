@@ -3,10 +3,13 @@
     cake_settings.lua -- settings page
 
     Only settings something actually reads. The previous version declared
-    eleven keys nothing consumed -- eight OMWFW buff toggles for categories
-    CAKE does not have (circlets, glasses, backpacks, cloaks...), plus
-    SHOWMESSAGES and EQUIPANIM left over from a design that changed. Dead
-    settings are worse than no settings: they imply a feature exists.
+    keys nothing consumed -- eight OMWFW buff toggles for categories CAKE does
+    not have (circlets, glasses, backpacks, cloaks...), plus SHOWMESSAGES.
+    Dead settings are worse than no settings: they imply a feature exists.
+
+    EQUIPANIM is NOT one of those. It survives because cake_player.playGesture
+    reads it before loading cake_anim.lua, and its description says plainly
+    that the animations are not shipped.
 
     THE SKELETON SETTING
     --------------------

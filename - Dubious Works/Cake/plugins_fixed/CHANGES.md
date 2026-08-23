@@ -1,90 +1,106 @@
-# Corrected plugins
+# Plugin state — `CAKEv4_2.json` + `CAKE_npc.json`
 
-`CAKE402.json` and `CAKE3npcCont.json`, rewritten by `tools/fix_plugins.py` and
-verified by `tools/validate_fixed.py` (17 checks, all passing).
+Produced by `tools/enrich_from_sources.py`, verified by `tools/validate_fixed.py`
+(17 checks, all passing).
 
-## ID scheme
+## Records are now defined from their source mods
 
-`dbs_` + the original id with its leading underscore stripped, `_eq` for the
-worn half:
+Every CAKE wearable is a Miscellaneous stand-in for an `ARMO` record in one of
+the mods that supplies its mesh. Those originals carry the authored name, the
+icon path, and a weight and value the author chose. The CAKE records carried a
+placeholder name, a uniform `0.5 / 2` for everything, and no icon on 61 of 160.
+
+The link is the bodypart, and it needs no alias table or guesswork:
 
 ```
-_RV_Ashmask1_H  ->  dbs_RV_Ashmask1_H   /  dbs_RV_Ashmask1_H_eq
-1adamantail     ->  dbs_1adamantail     /  dbs_1adamantail_eq
-GLantern2       ->  dbs_GLantern2       /  dbs_GLantern2_eq
+_RV_Ashmask_1 (Armor, "Dunmer Ashmask")
+      └─ biped_objects[].male_bodypart ─→ _RV_Ashmask1_H (Bodypart)
+                                                 └─→ dbs_RV_Ashmask1_H (CAKE)
 ```
 
-This is not a new convention. It reproduces the ids already in
-CAKE.esp/CAKE34.esp for **159 of 160** records, and all 160 `_eq` partners
-already exist there — so this converges the two generations rather than adding
-a third. The prefix also resolves the bodypart collision: `dbs_RV_Ashmask1_H`
-no longer shadows the `_RV_Ashmask1_H` bodypart.
-
-## CAKE402.json
+**158 of 160** resolve this way, across all seven source files.
 
 | | before | after |
 |---|---|---|
-| records | 320 | 320 |
-| unique ids | **160** | **320** |
-| `_eq` records | **0** | **160** |
+| records with an icon | 99 / 160 | **158 / 160** |
+| distinct weights | 1 | 12 |
+| distinct values | 1 | 19 |
+| placeholder names | 160 | 0 |
 
-- **The `_eq` suffix moved from `FNAM` to `NAME`.** Previously both blocks of
-  160 shared one id set, so the second overwrote the first on load and no worn
-  variant existed. Records now pair as `dbs_X` / `dbs_X_eq`, interleaved.
-- **Display names restored.** Nothing reads "Ashmask_eq" any more. Both halves
-  of a pair carry the same name; the worn state is conveyed by the item having
-  moved, not by its text.
-- **5 empty names filled** (`Goggles5-8`, `Orcishmask1` had `name: null`).
-- **3 wrong names fixed**: `Ashmask3` was "tail armor", `Blindfold1` was
-  "Ashmask", `hfirebelt` was "lantern".
-- **Duplicate names numbered.** 16 items called "Scarf" are now "Scarf 1".."16".
-  This matters because taking something off returns the *base* item to the
-  inventory, so identical names are unusable.
-- **99 of 160 records gained icons**, matched by rule against the shipped icon
-  files and by reusing the icon the equivalent ARMO record already uses.
+```
+dbs_RV_Ashmask1_H   "Ashmask 1"       ->  "Dunmer Ashmask"
+dbs_RV_Ashmask3_H   "Ashmask 3"       ->  "Visorless Dwemer Ashmask"
+dbs_RV_Scarf_10     "Scarf 10"        ->  "Expensive Ashlander Scarf"
+dbs_ash1            "Ash lantern 1"   ->  "Wearable Ashlander Lantern 1"
+```
 
-## CAKE3npcCont.json
+Values are scaled to a quarter of the source, floored at 1. The originals are
+enchanted armour worth 100+; these carry no armour rating and should not price
+like it, but 46 lanterns all worth exactly 2 was no better. Scaling keeps the
+relative ordering the author chose.
 
-Inventory references remapped so the items are obtainable. Of 194 entries:
+Names that still collide after enrichment get numbered, and the worn half
+always copies its base, so a pair can never disagree.
+
+## Asset paths untouched
+
+Meshes, icons and textures are supplied by the source mods, so every path is
+reproduced exactly as written — original case, original backslashes. The
+enrichment script **asserts** no mesh path changed, and deliberately does not
+take the ARMO's mesh: those are `_GND` ground meshes, while the CAKE record's
+is the worn variant.
+
+```
+OAAB\l\dwrv_lantern.nif        tr\l\TR_l_de_MhLant_whi_03.nif
+pc\l\pc_col_lantern_02.nif     RV\Ashmask1.nif
+```
+
+Four assertions in `tools/test_shared.lua` carry this through to
+`cake_shared.lua`, including one that checks a real backslash survives into the
+runtime string rather than only the source.
+
+## CAKE_npc.json
+
+Container and vendor inventories, 194 entries:
 
 | | count |
 |---|---|
-| already valid | 21 |
-| remapped via explicit alias | 104 |
-| remapped by normalising | 33 |
-| vanilla, left untouched | 14 |
-| unresolved | 22 |
+| already valid | 158 |
+| remapped via source mod | 20 |
+| vanilla, untouched | 14 |
+| dropped — no such record | 2 |
 
-**All 22 unresolved are tails**, which are excluded by design.
+The remap needs no alias table either: the same Armor → bodypart → CAKE chain
+turns the authored `adamantium_tail` into `dbs_1adamantail`.
 
-Aliases were curated, not fuzzy-matched. `difflib` confidently mapped
-`LanternPapery1` onto `LanternPap1` — a different lantern, and one already
-claimed by `LanternPaper1`. Every alias in `fix_plugins.py` was checked against
-the target record's mesh path, and the script asserts no two source ids collapse
-onto one record.
+`arg_domina` and `domina_tail` were **dropped**. They exist in the source mod
+and in the old `CAKE.esp`, but no `dbs_` record for them exists in `CAKEv4_2`
+(`dbs_1argdomina`, `dbs_1argdominaf`, `dbs_1dominatail` are all absent). A
+reference to an undefined record is a load warning and an item that can never
+appear. Re-add the three records if you want these back.
 
-Notable renames the aliases cover: `GlassLantern*`→`GLantern*`,
-`LanternPaper*`→`LanternPap*` (with `prp`→`pur` and `y`→`yel`),
-`Indoril*`→`TRIndoril*Lan*`, `commonbelt*`→`cbelt*`, `fy_*`→`aa_*`,
-`LanternDwem`→`Lantern0AABDwrn`, `ashl*`→`ash*`.
+## Outstanding
 
-## Still outstanding
-
-- **61 records have no icon**: 39 lanterns, 13 belts, 7 tails, 2 cigars. No
-  icon files exist for these in the archive — a content gap, not a data one.
-- **32 tails** remain excluded from `cake_shared.lua`. `xbase_anim_dbs.nif` has
-  no tail bone; they need a beast skeleton (`xbase_animkna`).
-- **9 meshes come from undeclared masters**: 4 Project Cyrodiil (`pc\`), 3 a
-  Skyrim-style lantern mod (`sky\`), 2 OAAB_Data (`OAAB\`). Only Tamriel_Data
-  is declared. Declare them, bundle the meshes, or drop the records.
-- These are **JSON**, not `.esp`. Convert with whatever produced the exports.
+- **2 cigars** (`dbs_01cigar`, `dbs_02cigar`) have no source mod among the
+  seven supplied, so no name, icon or value could be taken. They keep their
+  placeholder.
+- **32 tails** are in the plugin but excluded from `cake_shared.lua`:
+  `xbase_anim_dbs.nif` has no tail bone. Their records are inert — using one
+  does nothing — until a beast skeleton (`xbase_animkna`) with a tail bone
+  ships.
+- **9 records depend on undeclared masters**: 4 Project Cyrodiil, 3 the
+  Skyrim-style lantern mod, 2 OAAB_Data. Paths are correct; declare the masters
+  or document them as soft requirements. Listing in `tools/mesh_provenance.json`.
+- These are **JSON**, not `.esp`.
 
 ## Regenerating
 
 ```
-python3 tools/fix_plugins.py       # rewrite from the originals
-python3 tools/validate_fixed.py    # 17 checks + emit registry inputs
-python3 tools/gen_cake_shared.py   # -> cake_shared.lua
+python3 tools/enrich_from_sources.py   # source mods -> fixed/*.json
+python3 tools/validate_fixed.py        # 17 checks + registry inputs
+python3 tools/gen_cake_shared.py       # -> cake_shared.lua
 python3 tools/sweep.py
 python3 tools/luarun.py tools/test_integration.lua
 ```
+
+`tools/sources/` holds the seven source-mod exports the enrichment reads.

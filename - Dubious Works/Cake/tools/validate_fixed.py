@@ -14,13 +14,13 @@ def check(name, cond, extra=''):
         fails.append(name)
         print('  FAIL %s %s' % (name, extra))
 
-out = json.load(open('fixed/CAKE402.json'))
+out = json.load(open('fixed/CAKEv4_2.json'))
 recs = [r for r in out if r['type'] == 'MiscItem']
 base = [r for r in recs if not r['id'].endswith('_eq')]
 worn = [r for r in recs if r['id'].endswith('_eq')]
 ids = [r['id'] for r in recs]
 
-print('validating fixed/CAKE402.json')
+print('validating fixed/CAKEv4_2.json')
 check('320 records', len(recs) == 320, len(recs))
 check('160 base + 160 worn', len(base) == 160 and len(worn) == 160,
       '%d/%d' % (len(base), len(worn)))
@@ -54,7 +54,7 @@ check('display names are unique among base records',
       [k for k, v in names.items() if v > 1][:5])
 
 # The collision the dbs_ prefix was meant to resolve.
-bodyparts = {r['id'].lower() for r in json.load(open('/mnt/user-data/uploads/CAKE3npcCont.json'))
+bodyparts = {r['id'].lower() for r in json.load(open('/mnt/user-data/uploads/CAKE_npc.json'))
              if r.get('type') == 'Bodypart'}
 collide = [i for i in ids if i.lower() in bodyparts]
 check('no id shadows a Bodypart id', not collide, collide[:5])
@@ -66,7 +66,7 @@ withicon = sum(1 for r in base if r.get('icon'))
 print('  --   icons present on %d / %d base records' % (withicon, len(base)))
 
 # --------------------------------------------------------------- references
-fixed3 = json.load(open('fixed/CAKE3npcCont.json'))
+fixed3 = json.load(open('fixed/CAKE_npc.json'))
 defined = {r['id'].lower() for r in fixed3 if r.get('type') in ('Armor', 'MiscItem', 'Static')}
 defined |= low
 NOT_CAKE = re.compile(r'^(sc_|expensive_|extravagant_)')
@@ -90,8 +90,11 @@ for r in fixed3:
 print('  --   CAKE items now stocked somewhere: %d / 160' % len(stocked))
 
 # ------------------------------------------------------------ registry feed
+# Mesh path verbatim -- no separator or case normalisation. These meshes are
+# supplied by Tamriel_Data, OAAB, Project Cyrodiil and others, and the path in
+# the record is the one those mods publish.
 records = {r['id']: {'type': 'MISC', 'id': r['id'], 'name': r.get('name'),
-                     'model': (r.get('mesh') or '').replace('\\', '/')}
+                     'model': r.get('mesh') or ''}
            for r in recs}
 json.dump(records, open('cake_records.json', 'w'), indent=1)
 

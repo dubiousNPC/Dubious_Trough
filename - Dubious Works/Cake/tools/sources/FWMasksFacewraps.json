@@ -1,0 +1,1034 @@
+[
+  {
+    "type": "Header",
+    "flags": [
+      0,
+      0
+    ],
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "",
+    "description": "",
+    "num_objects": 37,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ],
+      [
+        "Tribunal.esm",
+        4565686
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ]
+    ]
+  },
+  {
+    "type": "Container",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_maskbarrel",
+    "name": "Barrel",
+    "mesh": "o\\Contain_barrel_01.NIF",
+    "encumbrance": 500.0,
+    "container_flags": 8,
+    "inventory": [
+      [
+        4,
+        "_RV_Ashmask_1"
+      ],
+      [
+        4,
+        "_RV_Ashmask_2"
+      ],
+      [
+        4,
+        "_RV_Ashmask_3"
+      ],
+      [
+        4,
+        "_RV_Daedramask_1"
+      ],
+      [
+        4,
+        "_RV_Daedramask_2"
+      ],
+      [
+        4,
+        "_RV_Daedramask_3"
+      ],
+      [
+        4,
+        "_RV_Daedramask_4"
+      ],
+      [
+        4,
+        "_RV_Facewrap_1"
+      ],
+      [
+        4,
+        "_RV_Facewrap_2"
+      ],
+      [
+        4,
+        "_RV_Facewrap_3"
+      ],
+      [
+        4,
+        "_RV_Facewrap_4"
+      ],
+      [
+        4,
+        "_RV_Facewrap_5"
+      ],
+      [
+        4,
+        "_RV_Facewrap_6"
+      ],
+      [
+        4,
+        "_RV_Facewrap_7"
+      ],
+      [
+        4,
+        "_RV_Facewrap_8"
+      ],
+      [
+        4,
+        "_RV_Orcishmask_1"
+      ],
+      [
+        4,
+        "_RV_Orcishmask_2"
+      ]
+    ]
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Ashmask1_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Ashmask1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Ashmask2_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Ashmask2.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Ashmask3_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Ashmask3.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Daedramask1_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Daedramask1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Daedramask2_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\Daedramask2.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Daedramask3_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\Daedramask3.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Daedramask4_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\Daedramask4.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap1_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Facewrap1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap2_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Facewrap2.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap3_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Facewrap3.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap4_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\Facewrap4.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap5_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\Facewrap5.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap6_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\Facewrap6.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap7_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\Facewrap7.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap8_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\Facewrap8.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Orcishmask1_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "",
+    "mesh": "RV\\Orcishmask1.nif"
+  },
+  {
+    "type": "Bodypart",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Orcishmask2_H",
+    "data": {
+      "part": "Hair",
+      "vampire": 0,
+      "female": 0,
+      "part_type": "Armor"
+    },
+    "name": "Argonian",
+    "mesh": "RV\\Orcishmask2.nif"
+  },
+  {
+    "type": "Npc",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Maskmerchant",
+    "name": "Dethis Alam",
+    "mesh": "base_anim.nif",
+    "race": "Dark Elf",
+    "class": "Trader",
+    "faction": "",
+    "head": "b_n_dark elf_m_head_13",
+    "hair": "b_n_dark elf_m_hair_15",
+    "npc_flags": 8,
+    "data": {
+      "level": 14,
+      "stats": {
+        "attributes": [
+          67,
+          61,
+          51,
+          69,
+          68,
+          48,
+          69,
+          40
+        ],
+        "skills": [
+          40,
+          18,
+          18,
+          18,
+          40,
+          23,
+          18,
+          18,
+          23,
+          6,
+          16,
+          6,
+          6,
+          6,
+          48,
+          6,
+          6,
+          2,
+          43,
+          43,
+          6,
+          99,
+          16,
+          11,
+          43,
+          43,
+          28
+        ],
+        "health": 122,
+        "magicka": 122,
+        "fatigue": 235
+      },
+      "disposition": 50,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 350
+    },
+    "inventory": [
+      [
+        1,
+        "_RV_Facewrap_4"
+      ],
+      [
+        1,
+        "cloth bracer left"
+      ],
+      [
+        1,
+        "common_belt_05"
+      ],
+      [
+        1,
+        "common_pants_02"
+      ],
+      [
+        1,
+        "common_shirt_03"
+      ],
+      [
+        1,
+        "common_shoes_01"
+      ],
+      [
+        1,
+        "netch_leather_boiled_cuirass"
+      ],
+      [
+        1,
+        "netch_leather_boots"
+      ],
+      [
+        1,
+        "steel dagger"
+      ]
+    ],
+    "spells": [
+      "sotha's mirror",
+      "vivec's feast",
+      "spell absorption",
+      "dispel",
+      "detect_creature"
+    ],
+    "ai_data": {
+      "hello": 30,
+      "fight": 30,
+      "flee": 30,
+      "alarm": 0,
+      "services": 6
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 0,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 0,
+        "idle6": 0,
+        "idle7": 0,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": []
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Ashmask_1",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.7,
+      "value": 100,
+      "health": 100,
+      "enchantment": 30,
+      "armor_rating": 1
+    },
+    "name": "Dunmer Ashmask",
+    "mesh": "RV\\Ashmask1_GND.nif",
+    "icon": "RV\\ashmask1.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Ashmask1_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Ashmask_2",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.5,
+      "value": 150,
+      "health": 200,
+      "enchantment": 35,
+      "armor_rating": 1
+    },
+    "name": "Dwemer Ashmask",
+    "mesh": "RV\\Ashmask2.nif",
+    "icon": "RV\\ashmask2.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Ashmask2_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Ashmask_3",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.4,
+      "value": 150,
+      "health": 200,
+      "enchantment": 35,
+      "armor_rating": 1
+    },
+    "name": "Visorless Dwemer Ashmask",
+    "mesh": "RV\\Ashmask3.nif",
+    "icon": "RV\\ashmask3.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Ashmask3_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Daedramask_1",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 250,
+      "health": 300,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Daedric Facemask",
+    "mesh": "RV\\Daedramask1_GND.nif",
+    "icon": "RV\\Daedramask1.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Daedramask1_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Daedramask_2",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 250,
+      "health": 300,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Daedric Facemask",
+    "mesh": "RV\\Daedramask2_GND.nif",
+    "icon": "RV\\Daedramask2.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Daedramask2_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Daedramask_3",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 250,
+      "health": 300,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Daedric Facemask",
+    "mesh": "RV\\Daedramask3_GND.nif",
+    "icon": "RV\\Daedramask3.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Daedramask3_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Daedramask_4",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 250,
+      "health": 300,
+      "enchantment": 40,
+      "armor_rating": 1
+    },
+    "name": "Daedric Facemask",
+    "mesh": "RV\\Daedramask4_GND.nif",
+    "icon": "RV\\Daedramask4.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Daedramask4_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap_1",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.2,
+      "value": 20,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Morag Tong Facewrap",
+    "mesh": "RV\\Facewrap1_GND.nif",
+    "icon": "RV\\facewrap1.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Facewrap1_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap_2",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.2,
+      "value": 20,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Dark Brotherhood Facewrap",
+    "mesh": "RV\\Facewrap2_GND.nif",
+    "icon": "RV\\facewrap2.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Facewrap2_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap_3",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.2,
+      "value": 20,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Grey Cloth Facewrap",
+    "mesh": "RV\\Facewrap3_GND.nif",
+    "icon": "RV\\facewrap3.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Facewrap3_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap_4",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.2,
+      "value": 20,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Brown Cloth Facewrap",
+    "mesh": "RV\\Facewrap4_GND.nif",
+    "icon": "RV\\facewrap4.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Facewrap4_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap_5",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.2,
+      "value": 20,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Chitin Cloth Facewrap",
+    "mesh": "RV\\Facewrap5_GND.nif",
+    "icon": "RV\\facewrap5.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Facewrap5_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap_6",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.2,
+      "value": 20,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Orange Cloth Facewrap",
+    "mesh": "RV\\Facewrap6_GND.nif",
+    "icon": "RV\\facewrap6.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Facewrap6_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap_7",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.2,
+      "value": 20,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Blue Cloth Facewrap",
+    "mesh": "RV\\Facewrap7_GND.nif",
+    "icon": "RV\\facewrap7.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Facewrap7_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Facewrap_8",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 0.2,
+      "value": 20,
+      "health": 100,
+      "enchantment": 20,
+      "armor_rating": 1
+    },
+    "name": "Red Cloth Facewrap",
+    "mesh": "RV\\Facewrap8_GND.nif",
+    "icon": "RV\\facewrap8.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Facewrap8_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Orcishmask_1",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 200,
+      "health": 250,
+      "enchantment": 30,
+      "armor_rating": 1
+    },
+    "name": "Orcish Facemask",
+    "mesh": "RV\\Orcishmask1.nif",
+    "icon": "RV\\Orcishmask1.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Orcishmask1_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Armor",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "_RV_Orcishmask_2",
+    "data": {
+      "armor_type": "Helmet",
+      "weight": 1.0,
+      "value": 200,
+      "health": 250,
+      "enchantment": 30,
+      "armor_rating": 1
+    },
+    "name": "Orcish Facemask",
+    "mesh": "RV\\Orcishmask2_GND.nif",
+    "icon": "RV\\Orcishmask2.tga",
+    "biped_objects": [
+      {
+        "biped_object_type": "Hair",
+        "male_bodypart": "_RV_Orcishmask2_H",
+        "female_bodypart": null
+      }
+    ]
+  },
+  {
+    "type": "Cell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "Balmora, South Wall Cornerclub",
+    "data": {
+      "flags": 5,
+      "grid": [
+        3418145,
+        1061158912
+      ]
+    },
+    "water_height": 0.0,
+    "atmosphere_data": {
+      "ambient_color": [
+        49,
+        68,
+        79,
+        0
+      ],
+      "sunlight_color": [
+        64,
+        85,
+        96,
+        0
+      ],
+      "fog_color": [
+        33,
+        40,
+        52,
+        0
+      ],
+      "fog_density": 0.75
+    },
+    "references": [
+      {
+        "mast_index": 0,
+        "refr_index": 1,
+        "id": "_RV_Maskmerchant",
+        "temporary": false,
+        "translation": [
+          841.5587,
+          696.31726,
+          -249.28963
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          4.383186
+        ]
+      },
+      {
+        "mast_index": 0,
+        "refr_index": 2,
+        "id": "_RV_maskbarrel",
+        "temporary": true,
+        "translation": [
+          976.31036,
+          639.15216,
+          -280.70023
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "owner": "_RV_Maskmerchant",
+        "health_left": 0
+      }
+    ]
+  }
+]
