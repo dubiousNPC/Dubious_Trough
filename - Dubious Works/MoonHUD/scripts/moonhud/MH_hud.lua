@@ -49,7 +49,9 @@ local saveData = {}
 -- One ui.texture per (moon, phase index), cut out of the sheet by offset.
 -- Cached because ui.texture registers a resource each call.
 local function atlasTexture(moonName, phaseIndex)
-	local path = ATLAS_PATH
+	-- ATLAS_PRESET names a bundled sheet; 'Custom' falls through to ATLAS_PATH.
+	local path = C.presetPath(ATLAS_PRESET)
+	if path == nil then path = ATLAS_PATH end
 	if path == nil or path == '' then path = C.ATLAS_PATH end
 	local cell = ATLAS_CELL or C.ATLAS_CELL
 	local row  = C.ATLAS_ROW[moonName] or 0
@@ -125,6 +127,163 @@ local function shadeLabel(shade)
 	return 'Shade: ' .. shade.daysUntil .. ' days (' .. shade.dateString .. ')'
 end
 
+-- Which elements are on, in draw order. Triangle needs this as a list.
+local function enabledElements()
+	local list = {}
+	if SHOW_MASSER  then list[#list + 1] = 'Masser'  end
+	if SHOW_SECUNDA then list[#list + 1] = 'Secunda' end
+	if SHOW_SHADE   then list[#list + 1] = 'Shade'   end
+	return list
+end
+
+-- The panel fill. A texture path if one is set, otherwise flat black, tinted and
+-- faded by the Panel settings.
+local function backgroundImage(name, sizeProps)
+	-- BACKGROUND_PRESET names a bundled fill. 'None' means flat black, which is
+	-- what the panel drew before any of these existed. 'Custom' uses the path.
+	local path = C.presetPath(BACKGROUND_PRESET)
+	if path == nil and BACKGROUND_PRESET == 'Custom' then path = BACKGROUND_TEXTURE end
+	if path == nil or path == '' then path = 'black' end
+	local ok, tex = pcall(ui.texture, { path = path })
+	if not ok then tex = ui.texture { path = 'black' } end
+
+	local props = {
+		resource = tex,
+		alpha = BACKGROUND_ALPHA,
+		color = BACKGROUND_TINT,
+	}
+	for k, v in pairs(sizeProps or {}) do props[k] = v end
+	return { type = ui.TYPE.Image, name = name, props = props }
+end
+
+-- Widest label the current settings can produce, in characters. The old
+-- heuristic was FONT_SIZE * 5, i.e. it assumed five characters; "Waning
+-- Crescent" is fifteen, so descriptive labels spilled out of their cell and got
+-- clipped by the neighbouring one.
+local function maxLabelChars()
+	local longest = 1
+	if PHASE_NAMING == 'Value' then
+		longest = 1
+	elseif PHASE_NAMING == 'Simple' then
+		for _, n in pairs(C.BUCKET) do longest = math.max(longest, #n) end
+	else
+		for _, n in pairs(C.DISPLAY_NAME) do longest = math.max(longest, #n) end
+	end
+	if SHOW_MOON_NAMES then longest = longest + 9 end   -- "Secunda: "
+	if SHOW_SOURCE then longest = longest + 12 end      -- " [projected]"
+	return longest
+end
+
+-- Rough advance width. Measured against MysticCards at pointsize 32, where six
+-- characters trim to 101px, giving 0.53 em; 0.58 leaves a little margin.
+local function labelWidth()
+	return math.ceil(maxLabelChars() * (FONT_SIZE or 20) * 0.58)
+end
+
+-- One triangle vertex: the icon, with its label centred underneath.
+local function buildVertex(elementName, cellW, cellH, iconSize, showIcon, showText)
+	local content = ui.content {}
+	local icon, text
+
+	if showIcon then
+		icon = {
+			type = ui.TYPE.Image,
+			name = 'icon' .. elementName,
+			props = {
+				resource = atlasTexture(elementName, 0),
+				size = v2(iconSize, iconSize),
+				-- Must be false, or MyGUI draws the atlas cell at its native 64px
+				-- and repeats it to fill the widget. That looks exactly like the
+				-- Icon Size setting doing nothing.
+				tileH = false,
+				tileV = false,
+				position = v2(math.floor((cellW - iconSize) / 2), 0),
+				alpha = 1,
+			},
+		}
+		content:add(icon)
+	end
+	if showText then
+		text = {
+			type = ui.TYPE.Text,
+			name = 'text' .. elementName,
+			props = {
+				text = '',
+				textColor = TEXT_COLOR,
+				textShadow = true,
+				textShadowColor = util.color.rgba(0, 0, 0, 0.9),
+				textAlignH = ui.ALIGNMENT.Center,
+				textAlignV = ui.ALIGNMENT.Center,
+				textSize = FONT_SIZE,
+				size = v2(cellW, FONT_SIZE + 2),
+				position = v2(0, showIcon and (iconSize + 2) or 0),
+			},
+		}
+		content:add(text)
+	end
+
+	rowFor[elementName] = { icon = icon, text = text }
+
+	return {
+		type = ui.TYPE.Widget,
+		name = 'vertex' .. elementName,
+		props = { size = v2(cellW, cellH) },
+		content = content,
+	}
+end
+
+-- Absolute-positioned triangle. Flex cannot do this, so the vertices are placed
+-- by hand inside a Widget of known size. Returns the element and its dimensions,
+-- which the circular panel needs in order to size itself.
+local function buildTriangle(inverted)
+	local names = enabledElements()
+	local showIcon = DISPLAY_MODE ~= 'Text'
+	local showText = DISPLAY_MODE ~= 'Icons'
+	local iconSize = ICON_SIZE or 32
+	local spread = TRIANGLE_SPREAD or 10
+
+	-- A label is wider than its icon, so the cell has to allow for it.
+	local cellW = iconSize
+	if showText then cellW = math.max(cellW, labelWidth()) end
+	local cellH = (showIcon and iconSize or 0) + (showText and (FONT_SIZE + 2) or 0)
+
+	local w = cellW * 2 + spread
+	local h = cellH * 2 + spread
+
+	local slots
+	if inverted then
+		-- Two across the top, one below the middle.
+		slots = {
+			v2(0, 0),
+			v2(w - cellW, 0),
+			v2(math.floor((w - cellW) / 2), cellH + spread),
+		}
+	else
+		-- One on top, two below.
+		slots = {
+			v2(math.floor((w - cellW) / 2), 0),
+			v2(0, cellH + spread),
+			v2(w - cellW, cellH + spread),
+		}
+	end
+
+	local content = ui.content {}
+	for i, name in ipairs(names) do
+		local slot = slots[i]
+		if slot == nil then break end
+		local vertex = buildVertex(name, cellW, cellH, iconSize, showIcon, showText)
+		vertex.props.position = slot
+		content:add(vertex)
+	end
+
+	return {
+		type = ui.TYPE.Widget,
+		name = 'moonTriangle',
+		props = { size = v2(w, h) },
+		content = content,
+	}, w, h
+end
+
 local function buildRow(moonName)
 	local showIcon = DISPLAY_MODE ~= 'Text'
 	local showText = DISPLAY_MODE ~= 'Icons'
@@ -151,6 +310,11 @@ local function buildRow(moonName)
 			props = {
 				resource = atlasTexture(moonName, 0),
 				size = v2(iconSize, iconSize),
+				-- Must be false, or MyGUI draws the atlas cell at its native 64px
+				-- and repeats it to fill the widget. That looks exactly like the
+				-- Icon Size setting doing nothing.
+				tileH = false,
+				tileV = false,
 				alpha = 1,
 			},
 		}
@@ -176,41 +340,56 @@ function createMoonHud()
 	end
 	rowFor = {}
 
-	local background = {
-		type = ui.TYPE.Image,
-		name = 'moonHudBackground',
-		props = {
-			resource = ui.texture { path = 'black' },
-			relativeSize = v2(1, 1),
-			alpha = BACKGROUND_ALPHA,
-		},
-	}
+	local shape = PANEL_SHAPE or 'Rectangle'
+	local triangle = (LAYOUT == 'Triangle' or LAYOUT == 'Triangle Inverted')
 
-	local pad = v2(HUD_PADDING, HUD_PADDING)
-	local template, paddingTemplate
-	if HUD_BORDER then
-		local borderFile = (HUD_BORDER_STYLE == 'thick' or HUD_BORDER_STYLE == 'verythick')
-			and 'thick' or 'thin'
-		local borderOffset =
-			HUD_BORDER_STYLE == 'verythick' and 4
-			or HUD_BORDER_STYLE == 'thick' and 3
-			or HUD_BORDER_STYLE == 'normal' and 2
-			or 1
-		local borders = borderTemplates(borderFile, HUD_BORDER_COLOR, borderOffset, background, pad)
-		template = borders.borders
-		paddingTemplate = borders.padding
+	-- Build the contents first. The circular panel has to know how big they are.
+	local contentElement, contentW, contentH
+	if triangle then
+		contentElement, contentW, contentH = buildTriangle(LAYOUT == 'Triangle Inverted')
 	else
-		template = { content = ui.content {} }
-		template.content:add(background)
-		if HUD_PADDING > 0 then
-			paddingTemplate = {
-				type = ui.TYPE.Container,
-				content = ui.content {
-					{ props = { size = pad } },
-					{ external = { slot = true }, props = { position = pad, relativeSize = v2(1, 1) } },
-					{ props = { position = pad, relativePosition = v2(1, 1), size = pad } },
-				},
-			}
+		local arrange = ui.ALIGNMENT.Start
+		if TEXT_ALIGNMENT == 'Center' then arrange = ui.ALIGNMENT.Center
+		elseif TEXT_ALIGNMENT == 'Right' then arrange = ui.ALIGNMENT.End end
+
+		moonFlex = {
+			type = ui.TYPE.Flex,
+			name = 'moonFlex',
+			props = {
+				horizontal = (LAYOUT == 'Horizontal'),
+				autoSize = true,
+				arrange = arrange,
+			},
+			content = ui.content {},
+		}
+
+		local names = enabledElements()
+		for i, name in ipairs(names) do
+			if i > 1 then
+				local gapSize = (LAYOUT == 'Horizontal')
+					and v2((ICON_SPACING or 6) * 2, 0) or v2(0, 2)
+				moonFlex.content:add { name = 'gap' .. i, props = { size = gapSize } }
+			end
+			moonFlex.content:add(buildRow(name))
+		end
+		contentElement = moonFlex
+		-- Flex auto-sizes at layout time, so its dimensions have to be estimated
+		-- here for the circle to size itself around it.
+		local n = #names
+		local showIcon = DISPLAY_MODE ~= 'Text'
+		local showText = DISPLAY_MODE ~= 'Icons'
+		local iconSize = ICON_SIZE or 32
+		local labelW = showText and labelWidth() or 0
+		local rowW = (showIcon and iconSize or 0)
+			+ ((showIcon and showText) and (ICON_SPACING or 6) or 0) + labelW
+		local rowH = math.max(showIcon and iconSize or 0,
+			showText and ((FONT_SIZE or 20) + 2) or 0)
+		if LAYOUT == 'Horizontal' then
+			contentW = rowW * n + (ICON_SPACING or 6) * 2 * (n - 1)
+			contentH = rowH
+		else
+			contentW = rowW
+			contentH = rowH * n + 2 * (n - 1)
 		end
 	end
 
@@ -218,18 +397,134 @@ function createMoonHud()
 	if TEXT_ALIGNMENT == 'Center' then anchorPoint = v2(0.5, 0)
 	elseif TEXT_ALIGNMENT == 'Right' then anchorPoint = v2(1, 0) end
 
-	moonHud = ui.create {
-		type = ui.TYPE.Container,
-		layer = HUD_LOCK and 'Scene' or 'Modal',
-		name = 'moonHud',
-		template = template,
-		props = {
-			position = v2(HUD_X_POS, HUD_Y_POS),
-			anchor = anchorPoint,
-		},
-		content = ui.content {},
-		userData = { windowStartPosition = v2(HUD_X_POS, HUD_Y_POS) },
-	}
+	local pad = v2(HUD_PADDING or 0, HUD_PADDING or 0)
+
+	if shape == 'Circle' then
+		-- A round plate needs an explicit square canvas, so this branch uses a
+		-- Widget with a known size rather than an auto-sizing Container.
+		local diameter = CIRCLE_SIZE or 0
+		if diameter <= 0 then
+			-- The circle has to enclose the content box, so the governing figure
+			-- is its diagonal, not its longer side. max(w,h) * 1.35 happens to
+			-- land close for a square triangle layout but is badly oversized for
+			-- a tall stack: a 40x124 vertical layout needs 130, not 175.
+			local cw, ch = contentW or 0, contentH or 0
+			if cw <= 0 or ch <= 0 then
+				local fallback = (ICON_SIZE or 32) * 3
+				cw, ch = fallback, fallback
+			end
+			local diagonal = math.sqrt(cw * cw + ch * ch)
+			diameter = math.ceil(diagonal * 1.06) + (HUD_PADDING or 0) * 2
+		end
+
+		local content = ui.content {}
+
+		content:add(backgroundImage('moonHudBackground', {
+			size = v2(diameter, diameter),
+			position = v2(0, 0),
+		}))
+
+		if CIRCLE_BORDER then
+			local ok, ringTex = pcall(ui.texture, { path = CIRCLE_BORDER_TEXTURE })
+			if ok then
+				content:add {
+					type = ui.TYPE.Image,
+					name = 'moonHudRing',
+					props = {
+						resource = ringTex,
+						size = v2(diameter, diameter),
+						position = v2(0, 0),
+						color = CIRCLE_BORDER_COLOR,
+					},
+				}
+			end
+		end
+
+		-- Centre the contents on the plate.
+		local holder = {
+			type = ui.TYPE.Widget,
+			name = 'moonHolder',
+			props = {
+				size = v2(diameter, diameter),
+				position = v2(0, 0),
+			},
+			content = ui.content { contentElement },
+		}
+		-- Centre the contents on the plate whatever the layout. Previously only
+		-- the triangle was centred and everything else sat at top-left plus
+		-- padding, which pushed a vertical stack off the edge of the circle.
+		contentElement.props.position = v2(
+			math.floor((diameter - (contentW or 0)) / 2),
+			math.floor((diameter - (contentH or 0)) / 2))
+		content:add(holder)
+
+		moonHud = ui.create {
+			type = ui.TYPE.Widget,
+			layer = HUD_LOCK and 'Scene' or 'Modal',
+			name = 'moonHud',
+			props = {
+				position = v2(HUD_X_POS, HUD_Y_POS),
+				size = v2(diameter, diameter),
+				anchor = anchorPoint,
+			},
+			content = content,
+			userData = {},
+		}
+
+	else
+		-- None or Rectangle: the original auto-sizing Container plus 9-slice border.
+		local background = backgroundImage('moonHudBackground', { relativeSize = v2(1, 1) })
+		if shape == 'None' then background.props.alpha = 0 end
+
+		local template, paddingTemplate
+		if shape == 'Rectangle' and HUD_BORDER then
+			local borderFile = (HUD_BORDER_STYLE == 'thick' or HUD_BORDER_STYLE == 'verythick')
+				and 'thick' or 'thin'
+			local borderOffset =
+				HUD_BORDER_STYLE == 'verythick' and 4
+				or HUD_BORDER_STYLE == 'thick' and 3
+				or HUD_BORDER_STYLE == 'normal' and 2
+				or 1
+			local borders = borderTemplates(borderFile, HUD_BORDER_COLOR, borderOffset, background, pad)
+			template = borders.borders
+			paddingTemplate = borders.padding
+		else
+			template = { content = ui.content {} }
+			template.content:add(background)
+			if (HUD_PADDING or 0) > 0 then
+				paddingTemplate = {
+					type = ui.TYPE.Container,
+					content = ui.content {
+						{ props = { size = pad } },
+						{ external = { slot = true }, props = { position = pad, relativeSize = v2(1, 1) } },
+						{ props = { position = pad, relativePosition = v2(1, 1), size = pad } },
+					},
+				}
+			end
+		end
+
+		moonHud = ui.create {
+			type = ui.TYPE.Container,
+			layer = HUD_LOCK and 'Scene' or 'Modal',
+			name = 'moonHud',
+			template = template,
+			props = {
+				position = v2(HUD_X_POS, HUD_Y_POS),
+				anchor = anchorPoint,
+			},
+			content = ui.content {},
+			userData = { windowStartPosition = v2(HUD_X_POS, HUD_Y_POS) },
+		}
+
+		if paddingTemplate then
+			moonHud.layout.content:add {
+				template = paddingTemplate,
+				content = ui.content { contentElement },
+			}
+		else
+			moonHud.layout.content:add(contentElement)
+		end
+	end
 
 	-- Drag to reposition, exactly as TimeHUD does it.
 	moonHud.layout.events = {
@@ -257,45 +552,6 @@ function createMoonHud()
 			end
 		end),
 	}
-
-	local arrange = ui.ALIGNMENT.Start
-	if TEXT_ALIGNMENT == 'Center' then arrange = ui.ALIGNMENT.Center
-	elseif TEXT_ALIGNMENT == 'Right' then arrange = ui.ALIGNMENT.End end
-
-	moonFlex = {
-		type = ui.TYPE.Flex,
-		name = 'moonFlex',
-		props = {
-			horizontal = (LAYOUT == 'Horizontal'),
-			autoSize = true,
-			arrange = arrange,
-		},
-		content = ui.content {},
-	}
-
-	if SHOW_MASSER then moonFlex.content:add(buildRow('Masser')) end
-	if SHOW_MASSER and SHOW_SECUNDA then
-		local gapSize = (LAYOUT == 'Horizontal') and v2(ICON_SPACING * 2, 0) or v2(0, 2)
-		moonFlex.content:add { name = 'moonGap', props = { size = gapSize } }
-	end
-	if SHOW_SECUNDA then moonFlex.content:add(buildRow('Secunda')) end
-
-	if SHOW_SHADE then
-		if SHOW_MASSER or SHOW_SECUNDA then
-			local gapSize = (LAYOUT == 'Horizontal') and v2(ICON_SPACING * 2, 0) or v2(0, 2)
-			moonFlex.content:add { name = 'shadeGap', props = { size = gapSize } }
-		end
-		moonFlex.content:add(buildRow('Shade'))
-	end
-
-	if paddingTemplate then
-		moonHud.layout.content:add {
-			template = paddingTemplate,
-			content = ui.content { moonFlex },
-		}
-	else
-		moonHud.layout.content:add(moonFlex)
-	end
 
 	updateMoonDisplay(true)
 end

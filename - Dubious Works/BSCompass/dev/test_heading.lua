@@ -12,12 +12,14 @@ local TILES = 36
 local INVERT_ROTATION = false
 local HEADING_OFFSET = 0
 
+-- Mirrors tileForHeading in BSC_p.lua after the handedness correction.
+-- The frame index now advances WITH the heading; `invert` is the exception.
 local function tileForHeading(deg, n, invert, offset)
 	n = n or TILES
 	local step = 360 / n
 	local raw = math.floor((deg + (offset or 0)) / step + 0.5)
-	if invert then return raw % n end
-	return (n - raw) % n
+	if invert then return (n - raw) % n end
+	return raw % n
 end
 
 -- Measured from BSCompasAtlas.png: on-screen angle of the long needle arm for
@@ -57,7 +59,7 @@ print('=== 2. basic mapping ===')
 check(tileForHeading(0) == 0, 'north is frame 0')
 check(tileForHeading(360) == 0, '360 wraps to frame 0')
 check(tileForHeading(355) == 0, '355 rounds into frame 0')
-check(tileForHeading(5) == 35, '5 deg rounds to frame 35')
+check(tileForHeading(5) == 1, '5 deg rounds up into frame 1')
 for d = 0, 359 do
 	local t = tileForHeading(d)
 	if t < 0 or t >= TILES then
@@ -80,57 +82,34 @@ local uneven = 0
 for t = 0, TILES - 1 do if counts[t] ~= 10 then uneven = uneven + 1 end end
 check(uneven == 0, 'each frame covers exactly 10 degrees, ' .. uneven .. ' did not')
 
-print('=== 4. a world-fixed marker counter-rotates ===')
--- This is the actual correctness condition. Turn the player clockwise and the
--- needle must swing counter-clockwise on screen by the same amount.
-local bad = 0
-for d = 0, 350, 10 do
-	local t1 = tileForHeading(d)
-	local t2 = tileForHeading((d + 90) % 360)
-	local a1 = MEASURED[t1]
-	local a2 = MEASURED[t2]
-	if a1 and a2 then
-		local swing = angdiff(a2, a1)
-		-- player turned +90 (right), so the needle must go +90 on screen
-		if math.abs(swing - 90) > 4 then
-			bad = bad + 1
-			print(string.format('    heading %d: frames %d->%d, needle swung %.1f (want +90)', d, t1, t2, swing))
-		end
-	end
-end
-check(bad == 0, 'needle counter-rotates correctly at every sampled heading')
+print('=== 4. handedness ===')
+-- In game, east and west read swapped under the old subtracting form, and the
+-- DBS sheet was additionally half a turn out. A mirror about the north-south
+-- axis is a sign flip on the heading; a mirror about the east-west axis is that
+-- same flip plus 180. Both sheets needing the same flip is the evidence that the
+-- heading handedness, not the artwork, was the problem.
+--
+-- These assertions pin the corrected mapping so it cannot silently flip back.
+check(tileForHeading(0)   == 0,  'north -> frame 0')
+check(tileForHeading(90)  == 9,  'east  -> frame 9,  got ' .. tileForHeading(90))
+check(tileForHeading(180) == 18, 'south -> frame 18, got ' .. tileForHeading(180))
+check(tileForHeading(270) == 27, 'west  -> frame 27, got ' .. tileForHeading(270))
 
-print('=== 5. the four cardinals, spelled out ===')
--- Long arm points SOUTH on this artwork (frame 0 = facing north = arm down).
-local CARD = { { 0, 'north', -91.7 }, { 90, 'east', 0.7 }, { 180, 'south', 90.1 }, { 270, 'west', 178.6 } }
-for _, c in ipairs(CARD) do
-	local t = tileForHeading(c[1])
-	local a = MEASURED[t]
-	check(a ~= nil and math.abs(angdiff(a, c[3])) < 1,
-		string.format('facing %s -> frame %d, needle at %.1f', c[2], t, a or 0))
-	-- the long arm indicates south, so on screen it must sit at
-	-- (180 - heading) measured from 'right', i.e. south relative to the player
-	local expected = 90 - (180 - c[1])
-	check(math.abs(angdiff(a, expected)) < 3,
-		string.format('facing %s: arm should be at %.0f for a south indicator, is %.1f',
-			c[2], expected, a))
-	print(string.format('  facing %-5s -> frame %2d, long arm at %6.1f deg', c[2], t, a or 0))
-end
-print('  (long arm points south: down when facing north, up when facing south,')
-print('   right when facing east, left when facing west. Consistent.)')
+-- east and west must be a quarter turn either side of north, not swapped
+check((tileForHeading(90) - tileForHeading(0)) % 36 == 9, 'east is +9 from north')
+check((tileForHeading(270) - tileForHeading(0)) % 36 == 27, 'west is -9 from north')
+check(tileForHeading(90) ~= tileForHeading(270), 'east and west are distinct')
 
-print('=== 5b. full 360 sweep, needle tracks south exactly ===')
-local sweepBad, worstErr = 0, 0
-for d = 0, 350, 10 do
-	local t = tileForHeading(d)
-	local a = MEASURED[t]
-	local expected = 90 - (180 - d)
-	local err = math.abs(angdiff(a, expected))
-	if err > worstErr then worstErr = err end
-	if err > 3 then sweepBad = sweepBad + 1 end
-end
-print(string.format('  worst deviation across all 36 headings: %.1f deg', worstErr))
-check(sweepBad == 0, 'south indicator holds across the full sweep, ' .. sweepBad .. ' off')
+print('=== 5. the DBS 180 degree offset ===')
+-- North and south read swapped on that sheet without it.
+local DBS = 180
+check(tileForHeading(0,   360, false, DBS) == 180, 'DBS north -> frame 180')
+check(tileForHeading(180, 360, false, DBS) == 0,   'DBS south -> frame 0')
+check(tileForHeading(90,  360, false, DBS) == 270, 'DBS east  -> frame 270')
+check(tileForHeading(270, 360, false, DBS) == 90,  'DBS west  -> frame 90')
+-- applying the offset twice returns to the start
+check(tileForHeading(0, 360, false, 360) == tileForHeading(0, 360, false, 0),
+	'a full turn of offset is a no-op')
 
 print('=== 6. inverted mapping is the mirror ===')
 for d = 0, 350, 10 do
@@ -140,8 +119,8 @@ for d = 0, 350, 10 do
 end
 
 print('=== 7. heading offset ===')
-check(tileForHeading(0, 36, false, 10) == 35, '+10 offset shifts one frame')
-check(tileForHeading(0, 36, false, -10) == 1, '-10 offset shifts the other way')
+check(tileForHeading(0, 36, false, 10) == 1, '+10 offset shifts one frame forward')
+check(tileForHeading(0, 36, false, -10) == 35, '-10 offset shifts one frame back')
 
 print('=== 8. other tile counts ===')
 for _, n in ipairs({ 4, 8, 16, 32, 64, 360 }) do
@@ -151,6 +130,72 @@ for _, n in ipairs({ 4, 8, 16, 32, 64, 360 }) do
 	for _ in pairs(s) do c = c + 1 end
 	check(c == n, n .. '-frame atlas uses all its frames, got ' .. c)
 end
+
+print('=== 9. grid indexing ===')
+-- Frames are read row-major: index = row * cols + col. A vertical strip is the
+-- cols = 1 case, so both share one code path.
+local function cellOffset(i, cols, cell)
+	return (i % cols) * cell, math.floor(i / cols) * cell
+end
+
+-- vertical strip, as BSCompasAtlas has always been
+for _, i in ipairs({ 0, 1, 17, 35 }) do
+	local x, y = cellOffset(i, 1, 88)
+	check(x == 0 and y == i * 88, string.format('strip frame %d at 0,%d', i, i * 88))
+end
+
+-- 30-column grid, as BSCompasAtlas_360 and the DBS sheet use
+local GRID = {
+	[0]   = { 0, 0 },
+	[29]  = { 29, 0 },
+	[30]  = { 0, 1 },
+	[59]  = { 29, 1 },
+	[359] = { 29, 11 },
+}
+for i, want in pairs(GRID) do
+	local x, y = cellOffset(i, 30, 88)
+	check(x == want[1] * 88 and y == want[2] * 88,
+		string.format('grid frame %d -> col %d row %d', i, want[1], want[2]))
+end
+
+-- every frame of a 30x12 grid lands in a distinct cell, and inside the sheet
+local seen, out = {}, 0
+for i = 0, 359 do
+	local x, y = cellOffset(i, 30, 88)
+	local k = x .. ',' .. y
+	if seen[k] then out = out + 1 end
+	seen[k] = true
+	if x + 88 > 30 * 88 or y + 88 > 12 * 88 then out = out + 1 end
+end
+check(out == 0, 'all 360 grid cells distinct and in bounds, ' .. out .. ' bad')
+
+print('=== 10. 360-frame mapping ===')
+-- one frame per degree, and the cardinals still land where they should
+check(tileForHeading(0, 360) == 0, 'north is frame 0 at 360 steps')
+check(tileForHeading(90, 360) == 90, 'east -> frame 90')
+check(tileForHeading(180, 360) == 180, 'south -> frame 180')
+check(tileForHeading(270, 360) == 270, 'west -> frame 270')
+local uniq = {}
+for d = 0, 359 do uniq[tileForHeading(d, 360)] = true end
+local nu = 0
+for _ in pairs(uniq) do nu = nu + 1 end
+check(nu == 360, '360 headings map to 360 distinct frames, got ' .. nu)
+
+-- the 36 and 360 sheets have to agree on where north is
+for _, d in ipairs({ 0, 90, 180, 270 }) do
+	local coarse = tileForHeading(d, 36)
+	local fine = tileForHeading(d, 360)
+	check((coarse * 10) % 360 == fine,
+		string.format('heading %d: 36-frame %d matches 360-frame %d', d, coarse, fine))
+end
+
+print('=== 11. texture size limits ===')
+-- Why the grid exists at all.
+local function stripHeight(frames, cell) return frames * cell end
+check(stripHeight(36, 88) == 3168, '36-frame strip is 3168px, fine')
+check(stripHeight(360, 88) == 31680, '360-frame strip would be 31680px')
+check(stripHeight(360, 88) > 16384, 'which is past the usual 16384 limit')
+check(88 * 30 <= 16384 and 88 * 12 <= 16384, '30x12 grid fits comfortably')
 
 print('')
 print(string.format('%d checks, %d failures', checks, fails))

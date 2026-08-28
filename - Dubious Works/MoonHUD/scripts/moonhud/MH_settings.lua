@@ -13,6 +13,7 @@ local util    = require('openmw.util')
 local storage = require('openmw.storage')
 local async   = require('openmw.async')
 local I       = require('openmw.interfaces')
+local C       = require('scripts.moonhud.MH_constants')
 
 local v2 = util.vector2
 
@@ -21,7 +22,36 @@ MODNAME = MODNAME or 'MoonHUD'
 -- TimeHUD and LocationHUD ship a "SuperColorPicker2" settings renderer. If you have
 -- either installed you can set this to 'SuperColorPicker2' for a colour wheel.
 -- Left as 'textLine' so MoonHUD has no dependencies: enter a plain hex string.
-local COLOR_RENDERER = 'textLine'
+--------------------------------------------------------------------------------
+-- Renderer selection
+--------------------------------------------------------------------------------
+-- SuperSettingsRenderers is bundled with this mod, under
+-- scripts/SuperSettingsRenderers, and registered by the MENU entries in the
+-- .omwscripts file. It is therefore always present and this can stay on.
+--
+-- Set it to false only if you have stripped the bundled copy out. Naming a
+-- renderer that is not registered makes I.Settings.registerGroup fail, which
+-- kills the whole script: no settings page and no widget.
+local SUPER = true
+
+local R_SLIDER = SUPER and 'SuperSlider6'      or 'number'
+local R_SELECT = SUPER and 'SuperSelect3'      or 'select'
+local R_COLOR  = SUPER and 'SuperColorPicker4' or 'textLine'
+
+local function sliderArg(min, max, step, unit)
+	if SUPER then
+		return { min = min, max = max, step = step or 1, unit = unit or '',
+		         showResetButton = true, tinyReset = true, width = 200 }
+	end
+	return { min = min, max = max }
+end
+
+local function selectArg(items)
+	if SUPER then return { items = items, l10n = 'none', width = 170 } end
+	return { disabled = false, l10n = 'none', items = items }
+end
+
+local COLOR_RENDERER = R_COLOR
 local function colorDefault(hex)
 	return (COLOR_RENDERER == 'textLine') and hex or util.color.hex(hex)
 end
@@ -37,6 +67,14 @@ local function gmstColor(tag, fallbackHex)
 	if #rgb ~= 3 then return fallbackHex end
 	return string.format('%02X%02X%02X', rgb[1], rgb[2], rgb[3])
 end
+
+local atlasItems = {}
+for _, n in ipairs(C.ATLAS_PRESETS) do atlasItems[#atlasItems + 1] = n end
+atlasItems[#atlasItems + 1] = 'Custom'
+
+local backgroundItems = { 'None' }
+for _, n in ipairs(C.BACKGROUND_PRESETS) do backgroundItems[#backgroundItems + 1] = n end
+backgroundItems[#backgroundItems + 1] = 'Custom'
 
 local presetColors = {
 	'caa560', -- FontColor_color_normal
@@ -214,13 +252,13 @@ settingsTemplate[key] = {
 		{
 			key = 'LAYOUT',
 			name = 'Layout',
-			description = 'Stack the two moons vertically or place them side by side.',
-			renderer = 'select',
+			description = 'Vertical stacks the moons, Horizontal places them side by side.\n'
+				.. 'Triangle puts Masser at the apex with Secunda and the Shade below;\n'
+				.. 'Triangle Inverted puts the two moons on top and the Shade beneath.\n'
+				.. 'Triangle pairs best with a Circle panel and Icons.',
+			renderer = R_SELECT,
 			default = 'Vertical',
-			argument = {
-				disabled = false, l10n = 'none',
-				items = { 'Vertical', 'Horizontal' },
-			},
+			argument = selectArg { 'Vertical', 'Horizontal', 'Triangle', 'Triangle Inverted' },
 		},
 		{
 			key = 'ICON_SIZE',
@@ -241,11 +279,36 @@ settingsTemplate[key] = {
 			argument = { min = 0, max = 64 },
 		},
 		{
+			key = 'TRIANGLE_SPREAD',
+			name = 'Triangle Spread',
+			description = 'Gap between the triangle corners, in pixels. Triangle layouts only.',
+			renderer = R_SLIDER,
+			integer = true,
+			default = 10,
+			argument = sliderArg(0, 120, 1, 'px'),
+		},
+		{
+			key = 'ATLAS_PRESET',
+			name = 'Moon Artwork',
+			description = 'Which bundled phase sheet to use.\n'
+				.. 'moon_atlas    soft shaded discs\n'
+				.. 'moon_atlas_1  woodcut, flat two-tone with a hard outline\n'
+				.. 'moon_atlas_2  cratered, mottled surface\n'
+				.. 'moon_atlas_3  celestial, outer halo with a ringed chart face\n'
+				.. 'moon_atlas_4  engraved, line art with a hatched shadow\n'
+				.. 'Custom        use the Atlas Path below instead',
+			renderer = R_SELECT,
+			default = 'moon_atlas',
+			argument = selectArg(atlasItems),
+		},
+		{
 			key = 'ATLAS_PATH',
-			name = 'Atlas Path',
-			description = 'VFS path to the phase sheet. Leave as-is to use the bundled one.',
+			name = 'Atlas Path (Custom)',
+			description = 'Only used when Moon Artwork is set to Custom.\n'
+				.. 'Same layout as the bundled sheets: 8 phase columns across,\n'
+				.. 'Masser, Secunda and Shade on three rows.',
 			renderer = 'textLine',
-			default = 'textures/moonhud/moonhud_atlas_1.png',
+			default = 'textures/moonhud/moon_atlas.png',
 		},
 		{
 			key = 'ATLAS_CELL',
@@ -364,19 +427,74 @@ settingsTemplate[key] = {
 }
 
 --------------------------------------------------------------------------------
-key = 'Border'
+key = 'Panel'
 settingsTemplate[key] = {
 	key = 'Settings' .. MODNAME .. key,
 	page = MODNAME,
 	l10n = 'none',
-	name = 'Border',
+	name = 'Panel',
 	permanentStorage = true,
 	order = getOrder(),
 	settings = {
 		{
+			key = 'PANEL_SHAPE',
+			name = 'Panel Shape',
+			description = 'None draws no backing at all.\nRectangle uses the shared 9-slice border, same as TimeHUD and LocationHUD.\nCircle uses a round plate and ring, which suits the Triangle layouts.',
+			renderer = R_SELECT,
+			default = 'Rectangle',
+			argument = selectArg { 'None', 'Rectangle', 'Circle' },
+		},
+		{
+			key = 'BACKGROUND_PRESET',
+			name = 'Background Fill',
+			description = 'Which bundled fill to draw behind the moons.\n'
+				.. 'None            flat black, tinted and faded below\n'
+				.. 'panel_bg_stars  night sky, tiles seamlessly\n'
+				.. 'panel_bg_stone  mottled stone\n'
+				.. 'panel_bg_linen  fine woven crosshatch\n'
+				.. 'Custom          use the Background Path below instead',
+			renderer = R_SELECT,
+			default = 'None',
+			argument = selectArg(backgroundItems),
+		},
+		{
+			key = 'BACKGROUND_TEXTURE',
+			name = 'Background Path (Custom)',
+			description = 'Only used when Background Fill is set to Custom.',
+			renderer = 'textLine',
+			default = '',
+		},
+		{
+			key = 'BACKGROUND_TINT',
+			name = 'Background Tint',
+			description = 'Multiplied over the background texture. White leaves it alone.',
+			renderer = R_COLOR,
+			default = colorDefault('FFFFFF'),
+			argument = { presetColors = presetColors },
+		},
+		{
+			key = 'BACKGROUND_ALPHA',
+			name = 'Background Opacity',
+			description = '0 to 1. Default 0.5.',
+			renderer = R_SLIDER,
+			default = 0.5,
+			argument = sliderArg(0, 1, 0.05),
+		},
+		{
+			key = 'HUD_PADDING',
+			name = 'Padding',
+			description = 'Inner spacing in pixels, applied on both axes.',
+			renderer = R_SLIDER,
+			integer = true,
+			default = 4,
+			argument = sliderArg(0, 50, 1, 'px'),
+		},
+
+		-- Rectangle only
+		{
 			key = 'HUD_BORDER',
-			name = 'Border',
-			description = 'Draw a border along the edges of the background.',
+			name = 'Rectangle Border',
+			description = 'Draw the 9-slice border along the panel edges. Rectangle shape only.',
 			renderer = 'checkbox',
 			default = true,
 		},
@@ -384,29 +502,57 @@ settingsTemplate[key] = {
 			key = 'HUD_BORDER_STYLE',
 			name = 'Border Style',
 			description = 'Same styles as TimeHUD, LocationHUD and Quickloot.',
-			renderer = 'select',
+			renderer = R_SELECT,
 			default = 'thin',
-			argument = {
-				disabled = false, l10n = 'none',
-				items = { 'thin', 'normal', 'thick', 'verythick' },
-			},
+			argument = selectArg { 'thin', 'normal', 'thick', 'verythick' },
 		},
 		{
 			key = 'HUD_BORDER_COLOR',
 			name = 'Border Color',
-			description = 'Hex, no #.',
-			renderer = COLOR_RENDERER,
+			description = '',
+			renderer = R_COLOR,
 			default = colorDefault('FFFFFF'),
 			argument = { presetColors = presetColors },
 		},
+
+		-- Circle only
 		{
-			key = 'HUD_PADDING',
-			name = 'Padding',
-			description = 'Inner spacing in pixels, applied on both axes. Default 4.',
-			renderer = 'number',
+			key = 'CIRCLE_BORDER',
+			name = 'Circle Ring',
+			description = 'Draw the ring around the round plate. Circle shape only.',
+			renderer = 'checkbox',
+			default = true,
+		},
+		{
+			key = 'CIRCLE_BORDER_COLOR',
+			name = 'Ring Color',
+			description = '',
+			renderer = R_COLOR,
+			default = colorDefault('CAA560'),
+			argument = { presetColors = presetColors },
+		},
+		{
+			key = 'CIRCLE_SIZE',
+			name = 'Circle Diameter',
+			description = '0 sizes the circle to fit the contents. Anything else is a fixed diameter in pixels.',
+			renderer = R_SLIDER,
 			integer = true,
-			default = 4,
-			argument = { min = 0, max = 50 },
+			default = 0,
+			argument = sliderArg(0, 400, 1, 'px'),
+		},
+		{
+			key = 'CIRCLE_TEXTURE',
+			name = 'Circle Plate Texture',
+			description = 'The round plate mask. Swap for your own if you want a different shape.',
+			renderer = 'textLine',
+			default = 'textures/moonhud/panel_circle.png',
+		},
+		{
+			key = 'CIRCLE_BORDER_TEXTURE',
+			name = 'Circle Ring Texture',
+			description = '',
+			renderer = 'textLine',
+			default = 'textures/moonhud/panel_circle_border.png',
 		},
 	},
 }
@@ -435,7 +581,7 @@ I.Settings.registerPage {
 
 -- Colours are stored as hex strings under the textLine renderer and as real
 -- colour objects under SuperColorPicker2. Normalise on read.
-local COLOR_KEYS = { TEXT_COLOR = true, HUD_BORDER_COLOR = true }
+local COLOR_KEYS = { TEXT_COLOR = true, HUD_BORDER_COLOR = true, BACKGROUND_TINT = true, CIRCLE_BORDER_COLOR = true }
 local function normalise(k, v)
 	if COLOR_KEYS[k] and type(v) == 'string' then
 		local ok, c = pcall(util.color.hex, (v:gsub('^#', '')))
@@ -472,8 +618,12 @@ for _, template in pairs(settingsTemplate) do
 			HUD_BORDER = true, HUD_BORDER_STYLE = true, HUD_BORDER_COLOR = true,
 			HUD_PADDING = true, DISPLAY_MODE = true, LAYOUT = true,
 			SHOW_MASSER = true, SHOW_SECUNDA = true, TEXT_ALIGNMENT = true,
-			ATLAS_PATH = true, ATLAS_CELL = true, ICON_SIZE = true,
+			ATLAS_PRESET = true, ATLAS_PATH = true, ATLAS_CELL = true, ICON_SIZE = true,
 			ICON_SPACING = true, SHOW_MOON_NAMES = true, SHOW_SHADE = true,
+			PANEL_SHAPE = true, BACKGROUND_PRESET = true, BACKGROUND_TEXTURE = true,
+			CIRCLE_BORDER = true,
+			CIRCLE_SIZE = true, CIRCLE_TEXTURE = true, CIRCLE_BORDER_TEXTURE = true,
+			TRIANGLE_SPREAD = true, BACKGROUND_TINT = true, CIRCLE_BORDER_COLOR = true,
 		}
 		if setting == nil or REBUILD[setting] then
 			if createMoonHud then createMoonHud() end

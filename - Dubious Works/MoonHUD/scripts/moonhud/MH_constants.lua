@@ -186,6 +186,29 @@ end
 --   row 0 = Masser, row 1 = Secunda
 -- Swap in your own sheet by matching this layout, or point ATLAS_PATH elsewhere
 -- and adjust ATLAS_CELL / ATLAS_ROW.
+M.TEXTURE_DIR = 'textures/moonhud/'
+
+-- Bundled atlases. All share the 8 x 3 layout above; they differ only in style.
+--   moon_atlas    soft shaded discs
+--   moon_atlas_1  woodcut, flat two-tone with a hard outline
+--   moon_atlas_2  cratered, mottled surface
+--   moon_atlas_3  celestial, outer halo with a ringed chart face
+--   moon_atlas_4  engraved, line art with a hatched shadow
+M.ATLAS_PRESETS = {
+	'moon_atlas', 'moon_atlas_1', 'moon_atlas_2', 'moon_atlas_3', 'moon_atlas_4',
+}
+
+-- Bundled panel fills for the rectangular and circular panels.
+M.BACKGROUND_PRESETS = { 'panel_bg_stars', 'panel_bg_stone', 'panel_bg_linen' }
+
+--- Turn a preset name into a VFS path. Returns nil for 'Custom' or 'None'.
+function M.presetPath(name)
+	if name == nil or name == '' or name == 'Custom' or name == 'None' then
+		return nil
+	end
+	return M.TEXTURE_DIR .. name .. '.png'
+end
+
 M.ATLAS_PATH = 'textures/moonhud/moon_atlas.png'
 M.ATLAS_CELL = 64
 M.ATLAS_ROW  = { Masser = 0, Secunda = 1, Shade = 2 }

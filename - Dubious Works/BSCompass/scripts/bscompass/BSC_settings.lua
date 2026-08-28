@@ -22,9 +22,13 @@ MODNAME = MODNAME or 'BSCompass'
 --------------------------------------------------------------------------------
 -- Renderer selection
 --------------------------------------------------------------------------------
--- SuperSettingsRenderers gives much nicer sliders, selects and a colour wheel.
--- If you do not have it installed, set this to false and the page falls back to
--- OpenMW's built-in renderers. Nothing else changes.
+-- SuperSettingsRenderers is bundled with this mod, under
+-- scripts/SuperSettingsRenderers, and registered by the MENU entries in the
+-- .omwscripts file. It is therefore always present and this can stay on.
+--
+-- Set it to false only if you have stripped the bundled copy out. Naming a
+-- renderer that is not registered makes I.Settings.registerGroup fail, which
+-- kills the whole script: no settings page and no widget.
 local SUPER = true
 
 local R_SLIDER = SUPER and 'SuperSlider6'      or 'number'
@@ -183,15 +187,42 @@ settingsTemplate[key] = {
 			argument = sliderArg(1, 10, 1, ' frames'),
 		},
 		{
+			key = 'ATLAS_PRESET',
+			name = 'Compass Artwork',
+			description = 'Which bundled sheet to use. Each preset carries its own\n'
+				.. 'frame count, column count and cell size, so they cannot be mismatched.\n\n'
+				.. 'BSCompasAtlas       36 steps, 10 degrees apart, vertical strip\n'
+				.. 'BSCompasAtlas_360   360 steps, 1 degree apart, 30-column grid\n'
+				.. 'DBS_CompassARROW    360 steps, arrow over the DBS corner frame\n'
+				.. 'Custom              use the manual settings below',
+			renderer = R_SELECT,
+			default = 'BSCompasAtlas',
+			argument = selectArg { 'BSCompasAtlas', 'BSCompasAtlas_360',
+			                       'DBS_CompassARROW', 'Custom' },
+		},
+		{
 			key = 'ATLAS_PATH',
-			name = 'Atlas Path',
-			description = 'VFS path to the compass sheet. Vertical strip, north first.',
+			name = 'Atlas Path (Custom)',
+			description = 'Only used when Compass Artwork is Custom.\n'
+				.. 'Frames are read row-major: index = row * columns + column,\n'
+				.. 'starting at north.',
 			renderer = 'textLine',
 			default = 'textures/bscompass/BSCompasAtlas.png',
 		},
 		{
+			key = 'ATLAS_COLUMNS',
+			name = 'Atlas Columns (Custom)',
+			description = 'Columns in your sheet. 1 is a vertical strip.\n'
+				.. 'Above roughly 180 frames a strip exceeds the maximum texture size,\n'
+				.. 'so a grid is required: 360 frames at 88px is 31680px tall as a strip.',
+			renderer = R_SLIDER,
+			integer = true,
+			default = 1,
+			argument = sliderArg(1, 60, 1),
+		},
+		{
 			key = 'ATLAS_TILES',
-			name = 'Atlas Tile Count',
+			name = 'Atlas Frame Count (Custom)',
 			description = 'Frames in the strip. 36 gives one frame per 10 degrees.',
 			renderer = R_SLIDER,
 			integer = true,
@@ -200,12 +231,191 @@ settingsTemplate[key] = {
 		},
 		{
 			key = 'ATLAS_CELL',
-			name = 'Atlas Tile Size',
+			name = 'Atlas Tile Size (Custom)',
 			description = 'Width and height of one frame, in pixels.',
 			renderer = R_SLIDER,
 			integer = true,
 			default = 88,
 			argument = sliderArg(8, 512, 1, 'px'),
+		},
+	},
+}
+
+--------------------------------------------------------------------------------
+key = 'Overlay'
+settingsTemplate[key] = {
+	key = 'Settings' .. MODNAME .. key,
+	page = MODNAME,
+	l10n = 'none',
+	name = 'Overlay',
+	permanentStorage = true,
+	order = getOrder(),
+	settings = {
+		{
+			key = 'BACKDROP_TEXTURE',
+			name = 'Backdrop Texture (Custom)',
+			description = 'Bottom layer: the frame or housing. Fills the widget.\n'
+				.. 'Leave empty for none. The DBS preset sets this for you.',
+			renderer = 'textLine',
+			default = '',
+		},
+		{
+			key = 'FACE_TEXTURE',
+			name = 'Face Texture (Custom)',
+			description = 'Middle layer: static dial art, drawn over the backdrop and\n'
+				.. 'under the rotating arrow. Leave empty for none.',
+			renderer = 'textLine',
+			default = '',
+		},
+		{
+			key = 'FACE_ANCHOR_X',
+			name = 'Face Pivot X (Custom)',
+			description = 'Face centre across the backdrop, as a percentage of its width.',
+			renderer = R_SLIDER,
+			default = 50,
+			argument = sliderArg(0, 100, 0.1, '%'),
+		},
+		{
+			key = 'FACE_ANCHOR_Y',
+			name = 'Face Pivot Y (Custom)',
+			description = 'As above, down the backdrop height.',
+			renderer = R_SLIDER,
+			default = 50,
+			argument = sliderArg(0, 100, 0.1, '%'),
+		},
+		{
+			key = 'FACE_SCALE',
+			name = 'Face Scale (Custom)',
+			description = 'Face size as a percentage of the backdrop width.',
+			renderer = R_SLIDER,
+			default = 60,
+			argument = sliderArg(1, 100, 0.1, '%'),
+		},
+		{
+			key = 'FACE_TINT',
+			name = 'Face Tint',
+			description = 'Multiplied over the face art. White leaves it untouched.',
+			renderer = R_COLOR,
+			default = colorDefault('FFFFFF'),
+			argument = { presetColors = presetColors },
+		},
+		{
+			key = 'FACE_ALPHA',
+			name = 'Face Opacity',
+			description = '',
+			renderer = R_SLIDER,
+			default = 1.0,
+			argument = sliderArg(0, 1, 0.05),
+		},
+		{
+			key = 'OVERLAY_LAYER',
+			name = 'Backdrop Layer',
+			description = 'Behind: backdrop, then face, then arrow. The usual order.\n'
+				.. 'In front: the backdrop is drawn last, for housings with a glass\n'
+				.. 'or bezel that should occlude the needle.',
+			renderer = R_SELECT,
+			default = 'Behind',
+			argument = selectArg { 'Behind', 'In front' },
+		},
+		{
+			key = 'OVERLAY_ANCHOR_X',
+			name = 'Pivot X (Custom)',
+			description = 'Where the rotating frame sits on the overlay, as a percentage\n'
+				.. 'of its width. 50 is centred.',
+			renderer = R_SLIDER,
+			default = 50,
+			argument = sliderArg(0, 100, 0.1, '%'),
+		},
+		{
+			key = 'OVERLAY_ANCHOR_Y',
+			name = 'Pivot Y (Custom)',
+			description = 'As above, down the overlay height.',
+			renderer = R_SLIDER,
+			default = 50,
+			argument = sliderArg(0, 100, 0.1, '%'),
+		},
+		{
+			key = 'OVERLAY_SCALE',
+			name = 'Frame Scale (Custom)',
+			description = 'Size of the rotating frame as a percentage of the overlay width.',
+			renderer = R_SLIDER,
+			default = 20,
+			argument = sliderArg(1, 100, 0.1, '%'),
+		},
+		{
+			key = 'OVERLAY_TINT',
+			name = 'Backdrop Tint',
+			description = 'Multiplied over the backdrop. White leaves it untouched.',
+			renderer = R_COLOR,
+			default = colorDefault('FFFFFF'),
+			argument = { presetColors = presetColors },
+		},
+		{
+			key = 'OVERLAY_ALPHA',
+			name = 'Backdrop Opacity',
+			description = '',
+			renderer = R_SLIDER,
+			default = 1.0,
+			argument = sliderArg(0, 1, 0.05),
+		},
+	},
+}
+
+--------------------------------------------------------------------------------
+key = 'Cardinals'
+settingsTemplate[key] = {
+	key = 'Settings' .. MODNAME .. key,
+	page = MODNAME,
+	l10n = 'none',
+	name = 'Cardinals',
+	permanentStorage = true,
+	order = getOrder(),
+	settings = {
+		{
+			key = 'CARDINAL_OVERLAY',
+			name = 'Cardinal Glyphs',
+			description = 'Lights the N/E/S/W glyph on the dial as you come round to\n'
+				.. 'face it. Needs artwork that provides them; the DBS preset does.\n\n'
+				.. 'Off           never shown\n'
+				.. 'Sharp         only inside the sharp arc, no approach\n'
+				.. 'Sharp + Fade  fades in across the wider arc first',
+			renderer = R_SELECT,
+			default = 'Sharp + Fade',
+			argument = selectArg { 'Off', 'Sharp', 'Sharp + Fade' },
+		},
+		{
+			key = 'CARDINAL_ARC',
+			name = 'Sharp Arc',
+			description = 'Degrees either side of a cardinal within which the solid\n'
+				.. 'glyph is drawn. 15 lights it for a 30 degree window.',
+			renderer = R_SLIDER,
+			default = 15,
+			argument = sliderArg(1, 45, 1, ' deg'),
+		},
+		{
+			key = 'CARDINAL_FADE_ARC',
+			name = 'Fade Arc',
+			description = 'Degrees either side within which the fade glyph is drawn,\n'
+				.. 'ramping off with distance. Must be at least the sharp arc.',
+			renderer = R_SLIDER,
+			default = 45,
+			argument = sliderArg(1, 90, 1, ' deg'),
+		},
+		{
+			key = 'CARDINAL_ALPHA',
+			name = 'Glyph Opacity',
+			description = 'Ceiling on the glyph opacity.',
+			renderer = R_SLIDER,
+			default = 1.0,
+			argument = sliderArg(0, 1, 0.05),
+		},
+		{
+			key = 'CARDINAL_TINT',
+			name = 'Glyph Tint',
+			description = 'Multiplied over the glyph art. White leaves it untouched.',
+			renderer = R_COLOR,
+			default = colorDefault('FFFFFF'),
+			argument = { presetColors = presetColors },
 		},
 	},
 }
@@ -293,7 +503,9 @@ I.Settings.registerPage {
 -- Mirror into globals
 --------------------------------------------------------------------------------
 
-local COLOR_KEYS = { COMPASS_TINT = true, HUD_BORDER_COLOR = true }
+local COLOR_KEYS = { COMPASS_TINT = true, HUD_BORDER_COLOR = true,
+                     OVERLAY_TINT = true, FACE_TINT = true,
+                     CARDINAL_TINT = true }
 local function normalise(k, v)
 	if COLOR_KEYS[k] and type(v) == 'string' then
 		local ok, c = pcall(util.color.hex, (v:gsub('^#', '')))
@@ -322,7 +534,16 @@ local REBUILD = {
 	HUD_BORDER = true, HUD_BORDER_STYLE = true, HUD_BORDER_COLOR = true,
 	HUD_PADDING = true, HUD_BACKGROUND = true, HUD_LOCK = true,
 }
-local RETILE = { ATLAS_PATH = true, ATLAS_TILES = true, ATLAS_CELL = true }
+local RETILE = {
+	ATLAS_PRESET = true, ATLAS_PATH = true, ATLAS_TILES = true,
+	ATLAS_CELL = true, ATLAS_COLUMNS = true,
+	BACKDROP_TEXTURE = true, FACE_TEXTURE = true,
+	OVERLAY_LAYER = true, OVERLAY_ANCHOR_X = true,
+	OVERLAY_ANCHOR_Y = true, OVERLAY_SCALE = true,
+	FACE_ANCHOR_X = true, FACE_ANCHOR_Y = true, FACE_SCALE = true,
+	COMPASS_SIZE = true,
+	CARDINAL_OVERLAY = true,
+}
 
 for _, template in pairs(settingsTemplate) do
 	local section = storage.playerSection(template.key)

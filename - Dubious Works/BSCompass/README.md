@@ -163,7 +163,7 @@ artwork already has its own bezel.
 
 ## Tests
 
-`dev/test_heading.lua` verifies the heading maths offline — **97 assertions**, no
+`dev/test_heading.lua` verifies the heading maths offline — **120 assertions**, no
 game needed:
 
 - the atlas rotates −10.00° per frame and closes a full −360°
@@ -174,6 +174,10 @@ game needed:
 - inverted mapping is an exact mirror
 - heading offset shifts the right way
 - 4-, 8-, 16-, 32-, 64- and 360-frame atlases all use every frame
+- row-major grid indexing, and that all 360 cells of a 30×12 sheet are distinct
+  and in bounds
+- the 36- and 360-frame sheets agree on where north is at every cardinal
+- the texture-size arithmetic that forces a grid above ~180 frames
 
 Run with any Lua 5.3+:
 
@@ -193,3 +197,149 @@ lua dev/test_heading.lua
 - The pre-built-texture-array approach is the one Talk To The Hand uses for its own
   compass, which is the right way to do this.
 - `BSCompasAtlas.png` is yours; it ships here unmodified.
+
+---
+
+## If the settings page is missing
+
+A Lua error while a script loads takes out **both** the settings page and the
+widget, because the whole file stops executing. If neither appears, that is the
+first thing to check.
+
+**SuperSettingsRenderers is bundled**, unaltered, under
+`scripts/SuperSettingsRenderers`, and registered by the `MENU:` lines at the top
+of the `.omwscripts` file. Those lines must come before the `PLAYER:` entries:
+a renderer has to exist by the time a settings group names it. Nothing needs to
+be downloaded separately, and `local SUPER = true` in the settings file is safe.
+
+If you also run another mod that bundles the same renderers, both copies get
+registered. That is harmless — a duplicate `registerRenderer` is logged and
+ignored, unlike a duplicate settings *group*, which is fatal.
+
+`dev/check_all.sh` catches load-time breakage without launching the game:
+
+```bash
+./dev/check_all.sh
+```
+
+It stubs the OpenMW API, executes the scripts for real, runs `onInit` and
+`onFrame`, loads the bundled renderers, and cross-checks that every renderer a
+setting names is both **present on disk** and **listed as a MENU script**.
+Shipping the file without the manifest entry is silent breakage, so those are
+verified separately. Run it after editing anything under `scripts/`.
+
+---
+
+## Fixes in this revision
+
+**360-frame wobble.** The expansion picked the nearest source frame and rotated by
+the remainder. Each of the 36 source frames carries its own small positional
+error, so the chosen source changing every ten frames switched those errors in and
+out — a wobble with period 10. Measured needle centroid jitter was 0.63px mean,
+4.53px worst. `expand_compass_atlas` now defaults to `--mode single`: every output
+frame is one source frame rotated, so the motion is continuous. Jitter drops to
+0.29px mean, 0.98px worst, and the rotation rate tightens from -0.980 ± 0.332 to
+-1.002 ± 0.201 degrees per frame. `--mode nearest` keeps the old behaviour where
+per-frame art detail matters more than smoothness.
+
+The rotation pivot was also `cell / 2`, which is 44 for an 88px cell where the
+pixel centre is 43.5. Now `(cell - 1) / 2`.
+
+**East/west and north/south.** The frame index used to be subtracted from the
+frame count, on the reasoning that a world-fixed marker counter-rotates as you
+turn. In game that put east and west the wrong way round on the BSCompass sheets,
+and north and south the wrong way round on the DBS sheet. A mirror about the
+north-south axis is a sign flip on the heading; a mirror about the east-west axis
+is that same flip plus 180. Both sheets needing the same flip is what identifies
+it as a handedness problem rather than an artwork one. The index now advances with
+the heading, and the DBS preset carries `headingOffset = 180`.
+
+**Backdrop resizing.** The static art used to be pinned to the arrow's size, so a
+1785px housing could not be made larger than the needle, and the Size slider
+capped at 320. There are now three layers — backdrop, face, arrow — all sized from
+one figure, with the inner two placed as percentages of the backdrop. Size goes up
+to 1024. The face layer is unused by the bundled DBS preset, whose corner art
+includes its dial; it is there for when that art is split.
+
+**Sizes being ignored.** Images now set `tileH = false, tileV = false`. Without
+them MyGUI draws a texture at its native size and repeats it to fill the widget,
+which looks exactly like the size setting doing nothing. Atlas sub-rect textures
+are the usual victims.
+
+
+---
+
+## Cardinal glyphs
+
+Artwork that provides them can light the N/E/S/W glyph on the dial as you come
+round to face it. The bundled DBS preset does; the plain dial sheets do not, and
+the setting simply has no effect there.
+
+Two bands, both configurable under **Cardinals**:
+
+| Setting | Default | Meaning |
+|---|---|---|
+| Cardinal Glyphs | Sharp + Fade | Off / Sharp / Sharp + Fade |
+| Sharp Arc | 15° | either side of a cardinal, solid glyph |
+| Fade Arc | 45° | either side, fade glyph ramping off with distance |
+| Glyph Opacity | 1.0 | ceiling on the ramp |
+| Glyph Tint | white | multiplied over the glyph art |
+
+Cardinals are 90° apart, so at the default fade arc of 45° the bands meet exactly
+at the midpoint and tile the whole circle — there is always a glyph on screen
+except at the four exact midpoints, where the ramp reaches zero. Narrow the fade
+arc below 45° if you want a genuine dead band between them.
+
+The opacity ramp is quantised to 16 steps, so a slow turn produces at most 129
+element updates across a full 360° rather than one per frame.
+
+## Named overlays
+
+Layers that nothing raises by itself, for another mod, a quest or an enchantment
+to switch on. The DBS artwork defines `eyes` and `dragoneyes`.
+
+From a script that can see the interface:
+
+```lua
+local I = require('openmw.interfaces')
+
+I.BSCompass.setOverlay('eyes', { duration = 8 })   -- clears itself after 8s
+I.BSCompass.setOverlay('dragoneyes', { alpha = 0.6, tint = someColour })
+I.BSCompass.clearOverlay('eyes')
+I.BSCompass.clearAllOverlays()
+
+I.BSCompass.isOverlayActive('eyes')   -- boolean
+I.BSCompass.getOverlayNames()         -- what this artwork defines
+I.BSCompass.getHeading()              -- degrees, and the glyph lit if any
+```
+
+From anywhere that would rather not hard-depend — a global script, another mod —
+send the player an event instead:
+
+```lua
+player:sendEvent('BSCompass_SetOverlay', { name = 'eyes', duration = 8 })
+player:sendEvent('BSCompass_ClearOverlay', { name = 'eyes' })
+player:sendEvent('BSCompass_ClearAllOverlays')
+```
+
+`setOverlay` returns false for a name the current artwork does not define rather
+than raising, so a mod can offer to light something without checking first. Omit
+`duration` to leave an overlay up until it is cleared.
+
+### Adding your own
+
+Both sets are declared per preset in `BSC_p.lua`, as full-canvas layers drawn at
+the backdrop rect. They need no placement figures because they are authored on
+the same canvas as the corner art and simply line up:
+
+```lua
+cardinals = { N = '...', E = '...', S = '...', W = '...',
+              Nfade = '...', Efade = '...', Sfade = '...', Wfade = '...' },
+overlays  = { eyes = '...', dragoneyes = '...' },
+```
+
+Add a key to `overlays` and it becomes callable by that name immediately.
+
+Every one of these is built once at load, hidden, and toggled by visibility and
+alpha. Elements are never created or destroyed while playing, which is what keeps
+this inside the per-frame budget.
