@@ -21,36 +21,10 @@
     animated_climbing_and_slowdown.zip and chim_climbing.zip for a sense of
     what a climb-oriented group set can look like. This file is the only
     place animation group names appear anywhere in FLOW.
-
-    VARIATION: entry.group can be a single string or a list of variant
-    group names (see Vault/Mantle below). When it's a list, playGroup()
-    rolls a random pick each time the state is freshly entered. This only
-    re-rolls on state ENTRY, not mid-loop - fine for one-shots like Vault/
-    Mantle, which naturally get a fresh roll on every activation anyway.
-    Don't use a list for a LOOPING_STATES entry expecting variety within a
-    single sustained loop; forceLoop just keeps replaying the one clip that
-    got picked at entry until the state changes.
-
-    EXIT TRANSITIONS: EXIT_TRANSITIONS below lets a short one-shot play on
-    the way OUT of a given state, before the real newState animation
-    starts - e.g. a brief push-off clip when leaving LedgeHang, regardless
-    of what comes next. This needed the I.AnimationController interface
-    for addTextKeyHandler specifically, since the base openmw.animation
-    module has no handler-registration functions of its own; play/cancel
-    calls elsewhere in this file are untouched and still module-level.
-    Unlike GROUPS, an EXIT_TRANSITIONS entry's group must be a single name,
-    not a variant list - the handler is registered against one fixed name
-    at load time, so a list could let the actually-played clip diverge
-    from what the handler is listening for.
 ]]--
 
 local self = require('openmw.self')
 local animation = require('openmw.animation')
--- Only used for addTextKeyHandler below - the base openmw.animation module
--- has no handler-registration functions of its own (checked against
--- Cod3x's animation.lua stub: cancel/playBlended/isPlaying/getCompletion
--- etc. are all there, addTextKeyHandler is not). Everything else in this
--- file still goes through the module-level calls as before.
 local I = require('openmw.interfaces')
 
 local Anim = {}
@@ -70,6 +44,35 @@ local Anim = {}
 -- with this exact tuning (before that got centralized here, which was
 -- the actual cause of LedgeHang's custom animation not reliably
 -- showing - two competing playBlended calls racing each other).
+-- =============================================================================
+-- PRIORITY TIERS
+--
+-- [BUGFIX] These were PRIORITY_FLOW / + 20, i.e. 15 and 25.
+-- The documented enum runs Default(0) .. Scripted(13), so both were off the
+-- end of it. A scalar priority is a legal FORM ("a single #Priority value
+-- assigned to all bone groups") but 15 and 25 are not #Priority values, and
+-- crucially they do NOT inherit Scripted's special behaviour -- that is tied
+-- to the exact value 13, not to "big number".
+--
+-- Mapped onto real enum entries that preserve the two tiers:
+--
+--   FLOW       = Weapon (7) - above Jump(4), Movement(5) and Hit(6), so a
+--                parkour pose outranks locomotion and hit reactions.
+--   FLOW_MAJOR = Block  (8) - above FLOW, for moves that must win outright
+--                against anything FLOW itself is doing.
+--
+-- Both deliberately sit BELOW Knockdown(9) and Death(12), so being knocked
+-- down or killed still interrupts a parkour move, and below Scripted(13),
+-- whose documented side effect is pausing every non-Scripted animation on the
+-- actor for as long as it is present.
+--
+-- If a pose must dominate absolutely, use animation.PRIORITY.Scripted and
+-- accept that pause. Do not go back to arithmetic on the enum.
+-- =============================================================================
+local PRIORITY_FLOW       = animation.PRIORITY.Weapon
+local PRIORITY_FLOW_MAJOR = animation.PRIORITY.Block
+local PRIORITY_FLOW_TOP   = animation.PRIORITY.Scripted
+
 local GROUPS = {
     Vault     = {
         group = { "pwvault1", "pwvault2", "pwvault3" }, speed = 1,
@@ -78,14 +81,14 @@ local GROUPS = {
     },
     Mantle    = {
         group = { "pwmantle1", "pwmantle2", "pwmantle3" }, speed = 1,
-        priority = animation.PRIORITY.Movement + 10,
+        priority = PRIORITY_FLOW,
         blendMask = animation.BLEND_MASK.All,
         autoDisable = false,  -- hold the last frame instead of reverting mid-climb if
                                -- the clip is shorter than the height-scaled duration
     },
     LedgeHang = {
         group = "pwwallhangidle", speed = 1,  -- looping hang pose
-        priority = animation.PRIORITY.Movement + 20,
+        priority = PRIORITY_FLOW_MAJOR,
         blendMask = animation.BLEND_MASK.All,
     },
 
@@ -93,10 +96,45 @@ local GROUPS = {
     -- states/optional/README.md. Kept here so re-enabling one of them
     -- doesn't require touching this file at all, just uncommenting/adding
     -- its name to the ONE_SHOT_STATES/LOOPING_STATES sets below.
-    Sprint    = { group = "pwrun1", speed = 1 },  -- looping
+    -- [SYNTAX FIX] This entry was previously closed with '}' on the first
+    -- line, leaving priority/blendMask/startKey/stopKey dangling as keys of
+    -- GROUPS ITSELF rather than of Sprint. Valid Lua, but it meant Sprint
+    -- silently lost all four settings AND GROUPS gained four junk numeric
+    -- entries - which made Anim.verifyGroups() throw, since it indexes
+    -- entry.group on every value in the table.
+    Sprint    = {
+        group = "pwrun1", speed = 1,  -- looping
+        priority = PRIORITY_FLOW,
+        blendMask = animation.BLEND_MASK.All,
+        startKey = "start",
+        stopKey = "stop",
+    },
+
+    -- Directional entries. `variants` replaces `group`; the state selects
+    -- which one via Anim.setVariant() immediately before the transition, so
+    -- group names still appear ONLY in this file.
+    Shimmy = {
+        variants = { left = "pwshimmyl1", right = "pwshimmyr1" },
+        speed = 1,
+        priority = PRIORITY_FLOW_MAJOR,
+        blendMask = animation.BLEND_MASK.All,
+        startKey = "start",
+        stopKey = "stop",
+    },
+
+    WallBoost = {
+        variants = { left = "pwboostbkl", right = "pwboostbkr" },
+        speed = 1,
+        priority = PRIORITY_FLOW_MAJOR,
+        blendMask = animation.BLEND_MASK.All,
+        startKey = "start",
+        stopKey = "stop",
+    },
 
     Roll      = {
-        group = "pwroll1", speed = 1,  -- one-shot landing roll
+        group = "pwroll1", speed = 0.5,  -- one-shot landing roll
+        priority = PRIORITY_FLOW_TOP,
+        blendMask = animation.BLEND_MASK.All,
         startKey = "start",
         stopKey = "stop",
     },
@@ -114,22 +152,8 @@ local GROUPS = {
 -- and the character T-poses for as long as the state is active. That is
 -- exactly what the removed WallJump entry ("pwwalljump") was doing.
 local LOOPING_STATES = { LedgeHang = true, Sprint = true }
-local ONE_SHOT_STATES = { Vault = true, Mantle = true, Roll = true }
-
--- Short interstitial one-shots played on the way OUT of a state, before the
--- real newState animation starts. Keyed by the state being EXITED (i.e.
--- oldState), not entered. Same optional fields as a GROUPS entry, but
--- group must be a single name here (not a variant list) - the text-key
--- handler below is registered against one fixed group name at load time,
--- so a list would let the actually-played clip diverge from what the
--- handler is listening for.
-local EXIT_TRANSITIONS = {
-    LedgeHang = {
-        group = "pwwalljump1", speed = 1,
-        startKey = "start",
-        stopKey = "stop",
-    },
-}
+local ONE_SHOT_STATES = { Vault = true, Mantle = true, Roll = true,
+                          Shimmy = true, WallBoost = true }
 
 local FULLBODY_PRIORITY = {
     [animation.BONE_GROUP.RightArm] = animation.PRIORITY.Jump,
@@ -143,39 +167,157 @@ local FULLBODY_BLEND_MASK = animation.BLEND_MASK.LeftArm + animation.BLEND_MASK.
 -- ==============================================
 -- INTERNAL STATE
 -- ==============================================
-local currentState = nil -- the state name last played, e.g. "Vault"
-local currentGroup = nil -- the specific (possibly randomly-picked) group name actually playing
-local pendingState = nil -- newState waiting to be entered once an exit transition finishes
+local currentGroup = nil
 
--- entry.group may be a single string or a list of variant names to pick
--- between at random.
-local function pickGroup(entryGroup)
-    if type(entryGroup) == "table" then
-        return entryGroup[math.random(#entryGroup)]
+-- Set by a state immediately before returning its own name, to pick between
+-- a GROUPS entry's `variants`. Consumed on the next resolve and cleared, so
+-- a stale direction can't leak into an unrelated transition.
+local pendingVariant = nil
+
+-- =============================================================================
+-- PERSPECTIVE-CHANGE RECOVERY
+--
+-- Switching 1st/3rd person rebuilds the player's animation object, dropping
+-- any scripted animation attached to it - a Vault or LedgeHang pose silently
+-- vanishes mid-move if the player presses the POV key. AnimRefresh notifies
+-- us after the new skeleton has settled; we simply re-issue whatever we
+-- believed was playing.
+--
+-- Only re-issues if a group was actually active, so a player who never
+-- triggers a FLOW animation pays nothing beyond the subscription itself.
+-- =============================================================================
+local reissue = nil   -- forward declaration; defined once playGroup exists
+
+if I.AnimRefresh and I.AnimRefresh.subscribe then
+    I.AnimRefresh.subscribe("FLOW", function()
+        if reissue then reissue() end
+    end)
+end
+
+function Anim.setVariant(name)
+    pendingVariant = name
+end
+
+-- Resolves a GROUPS entry to an actual group name, honouring `variants`.
+local function resolveGroup(entry)
+    if not entry then return nil end
+
+    -- Directional: left/right picked by the state via Anim.setVariant().
+    if entry.variants then
+        return entry.variants[pendingVariant or "right"]
     end
-    return entryGroup
+
+    -- List form: several interchangeable clips for the same action, e.g.
+    -- Mantle's pwmantle1/2/3. These are VISUAL variation only - none of them
+    -- carries root motion, so which one plays has no effect on movement and a
+    -- random pick is safe.
+    --
+    -- [CRASH FIX] entry.group was previously returned verbatim, so a list went
+    -- straight to animation.playBlended, whose second argument must be a
+    -- string. That threw inside onUpdate on EVERY Vault and Mantle
+    -- transition:
+    --   playeranim.lua:290: stack index 2, expected string, received table
+    -- and because it threw inside the update handler it took the whole tick
+    -- down with it, not just the animation.
+    if type(entry.group) == "table" then
+        local n = #entry.group
+        if n == 0 then return nil end
+        return entry.group[math.random(n)]
+    end
+
+    return entry.group
+end
+
+-- =============================================================================
+-- ONE-SHOT GROUP VERIFICATION
+--
+-- Every animation failure in this mod so far has come down to the same
+-- question - is the configured group actually present in the animation set
+-- loaded on THIS actor? - and until now there was no way to answer it
+-- except by inference from the symptom (T-pose = missing, nothing at all =
+-- ambiguous). animation.hasGroup() answers it directly.
+--
+-- Called once from main.lua's cold init, not per frame. Also probes the
+-- vanilla 'jump' group, since states/airborne.lua's landing fast-path
+-- depends on it existing.
+-- =============================================================================
+local verified = false
+
+function Anim.verifyGroups()
+    if verified then return end
+    verified = true
+
+    if not animation.hasGroup then
+        print("[FLOW][anim] animation.hasGroup unavailable - skipping group probe")
+        return
+    end
+
+    -- Collect every group name this file can ever play, flattening variants.
+    -- Guarded on type: a malformed GROUPS table (an entry that isn't a table)
+    -- used to make this throw, since entry.group was indexed outside pcall.
+    local probes = {}
+    for stateName, entry in pairs(GROUPS) do
+        if type(entry) == "table" then
+            if entry.variants then
+                for dir, g in pairs(entry.variants) do
+                    probes[#probes + 1] = { stateName .. "/" .. dir, g }
+                end
+            elseif type(entry.group) == "table" then
+                for i = 1, #entry.group do
+                    probes[#probes + 1] = { stateName .. "[" .. i .. "]", entry.group[i] }
+                end
+            elseif entry.group then
+                probes[#probes + 1] = { stateName, entry.group }
+            end
+        else
+            print(string.format("[FLOW][anim] MALFORMED GROUPS entry '%s' (%s, expected table)",
+                tostring(stateName), type(entry)))
+        end
+    end
+
+    for i = 1, #probes do
+        local label, group = probes[i][1], probes[i][2]
+        local ok, present = pcall(animation.hasGroup, self, group)
+        if not ok then
+            print(string.format("[FLOW][anim] %-16s '%s' -> probe FAILED", label, group))
+        elseif present then
+            print(string.format("[FLOW][anim] %-16s '%s' -> OK", label, group))
+        else
+            print(string.format("[FLOW][anim] %-16s '%s' -> MISSING (will T-pose or do nothing)",
+                label, group))
+        end
+    end
+
+    local ok, present = pcall(animation.hasGroup, self, 'jump')
+    if ok then
+        print(string.format("[FLOW][anim] vanilla   'jump' -> %s", present and "OK" or "MISSING"))
+    end
 end
 
 local function stopCurrent()
     if not currentGroup then return end
     animation.cancel(self, currentGroup)
     currentGroup = nil
-    currentState = nil
 end
 
 local function playGroup(stateName, looping)
     local entry = GROUPS[stateName]
-    if not entry or not entry.group then return end
+    local group = resolveGroup(entry)
+    pendingVariant = nil   -- consumed; never let a direction leak forward
+    if not group then return end
 
-    -- Compare by STATE, not by resolved group name - entry.group may be a
-    -- variant list, so the actual clip can legitimately differ between
-    -- consecutive entries into the same state. This still skips redundant
-    -- restarts while already in the state (avoiding restart stutter),
-    -- while still re-rolling a fresh variant on every genuine re-entry.
-    if currentState == stateName then return end
+    -- Defensive: playBlended requires a string and throws into the caller if
+    -- given anything else. playGroup runs inside onUpdate, so a malformed
+    -- GROUPS entry would otherwise take down the entire update loop - which
+    -- is exactly what a list-form group did. Report and skip instead.
+    if type(group) ~= "string" then
+        print(string.format("[FLOW][anim] GROUPS['%s'] resolved to %s, expected string - skipped",
+            tostring(stateName), type(group)))
+        return
+    end
+
+    if currentGroup == group then return end -- already playing, avoid restart stutter
     stopCurrent()
-
-    local group = pickGroup(entry.group)
 
     local autoDisable = entry.autoDisable
     if autoDisable == nil then autoDisable = not looping end
@@ -190,79 +332,54 @@ local function playGroup(stateName, looping)
         forceLoop = looping and true or nil,
         autoDisable = autoDisable,
     })
-    currentState = stateName
     currentGroup = group
-end
-
--- Enters newState "for real" - the normal one-shot/looping/vanilla dispatch.
--- Split out from onStateChange so the exit-transition handler below can
--- call it once the interstitial clip finishes, not just onStateChange
--- itself.
-local function enterState(stateName)
-    pendingState = nil
-    if ONE_SHOT_STATES[stateName] then
-        playGroup(stateName, false)
-    elseif LOOPING_STATES[stateName] then
-        playGroup(stateName, true)
-    else
-        -- Idle, Airborne, or anything else: hand control back to vanilla.
-        stopCurrent()
-    end
-end
-
-local function playExitTransition(transition, nextState)
-    stopCurrent()
-
-    pendingState = nextState
-
-    animation.playBlended(self, transition.group, {
-        startKey = transition.startKey,
-        stopKey = transition.stopKey,
-        priority = transition.priority or FULLBODY_PRIORITY,
-        blendMask = transition.blendMask or FULLBODY_BLEND_MASK,
-        speed = transition.speed or 1,
-        loops = 0,
-        autoDisable = true,
-    })
-
-    -- Deliberately not treated as a real "state" (currentState stays nil):
-    -- this is a fixed one-shot, never re-entered/skipped by name, and
-    -- leaving currentState nil means a later genuine enterState() call
-    -- isn't blocked by the "already in this state" guard in playGroup.
-    currentGroup = transition.group
-end
-
--- Registered once at load per transition group, matching the convention
--- already used elsewhere (RidingAnim's jump handler) - not re-registered
--- on every play. The transition's own stop key hands off to whatever state
--- was actually being entered when the transition started.
-for _, transition in pairs(EXIT_TRANSITIONS) do
-    I.AnimationController.addTextKeyHandler(transition.group, function(groupname, key)
-        if key ~= (transition.stopKey or "stop") then return end
-        if currentGroup ~= groupname then return end -- a later transition/state already took over
-
-        local nextState = pendingState
-        pendingState = nil
-        currentGroup = nil
-        currentState = nil
-
-        if nextState then
-            enterState(nextState)
-        end
-    end)
 end
 
 -- ==============================================
 -- PUBLIC API - called only from core/state_manager.lua's setState()
 -- ==============================================
-function Anim.onStateChange(newState, oldState)
-    local transition = EXIT_TRANSITIONS[oldState]
-    if transition then
-        playExitTransition(transition, newState)
-        return
-    end
+-- Remembers the last thing we asked for, so AnimRefresh can replay it.
+local lastRequest = nil
 
-    enterState(newState)
+reissue = function()
+    if not lastRequest then return end
+    -- [BUGFIX] Restore the direction before replaying. playGroup() clears
+    -- pendingVariant as soon as it resolves, so by the time AnimRefresh fires
+    -- it is nil and resolveGroup() falls back to "right" -- a POV press
+    -- mid-shimmy replayed pwshimmyr1 no matter which way the player was
+    -- actually moving. Same for WallBoost.
+    pendingVariant = lastRequest.variant
+    currentGroup = nil   -- force playGroup past its "already playing" guard
+    playGroup(lastRequest.state, lastRequest.looping)
+end
+
+-- Re-fire the current one-shot without a state change. playGroup short-
+-- circuits when the requested group is already current, which is right for
+-- ordinary transitions but wrong for a repeating step animation - so clear
+-- the guard first. Used by states/shimmy.lua, which now loops internally
+-- rather than bouncing through LedgeHang between steps.
+function Anim.replay()
+    if not lastRequest then return end
+    currentGroup = nil
+    playGroup(lastRequest.state, lastRequest.looping)
+end
+
+function Anim.onStateChange(newState, oldState)
+    -- Captured before playGroup() consumes it, so the reissue above can put
+    -- it back.
+    local variant = pendingVariant
+
+    if ONE_SHOT_STATES[newState] then
+        lastRequest = { state = newState, looping = false, variant = variant }
+        playGroup(newState, false)
+    elseif LOOPING_STATES[newState] then
+        lastRequest = { state = newState, looping = true, variant = variant }
+        playGroup(newState, true)
+    else
+        lastRequest = nil
+        -- Idle, Airborne, or anything else: hand control back to vanilla.
+        stopCurrent()
+    end
 end
 
 return Anim

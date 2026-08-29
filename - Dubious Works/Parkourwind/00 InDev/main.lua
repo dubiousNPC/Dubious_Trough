@@ -175,6 +175,8 @@ return {
         --
         -- dt is now simulation time rather than frame time, so state timers
         -- respect the game's time scaling.
+        onKeyPress = InputManager.onKeyPress,
+        onKeyRelease = InputManager.onKeyRelease,
         onUpdate = onUpdate
     }
 }

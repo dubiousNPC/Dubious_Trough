@@ -1,6 +1,8 @@
 local async = require("openmw.async")
 local I = require("openmw.interfaces")
 local storage = require("openmw.storage")
+local input = require("openmw.input")
+local ui = require("openmw.ui")
 
 local MOD_ID = "FLOW_AMF"
 local SETTINGS_KEY = "Settings" .. MOD_ID
@@ -20,12 +22,14 @@ I.Settings.registerGroup {
     permanentStorage = false,
     settings = {
         {
-            key = "activateInput",
+            key = "sprintKeyCode",
             name = "activateInput_name",
             description = "activateInput_desc",
-            default = "Left Alt",
-            renderer = "inputBinding",
-            argument = { type = "action", key = "FLOW_Sprint" }
+            -- NEW key name: the old 'activateInput' held an action-binding
+            -- string, so a stale entry would otherwise linger and read back as
+            -- a keycode. Users rebind once on update.
+            default = input.KEY.LeftAlt,
+            renderer = "FLOW_AMF/keyBinding"
         },
         -- [NEW] Master enable/disable
         {
@@ -48,6 +52,34 @@ I.Settings.registerGroup {
         },
     }
 }
+
+-- Raw-keycode renderer. See the note in core/input.lua: FLOW no longer
+-- publishes into the engine's shared action-binding registry, so it needs its
+-- own widget for the sprint key. Same approach AcrobaticsEnhanced, Questman
+-- and Character Panel settled on.
+I.Settings.registerRenderer('FLOW_AMF/keyBinding', function(value, set)
+    local name = value and input.getKeyName(value) or 'Not set'
+    return {
+        template = I.MWUI.templates.box,
+        content = ui.content{
+            {
+                template = I.MWUI.templates.padding,
+                content = ui.content{
+                    {
+                        template = I.MWUI.templates.textEditLine,
+                        props = { text = name },
+                        events = {
+                            keyPress = async:callback(function(e)
+                                if e.code == input.KEY.Escape then return end
+                                set(e.code)
+                            end),
+                        },
+                    },
+                },
+            },
+        },
+    }
+end)
 
 local section = storage.playerSection(SETTINGS_KEY)
 
@@ -88,5 +120,6 @@ end
 return {
     modEnabled = function() return get("modEnabled", true) end,
     disableInInteriors = function() return get("disableInInteriors", false) end,
-    debugMode = function() return get("debugMode", false) end
+    debugMode = function() return get("debugMode", false) end,
+    sprintKeyCode = function() return get("sprintKeyCode", input.KEY.LeftAlt) end
 }

@@ -71,11 +71,16 @@ local Anim = {}
 -- =============================================================================
 local PRIORITY_FLOW       = animation.PRIORITY.Weapon
 local PRIORITY_FLOW_MAJOR = animation.PRIORITY.Block
+local PRIORITY_FLOW_TOP   = animation.PRIORITY.Scripted
 
 local GROUPS = {
-    Vault     = { group = "pwvault1",       speed = 1 },  -- one-shot, plays over the vault's physics duration
+    Vault     = {
+        group = { "pwvault1", "pwvault2", "pwvault3" }, speed = 1,
+        -- one-shot, plays over the vault's physics duration; re-rolled
+        -- every time Vault is (re-)entered
+    },
     Mantle    = {
-        group = "pwmantle1", speed = 1,  -- kf has pwmantle1/2/3; "pwmantle" does not exist
+        group = { "pwmantle1", "pwmantle2", "pwmantle3" }, speed = 1,
         priority = PRIORITY_FLOW,
         blendMask = animation.BLEND_MASK.All,
         autoDisable = false,  -- hold the last frame instead of reverting mid-climb if
@@ -127,8 +132,8 @@ local GROUPS = {
     },
 
     Roll      = {
-        group = "pwroll1", speed = 1,  -- one-shot landing roll
-        priority = PRIORITY_FLOW_MAJOR,
+        group = "pwroll1", speed = 0.5,  -- one-shot landing roll
+        priority = PRIORITY_FLOW_TOP,
         blendMask = animation.BLEND_MASK.All,
         startKey = "start",
         stopKey = "stop",
@@ -196,9 +201,30 @@ end
 -- Resolves a GROUPS entry to an actual group name, honouring `variants`.
 local function resolveGroup(entry)
     if not entry then return nil end
+
+    -- Directional: left/right picked by the state via Anim.setVariant().
     if entry.variants then
         return entry.variants[pendingVariant or "right"]
     end
+
+    -- List form: several interchangeable clips for the same action, e.g.
+    -- Mantle's pwmantle1/2/3. These are VISUAL variation only - none of them
+    -- carries root motion, so which one plays has no effect on movement and a
+    -- random pick is safe.
+    --
+    -- [CRASH FIX] entry.group was previously returned verbatim, so a list went
+    -- straight to animation.playBlended, whose second argument must be a
+    -- string. That threw inside onUpdate on EVERY Vault and Mantle
+    -- transition:
+    --   playeranim.lua:290: stack index 2, expected string, received table
+    -- and because it threw inside the update handler it took the whole tick
+    -- down with it, not just the animation.
+    if type(entry.group) == "table" then
+        local n = #entry.group
+        if n == 0 then return nil end
+        return entry.group[math.random(n)]
+    end
+
     return entry.group
 end
 
@@ -235,6 +261,10 @@ function Anim.verifyGroups()
             if entry.variants then
                 for dir, g in pairs(entry.variants) do
                     probes[#probes + 1] = { stateName .. "/" .. dir, g }
+                end
+            elseif type(entry.group) == "table" then
+                for i = 1, #entry.group do
+                    probes[#probes + 1] = { stateName .. "[" .. i .. "]", entry.group[i] }
                 end
             elseif entry.group then
                 probes[#probes + 1] = { stateName, entry.group }
@@ -275,6 +305,16 @@ local function playGroup(stateName, looping)
     local group = resolveGroup(entry)
     pendingVariant = nil   -- consumed; never let a direction leak forward
     if not group then return end
+
+    -- Defensive: playBlended requires a string and throws into the caller if
+    -- given anything else. playGroup runs inside onUpdate, so a malformed
+    -- GROUPS entry would otherwise take down the entire update loop - which
+    -- is exactly what a list-form group did. Report and skip instead.
+    if type(group) ~= "string" then
+        print(string.format("[FLOW][anim] GROUPS['%s'] resolved to %s, expected string - skipped",
+            tostring(stateName), type(group)))
+        return
+    end
 
     if currentGroup == group then return end -- already playing, avoid restart stutter
     stopCurrent()

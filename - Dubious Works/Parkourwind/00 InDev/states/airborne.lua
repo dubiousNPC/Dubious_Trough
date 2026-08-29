@@ -4,6 +4,8 @@ local I = require('openmw.interfaces')
 local input = require('openmw.input')
 local async = require('openmw.async')
 local types = require('openmw.types')
+local util = require('openmw.util')
+local nearby = require('openmw.nearby')
 local mwSelf = require('openmw.self')
 local Sensor = require('core/sensor')
 local SensorExt = require('core/optional/sensor_ext')
@@ -79,6 +81,36 @@ local LEDGE_HANG_DROP = 125
 -- surfAnimations' deadzone treatment of pself.controls.movement.
 local FORWARD_DEADZONE = 0.1
 
+-- Height window for arming the roll. Borrowed from AcrobaticsEnhanced, which
+-- gates its own roll the same way and states the reason plainly: an arm with
+-- no height check "kills the double-tap-jump-early exploit" only if the press
+-- has to happen NEAR THE GROUND. FLOW's arm never expires, so without this a
+-- single press at the apex of any fall armed the whole descent - no timing
+-- skill involved at all.
+--
+-- A height window is also better than the 1-second timer it effectively
+-- replaces: a timer punishes long falls (press too early, lose the attempt),
+-- whereas a height gate behaves identically at any fall height because it is
+-- measured against the geometry the player is actually approaching.
+--
+-- Cost is one downward raycast PER PRESS, not per frame.
+local ROLL_HEIGHT_WINDOW = 256.0
+local ROLL_HEIGHT_PROBE = 5000.0
+
+local function heightAboveGround()
+    local p = mwSelf.position
+    local ok, res = pcall(function()
+        return nearby.castRay(p, util.vector3(p.x, p.y, p.z - ROLL_HEIGHT_PROBE), {
+            ignore = mwSelf,
+            collisionType = nearby.COLLISION_TYPE.World + nearby.COLLISION_TYPE.HeightMap,
+        })
+    end)
+    if ok and res and res.hit and res.hitPos then
+        return p.z - res.hitPos.z
+    end
+    return nil
+end
+
 local armed = false
 local armTimer = 0
 local isActive = false          -- is Airborne the current state? gates the
@@ -143,6 +175,10 @@ input.registerTriggerHandler("Jump", async:callback(function()
     -- Forward must be held at the tap.
     if InputManager.intents.moveVector.y <= FORWARD_DEADZONE then return end
 
+    -- Height gate: only counts near the ground. See ROLL_HEIGHT_WINDOW.
+    local h = heightAboveGround()
+    if not h or h > ROLL_HEIGHT_WINDOW then return end
+
     armed = true
     armTimer = 0
     applyAgility(true)
@@ -192,14 +228,9 @@ function AirborneState.getRollDebug()
     return string.format("ROLL: idle fwd=%.2f", InputManager.intents.moveVector.y)
 end
 
--- Health sampled while still airborne, i.e. before the engine applies fall
--- damage. states/roll.lua compares against this to work out how much was
--- actually lost, without having to assume when the engine applies it.
-local healthBeforeLanding = nil
 
 function AirborneState:enter(syncData)
     isActive = true
-    healthBeforeLanding = types.Actor.stats.dynamic.health(mwSelf).current
     -- Fresh airborne period starts unarmed.
     armed = false
     armTimer = 0
@@ -260,7 +291,6 @@ function AirborneState:update(dt, syncData, inputData)
     -- handler above, not here - this only tracks the pre-impact health
     -- sample and ages the debug timer.
     if not touchedDown then
-        healthBeforeLanding = types.Actor.stats.dynamic.health(mwSelf).current
         if armed then
             armTimer = armTimer + dt   -- debug readout only; the arm never expires
         end
@@ -272,7 +302,7 @@ function AirborneState:update(dt, syncData, inputData)
         if armed then
             applyAgility(false)
             armed = false
-            RollState.setLandingData(healthBeforeLanding)
+            RollState.setLandingData()
             return "Roll"
         end
 
