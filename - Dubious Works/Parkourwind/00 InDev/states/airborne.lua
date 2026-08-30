@@ -7,6 +7,7 @@ local types = require('openmw.types')
 local util = require('openmw.util')
 local nearby = require('openmw.nearby')
 local mwSelf = require('openmw.self')
+local Settings = require('settings')
 local Sensor = require('core/sensor')
 local SensorExt = require('core/optional/sensor_ext')
 local RollState = require('states/roll')
@@ -177,8 +178,17 @@ input.registerTriggerHandler("Jump", async:callback(function()
 
     -- Height gate: only counts near the ground. See ROLL_HEIGHT_WINDOW.
     local h = heightAboveGround()
-    if not h or h > ROLL_HEIGHT_WINDOW then return end
+    if not h or h > ROLL_HEIGHT_WINDOW then
+        if Settings.debugMode() then
+            print(string.format("[FLOW][roll] tap REJECTED h=%s window=%.0f",
+                h and string.format("%.0f", h) or "nil", ROLL_HEIGHT_WINDOW))
+        end
+        return
+    end
 
+    if Settings.debugMode() then
+        print(string.format("[FLOW][roll] ARMED h=%.0f", h))
+    end
     armed = true
     armTimer = 0
     applyAgility(true)
@@ -302,6 +312,7 @@ function AirborneState:update(dt, syncData, inputData)
         if armed then
             applyAgility(false)
             armed = false
+            if Settings.debugMode() then print("[FLOW][roll] landing -> Roll") end
             RollState.setLandingData()
             return "Roll"
         end

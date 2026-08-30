@@ -302,7 +302,14 @@ function ShimmyState:update(dt, syncData, inputData)
                 -- resultLip is what gets handed to LedgeHang on exit, so it
                 -- has to track each in-state step, not just the first.
                 resultLip = nextLip
-                startPos = mwSelf.position
+                -- [FIX] Chain from the previous step's TARGET, not from the
+                -- live position. Reading mwSelf.position back each step let
+                -- the small gap between the SnapTo and where the engine
+                -- actually settled accumulate; after a few seconds of held
+                -- input the accumulated offset desynced the player from the
+                -- lip the probe was tracking, and probeStep started
+                -- alternating pass/fail - the vibration.
+                startPos = endPos or mwSelf.position
                 local lateral = ShimmyState.lateralVector(wallNormal)
                 endPos = lateral and (startPos + lateral * (STEP_DISTANCE * dir)) or startPos
                 timeInState = 0

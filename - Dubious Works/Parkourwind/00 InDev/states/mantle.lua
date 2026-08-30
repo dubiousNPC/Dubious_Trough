@@ -126,7 +126,7 @@ function MantleState:enter(syncData)
     -- At the outer edge of sensor range the target is furthest from what
     -- approved it, and indoors a bad target sits on the far side of a wall -
     -- which is how a mantle turns into a clip-through and a fall.
-    local DEST_HEAD_PROBE = 90.0
+    local DEST_HEAD_PROBE = 60.0
     local DEST_FLOOR_PROBE = 200.0
     local DEST_FLOOR_TOLERANCE = 60.0
     local DEST_RAY_OPTS = {
@@ -134,10 +134,17 @@ function MantleState:enter(syncData)
         collisionType = nearby.COLLISION_TYPE.World + nearby.COLLISION_TYPE.HeightMap
     }
 
+    -- Probe the floor at the LEDGE's own horizontal position, not at
+    -- targetPos. targetPos is pushed LEDGE_PUSH_IN (45) past the detected
+    -- edge, which on a narrow ledge or a railing overshoots into empty space -
+    -- no floor found, refusal, and the "message shows but nothing happens"
+    -- symptom. The ledge position is where a surface is known to exist.
+    local probeXY = util.vector3(rawLedge.x, rawLedge.y, targetPos.z)
     local destTop = targetPos + util.vector3(0, 0, DEST_HEAD_PROBE)
-    local floorRes = nearby.castRay(destTop, targetPos - util.vector3(0, 0, DEST_FLOOR_PROBE),
+    local floorRes = nearby.castRay(probeXY + util.vector3(0, 0, DEST_HEAD_PROBE),
+                                    probeXY - util.vector3(0, 0, DEST_FLOOR_PROBE),
                                     DEST_RAY_OPTS)
-    if not floorRes.hit or (targetPos.z - floorRes.hitPos.z) > DEST_FLOOR_TOLERANCE then
+    if not floorRes.hit or (probeXY.z - floorRes.hitPos.z) > DEST_FLOOR_TOLERANCE then
         refuse(self)
         return
     end
