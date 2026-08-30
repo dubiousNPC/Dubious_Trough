@@ -33,8 +33,7 @@ local boneCache = nil
 local function probeBone(bone)
     if boneCache == nil then boneCache = {} end
     if boneCache[bone] == nil then
-        local ok, has = pcall(anim.hasBone, self, bone)
-        boneCache[bone] = (ok and has) or false
+        boneCache[bone] = anim.hasBone(self, bone)
     end
     return boneCache[bone]
 end
@@ -46,7 +45,8 @@ local function resolveBone(cat)
 end
 
 local function rescan()
-    for _, cat in pairs(CAKE.CATEGORIES) do pcall(anim.removeVfx, self, cat.vfxId) end
+    -- removeVfx on an id that was never added is a no-op, not an error.
+    for _, cat in pairs(CAKE.CATEGORIES) do anim.removeVfx(self, cat.vfxId) end
     boneCache = nil
 
     -- Detaching first and returning means turning the setting off strips what
@@ -62,12 +62,15 @@ local function rescan()
             local cat  = CAKE.CATEGORIES[entry.category]
             local bone = resolveBone(cat)
             if bone then
-                pcall(anim.addVfx, self, entry.model, {
-                    vfxId           = cat.vfxId,
-                    boneName        = bone,
-                    loop            = true,
-                    useAmbientLight = false,
-                })
+                local mesh = CAKE.meshFor(types, entry.eq)
+                if mesh then
+                    anim.addVfx(self, mesh, {
+                        vfxId           = cat.vfxId,
+                        boneName        = bone,
+                        loop            = true,
+                        useAmbientLight = false,
+                    })
+                end
             end
         end
     end

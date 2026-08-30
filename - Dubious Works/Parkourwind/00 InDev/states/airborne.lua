@@ -98,15 +98,18 @@ local FORWARD_DEADZONE = 0.1
 local ROLL_HEIGHT_WINDOW = 256.0
 local ROLL_HEIGHT_PROBE = 5000.0
 
+-- No pcall: nearby.castRay is a documented, always-present API and a miss is
+-- reported as res.hit == false, not an error. Wrapping it would only hide a
+-- genuine mistake in the arguments.
+local HEIGHT_RAY_OPTS = {
+    ignore = mwSelf,
+    collisionType = nearby.COLLISION_TYPE.World + nearby.COLLISION_TYPE.HeightMap,
+}
+
 local function heightAboveGround()
     local p = mwSelf.position
-    local ok, res = pcall(function()
-        return nearby.castRay(p, util.vector3(p.x, p.y, p.z - ROLL_HEIGHT_PROBE), {
-            ignore = mwSelf,
-            collisionType = nearby.COLLISION_TYPE.World + nearby.COLLISION_TYPE.HeightMap,
-        })
-    end)
-    if ok and res and res.hit and res.hitPos then
+    local res = nearby.castRay(p, util.vector3(p.x, p.y, p.z - ROLL_HEIGHT_PROBE), HEIGHT_RAY_OPTS)
+    if res.hit then
         return p.z - res.hitPos.z
     end
     return nil
@@ -212,9 +215,12 @@ end))
 -- =============================================================================
 local landedSignal = false
 
+-- The `if` above is the real guard: addTextKeyHandler is optional across
+-- versions, so its ABSENCE is checked directly. No pcall - if the call itself
+-- fails, that is a bug worth seeing rather than silently losing the landing
+-- fast path.
 if I.AnimationController and I.AnimationController.addTextKeyHandler then
-    pcall(function()
-        I.AnimationController.addTextKeyHandler('jump', function(groupname, key)
+    I.AnimationController.addTextKeyHandler('jump', function(groupname, key)
             -- Naive suffix matching on 'stop' is wrong: the vanilla jump
             -- group also emits 'jump: loop stop', which fires when the
             -- falling loop ends and is NOT reliably touchdown. Accept the
@@ -224,7 +230,6 @@ if I.AnimationController and I.AnimationController.addTextKeyHandler then
             elseif string.sub(key, -4) == 'stop' and string.sub(key, -9) ~= 'loop stop' then
                 landedSignal = true
             end
-        end)
     end)
 end
 
@@ -319,10 +324,7 @@ function AirborneState:update(dt, syncData, inputData)
 
         applyAgility(false)
 
-        if inputData.sprint and inputData.moveVector.y > 0 then
-            return "Sprint"
-        end
-        return "Idle"
+                return "Idle"
     end
 
     return nil

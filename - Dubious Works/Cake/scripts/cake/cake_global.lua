@@ -126,11 +126,9 @@ local function convertLooseInCell(player)
             -- Sit the replacement on the ground rather than at the mesh origin.
             -- The old code read a BACKPACK_Z_OFFSETS table that was never
             -- defined; the bounding box is always available and needs no table.
-            local ok, bbox = pcall(obj.getBoundingBox, obj)
-            if ok and bbox then
-                pos = util.vector3(bbox.center.x, bbox.center.y,
-                                   bbox.center.z - bbox.halfSize.z * 0.9)
-            end
+            local bbox = obj:getBoundingBox()
+            pos = util.vector3(bbox.center.x, bbox.center.y,
+                               bbox.center.z - bbox.halfSize.z * 0.9)
             obj:remove()
             world.createObject(baseId, count):teleport(cell, pos, rot)
         end

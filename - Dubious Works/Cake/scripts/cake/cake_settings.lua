@@ -52,8 +52,11 @@ local CAKE = require('scripts.cake.cake_shared')
 local MIN_SELECT_VERSION = 3
 
 local function selectRenderer()
-    local ok, installed = pcall(storage.playerSection, 'InstalledSettingsRenderers')
-    if ok and installed and (installed:get('SuperSelect') or 0) >= MIN_SELECT_VERSION then
+    -- playerSection is available in menu context and creates the section on
+    -- demand, so this cannot fail; an absent renderer shows up as a nil get,
+    -- which is the case being tested for anyway.
+    local installed = storage.playerSection('InstalledSettingsRenderers')
+    if (installed:get('SuperSelect') or 0) >= MIN_SELECT_VERSION then
         return 'SuperSelect' .. MIN_SELECT_VERSION, true
     end
     return 'select', false

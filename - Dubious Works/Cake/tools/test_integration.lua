@@ -7,7 +7,15 @@ local function check(n,c,e) if c then print('  ok   '..n) else fails=fails+1; pr
 local world = { vfx={}, created={}, removed={}, globalEvents={}, actorEvents={},
                 bones={}, cameraMode='third', timers={} }
 local MISC = {}
-MISC.records = setmetatable({}, {__index=function(_,id) return {id=id, model='m/'..id..'.nif'} end})
+-- The engine returns a VFS path from record.model: meshes/-prefixed, forward
+-- slashes, lowercase. The mock must do the same or it hides the exact bug that
+-- made every item silently attach nothing.
+MISC.records = setmetatable({}, {__index=function(_,id)
+    return {id=id, model='meshes/'..id:lower()..'.nif'} end})
+MISC.record = function(o)
+    local id = type(o)=='string' and o or o.recordId
+    return MISC.records[id]
+end
 
 local inv = {}
 local function mkItem(id, count)
@@ -48,6 +56,8 @@ package.preload['openmw.types']=function() return {
 package.preload['openmw.animation']=function() return {
     addVfx=function(_,path,o)
         assert(type(path)=='string' and path~='', 'addVfx needs a model path')
+        assert(path:sub(1,7)=='meshes/' and not path:find('\\', 1, true),
+               'addVfx got a non-VFS path: '..path)
         assert(o.vfxId and o.boneName, 'addVfx needs vfxId and boneName')
         world.vfx[o.vfxId]={path=path,bone=o.boneName} end,
     removeVfx=function(_,id) world.vfx[id]=nil end,
@@ -147,8 +157,17 @@ check('worn lantern attached', world.vfx['cake_lanterns']~=nil,
       'activation set the state, onActive drew it')
 check('attached to the DBS bone', world.vfx['cake_lanterns'].bone=='Bip01 L hipDBS',
       world.vfx['cake_lanterns'].bone)
-check('model comes straight from the record, no _skins derivation',
-      world.vfx['cake_lanterns'].path==shared.ITEMS[lantern].model,
+-- The registry's `model` is the plugin's raw MODL string (`RV\Ashmask1.nif`).
+-- The engine wants a VFS path (`meshes/rv/ashmask1.nif`). Attaching the former
+-- silently attaches nothing, which is what "the item does nothing" looked like.
+check('mesh is resolved from the record, not from the baked plugin path',
+      world.vfx['cake_lanterns'].path == MISC.records[shared.ITEMS[lantern].eq].model,
+      world.vfx['cake_lanterns'].path)
+check('the baked registry path is NOT what gets attached',
+      world.vfx['cake_lanterns'].path ~= shared.ITEMS[lantern].model)
+check('the attached path is a VFS path',
+      world.vfx['cake_lanterns'].path:sub(1,7)=='meshes/'
+      and not world.vfx['cake_lanterns'].path:find('\\', 1, true),
       world.vfx['cake_lanterns'].path)
 check('subscribed to AnimRefresh while worn', animRefresh.subs['CAKE']~=nil)
 

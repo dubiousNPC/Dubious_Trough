@@ -96,19 +96,9 @@ local GROUPS = {
     -- states/optional/README.md. Kept here so re-enabling one of them
     -- doesn't require touching this file at all, just uncommenting/adding
     -- its name to the ONE_SHOT_STATES/LOOPING_STATES sets below.
-    -- [SYNTAX FIX] This entry was previously closed with '}' on the first
-    -- line, leaving priority/blendMask/startKey/stopKey dangling as keys of
-    -- GROUPS ITSELF rather than of Sprint. Valid Lua, but it meant Sprint
-    -- silently lost all four settings AND GROUPS gained four junk numeric
-    -- entries - which made Anim.verifyGroups() throw, since it indexes
-    -- entry.group on every value in the table.
-    Sprint    = {
-        group = "pwrun1", speed = 1,  -- looping
-        priority = PRIORITY_FLOW,
-        blendMask = animation.BLEND_MASK.All,
-        startKey = "start",
-        stopKey = "stop",
-    },
+    -- Sprint's entry was removed with the state itself: vanilla's own run
+    -- animation is correct while running, and FLOW no longer has a state to
+    -- attach a replacement to.
 
     -- Directional entries. `variants` replaces `group`; the state selects
     -- which one via Anim.setVariant() immediately before the transition, so
@@ -151,7 +141,7 @@ local GROUPS = {
 -- groups; if the named group has no matching clip, nothing replaces it
 -- and the character T-poses for as long as the state is active. That is
 -- exactly what the removed WallJump entry ("pwwalljump") was doing.
-local LOOPING_STATES = { LedgeHang = true, Sprint = true }
+local LOOPING_STATES = { LedgeHang = true }
 local ONE_SHOT_STATES = { Vault = true, Mantle = true, Roll = true,
                           Shimmy = true, WallBoost = true }
 
@@ -277,10 +267,8 @@ function Anim.verifyGroups()
 
     for i = 1, #probes do
         local label, group = probes[i][1], probes[i][2]
-        local ok, present = pcall(animation.hasGroup, self, group)
-        if not ok then
-            print(string.format("[FLOW][anim] %-16s '%s' -> probe FAILED", label, group))
-        elseif present then
+        local present = animation.hasGroup(self, group)
+        if present then
             print(string.format("[FLOW][anim] %-16s '%s' -> OK", label, group))
         else
             print(string.format("[FLOW][anim] %-16s '%s' -> MISSING (will T-pose or do nothing)",
@@ -288,10 +276,8 @@ function Anim.verifyGroups()
         end
     end
 
-    local ok, present = pcall(animation.hasGroup, self, 'jump')
-    if ok then
-        print(string.format("[FLOW][anim] vanilla   'jump' -> %s", present and "OK" or "MISSING"))
-    end
+    print(string.format("[FLOW][anim] vanilla   'jump' -> %s",
+        animation.hasGroup(self, 'jump') and "OK" or "MISSING"))
 end
 
 local function stopCurrent()

@@ -17,8 +17,8 @@
     state_manager plays a state's animation on ENTRY and entering while
     airborne would fire pwroll1 mid-fall.
 
-    Exits to Sprint when forward is still held so momentum chains, otherwise
-    to Idle.
+    Exits to Idle; the engine's own run state carries momentum forward, so no
+    separate sprint hand-off is needed.
 
     ANIMATION: "pwroll1", start/stop keys, registered in playerAnim.lua's
     GROUPS and ONE_SHOT_STATES. This file never calls the animation API
@@ -38,7 +38,7 @@ local RollState = BaseState.new("Roll")
 -- CONFIGURATION
 -- ==============================================
 local ROLL_DURATION = 0.45      -- recovery window before handing back to
-                                 -- Idle/Sprint. Long enough to read as a
+                                 -- Idle. Long enough to read as a
                                  -- deliberate action, short enough not to
                                  -- feel like a stun.
 
@@ -133,12 +133,11 @@ function RollState:update(dt, syncData, inputData)
     end
 
     -- 3. Recovery window over - momentum preservation, matching the
-    -- Vault/Mantle convention: holding forward hands to Sprint, which
-    -- bounces straight back to Idle on its own if the sprint key isn't
-    -- actually held (see states/sprint.lua).
+    -- Vault/Mantle convention. Movement itself is engine-driven, so simply
+    -- returning to Idle preserves whatever the player was doing.
     if timeInState >= ROLL_DURATION then
         if inputData.moveVector.y > 0 then
-            return "Sprint"
+            return "Idle"
         end
         return "Idle"
     end

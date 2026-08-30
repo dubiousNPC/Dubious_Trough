@@ -343,6 +343,26 @@ end
 function M.isBaseItem(recordId) return M.get(recordId) ~= nil end
 function M.isWornItem(recordId) return M.baseOf(recordId) ~= nil end
 
+---VFS path of the mesh to attach for a worn record.
+---
+---MUST be resolved from the record at runtime, not read from `entry.model`.
+---A plugin's MODL subrecord is a raw path relative to `meshes/`, with the
+---original backslashes and case -- `RV\Ashmask1.nif`. The Lua API's
+---`record.model` is a VFS path -- `meshes/rv/ashmask1.nif`. They are not the
+---same string, and handing the former to `animation.addVfx` attaches nothing
+---at all: no error, no mesh, no clue. That was the bug that made every item
+---appear to do nothing when used.
+---
+---`entry.model` is retained only as documentation of what the plugin declares.
+---Sun's Dusk and Bardcraft both resolve at runtime for the same reason.
+---@param types any the openmw.types package
+---@param equippedId string the `_eq` record id
+---@return string|nil
+function M.meshFor(types, equippedId)
+    local record = types.Miscellaneous.record(equippedId)
+    return record and record.model or nil
+end
+
 ---Category definition for either half of a pair.
 function M.categoryOf(recordId)
     local entry = M.get(recordId) or M.get(M.baseOf(recordId))

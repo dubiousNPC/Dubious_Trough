@@ -145,10 +145,7 @@ function WallBoostState:update(dt, syncData, inputData)
     end
 
     if syncData.isGrounded then
-        if inputData.sprint and inputData.moveVector.y > 0 then
-            return "Sprint"
-        end
-        return "Idle"
+                return "Idle"
     end
 
     -- Still in the air once the arc has been handed back: let Airborne take

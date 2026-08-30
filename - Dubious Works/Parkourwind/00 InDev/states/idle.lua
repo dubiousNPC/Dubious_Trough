@@ -24,18 +24,6 @@ function IdleState:update(dt, syncData, inputData)
         end
     end
 
-    -- 3. To Sprint (was missing entirely - Sprint was unreachable from a
-    -- standing start; this is the actual entry point for the mod's
-    -- "hold key to sprint, run at obstacle" flow). Gated on the same
-    -- fatigue threshold Sprint's own update() checks, so this doesn't
-    -- hand off into a state that immediately bounces back.
-    if inputData.sprint and inputData.moveVector.y > 0 then
-        local fat = types.Actor.stats.dynamic.fatigue(mwSelf).current
-        if fat > 0 then
-            return "Sprint"
-        end
-    end
-
     return nil
 end
 

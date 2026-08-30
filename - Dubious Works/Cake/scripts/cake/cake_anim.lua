@@ -72,14 +72,17 @@ function M.playEquip(categoryName)
     local group = M.GROUPS[categoryName]
     if not group then return false end
 
-    return pcall(anim.playBlended, self, group, {
+    -- Playing a group the actor's skeleton does not define is a no-op, not an
+    -- error, so there is nothing here for a pcall to catch.
+    anim.playBlended(self, group, {
         priority    = anim.PRIORITY.Weapon,
         blendMask   = UPPER_BODY,
         startKey    = 'start',
         stopKey     = 'stop',
         loops       = 0,
         autoDisable = true,
-    }) == true
+    })
+    return true
 end
 
 ---Cancel a gesture early, for a category swapped mid-animation.
@@ -87,8 +90,8 @@ function M.cancelEquip(categoryName)
     local group = M.GROUPS[categoryName]
     if not group then return end
     -- cancel lives on openmw.animation and takes the actor; it is not on
-    -- I.AnimationController.
-    pcall(anim.cancel, self, group)
+    -- I.AnimationController. Cancelling a group that is not playing is a no-op.
+    anim.cancel(self, group)
 end
 
 return M

@@ -199,13 +199,13 @@ local suspensionApplied = false
 
 local function applySuspension(enable)
     if enable ~= suspensionApplied then
-        local ok, effects = pcall(types.Actor.activeEffects, mwSelf)
-        if ok and effects then
-            pcall(function()
-                effects:modify(enable and GRAVITY_MAGNITUDE or -GRAVITY_MAGNITUDE,
-                               core.magic.EFFECT_TYPE.Levitate)
-            end)
-        end
+        -- No pcall: types.Actor.activeEffects and :modify are documented API
+        -- on a live actor, and ledge_hang.lua makes the identical call
+        -- unguarded. Swallowing an error here would leave the hang silently
+        -- un-suspended, which is worse than seeing the error.
+        types.Actor.activeEffects(mwSelf):modify(
+            enable and GRAVITY_MAGNITUDE or -GRAVITY_MAGNITUDE,
+            core.magic.EFFECT_TYPE.Levitate)
         suspensionApplied = enable
     end
 

@@ -42,7 +42,7 @@
    "flags": 0
   },
   "name": "Dunmer Ashmask",
-  "mesh": "RV\\Ashmask1.nif",
+  "mesh": "RV\\Ashmask1_GND.nif",
   "icon": "RV\\ashmask1.tga"
  },
  {
@@ -170,7 +170,7 @@
    "flags": 0
   },
   "name": "Daedric Facemask 1",
-  "mesh": "RV\\Daedramask1.nif",
+  "mesh": "RV\\Daedramask1_GND.nif",
   "icon": "RV\\Daedramask1.tga"
  },
  {
@@ -202,7 +202,7 @@
    "flags": 0
   },
   "name": "Daedric Facemask 2",
-  "mesh": "RV\\Daedramask2.nif",
+  "mesh": "RV\\Daedramask2_GND.nif",
   "icon": "RV\\Daedramask2.tga"
  },
  {
@@ -234,7 +234,7 @@
    "flags": 0
   },
   "name": "Daedric Facemask 3",
-  "mesh": "RV\\Daedramask3.nif",
+  "mesh": "RV\\Daedramask3_GND.nif",
   "icon": "RV\\Daedramask3.tga"
  },
  {
@@ -266,7 +266,7 @@
    "flags": 0
   },
   "name": "Daedric Facemask 4",
-  "mesh": "RV\\Daedramask4.nif",
+  "mesh": "RV\\Daedramask4_GND.nif",
   "icon": "RV\\Daedramask4.tga"
  },
  {
@@ -362,7 +362,7 @@
    "flags": 0
   },
   "name": "Morag Tong Facewrap",
-  "mesh": "RV\\Facewrap1.nif",
+  "mesh": "RV\\Facewrap1_GND.nif",
   "icon": "RV\\facewrap1.tga"
  },
  {
@@ -394,7 +394,7 @@
    "flags": 0
   },
   "name": "Dark Brotherhood Facewrap",
-  "mesh": "RV\\Facewrap2.nif",
+  "mesh": "RV\\Facewrap2_GND.nif",
   "icon": "RV\\facewrap2.tga"
  },
  {
@@ -426,7 +426,7 @@
    "flags": 0
   },
   "name": "Grey Cloth Facewrap",
-  "mesh": "RV\\Facewrap3.nif",
+  "mesh": "RV\\Facewrap3_GND.nif",
   "icon": "RV\\facewrap3.tga"
  },
  {
@@ -458,7 +458,7 @@
    "flags": 0
   },
   "name": "Brown Cloth Facewrap",
-  "mesh": "RV\\Facewrap4.nif",
+  "mesh": "RV\\Facewrap4_GND.nif",
   "icon": "RV\\facewrap4.tga"
  },
  {
@@ -490,7 +490,7 @@
    "flags": 0
   },
   "name": "Chitin Cloth Facewrap",
-  "mesh": "RV\\Facewrap5.nif",
+  "mesh": "RV\\Facewrap5_GND.nif",
   "icon": "RV\\facewrap5.tga"
  },
  {
@@ -522,7 +522,7 @@
    "flags": 0
   },
   "name": "Orange Cloth Facewrap",
-  "mesh": "RV\\Facewrap6.nif",
+  "mesh": "RV\\Facewrap6_GND.nif",
   "icon": "RV\\facewrap6.tga"
  },
  {
@@ -554,7 +554,7 @@
    "flags": 0
   },
   "name": "Blue Cloth Facewrap",
-  "mesh": "RV\\Facewrap7.nif",
+  "mesh": "RV\\Facewrap7_GND.nif",
   "icon": "RV\\facewrap7.tga"
  },
  {
@@ -586,7 +586,7 @@
    "flags": 0
   },
   "name": "Red Cloth Facewrap",
-  "mesh": "RV\\Facewrap8.nif",
+  "mesh": "RV\\Facewrap8_GND.nif",
   "icon": "RV\\facewrap8.tga"
  },
  {
@@ -1194,7 +1194,7 @@
    "flags": 0
   },
   "name": "Orcish Facemask 2",
-  "mesh": "RV\\Orcishmask2.nif",
+  "mesh": "RV\\Orcishmask2_GND.nif",
   "icon": "RV\\Orcishmask2.tga"
  },
  {
@@ -1226,7 +1226,7 @@
    "flags": 0
   },
   "name": "Leather Scarf",
-  "mesh": "RV\\scarf1.nif",
+  "mesh": "RV\\scarf1 gnd.nif",
   "icon": "RV\\scarf1.tga"
  },
  {
@@ -1674,7 +1674,7 @@
    "flags": 0
   },
   "name": "Dunmer Warrior Cloth Scarf",
-  "mesh": "RV\\scarf15.nif",
+  "mesh": "RV\\scarf15 gnd.nif",
   "icon": "RV\\scarf15.tga"
  },
  {
@@ -1706,7 +1706,7 @@
    "flags": 0
   },
   "name": "Expensive Oceanic Scarf",
-  "mesh": "RV\\scarf16.nif",
+  "mesh": "RV\\scarf16 gnd.nif",
   "icon": "RV\\scarf16.tga"
  },
  {
@@ -1738,7 +1738,7 @@
    "flags": 0
   },
   "name": "Adamantium Tailguard",
-  "mesh": "ArmoredTails\\tailadaman.nif",
+  "mesh": "ArmoredTails\\tailsteel_gnd.nif",
   "icon": "a\\ArmoredTails\\adaman.dds"
  },
  {
@@ -1770,7 +1770,7 @@
    "flags": 0
   },
   "name": "Her Hand Tailguard",
-  "mesh": "ArmoredTails\\tailalma.nif",
+  "mesh": "ArmoredTails\\tailalma_gnd.nif",
   "icon": "a\\ArmoredTails\\alma.dds"
  },
  {
@@ -1802,7 +1802,7 @@
    "flags": 0
   },
   "name": "Armun-An Bonemold Tailguard",
-  "mesh": "ArmoredTails\\tailarmunan.nif",
+  "mesh": "ArmoredTails\\tarmunan_gnd.nif",
   "icon": "a\\ArmoredTails\\armanan.dds"
  },
  {
@@ -1866,7 +1866,7 @@
    "flags": 0
   },
   "name": "Bonemold Tailguard",
-  "mesh": "ArmoredTails\\tailbonemold.nif",
+  "mesh": "ArmoredTails\\tbmold_gnd.nif",
   "icon": "a\\ArmoredTails\\bonemold.dds"
  },
  {
@@ -1898,7 +1898,7 @@
    "flags": 0
   },
   "name": "Telvanni Cephalopod Tailguard",
-  "mesh": "ArmoredTails\\tailceph.nif",
+  "mesh": "ArmoredTails\\tailceph_gnd.nif",
   "icon": "a\\ArmoredTails\\ceph.dds"
  },
  {
@@ -1930,7 +1930,7 @@
    "flags": 0
   },
   "name": "Imperial Chain Tailguard",
-  "mesh": "ArmoredTails\\tailchain.nif",
+  "mesh": "ArmoredTails\\tailchain_gnd.nif",
   "icon": "a\\ArmoredTails\\chain.dds"
  },
  {
@@ -1962,7 +1962,7 @@
    "flags": 0
   },
   "name": "Chitin Tailguard",
-  "mesh": "ArmoredTails\\tailchitin.nif",
+  "mesh": "ArmoredTails\\tchitin_gnd.nif",
   "icon": "a\\ArmoredTails\\chitin.dds"
  },
  {
@@ -1994,7 +1994,7 @@
    "flags": 0
   },
   "name": "Chuzei Bonemold Tail",
-  "mesh": "ArmoredTails\\tailchuzei.nif",
+  "mesh": "ArmoredTails\\tailchuzei_gnd.nif",
   "icon": "a\\ArmoredTails\\chuzei.dds"
  },
  {
@@ -2026,7 +2026,7 @@
    "flags": 0
   },
   "name": "Daedric Tailguard",
-  "mesh": "ArmoredTails\\taildaedric.nif",
+  "mesh": "ArmoredTails\\tdaedric_gnd.nif",
   "icon": "a\\ArmoredTails\\daedric.dds"
  },
  {
@@ -2058,7 +2058,7 @@
    "flags": 0
   },
   "name": "Dark Brotherhood Tailguard",
-  "mesh": "ArmoredTails\\taildb.nif",
+  "mesh": "ArmoredTails\\taildb_gnd.nif",
   "icon": "a\\ArmoredTails\\darkbro.dds"
  },
  {
@@ -2090,7 +2090,7 @@
    "flags": 0
   },
   "name": "Dreugh Tailguard",
-  "mesh": "ArmoredTails\\taildreugh.nif",
+  "mesh": "ArmoredTails\\taildre_gnd.nif",
   "icon": "a\\ArmoredTails\\dreugh.dds"
  },
  {
@@ -2122,7 +2122,7 @@
    "flags": 0
   },
   "name": "Telvanni Dust Adept Tailguard",
-  "mesh": "ArmoredTails\\taildust.nif",
+  "mesh": "ArmoredTails\\taildust_gnd.nif",
   "icon": "a\\ArmoredTails\\dust.dds"
  },
  {
@@ -2154,7 +2154,7 @@
    "flags": 0
   },
   "name": "Dwemer Tailguard",
-  "mesh": "ArmoredTails\\taildwemer.nif",
+  "mesh": "ArmoredTails\\tdwemer_gnd.nif",
   "icon": "a\\ArmoredTails\\dwemer.dds"
  },
  {
@@ -2186,7 +2186,7 @@
    "flags": 0
   },
   "name": "Ebony Tailguard",
-  "mesh": "ArmoredTails\\tailebony.nif",
+  "mesh": "ArmoredTails\\tebony_gnd.nif",
   "icon": "a\\ArmoredTails\\ebony.dds"
  },
  {
@@ -2218,7 +2218,7 @@
    "flags": 0
   },
   "name": "Gah-julan Bonemold Tailguard",
-  "mesh": "ArmoredTails\\tailgahjulan.nif",
+  "mesh": "ArmoredTails\\tgahjulan_gnd.nif",
   "icon": "a\\ArmoredTails\\gahjulan.dds"
  },
  {
@@ -2250,7 +2250,7 @@
    "flags": 0
   },
   "name": "Glass Tailguard",
-  "mesh": "ArmoredTails\\tailglass.nif",
+  "mesh": "ArmoredTails\\tglass_gnd.nif",
   "icon": "a\\ArmoredTails\\glass.dds"
  },
  {
@@ -2282,7 +2282,7 @@
    "flags": 0
   },
   "name": "Gold Tailguard",
-  "mesh": "ArmoredTails\\tailgold.nif",
+  "mesh": "ArmoredTails\\tailgold_gnd.nif",
   "icon": "a\\ArmoredTails\\gold.dds"
  },
  {
@@ -2314,7 +2314,7 @@
    "flags": 0
   },
   "name": "Royal Guard Tailguard",
-  "mesh": "ArmoredTails\\tailhels.nif",
+  "mesh": "ArmoredTails\\tailhels_gnd.nif",
   "icon": "a\\ArmoredTails\\helseth.dds"
  },
  {
@@ -2346,7 +2346,7 @@
    "flags": 0
   },
   "name": "Ice Tailguard",
-  "mesh": "ArmoredTails\\tailice.nif",
+  "mesh": "ArmoredTails\\tailice_gnd.nif",
   "icon": "a\\ArmoredTails\\ice.dds"
  },
  {
@@ -2378,7 +2378,7 @@
    "flags": 0
   },
   "name": "Imperial Steel Tailguard",
-  "mesh": "ArmoredTails\\tailimperial.nif",
+  "mesh": "ArmoredTails\\tailimp_gnd.nif",
   "icon": "a\\ArmoredTails\\imperial.dds"
  },
  {
@@ -2410,7 +2410,7 @@
    "flags": 0
   },
   "name": "Indoril Tailguard",
-  "mesh": "ArmoredTails\\tailindoril.nif",
+  "mesh": "ArmoredTails\\tlindoril_gnd.nif",
   "icon": "a\\ArmoredTails\\indoril.dds"
  },
  {
@@ -2442,7 +2442,7 @@
    "flags": 0
   },
   "name": "Iron Tailguard",
-  "mesh": "ArmoredTails\\tailiron.nif",
+  "mesh": "ArmoredTails\\tailiron_gnd.nif",
   "icon": "a\\ArmoredTails\\iron.dds"
  },
  {
@@ -2474,7 +2474,7 @@
    "flags": 0
   },
   "name": "Telvanni Mole Crab Tailguard",
-  "mesh": "ArmoredTails\\tailmole.nif",
+  "mesh": "ArmoredTails\\tailmole_gnd.nif",
   "icon": "a\\ArmoredTails\\mole.dds"
  },
  {
@@ -2506,7 +2506,7 @@
    "flags": 0
   },
   "name": "Netch Tailguard",
-  "mesh": "ArmoredTails\\tailnetch.nif",
+  "mesh": "ArmoredTails\\tailnetch_gnd.nif",
   "icon": "a\\ArmoredTails\\netch.dds"
  },
  {
@@ -2538,7 +2538,7 @@
    "flags": 0
   },
   "name": "Nordic Tailguard",
-  "mesh": "ArmoredTails\\tailnord.nif",
+  "mesh": "ArmoredTails\\tailnord_gnd.nif",
   "icon": "a\\ArmoredTails\\nordic.dds"
  },
  {
@@ -2570,7 +2570,7 @@
    "flags": 0
   },
   "name": "Orcish Tailguard",
-  "mesh": "ArmoredTails\\tailorcish.nif",
+  "mesh": "ArmoredTails\\tailorcish_gnd.nif",
   "icon": "a\\ArmoredTails\\orc.dds"
  },
  {
@@ -2602,7 +2602,7 @@
    "flags": 0
   },
   "name": "Imperial Dragonscale Tailguard",
-  "mesh": "ArmoredTails\\tailscale.nif",
+  "mesh": "ArmoredTails\\tailscale_gnd.nif",
   "icon": "a\\ArmoredTails\\scale.dds"
  },
  {
@@ -2634,7 +2634,7 @@
    "flags": 0
   },
   "name": "Steel Tailguard",
-  "mesh": "ArmoredTails\\tailsteel.nif",
+  "mesh": "ArmoredTails\\tailsteel_gnd.nif",
   "icon": "a\\ArmoredTails\\steel.dds"
  },
  {
@@ -2666,7 +2666,7 @@
    "flags": 0
   },
   "name": "Imperial Templar Tailguard",
-  "mesh": "ArmoredTails\\tailtemplar.nif",
+  "mesh": "ArmoredTails\\tailtem_gnd.nif",
   "icon": "a\\ArmoredTails\\templar.dds"
  },
  {
@@ -2698,7 +2698,7 @@
    "flags": 0
   },
   "name": "Redoran Watchman's Tailguard",
-  "mesh": "ArmoredTails\\tailwatch.nif",
+  "mesh": "ArmoredTails\\tailwathc_gnd.nif",
   "icon": "a\\ArmoredTails\\watch.dds"
  },
  {
@@ -2730,7 +2730,7 @@
    "flags": 0
   },
   "name": "Snow Wolf Tailguard",
-  "mesh": "ArmoredTails\\tailwolf.nif",
+  "mesh": "ArmoredTails\\tailwolf_gnd.nif",
   "icon": "a\\ArmoredTails\\wolf.dds"
  },
  {
@@ -2822,7 +2822,7 @@
    "flags": 0
   },
   "name": "Fannypack 1",
-  "mesh": "frummyonda\\fy_fannypack_b.nif",
+  "mesh": "frummyonda\\fy_fannypack_g.nif",
   "icon": "frummyonda\\fy_fannypack.dds"
  },
  {
@@ -2854,7 +2854,7 @@
    "flags": 0
   },
   "name": "Fannypack 2",
-  "mesh": "frummyonda\\fy_fannypack_l.nif",
+  "mesh": "frummyonda\\fy_fannypack_g.nif",
   "icon": "frummyonda\\fy_fannypack.dds"
  },
  {
@@ -2886,7 +2886,7 @@
    "flags": 0
   },
   "name": "Fannypack 3",
-  "mesh": "frummyonda\\fy_fannypack_r.nif",
+  "mesh": "frummyonda\\fy_fannypack_g.nif",
   "icon": "frummyonda\\fy_fannypack.dds"
  },
  {
@@ -2918,7 +2918,7 @@
    "flags": 0
   },
   "name": "Fannypack with Pouches",
-  "mesh": "frummyonda\\fy_fpackpouch.nif",
+  "mesh": "frummyonda\\fy_fannypack_g.nif",
   "icon": "frummyonda\\fy_fannypack.dds"
  },
  {
@@ -2950,7 +2950,7 @@
    "flags": 0
   },
   "name": "Fannypack with Thigh Bag 1",
-  "mesh": "frummyonda\\fy_fpktbg_l.nif",
+  "mesh": "frummyonda\\fy_waistbag_g.nif",
   "icon": "frummyonda\\fy_fpktbg.dds"
  },
  {
@@ -2982,7 +2982,7 @@
    "flags": 0
   },
   "name": "Fannypack with Thigh Bag 2",
-  "mesh": "frummyonda\\fy_fpktbg_r.nif",
+  "mesh": "frummyonda\\fy_waistbag_g.nif",
   "icon": "frummyonda\\fy_fpktbg.dds"
  },
  {
@@ -3014,7 +3014,7 @@
    "flags": 0
   },
   "name": "Satchel 1",
-  "mesh": "frummyonda\\fy_satchel_f.nif",
+  "mesh": "frummyonda\\fy_satchel_g.nif",
   "icon": "frummyonda\\fy_satchel.dds"
  },
  {
@@ -3046,7 +3046,7 @@
    "flags": 0
   },
   "name": "Satchel 2",
-  "mesh": "frummyonda\\fy_satchel_m.nif",
+  "mesh": "frummyonda\\fy_satchel_g.nif",
   "icon": "frummyonda\\fy_satchel.dds"
  },
  {
@@ -3078,7 +3078,7 @@
    "flags": 0
   },
   "name": "Thigh Bag 1",
-  "mesh": "frummyonda\\fy_thighbag_l.nif",
+  "mesh": "frummyonda\\fy_waistbag_g.nif",
   "icon": "frummyonda\\fy_thighbag.dds"
  },
  {
@@ -3110,7 +3110,7 @@
    "flags": 0
   },
   "name": "Thigh Bag 2",
-  "mesh": "frummyonda\\fy_thighbag_r.nif",
+  "mesh": "frummyonda\\fy_waistbag_g.nif",
   "icon": "frummyonda\\fy_thighbag.dds"
  },
  {
@@ -3142,7 +3142,7 @@
    "flags": 0
   },
   "name": "Utility Belt",
-  "mesh": "frummyonda\\fy_utilitybelt.nif",
+  "mesh": "frummyonda\\fy_utilitybelt_g.nif",
   "icon": "frummyonda\\fy_ubelt.dds"
  },
  {
@@ -3174,7 +3174,7 @@
    "flags": 0
   },
   "name": "Waist Bag 1",
-  "mesh": "frummyonda\\fy_waistbag_b.nif",
+  "mesh": "frummyonda\\fy_waistbag_g.nif",
   "icon": "frummyonda\\fy_thighbag.dds"
  },
  {
@@ -3206,7 +3206,7 @@
    "flags": 0
   },
   "name": "Waist Bag 2",
-  "mesh": "frummyonda\\fy_waistbag_l.nif",
+  "mesh": "frummyonda\\fy_waistbag_g.nif",
   "icon": "frummyonda\\fy_thighbag.dds"
  },
  {
@@ -3238,7 +3238,7 @@
    "flags": 0
   },
   "name": "Waist Bag 3",
-  "mesh": "frummyonda\\fy_waistbag_r.nif",
+  "mesh": "frummyonda\\fy_waistbag_g.nif",
   "icon": "frummyonda\\fy_thighbag.dds"
  },
  {
@@ -3270,7 +3270,7 @@
    "flags": 0
   },
   "name": "Wearable Ashlander Lantern 1",
-  "mesh": "l\\light_ashl_lantern_01.nif",
+  "mesh": "l\\ash1_gnd.nif",
   "icon": "lanterns\\ash1.dds"
  },
  {
@@ -3302,7 +3302,7 @@
    "flags": 0
   },
   "name": "Wearable Ashlander Lantern 2",
-  "mesh": "l\\light_ashl_lantern_02.nif",
+  "mesh": "l\\ash2_gnd.nif",
   "icon": "lanterns\\ash2.dds"
  },
  {
@@ -3334,7 +3334,7 @@
    "flags": 0
   },
   "name": "Wearable Ashlander Lantern 3",
-  "mesh": "l\\light_ashl_lantern_03.nif",
+  "mesh": "l\\ash3_gnd.nif",
   "icon": "lanterns\\ash3.dds"
  },
  {
@@ -3366,7 +3366,7 @@
    "flags": 0
   },
   "name": "Wearable Ashlander Lantern 4",
-  "mesh": "l\\light_ashl_lantern_04.nif",
+  "mesh": "l\\ash4_gnd.nif",
   "icon": "lanterns\\ash4.dds"
  },
  {
@@ -3398,7 +3398,7 @@
    "flags": 0
   },
   "name": "Wearable Ashlander Lantern 5",
-  "mesh": "l\\light_ashl_lantern_05.nif",
+  "mesh": "l\\ash5_gnd.nif",
   "icon": "lanterns\\ash5.dds"
  },
  {
@@ -3430,7 +3430,7 @@
    "flags": 0
   },
   "name": "Wearable Ashlander Lantern 6",
-  "mesh": "l\\light_ashl_lantern_06.nif",
+  "mesh": "l\\ash6_gnd.nif",
   "icon": "lanterns\\ash6.dds"
  },
  {
@@ -3462,7 +3462,7 @@
    "flags": 0
   },
   "name": "Wearable Ashlander Lantern 7",
-  "mesh": "l\\light_ashl_lantern_07.nif",
+  "mesh": "l\\ash7_gnd.nif",
   "icon": "lanterns\\ash7.dds"
  },
  {

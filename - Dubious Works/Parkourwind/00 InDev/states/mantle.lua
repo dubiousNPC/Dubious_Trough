@@ -224,11 +224,10 @@ function MantleState:update(dt, syncData, inputData)
     -- truncated phase 2 leaves the player floating at the wall face
     -- instead of on top of the ledge.
     if timeInState >= totalDuration + 0.06 then
-        -- Momentum preservation: holding forward hands back to Sprint,
-        -- which immediately bounces to Idle on its own if the sprint key
-        -- isn't actually held - see states/sprint.lua.
+        -- Momentum preservation: movement is engine-driven,
+        -- so returning to Idle preserves whatever the player was doing.
         if inputData.moveVector.y > 0 then
-            return "Sprint"
+            return "Idle"
         else
             return "Idle"
         end

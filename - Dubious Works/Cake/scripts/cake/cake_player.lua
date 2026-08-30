@@ -85,8 +85,7 @@ local function reconcile()
     local lost = false
     for category, baseId in pairs(worn) do
         local entry = CAKE.get(baseId)
-        local ok, count = pcall(function() return inv:countOf(entry and entry.eq or '') end)
-        if not entry or not ok or (count or 0) < 1 then
+        if not entry or inv:countOf(entry.eq) < 1 then
             worn[category] = nil
             lost = true
         end
@@ -101,8 +100,7 @@ end
 local function probeBones()
     local found = {}
     for bone in pairs(CAKE.allBones) do
-        local ok, has = pcall(anim.hasBone, self, bone)
-        found[bone] = (ok and has) or false
+        found[bone] = anim.hasBone(self, bone)
     end
     boneCache = found
     return found
@@ -131,7 +129,8 @@ end
 
 local function detachAll()
     for _, cat in pairs(CAKE.CATEGORIES) do
-        pcall(anim.removeVfx, self, cat.vfxId)
+        -- removeVfx on an id that was never added is a no-op, not an error.
+        anim.removeVfx(self, cat.vfxId)
     end
 end
 
@@ -167,13 +166,20 @@ local function refresh(isRetry)
         if not bone then
             retryNeeded = true
         else
-            local ok = pcall(anim.addVfx, self, entry.model, {
-                vfxId           = cat.vfxId,
-                boneName        = bone,
-                loop            = true,
-                useAmbientLight = false,
-            })
-            if not ok then retryNeeded = true end
+            -- Resolved from the record, not from entry.model. See
+            -- CAKE.meshFor: the baked path is the plugin's raw MODL string and
+            -- is not a VFS path.
+            local mesh = CAKE.meshFor(types, entry.eq)
+            if not mesh then
+                print('[CAKE] no model on record ' .. tostring(entry.eq))
+            else
+                anim.addVfx(self, mesh, {
+                    vfxId           = cat.vfxId,
+                    boneName        = bone,
+                    loop            = true,
+                    useAmbientLight = false,
+                })
+            end
         end
     end
 
@@ -220,7 +226,13 @@ local animModule = nil   -- nil = not tried, false = unavailable
 local function playGesture(categoryName)
     if not categoryName or not settings:get('EQUIPANIM') then return end
     if animModule == nil then
+        -- The one pcall kept in this file. cake_anim.lua is documented as
+        -- deletable, so a missing module is a supported state rather than an
+        -- error, and `require` has no non-throwing form.
         local ok, mod = pcall(require, 'scripts.cake.cake_anim')
+        if not ok then
+            print('[CAKE] cake_anim.lua not loadable; equip gestures disabled')
+        end
         animModule = (ok and type(mod) == 'table' and mod) or false
     end
     if animModule then animModule.playEquip(categoryName) end
