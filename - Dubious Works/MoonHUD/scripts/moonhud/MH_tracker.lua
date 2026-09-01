@@ -91,12 +91,15 @@ local function readEngine()
 		return nil
 	end
 
-	local ok, moons = pcall(core.weather.getCurrentMoons, self.cell)
-	if not ok then
-		-- A hard error means the binding is missing or broken; stop trying.
-		engineAvailable = false
-		return nil
-	end
+	-- self.cell is nil while a save is loading, and passing nil is the one call
+	-- shape that could reasonably raise. Checked explicitly rather than wrapped
+	-- in pcall: a genuine engine fault should surface, not be mistaken for
+	-- "the binding is broken, stop trying" and silently demote the mod to its
+	-- fallback tier for the rest of the session.
+	local cell = self.cell
+	if cell == nil then return nil end
+
+	local moons = core.weather.getCurrentMoons(cell)
 	engineAvailable = true
 	if not moons then return nil end   -- inactive cell / no sky. Normal in interiors.
 
@@ -285,7 +288,11 @@ local function current()
 		return lastResult
 	end
 	local r = compute()
-	if r then
+	-- Only cache a reading taken with a live cell. During a load self.cell is
+	-- nil, so the result comes from a fallback tier; caching that would keep the
+	-- fallback in place for the rest of the quarter-hour bucket even once the
+	-- cell is back and the engine could answer exactly.
+	if r and self.cell ~= nil then
 		lastResult, lastResultDay, lastResultHour = r, day, hour
 	end
 	return r

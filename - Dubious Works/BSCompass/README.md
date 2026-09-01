@@ -343,3 +343,31 @@ Add a key to `overlays` and it becomes callable by that name immediately.
 Every one of these is built once at load, hidden, and toggled by visibility and
 alpha. Elements are never created or destroyed while playing, which is what keeps
 this inside the per-frame budget.
+
+---
+
+## On `pcall`
+
+There is none in this mod's code. The audit that removed the last of it is worth
+recording, because most of it was guarding conditions that do not occur.
+
+| Site | Was catching | Now |
+|---|---|---|
+| `ui.texture` × 2 | nothing | direct call, path validated by type |
+| `util.color.hex` | malformed settings input | pattern match on the input |
+
+**The texture ones were guarding a condition that never happens.** A missing file
+is not a Lua error in OpenMW — it logs `Failed to open image: Resource ... not
+found` and carries on. `ui.texture` raises only on a malformed argument, which is
+a bug in this script. Catching it turned a loud, findable failure into a silently
+blank widget, and would have hidden any future change to the binding, which is
+the opposite of compatibility.
+
+**The colour one was guarding something real** — whatever was typed into a text
+field — but a pattern match does the job without also swallowing a genuine fault
+in `util.color`. It now accepts three-digit shorthand as a bonus, and falls back
+to white on anything it cannot parse.
+
+`dev/check_all.sh` covers the replacement: 24 checks on the colour validator,
+including eight malformed inputs.
+

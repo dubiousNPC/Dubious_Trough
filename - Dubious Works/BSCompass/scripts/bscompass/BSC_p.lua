@@ -128,6 +128,22 @@ local DEG_PER_RAD = 180 / math.pi
 --------------------------------------------------------------------------------
 -- Atlas
 --------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Texture paths
+--------------------------------------------------------------------------------
+-- ui.texture is called directly, not through pcall. A missing file is not an
+-- error: OpenMW logs "Failed to open image: Resource ... not found" and carries
+-- on. The only way ui.texture raises is a malformed argument -- a non-string
+-- path, or none at all -- which is a bug in this script, and swallowing it would
+-- turn a loud, findable failure into a silently blank widget. It would also hide
+-- a future change to the binding, which is the opposite of compatibility.
+--
+-- So the one thing worth checking is checked explicitly, and anything else is
+-- allowed to raise.
+local function validPath(path)
+	return type(path) == 'string' and path ~= ''
+end
+
 
 -- Resolved geometry for whichever atlas is selected. Custom reads the manual
 -- settings; a preset supplies its own so you cannot mismatch frames and columns.
@@ -221,15 +237,21 @@ function rebuildTiles()
 	local cell, cols, count = geo.cell, geo.cols, geo.frames
 
 	tiles = {}
+	if not validPath(geo.path) then
+		-- Nothing to cut. Leave the array empty; the widget draws nothing and the
+		-- reason is visible in the settings rather than buried in a log.
+		tileCount = 0
+		currentTile = -1
+		return
+	end
 	for i = 0, count - 1 do
 		local row = math.floor(i / cols)
 		local col = i % cols
-		local ok, tex = pcall(ui.texture, {
+		tiles[i + 1] = ui.texture {
 			path   = geo.path,
 			offset = v2(col * cell, row * cell),
 			size   = v2(cell, cell),
-		})
-		tiles[i + 1] = ok and tex or nil
+		}
 	end
 	tileCount = count
 	currentTile = -1        -- force the next frame to apply a texture
@@ -390,10 +412,8 @@ function createCompassHud()
 	end
 
 	local function staticLayer(name, path, w, h, x, y, tint, alpha)
-		if path == nil or path == '' then return nil end
-		local ok, tex = pcall(ui.texture, { path = path })
-		if not ok then return nil end
-		return imageLayer(name, tex, w, h, x, y, tint, alpha)
+		if not validPath(path) then return nil end
+		return imageLayer(name, ui.texture { path = path }, w, h, x, y, tint, alpha)
 	end
 
 	compassImage = imageLayer('compassImage', tiles[1],

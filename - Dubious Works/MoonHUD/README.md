@@ -338,3 +338,43 @@ are the usual victims.
 
 **Triangle layouts.** The Layout dropdown only listed Vertical and Horizontal, so
 the triangle modes the widget already supported could not be selected.
+
+---
+
+## On `pcall`
+
+There is none in this mod's code. The audit that removed the last of it is worth
+recording, because most of it was guarding conditions that do not occur.
+
+| Site | Was catching | Now |
+|---|---|---|
+| `ui.texture` × 3 | nothing | direct call, path validated by type |
+| `util.color.hex` | malformed settings input | pattern match on the input |
+| `core.weather.getCurrentMoons` | a nil cell during load | explicit `self.cell` check |
+
+**The texture ones were guarding a condition that never happens.** A missing file
+is not a Lua error in OpenMW — it logs `Failed to open image: Resource ... not
+found` and carries on. `ui.texture` raises only on a malformed argument, which is
+a bug in this script. Catching it turned a loud, findable failure into a silently
+blank widget, and would have hidden any future change to the binding, which is
+the opposite of compatibility.
+
+**The colour one was guarding something real** — whatever was typed into a text
+field — but a pattern match does the job without also swallowing a genuine fault
+in `util.color`. It now accepts three-digit shorthand as a bonus, and falls back
+to white on anything it cannot parse.
+
+**The tracker one was the worst of them.** It treated *any* error from
+`getCurrentMoons` as "the binding is broken" and permanently demoted the mod to
+its fallback tier for the rest of the session. The one call shape that could
+plausibly raise is a nil cell, which happens while a save loads, so that is now
+checked directly.
+
+Removing it exposed a bug the `pcall` had been hiding: a reading taken with a nil
+cell was being cached, so the fallback stayed in place for up to fifteen in-game
+minutes after the cell came back. Readings are now only cached when the cell is
+live.
+
+`dev/check_all.sh` covers both replacements — 24 checks on the colour validator
+including eight malformed inputs, and 7 on the nil-cell guard including that the
+engine tier recovers afterwards.

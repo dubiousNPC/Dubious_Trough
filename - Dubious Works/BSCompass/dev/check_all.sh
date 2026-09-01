@@ -9,6 +9,12 @@ echo "--- dev/test_heading.lua"
 "$LUA" dev/test_heading.lua >/tmp/bs_out 2>&1 || fail=1
 tail -1 /tmp/bs_out
 
+echo "--- colour validator (replaced a pcall)"
+out=$(API_SCRIPT=dev/test_colour.lua "$LUA" dev/load_check.lua . \
+    scripts/bscompass/BSC_p.lua 2>&1)
+echo "$out" | grep -E "checks, . failures" || true
+last=$(echo "$out" | tail -1); echo "  $last"; [ "$last" = OK ] || fail=1
+
 echo "--- bundled renderers (MENU scripts)"
 out=$("$LUA" dev/load_check.lua . \
     scripts/SuperSettingsRenderers/SuperSlider6.lua \

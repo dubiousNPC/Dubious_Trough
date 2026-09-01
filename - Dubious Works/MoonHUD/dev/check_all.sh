@@ -9,6 +9,18 @@ run() { echo "--- $*"; "$@" >/tmp/mh_out 2>&1 || fail=1; tail -1 /tmp/mh_out; }
 run "$LUA" dev/test_tracker.lua
 run "$LUA" dev/test_presets.lua
 
+echo "--- colour validator (replaced a pcall)"
+out=$(API_SCRIPT=dev/test_colour.lua "$LUA" dev/load_check.lua . \
+    scripts/moonhud/MH_tracker.lua 2>&1)
+echo "$out" | grep -E "checks, . failures" || true
+last=$(echo "$out" | tail -1); echo "  $last"; [ "$last" = OK ] || fail=1
+
+echo "--- nil-cell guard (replaced a pcall)"
+out=$(API_SCRIPT=dev/test_nocell.lua "$LUA" dev/load_check.lua . \
+    scripts/moonhud/MH_tracker.lua 2>&1)
+echo "$out" | grep -E "checks, . failures" || true
+last=$(echo "$out" | tail -1); echo "  $last"; [ "$last" = OK ] || fail=1
+
 echo "--- bundled renderers (MENU scripts)"
 out=$("$LUA" dev/load_check.lua . \
     scripts/SuperSettingsRenderers/SuperSlider6.lua \

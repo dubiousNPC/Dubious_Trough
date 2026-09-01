@@ -45,6 +45,22 @@ local saveData = {}
 --------------------------------------------------------------------------------
 -- Atlas
 --------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Texture paths
+--------------------------------------------------------------------------------
+-- ui.texture is called directly, not through pcall. A missing file is not an
+-- error: OpenMW logs "Failed to open image: Resource ... not found" and carries
+-- on. The only way ui.texture raises is a malformed argument -- a non-string
+-- path, or none at all -- which is a bug in this script, and swallowing it would
+-- turn a loud, findable failure into a silently blank widget. It would also hide
+-- a future change to the binding, which is the opposite of compatibility.
+--
+-- So the one thing worth checking is checked explicitly, and anything else is
+-- allowed to raise.
+local function validPath(path)
+	return type(path) == 'string' and path ~= ''
+end
+
 
 -- One ui.texture per (moon, phase index), cut out of the sheet by offset.
 -- Cached because ui.texture registers a resource each call.
@@ -59,12 +75,12 @@ local function atlasTexture(moonName, phaseIndex)
 	local id = path .. '|' .. cell .. '|' .. row .. '|' .. phaseIndex
 	if atlasCache[id] then return atlasCache[id] end
 
-	local ok, tex = pcall(ui.texture, {
+	if not validPath(path) then return nil end
+	local tex = ui.texture {
 		path   = path,
 		offset = v2(phaseIndex * cell, row * cell),
 		size   = v2(cell, cell),
-	})
-	if not ok then return nil end
+	}
 	atlasCache[id] = tex
 	return tex
 end
@@ -143,9 +159,8 @@ local function backgroundImage(name, sizeProps)
 	-- what the panel drew before any of these existed. 'Custom' uses the path.
 	local path = C.presetPath(BACKGROUND_PRESET)
 	if path == nil and BACKGROUND_PRESET == 'Custom' then path = BACKGROUND_TEXTURE end
-	if path == nil or path == '' then path = 'black' end
-	local ok, tex = pcall(ui.texture, { path = path })
-	if not ok then tex = ui.texture { path = 'black' } end
+	if not validPath(path) then path = 'black' end
+	local tex = ui.texture { path = path }
 
 	local props = {
 		resource = tex,
@@ -424,9 +439,9 @@ function createMoonHud()
 			position = v2(0, 0),
 		}))
 
-		if CIRCLE_BORDER then
-			local ok, ringTex = pcall(ui.texture, { path = CIRCLE_BORDER_TEXTURE })
-			if ok then
+		if CIRCLE_BORDER and validPath(CIRCLE_BORDER_TEXTURE) then
+			local ringTex = ui.texture { path = CIRCLE_BORDER_TEXTURE }
+			do
 				content:add {
 					type = ui.TYPE.Image,
 					name = 'moonHudRing',

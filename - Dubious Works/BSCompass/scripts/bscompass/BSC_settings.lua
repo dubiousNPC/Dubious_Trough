@@ -508,8 +508,20 @@ local COLOR_KEYS = { COMPASS_TINT = true, HUD_BORDER_COLOR = true,
                      CARDINAL_TINT = true }
 local function normalise(k, v)
 	if COLOR_KEYS[k] and type(v) == 'string' then
-		local ok, c = pcall(util.color.hex, (v:gsub('^#', '')))
-		if ok then return c end
+		-- Validated by pattern rather than caught with pcall. util.color.hex
+		-- raises on anything that is not six hex digits, and this is genuinely
+		-- untrusted -- it is whatever was typed into a text field. But a pcall
+		-- here would also swallow a real fault in util.color, so the input is
+		-- checked directly and the call is left to raise if it ever should.
+		local hex = v:gsub('^#', '')
+		if hex:match('^%x%x%x%x%x%x$') then
+			return util.color.hex(hex)
+		end
+		-- Three-digit shorthand, since the settings text says "hex, no #".
+		local short = hex:match('^(%x%x%x)$')
+		if short then
+			return util.color.hex(short:gsub('(%x)', '%1%1'))
+		end
 		return util.color.rgb(1, 1, 1)
 	end
 	return v

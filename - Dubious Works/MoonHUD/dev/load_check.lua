@@ -396,6 +396,8 @@ for i = 2, #arg do
 	print('--- ' .. scriptPath)
 
 	local ok, result = pcall(realRequire, modName)
+	_G.LOADED = _G.LOADED or {}
+	if ok then _G.LOADED[modName] = result end
 	if not ok then
 		failures = failures + 1
 		print('  LOAD ERROR: ' .. tostring(result))
@@ -458,6 +460,24 @@ if #record.warnings > 0 then
 		if not seen[r] then
 			seen[r] = true
 			print('  ' .. w)
+		end
+	end
+end
+
+-- API_SCRIPT=<path> runs a Lua file after loading, with the stubs in place and
+-- the loaded modules' interfaces available as _G.LOADED. Lets the real interface
+-- be driven without launching the game.
+local apiScript = os.getenv('API_SCRIPT')
+if apiScript then
+	local fn, err = loadfile(apiScript)
+	if not fn then
+		failures = failures + 1
+		print('  API SCRIPT LOAD ERROR: ' .. tostring(err))
+	else
+		local ok, e = pcall(fn)
+		if not ok then
+			failures = failures + 1
+			print('  API SCRIPT ERROR: ' .. tostring(e))
 		end
 	end
 end
