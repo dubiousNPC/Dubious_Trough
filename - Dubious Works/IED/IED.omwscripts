@@ -6,5 +6,12 @@
 # affected by.
 PLAYER: scripts/AnimRefresh/AnimRefresh_v1.lua
 
-PLAYER: scripts/show-all-weapons/player.lua
+# Settings. The MENU script declares them, the GLOBAL script owns a storage
+# section local scripts can read, and player.lua relays between the two -- an
+# NPC local script cannot read a player settings section, so the detour is
+# required rather than decorative.
 MENU:   scripts/show-all-weapons/settings.lua
+GLOBAL: scripts/show-all-weapons/global.lua
+
+PLAYER: scripts/show-all-weapons/player.lua
+NPC:    scripts/show-all-weapons/npc.lua

@@ -164,14 +164,18 @@ local function playPose(group, priority, blendMask)
     if not group then return end
     if currentGroup == group then return end -- already playing this pose
 
-    -- pcall, and the play happens regardless of the result. A release that
-    -- raises must never prevent the next pose from starting - that exact
-    -- coupling is what turned a pose leak into a total animation blackout.
-    -- Different group name, so this can never cancel the one we're about to
-    -- start.
-    if currentGroup then
-        pcall(releaseGroup, currentGroup)
-    end
+    -- ORDER MATTERS: bookkeeping first, then start the new pose, then
+    -- release the outgoing one. Nothing here is wrapped in pcall - if
+    -- playBlendedAnimation can raise then the play below raises too, and
+    -- guarding only the release would hide a real fault while leaving the
+    -- pose system half-broken.
+    --
+    -- The ordering gives the same protection structurally: currentGroup is
+    -- already correct and the new pose is already started before the
+    -- release is attempted, so a raise there can neither block the incoming
+    -- pose nor strand currentGroup on a pose that is no longer playing.
+    local outgoing = currentGroup
+    currentGroup = group
 
     I.AnimationController.playBlendedAnimation(group, {
         startKey = "start",
@@ -183,7 +187,12 @@ local function playPose(group, priority, blendMask)
         autoDisable = false,
     })
 
-    currentGroup = group
+    -- Different group name, so this can never end the pose just started.
+    -- The incoming pose holds Weapon priority on the shared bone groups, so
+    -- the outgoing one losing to Default takes effect cleanly.
+    if outgoing then
+        releaseGroup(outgoing)
+    end
 end
 
 -- Full-body pose: overrides locomotion too (includes LowerBody).
@@ -200,13 +209,15 @@ end
 local function stopAnim()
     if not currentGroup then return end
 
-    pcall(releaseGroup, currentGroup)
-
-    -- Cleared UNCONDITIONALLY, even if the release above failed. Leaving a
-    -- stale name here is worse than a leaked pose: every later transition
+    -- Cleared BEFORE the release, not after, and deliberately not guarded.
+    -- A stale name here is worse than a leaked pose: every later transition
     -- would early-return on `currentGroup == group` and no pose would ever
-    -- start again.
+    -- start again. Clearing first removes that failure mode without hiding
+    -- the error, which still propagates to openmw.log where it belongs.
+    local group = currentGroup
     currentGroup = nil
+
+    releaseGroup(group)
 end
 
 -- ==============================================
@@ -280,17 +291,17 @@ end
 -- against exactly the kind of gap that left HANDOFF/FIRING variants out
 -- the first time.
 function Anim.forceReset()
-    -- Each release is guarded individually so one failure can't skip the
-    -- rest of the list, and currentGroup is cleared either way.
-    pcall(releaseGroup, GROUPS.DRAWN)
-    pcall(releaseGroup, GROUPS.HANDOFF)
-    pcall(releaseGroup, GROUPS.HANG_IDLE)
-    pcall(releaseGroup, GROUPS.HANG_UP)
-    pcall(releaseGroup, GROUPS.HANG_DOWN)
-    for _, group in pairs(FIRING_GROUPS) do
-        pcall(releaseGroup, group)
-    end
+    -- Cleared first so the reset is complete even if a release raises.
     currentGroup = nil
+
+    releaseGroup(GROUPS.DRAWN)
+    releaseGroup(GROUPS.HANDOFF)
+    releaseGroup(GROUPS.HANG_IDLE)
+    releaseGroup(GROUPS.HANG_UP)
+    releaseGroup(GROUPS.HANG_DOWN)
+    for _, group in pairs(FIRING_GROUPS) do
+        releaseGroup(group)
+    end
 end
 
 return Anim

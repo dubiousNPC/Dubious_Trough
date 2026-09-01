@@ -24,20 +24,20 @@ local W = types.Weapon.TYPE
 -- different silhouette and most axe meshes look wrong on it. Sharing is the
 -- right call -- it just has to be accounted for downstream.
 local BONE_BY_TYPE = {
-    [W.ShortBladeOneHand] = "Bip01 ShortBladeOneHandSem",
-    [W.LongBladeOneHand]  = "Bip01 LongBladeOneHandSem",
-    [W.LongBladeTwoHand]  = "Bip01 LongBladeTwoCloseSem",
-    [W.BluntOneHand]      = "Bip01 BluntOneHandSem",
-    [W.BluntTwoClose]     = "Bip01 BluntTwoCloseSem",
-    [W.BluntTwoWide]      = "Bip01 BluntTwoWideSem",
-    [W.SpearTwoWide]      = "Bip01 SpearTwoWideSem",
-    [W.AxeOneHand]        = "Bip01 AxeOneHandSem",
-    [W.AxeTwoHand]        = "Bip01 AxeTwoCloseSem",
-    [W.MarksmanBow]       = "Bip01 MarksmanBowSem",
-    [W.MarksmanCrossbow]  = "Bip01 MarksmanCrossbowSem",
-    [W.MarksmanThrown]    = "Bip01 MarksmanThrownSem",
-    [W.Arrow]             = "Bip01 AmmoSem",
-    [W.Bolt]              = "Bip01 AmmoSem",
+    [W.ShortBladeOneHand] = "Bip01 ShortBladeOneHand",
+    [W.LongBladeOneHand]  = "Bip01 LongBladeOneHand",
+    [W.LongBladeTwoHand]  = "Bip01 LongBladeTwoClose",
+    [W.BluntOneHand]      = "Bip01 BluntOneHand",
+    [W.BluntTwoClose]     = "Bip01 BluntTwoClose",
+    [W.BluntTwoWide]      = "Bip01 BluntTwoWide",
+    [W.SpearTwoWide]      = "Bip01 SpearTwoWide",
+    [W.AxeOneHand]        = "Bip01 LongBladeOneHand",
+    [W.AxeTwoHand]        = "Bip01 AxeTwoClose",
+    [W.MarksmanBow]       = "Bip01 MarksmanBow",
+    [W.MarksmanCrossbow]  = "Bip01 MarksmanCrossbow",
+    [W.MarksmanThrown]    = "Bip01 MarksmanThrown",
+    [W.Arrow]             = "Bip01 Ammo",
+    [W.Bolt]              = "Bip01 Ammo",
 }
 
 M.SHIELD_BONE        = "Bip01 AttachShield"

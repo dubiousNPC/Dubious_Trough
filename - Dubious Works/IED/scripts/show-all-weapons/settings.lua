@@ -39,6 +39,13 @@ I.Settings.registerGroup({
     order            = 1,
     settings = {
         {
+            key         = 'SHOWNPCS',
+            name        = 'setting_shownpcs',
+            description = 'setting_shownpcs_desc',
+            default     = true,
+            renderer    = 'checkbox',
+        },
+        {
             key         = 'SHOWWEAPONS',
             name        = 'setting_showweapons',
             description = 'setting_showweapons_desc',
@@ -58,6 +65,18 @@ I.Settings.registerGroup({
             description = 'setting_showammo_desc',
             default     = true,
             renderer    = 'checkbox',
+        },
+        {
+            -- The poll is a string compare against a cached signature and does
+            -- no record or filesystem work, so this is a much smaller dial
+            -- than it looks. Exposed mainly so a very large load order can back
+            -- it off.
+            key         = 'POLLINTERVAL',
+            name        = 'setting_pollinterval',
+            description = 'setting_pollinterval_desc',
+            default     = 0.5,
+            renderer    = 'number',
+            argument    = { min = 0.1, max = 5.0 },
         },
     },
 })

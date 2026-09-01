@@ -86,13 +86,8 @@ local function copyPosition(value)
     if value == nil then
         return nil
     end
-    local okX, x = pcall(function() return value.x end)
-    local okY, y = pcall(function() return value.y end)
-    local okZ, z = pcall(function() return value.z end)
-    if not okX
-        or not okY
-        or not okZ
-        or not finiteNumber(x)
+    local x, y, z = value.x, value.y, value.z
+    if not finiteNumber(x)
         or not finiteNumber(y)
         or not finiteNumber(z)
     then

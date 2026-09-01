@@ -65,8 +65,10 @@ local function inventoryActionHandler(data)
         local itemValue = 0
         local itemName = "Item"
         if item.type and item.type.record then
-            local success, record = pcall(function() return item.type.record(item) end)
-            if success and record then
+            -- Guarded by the `item.type and item.type.record` check above,
+            -- so this is a plain call on a type that advertises the method.
+            local record = item.type.record(item)
+            if record then
                 itemValue = record.value or 0
                 itemName = record.name or itemName
             end
@@ -87,23 +89,23 @@ local function inventoryActionHandler(data)
             -- options.arg: bounty value for theft
             -- options.faction: faction ID string (optional)
             -- options.victim: victim GameObject (optional) - we don't have this for world items
-            local success, result = pcall(function()
-                return I.Crimes.commitCrime(actor, {
-                    type = types.Player.OFFENSE_TYPE.Theft,
-                    arg = itemValue,
-                    faction = factionId,  -- Can be nil, faction ID as string
-                    -- victim is omitted - we don't have the actual NPC GameObject
-                })
-            end)
-            
-            if success then
-                if result and result.wasCrimeSeen then
-                    print("[HOOKSHOT GLOBAL] Theft was witnessed!")
-                else
-                    print("[HOOKSHOT GLOBAL] Theft went unnoticed")
-                end
+            -- Called directly. I.Crimes is a core OpenMW interface, already
+            -- nil-checked above, and a raise here would mean the call itself
+            -- is wrong - which is exactly the kind of fault that needs to
+            -- reach openmw.log rather than be reported as a print and
+            -- swallowed. The item has already been moved at this point, so a
+            -- raise costs the bounty, not the item.
+            local result = I.Crimes.commitCrime(actor, {
+                type = types.Player.OFFENSE_TYPE.Theft,
+                arg = itemValue,
+                faction = factionId,  -- Can be nil, faction ID as string
+                -- victim is omitted - we don't have the actual NPC GameObject
+            })
+
+            if result and result.wasCrimeSeen then
+                print("[HOOKSHOT GLOBAL] Theft was witnessed!")
             else
-                print("[HOOKSHOT GLOBAL] Failed to report crime:", result)
+                print("[HOOKSHOT GLOBAL] Theft went unnoticed")
             end
         end
     end

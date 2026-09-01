@@ -31,28 +31,14 @@
     * Every shield in the inventory attached to the same bone, so three shields
       meant three overlapping meshes in one spot. Capped.
     * The ammo loop was unbounded and relied on a missing bone to stop it.
-
-    CLASHES WITH OPENMW'S NATIVE WEAPON SHEATHING
-    ---------------------------------------------
-    These are the same bones the engine's own sheathing uses, so both can put a
-    mesh on one bone. Two cases were doing exactly that:
-
-    * Occupancy was keyed by weapon TYPE, but bones.lua maps AxeOneHand and
-      LongBladeOneHand onto the same bone (and Arrow/Bolt onto another). An
-      equipped, sheathed longsword plus a carried axe therefore stacked two
-      meshes on `Bip01 LongBladeOneHand`. Keyed by bone now.
-    * The equipped shield was excluded only by record id, so a SECOND, different
-      shield in the pack went onto `Bip01 AttachShield` alongside the engine's.
-
-    The equipped weapon's bone is also claimed only while the weapon is
-    sheathed, which is when the engine actually occupies it.
 ]]
 
-local types = require('openmw.types')
-local vfs   = require('openmw.vfs')
-local anim  = require('openmw.animation')
-local I     = require('openmw.interfaces')
-local bones = require('scripts.show-all-weapons.bones')
+local types   = require('openmw.types')
+local vfs     = require('openmw.vfs')
+local anim    = require('openmw.animation')
+local storage = require('openmw.storage')
+local I       = require('openmw.interfaces')
+local bones   = require('scripts.show-all-weapons.bones')
 
 local M = {}
 
@@ -61,8 +47,25 @@ local M = {}
 -- ---------------------------------------------------------------------------
 
 -- Seconds between change checks. The check itself is cheap (see buildSignature)
--- and a full rebuild only happens when something actually moved.
+-- and a full rebuild only happens when something actually moved. Overridable
+-- from settings; this is the fallback when the global section has not been
+-- seeded yet.
 local POLL_INTERVAL = 0.5
+
+-- Read-only mirror of the settings page. A local script on an NPC cannot read a
+-- player settings section, so global.lua relays them into here, which any
+-- context may read. `nil` means "not seeded yet" and must behave as the
+-- permissive default, not as off.
+local cfg = storage.globalSection('IED_global')
+
+local function enabled(key)
+    return cfg:get(key) ~= false
+end
+
+local function pollInterval()
+    local v = cfg:get('pollInterval')
+    return (type(v) == 'number' and v > 0) and v or POLL_INTERVAL
+end
 
 -- Ammo is one VFX per arrow, attached to "Bip01 Ammo 1", "Bip01 Ammo 2"...
 -- The original looped to the full stack count and relied on the first missing
@@ -104,18 +107,21 @@ local function weaponRecord(item)
     local rid = item.recordId
     local cached = weaponRecCache[rid]
     if cached ~= nil then return cached or nil end
-    local ok, rec = pcall(types.Weapon.record, item)
-    weaponRecCache[rid] = (ok and rec) or false
-    return (ok and rec) or nil
+    -- No pcall: every caller has already established this is a weapon, either
+    -- by taking it from inv:getAll(types.Weapon) or by checking
+    -- objectIsInstance first. record() cannot fail on one.
+    local rec = types.Weapon.record(item)
+    weaponRecCache[rid] = rec or false
+    return rec
 end
 
 local function armorRecord(item)
     local rid = item.recordId
     local cached = armorRecCache[rid]
     if cached ~= nil then return cached or nil end
-    local ok, rec = pcall(types.Armor.record, item)
-    armorRecCache[rid] = (ok and rec) or false
-    return (ok and rec) or nil
+    local rec = types.Armor.record(item)
+    armorRecCache[rid] = rec or false
+    return rec
 end
 
 local function normPath(path)
@@ -131,11 +137,24 @@ local function resolveMesh(model)
     local cached = meshCache[model]
     if cached ~= nil then return cached or nil end
 
+    -- record.model is already a VFS path -- meshes/-prefixed, forward slashes,
+    -- lowercase -- so normPath is a no-op on it. It stays as a guard in case a
+    -- caller ever passes a raw plugin MODL string, which is NOT a VFS path and
+    -- attaches nothing at all if handed to addVfx.
     local path   = normPath(model)
-    local result = path
+    local result = nil
     if path then
         local sheath = path:gsub("%.nif$", "_sh.nif")
-        if vfs.fileExists(sheath) then result = sheath end
+        if vfs.fileExists(sheath) then
+            result = sheath
+        elseif vfs.fileExists(path) then
+            result = path
+        else
+            -- Reported, not swallowed: a record whose mesh is not in the VFS is
+            -- a broken install or a missing master, and it should say so once
+            -- rather than fail invisibly on every rebuild.
+            print("[IED] mesh not in VFS, skipping: " .. tostring(path))
+        end
     end
     meshCache[model] = result or false
     return result
@@ -149,7 +168,8 @@ local activeTags = {}
 
 local function clearVfx(actor)
     for i = 1, #activeTags do
-        pcall(anim.removeVfx, actor, activeTags[i])
+        -- Removing an id that was never added is a no-op, not an error.
+        anim.removeVfx(actor, activeTags[i])
     end
     activeTags = {}
 end
@@ -159,13 +179,16 @@ local function attachVfx(actor, mesh, bone, tag)
     if not anim.hasBone(actor, bone) then return false end
     -- Only the documented options: loop, boneName, particleTextureOverride,
     -- vfxId, useAmbientLight.
-    local ok = pcall(anim.addVfx, actor, mesh, {
+    -- No pcall. The mesh path and bone are both validated above, and a failure
+    -- here means one of those checks is wrong -- which is exactly what must not
+    -- be swallowed. The same pcall around addVfx in CAKE hid a bad mesh path
+    -- for a full session: the mod simply did nothing, silently.
+    anim.addVfx(actor, mesh, {
         boneName        = bone,
         vfxId           = tag,
         loop            = true,
         useAmbientLight = false,
     })
-    if not ok then return false end
     activeTags[#activeTags + 1] = tag
     return true
 end
@@ -179,9 +202,10 @@ local function readState(actor)
     local equippedWeapon, equippedShield
 
     -- getEquipment, NOT equipment. The original called a function that does not
-    -- exist, and the surrounding pcall hid it completely.
-    local ok, slots = pcall(types.Actor.getEquipment, actor)
-    if ok and slots then
+    -- exist, and the surrounding pcall hid it completely -- which is the whole
+    -- argument against the pcall, so it is gone too.
+    local slots = types.Actor.getEquipment(actor)
+    if slots then
         local w = slots[types.Actor.EQUIPMENT_SLOT.CarriedRight]
         if w and types.Weapon.objectIsInstance(w) then
             local rec = weaponRecord(w)
@@ -194,9 +218,7 @@ local function readState(actor)
         end
     end
 
-    local isDrawn = false
-    local sok, stance = pcall(types.Actor.getStance, actor)
-    if sok then isDrawn = (stance == types.Actor.STANCE.Weapon) end
+    local isDrawn = types.Actor.getStance(actor) == types.Actor.STANCE.Weapon
 
     return equippedWeapon, equippedShield, isDrawn
 end
@@ -235,19 +257,19 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
     local equippedShieldId = equippedShield and equippedShield.recordId or nil
 
     -- Occupancy is tracked BY BONE, not by weapon type. Two weapon types share
-    -- `Bip01 LongBladeOneHand` and two more share `Bip01 Ammo`, so a type-keyed
-    -- table let a second mesh land on a bone that was already taken -- an
-    -- equipped longsword sheathed by the engine plus a carried axe from this
-    -- mod, both on the one bone.
+    -- `Bip01 LongBladeOneHand` and two more share `Bip01 Ammo`, so a
+    -- type-keyed table let a second mesh land on a bone that was already
+    -- taken -- an equipped longsword sheathed by the engine plus an inventory
+    -- axe from this mod, both on the same bone.
     local boneTaken     = {}
     local ammoForRanged = {}
     local rangedPresent = {}
     local rangedEquipped = {}
 
-    -- An equipped weapon that is NOT drawn is sitting on its sheath bone, put
-    -- there by OpenMW's own weapon sheathing rather than by this mod. Claim the
-    -- bone so nothing is stacked on top of the engine's mesh. Once drawn the
-    -- weapon moves to the hand and the bone is free again.
+    -- An equipped weapon that is NOT drawn is on its sheath bone -- put there
+    -- by OpenMW's own weapon sheathing, not by this mod. Claim the bone so
+    -- nothing is stacked on top of the engine's mesh. Once drawn, the weapon
+    -- moves to the hand and the bone is free again.
     if equippedWeapon then
         local rec = weaponRecord(equippedWeapon)
         if rec then
@@ -269,20 +291,19 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
             local wt  = rec.type
 
             if AMMO_TYPES[wt] then
-                if types.Actor.hasEquipped(actor, item) then
+                if enabled('showAmmo') and types.Actor.hasEquipped(actor, item) then
                     ammoForRanged[wt] = item
                 end
             else
                 local bone = bones.boneForWeapon(wt)
-                if not boneTaken[bone] and rid ~= equippedWeaponId
+                if enabled('showWeapons') and not boneTaken[bone]
+                   and rid ~= equippedWeaponId
                    and not seen[rid] then
                     seen[rid] = true
                     boneTaken[bone] = true
                     if RANGED_TYPES[wt] then rangedPresent[wt] = true end
                     attachVfx(actor, resolveMesh(rec.model), bone, "saw_w_" .. rid)
                 elseif RANGED_TYPES[wt] then
-                    -- Still counts as owning a bow for quiver purposes even
-                    -- when its bone is already spoken for.
                     rangedPresent[wt] = true
                 end
             end
@@ -314,10 +335,12 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
 
     -- Shields all share one bone. An equipped shield that is not drawn is
     -- already on that bone, placed there by the engine's sheathing, so showing
-    -- a carried shield as well stacks two meshes in one spot. Yield the bone
-    -- entirely in that case; once the shield is drawn it moves to the arm and
-    -- the back is free again.
-    local shieldsShown = (equippedShield and not isDrawn) and MAX_SHIELDS or 0
+    -- an inventory shield as well stacks two meshes in one spot. Yield the
+    -- bone entirely in that case.
+    local shieldsShown = MAX_SHIELDS
+    if enabled('showShields') and not (equippedShield and not isDrawn) then
+        shieldsShown = 0
+    end
     for _, item in ipairs(inv:getAll(types.Armor)) do
         if shieldsShown >= MAX_SHIELDS then break end
         local rid = item.recordId
@@ -337,7 +360,9 @@ end
 -- UPDATE HANDLER
 -- ---------------------------------------------------------------------------
 
-function M.makeUpdateHandler(actor)
+---@param actor any
+---@param isPlayer boolean|nil true for the player script; NPC scripts pass nil
+function M.makeUpdateHandler(actor, isPlayer)
     local timer         = 0
     local lastSignature = nil
     local forceRebuild  = true   -- first pass always builds
@@ -362,8 +387,20 @@ function M.makeUpdateHandler(actor)
 
     return function(dt)
         timer = timer + (dt or 0)
-        if timer < POLL_INTERVAL and not forceRebuild then return end
+        if timer < pollInterval() and not forceRebuild then return end
         timer = 0
+
+        -- NPC display off: strip anything already attached, then idle. Checked
+        -- here rather than in handler() so turning it off clears immediately
+        -- instead of freezing the current meshes in place.
+        if not isPlayer and not enabled('showNpcs') then
+            if lastSignature ~= false then
+                clearVfx(actor)
+                lastSignature = false
+                forceRebuild  = false
+            end
+            return
+        end
 
         if forceRebuild then
             rebuildNow()
@@ -371,8 +408,13 @@ function M.makeUpdateHandler(actor)
         end
 
         local w, s, drawn = readState(actor)
+        -- Settings join the signature, so toggling one rebuilds on the next
+        -- poll without needing its own change subscription in every context.
         local signature = buildSignature(actor,
             w and w.recordId or nil, s and s.recordId or nil, drawn)
+            .. '|' .. tostring(cfg:get('showWeapons'))
+            .. tostring(cfg:get('showShields'))
+            .. tostring(cfg:get('showAmmo'))
         if signature == lastSignature then return end
 
         lastSignature = signature

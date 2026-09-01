@@ -112,18 +112,11 @@ local function isPlayer(object)
     if object == nil then
         return false
     end
+    -- world.players is a core engine list; indexing it and taking its
+    -- length cannot raise, so neither read needs a guard.
     local players = world.players
-    local ok, count = pcall(function()
-        return #players
-    end)
-    if not ok then
-        return false
-    end
-    for index = 1, count do
-        local readOk, player = pcall(function()
-            return players[index]
-        end)
-        if readOk and player == object then
+    for index = 1, #players do
+        if players[index] == object then
             return true
         end
     end
@@ -131,13 +124,9 @@ local function isPlayer(object)
 end
 
 local function objectCell(object)
-    local ok, cell = pcall(function()
-        return object.cell
-    end)
-    if not ok then
-        return nil
-    end
-    return cell
+    -- object is already confirmed to be a player by isPlayer() above, so
+    -- reading .cell is a plain GameObject field access.
+    return object.cell
 end
 
 -- ==============================================
@@ -147,10 +136,8 @@ end
 -- same beam instead of spawning new ones. Multiplayer-safe by construction
 -- even though vanilla OpenMW only ever has one player.
 local function beamIdFor(sender)
-    local ok, id = pcall(function()
-        return sender.id
-    end)
-    if not ok or type(id) ~= "string" then
+    local id = sender.id
+    if type(id) ~= "string" then
         return "dbs_hookshot_rope"
     end
     return "dbs_hookshot_rope_" .. id

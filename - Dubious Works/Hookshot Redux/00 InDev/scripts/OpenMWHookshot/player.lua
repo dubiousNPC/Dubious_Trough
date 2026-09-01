@@ -216,15 +216,11 @@ end
 local function copyVector3(value)
     if value == nil then return nil end
 
-    local ok, result = pcall(function()
-        local x, y, z = value.x, value.y, value.z
-        if not finiteNumber(x) or not finiteNumber(y) or not finiteNumber(z) then
-            return nil
-        end
-        return util.vector3(x, y, z)
-    end)
-    if not ok then return nil end
-    return result
+    local x, y, z = value.x, value.y, value.z
+    if not finiteNumber(x) or not finiteNumber(y) or not finiteNumber(z) then
+        return nil
+    end
+    return util.vector3(x, y, z)
 end
 
 -- The rope interface is registered by a later PLAYER entry in the manifest,
@@ -233,8 +229,8 @@ local function ropeInterfaceMethod(name)
     local visuals = I.DubiousHookshotVisuals
     if visuals == nil then return nil end
 
-    local ok, method = pcall(function() return visuals[name] end)
-    if not ok or type(method) ~= "function" then return nil end
+    local method = visuals[name]
+    if type(method) ~= "function" then return nil end
     return method
 end
 
@@ -249,13 +245,12 @@ end
 -- the single source of truth; the consumer resolves to the same helper, so
 -- the rendered beam still starts exactly where the gameplay says it does.
 local function ropeShoulderOrigin()
-    local ok, position = pcall(U.actorShoulderOrigin, self)
-    local copied = ok and copyVector3(position) or nil
-    if copied then return copied end
-
-    -- Last-resort fallback if the bounds query fails on an odd actor state.
-    -- Matches the helper's own height fraction rather than a flat guess.
-    return self.position + util.vector3(0, 0, U.PLAYER_HEIGHT * 0.81)
+    return copyVector3(U.actorShoulderOrigin(self))
+        -- Fallback only for a malformed vector, not for a raise. The helper
+        -- reads self's own agent bounds and rotation; if that can fail, the
+        -- hookshot has bigger problems than a rope anchor and the error
+        -- should surface rather than be papered over with a guessed offset.
+        or (self.position + util.vector3(0, 0, U.PLAYER_HEIGHT * 0.81))
 end
 
 local function clearRopeState()
@@ -281,9 +276,11 @@ local function endActiveRope()
     if state.rope.active then
         local endRope = ropeInterfaceMethod("endRope")
         if endRope then
-            -- Rope rendering is optional, best-effort output. Its failure may
-            -- never interrupt targeting, physics, animation, or controls.
-            pcall(endRope)
+            -- Called directly. This resolves to THIS MOD's own consumer
+            -- script, not to BeamFX: the cross-mod boundary is downstream in
+            -- beamfx_adapter.lua, which already guards the provider call.
+            -- Wrapping here only hid our own faults a second time.
+            endRope()
         end
     end
     clearRopeState()
@@ -299,18 +296,19 @@ local function publishRope(endPosition)
     local to = copyVector3(endPosition)
     if not from or not to then return end
 
-    pcall(updateRope, from, to)
+    updateRope(from, to)
 end
 
 local function validObjectPosition(object)
     if object == nil then return nil end
 
-    local okValid, isValid = pcall(function() return object:isValid() end)
-    if not okValid or not isValid then return nil end
+    -- isValid() is the API that exists precisely to answer "can I still
+    -- read this object", and it does not raise. Once it passes, reading
+    -- .position is safe, so neither call needs a guard - the grappled
+    -- target being deleted mid-pull is already handled by the check.
+    if not object:isValid() then return nil end
 
-    local okPosition, position = pcall(function() return object.position end)
-    if not okPosition then return nil end
-    return copyVector3(position)
+    return copyVector3(object.position)
 end
 
 local function currentRopeAnchor()

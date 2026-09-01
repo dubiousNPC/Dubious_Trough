@@ -60,8 +60,8 @@ local function getItemName(item)
     if not item then return "Unknown" end
     
     if item.type and item.type.record then
-        local success, record = pcall(function() return item.type.record(item) end)
-        if success and record and record.name then
+        local record = item.type.record(item)
+        if record and record.name then
             return record.name
         end
     end
