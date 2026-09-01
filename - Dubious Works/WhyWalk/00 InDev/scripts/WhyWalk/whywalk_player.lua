@@ -94,21 +94,29 @@ end
 -- Suppresses rider gravity so it stops dragging the rider down between pin
 -- updates -- the artefact both reference mods work around. It does not move
 -- anything; the pin still does the moving.
+--
+-- Applied by modifying the Levitate effect magnitude directly rather than by
+-- adding a spell. The spell route needed a record in the ESP, which meant a
+-- placeholder id that could not resolve, which in turn meant wrapping both
+-- add and remove in pcall to absorb the guaranteed failure -- a pcall standing
+-- in for a missing asset. p37z demonstrates the record-free form; this is that
+-- technique. Cod3x types activeEffects(actor) as taking an openmw.Object and
+-- documents modify(value, effectId) as a permanent magnitude change, so it is
+-- legal on self from a player script.
+--
+-- Symmetric by construction: +1 on mount, -1 on dismount, gated by the
+-- levitationAdded flag so the pair can never drift out of balance and leave a
+-- permanently levitating player.
 
 local function addLevitation()
     if not TUNING.useLevitation or levitationAdded then return end
-    local spells = types.Actor.spells(self)
-    levitationAdded = pcall(spells.add, spells, TUNING.levitationSpellId)
-    if DEBUG and not levitationAdded then
-        print("[WhyWalk] levitation spell '" .. tostring(TUNING.levitationSpellId)
-              .. "' missing; rider gravity will fight the pin")
-    end
+    types.Actor.activeEffects(self):modify(1, core.magic.EFFECT_TYPE.Levitate)
+    levitationAdded = true
 end
 
 local function removeLevitation()
     if not levitationAdded then return end
-    local spells = types.Actor.spells(self)
-    pcall(spells.remove, spells, TUNING.levitationSpellId)
+    types.Actor.activeEffects(self):modify(-1, core.magic.EFFECT_TYPE.Levitate)
     levitationAdded = false
 end
 

@@ -99,49 +99,68 @@ end
 -- RIDER PLACEMENT BACKENDS
 -- ---------------------------------------------------------------------------
 
-local mwGlobals = nil
-local function globalsHandle()
-    if mwGlobals ~= nil then return mwGlobals end
-    local ok, g = pcall(function()
-        return world.mwscript.getGlobalVariables(world.players[1])
-    end)
-    mwGlobals = (ok and g) or false
-    return mwGlobals
+-- Probed once per session, then cached. Whether the ESP's globals exist is a
+-- LOAD-TIME property: if they are absent now they are absent forever, so
+-- re-testing per frame would both waste work and hide the answer.
+--
+-- Note what is and is not tested here. Cod3x documents
+-- world.mwscript.getGlobalVariables(player) as returning MWScriptVariables
+-- with no failure path -- it fetches Morrowind's own global variable table,
+-- which exists whether or not this mod's ESP is loaded. So wrapping THAT call
+-- detects nothing. The real failure is indexing a name the ESP never defined,
+-- which is why the probe reads one of our own names instead.
+local mwBridge = nil
+local function bridgeReady()
+    if mwBridge ~= nil then return mwBridge end
+
+    local g = world.mwscript.getGlobalVariables(world.players[1])
+    local ok = pcall(function() return g[TUNING.mwGlobals.active] end)
+    mwBridge = ok and g or false
+
+    if not mwBridge then
+        print("[WhyWalk] MWScript bridge unavailable ('" .. tostring(TUNING.mwGlobals.active)
+              .. "' not found) -- falling back to the teleport backend."
+              .. " Install the ESP to use the MWScript pin.")
+    end
+    return mwBridge
 end
 
 -- Writes the target into MWScript globals; a compiled MWScript in the ESP
 -- reads them and does the SetPos. Devilish warns that a per-frame Lua player
 -- teleport loop triggers an engine bug involving nearby NPCs, which is why
 -- this is the default path.
+--
+-- Writes bare: bridgeReady() already established that these names resolve, so
+-- an assignment failing here would be a genuine bug worth surfacing rather
+-- than absorbing once per frame.
 local function placeRiderMWScript(pos, yaw)
-    local g = globalsHandle()
+    local g = bridgeReady()
     if not g then return false end
     local names = TUNING.mwGlobals
-    local ok = pcall(function()
-        g[names.active] = 1
-        g[names.x] = pos.x
-        g[names.y] = pos.y
-        g[names.z] = pos.z
-        -- Written unconditionally. The perspective gate belongs in the
-        -- MWScript, where PCGet3rdPerson is free and always correct:
-        --
-        --     player->SetPos X px
-        --     player->SetPos Y py
-        --     player->SetPos Z pz
-        --     if ( PCGet3rdPerson == 1 )
-        --         player->SetAngle Z pa
-        --     endif
-        --
-        -- Degrees, because SetAngle takes degrees.
-        g[names.angle] = math.deg(yaw or 0)
-    end)
-    return ok
+
+    g[names.active] = 1
+    g[names.x] = pos.x
+    g[names.y] = pos.y
+    g[names.z] = pos.z
+    -- Written unconditionally. The perspective gate belongs in the
+    -- MWScript, where PCGet3rdPerson is free and always correct:
+    --
+    --     player->SetPos X px
+    --     player->SetPos Y py
+    --     player->SetPos Z pz
+    --     if ( PCGet3rdPerson == 1 )
+    --         player->SetAngle Z pa
+    --     endif
+    --
+    -- Degrees, because SetAngle takes degrees.
+    g[names.angle] = math.deg(yaw or 0)
+    return true
 end
 
 local function clearRiderMWScript()
-    local g = globalsHandle()
+    local g = bridgeReady()
     if not g then return end
-    pcall(function() g[TUNING.mwGlobals.active] = 0 end)
+    g[TUNING.mwGlobals.active] = 0
 end
 
 local function placeRiderTeleport(player, pos, yaw, firstPerson)
@@ -193,10 +212,15 @@ end
 -- direct heightmap query -- no ray, no collision traversal -- which matters
 -- because this runs every frame while mounted. Learned from the Rideable Silt
 -- Striders mod, which uses it to floor its flight path.
+--
+-- Cod3x documents the cell argument as one "in their exterior world space",
+-- so interiors are the expected failure -- and Cell.isExterior is a documented
+-- field, so that case is checkable outright instead of caught. No pcall: if
+-- getHeightAt throws on a loaded exterior cell that is a bug worth seeing,
+-- not one worth absorbing sixty times a second.
 local function groundZ(pos, cell)
-    local ok, h = pcall(core.land.getHeightAt, util.vector3(pos.x, pos.y, 0), cell)
-    if ok and h then return h end
-    return nil
+    if not (cell and cell.isExterior) then return nil end
+    return core.land.getHeightAt(util.vector3(pos.x, pos.y, 0), cell)
 end
 
 -- ---------------------------------------------------------------------------
@@ -275,7 +299,10 @@ local function doDismount(reason)
         local off = s.mount.position + right * TUNING.dismountClearance
         local gz = groundZ(off, s.mount.cell)
         if gz then off = util.vector3(off.x, off.y, gz + 10) end
-        pcall(function() s.player:teleport(s.player.cell or '', off) end)
+        -- Bare: the enclosing guard already established that both objects are
+        -- valid, so a failure here would be a real bug rather than an
+        -- expected condition.
+        s.player:teleport(s.player.cell or '', off)
     end
 
     if s.player and s.player:isValid() then
@@ -356,8 +383,11 @@ local function onUpdate(dt)
         return
     end
 
-    local healthOk, health = pcall(types.Actor.stats.dynamic.health, s.mount)
-    if healthOk and health and health.current <= 0 then
+    -- Bare: isValid() passed immediately above and the mount was type-checked
+    -- as a creature at mount time. A mount that has stopped having health
+    -- stats is a genuine bug, and swallowing it every frame would hide it.
+    local health = types.Actor.stats.dynamic.health(s.mount)
+    if health and health.current <= 0 then
         doDismount('mount died')
         return
     end
@@ -401,14 +431,13 @@ local function onUpdate(dt)
     -- rather than easing, which would otherwise take seconds to converge.
     local drift = (s.player.position - riderPos):length()
     if drift > TUNING.maxRiderDrift then
-        pcall(function()
-            if s.firstPerson then
-                s.player:teleport(s.player.cell or '', riderPos)
-            else
-                s.player:teleport(s.player.cell or '', riderPos,
-                                  util.transform.rotateZ(s.yaw))
-            end
-        end)
+        -- Bare: both objects were validated at the top of this function.
+        if s.firstPerson then
+            s.player:teleport(s.player.cell or '', riderPos)
+        else
+            s.player:teleport(s.player.cell or '', riderPos,
+                              util.transform.rotateZ(s.yaw))
+        end
     else
         placeRider(s.player, riderPos, s.yaw, s.firstPerson)
     end
@@ -440,7 +469,9 @@ end
 local function onLoad(data)
     session = nil
     lastRiderState = nil
-    mwGlobals = nil
+    -- Re-probe the bridge after a load: the handle is tied to the previous
+    -- game session, and the load order can differ between saves.
+    mwBridge = nil
     if not (data and data.riding) then return end
     if not data.player or not data.player:isValid() then return end
     if not data.mount or not data.mount:isValid() then return end

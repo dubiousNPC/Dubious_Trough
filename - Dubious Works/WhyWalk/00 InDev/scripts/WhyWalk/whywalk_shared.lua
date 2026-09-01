@@ -239,8 +239,13 @@ M.TUNING = {
     -- Levitation removes rider gravity so it stops fighting placement between
     -- pin updates. It does NOT move the player -- nothing in the OpenMW Lua
     -- API parents one object to another, so the pin is still required.
+    --
+    -- Applied by modifying the Levitate effect magnitude directly (see
+    -- addLevitation in whywalk_player.lua), so there is no spell record and
+    -- therefore no id to configure. The former levitationSpellId was a
+    -- placeholder that could never resolve; it has been removed rather than
+    -- left as a field that does nothing.
     useLevitation      = true,
-    levitationSpellId  = "placeholder_whywalk_levitate",   -- PLACEHOLDER
 
     -- Preferred rider-placement backend.
     --   "mwscript" : Lua writes globals, a compiled MWScript does SetPos.
