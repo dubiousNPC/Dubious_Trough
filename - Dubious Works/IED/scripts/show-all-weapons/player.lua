@@ -14,6 +14,7 @@ local settings = storage.playerSection('Settings_ied_main')
 local function push()
     core.sendGlobalEvent('IED_SetSettings', {
         showNpcs     = settings:get('SHOWNPCS')     ~= false,
+        sheathBones  = settings:get('SHEATHBONES')  or 'auto',
         showWeapons  = settings:get('SHOWWEAPONS')  ~= false,
         showShields  = settings:get('SHOWSHIELDS')  ~= false,
         showAmmo     = settings:get('SHOWAMMO')     ~= false,

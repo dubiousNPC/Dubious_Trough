@@ -16,6 +16,7 @@ local state = storage.globalSection('IED_global')
 
 local DEFAULTS = {
     showNpcs     = true,
+    sheathBones  = 'auto',
     showWeapons  = true,
     showShields  = true,
     showAmmo     = true,

@@ -68,14 +68,18 @@ local cfg = storage.globalSection('IED_global')
 -- setting whose whole purpose is "turn this off to save time" must not cost
 -- time to consult.
 local cfgCache = {}
+local cfgGeneration = 0
 
 local function refreshCfgCache()
     cfgCache.showNpcs    = cfg:get('showNpcs')    ~= false
+    cfgCache.sheathBones = cfg:get('sheathBones') or 'auto'
     cfgCache.showWeapons = cfg:get('showWeapons') ~= false
     cfgCache.showShields = cfg:get('showShields') ~= false
     cfgCache.showAmmo    = cfg:get('showAmmo')    ~= false
     local v = cfg:get('pollInterval')
     cfgCache.pollInterval = (type(v) == 'number' and v > 0) and v or POLL_INTERVAL
+    -- Invalidates the cached skeleton probe; see useSemBones.
+    cfgGeneration = cfgGeneration + 1
 end
 
 refreshCfgCache()
@@ -144,6 +148,37 @@ local function armorRecord(item)
     local rec = types.Armor.record(item)
     armorRecCache[rid] = rec or false
     return rec
+end
+
+-- ---------------------------------------------------------------------------
+-- SKELETON SELECTION
+-- ---------------------------------------------------------------------------
+-- 'auto' probes the actor's own skeleton once and caches the answer. Per actor
+-- rather than globally, because a cell can hold a mix: the player on a Sem
+-- skeleton and vanilla NPCs beside them, or the reverse.
+--
+-- hasBone is a real lookup, so it is asked once and only re-asked if the
+-- setting changes -- refreshCfgCache bumps the generation to invalidate.
+local semResolved  = nil
+local semGeneration = -1
+
+local function useSemBones(actor)
+    if semResolved ~= nil and semGeneration == cfgGeneration then
+        return semResolved
+    end
+    local mode = cfgCache.sheathBones or 'auto'
+    if mode == 'standard' then
+        semResolved = false
+    elseif mode == 'sem' then
+        semResolved = true
+    else
+        -- Probe. A failure counts as "no Sem bones", which falls back to the
+        -- standard set: the bones the engine itself uses and the safer guess.
+        local ok, has = pcall(anim.hasBone, actor, bones.SEM_PROBE_BONE)
+        semResolved = (ok and has) or false
+    end
+    semGeneration = cfgGeneration
+    return semResolved
 end
 
 local function normPath(path)
@@ -272,6 +307,7 @@ end
 -- ---------------------------------------------------------------------------
 
 local function handler(actor, equippedWeapon, equippedShield, isDrawn)
+    local useSem = useSemBones(actor)
     clearVfx(actor)
 
     local inv = types.Actor.inventory(actor)
@@ -296,7 +332,7 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
         local rec = weaponRecord(equippedWeapon)
         if rec then
             if not isDrawn then
-                boneTaken[bones.boneForWeapon(rec.type)] = true
+                boneTaken[bones.boneForWeapon(rec.type, useSem)] = true
             end
             if RANGED_TYPES[rec.type] then
                 rangedPresent[rec.type]  = true
@@ -317,7 +353,7 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
                     ammoForRanged[wt] = item
                 end
             else
-                local bone = bones.boneForWeapon(wt)
+                local bone = bones.boneForWeapon(wt, useSem)
                 if enabled('showWeapons') and not boneTaken[bone]
                    and rid ~= equippedWeaponId
                    and not seen[rid] then
@@ -340,7 +376,7 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
            and not (isDrawn and rangedEquipped[rangedType]) then
             local rec = weaponRecord(ammoItem)
             if rec then
-                local baseBone = bones.boneForWeapon(ammoType)
+                local baseBone = bones.boneForWeapon(ammoType, useSem)
                 local mesh     = normPath(rec.model)
                 if baseBone and mesh then
                     local count = math.min(inv:countOf(rec.id), MAX_AMMO_DISPLAY)
@@ -369,7 +405,7 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
         if rid ~= equippedShieldId then
             local rec = armorRecord(item)
             if rec and rec.model and rec.type == types.Armor.TYPE.Shield then
-                if attachVfx(actor, normPath(rec.model), bones.SHIELD_BONE,
+                if attachVfx(actor, normPath(rec.model), bones.shieldBone(useSem),
                              "saw_sh_" .. shieldsShown) then
                     shieldsShown = shieldsShown + 1
                 end

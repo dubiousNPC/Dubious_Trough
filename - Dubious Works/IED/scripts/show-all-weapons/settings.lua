@@ -39,6 +39,20 @@ I.Settings.registerGroup({
     order            = 1,
     settings = {
         {
+            key         = 'SHEATHBONES',
+            name        = 'Sheath bones',
+            description = 'Which skeleton bones sheathed gear attaches to.\n\n'
+                       .. 'Auto: use the Sem bones when the actor\'s skeleton has '
+                       .. 'them, otherwise the standard ones. Detected per actor, '
+                       .. 'so a mix of skeletons in one cell works.\n\n'
+                       .. 'Standard: the bones OpenMW\'s own weapon sheathing uses.\n\n'
+                       .. 'Sem: the "Sem" bones added by semaroBones.nif. Nothing '
+                       .. 'attaches if the skeleton lacks them.',
+            default     = 'auto',
+            renderer    = 'select',
+            argument    = { items = { 'auto', 'standard', 'sem' } },
+        },
+        {
             key         = 'SHOWNPCS',
             name        = 'setting_shownpcs',
             description = 'setting_shownpcs_desc',
