@@ -37,6 +37,7 @@ local types   = require('openmw.types')
 local vfs     = require('openmw.vfs')
 local anim    = require('openmw.animation')
 local storage = require('openmw.storage')
+local async   = require('openmw.async')
 local I       = require('openmw.interfaces')
 local bones   = require('scripts.show-all-weapons.bones')
 
@@ -58,13 +59,34 @@ local POLL_INTERVAL = 0.5
 -- permissive default, not as off.
 local cfg = storage.globalSection('IED_global')
 
+-- Mirrored into plain locals and refreshed on change, rather than read live.
+--
+-- These are on the per-frame path for EVERY actor running this handler, and
+-- pollInterval() in particular was read before anything else -- so with the
+-- NPC display switched off, each NPC still paid a storage lookup every frame
+-- for a feature the player had disabled. A settings read is not free, and a
+-- setting whose whole purpose is "turn this off to save time" must not cost
+-- time to consult.
+local cfgCache = {}
+
+local function refreshCfgCache()
+    cfgCache.showNpcs    = cfg:get('showNpcs')    ~= false
+    cfgCache.showWeapons = cfg:get('showWeapons') ~= false
+    cfgCache.showShields = cfg:get('showShields') ~= false
+    cfgCache.showAmmo    = cfg:get('showAmmo')    ~= false
+    local v = cfg:get('pollInterval')
+    cfgCache.pollInterval = (type(v) == 'number' and v > 0) and v or POLL_INTERVAL
+end
+
+refreshCfgCache()
+cfg:subscribe(async:callback(refreshCfgCache))
+
 local function enabled(key)
-    return cfg:get(key) ~= false
+    return cfgCache[key] ~= false
 end
 
 local function pollInterval()
-    local v = cfg:get('pollInterval')
-    return (type(v) == 'number' and v > 0) and v or POLL_INTERVAL
+    return cfgCache.pollInterval or POLL_INTERVAL
 end
 
 -- Ammo is one VFX per arrow, attached to "Bip01 Ammo 1", "Bip01 Ammo 2"...
@@ -386,14 +408,17 @@ function M.makeUpdateHandler(actor, isPlayer)
     end
 
     return function(dt)
-        timer = timer + (dt or 0)
-        if timer < pollInterval() and not forceRebuild then return end
-        timer = 0
-
-        -- NPC display off: strip anything already attached, then idle. Checked
-        -- here rather than in handler() so turning it off clears immediately
-        -- instead of freezing the current meshes in place.
-        if not isPlayer and not enabled('showNpcs') then
+        -- FIRST, before the timer. With NPC display off this single boolean is
+        -- the entire per-frame cost of this mod on every NPC in the cell --
+        -- no timer arithmetic, no storage read, nothing else reached.
+        --
+        -- It also means turning the setting off clears on the very next frame
+        -- rather than up to one poll interval later.
+        --
+        -- The truly free option is to comment the `NPC:` line out of
+        -- IED.omwscripts, which stops the script existing at all. This is the
+        -- next best thing, and unlike that it can be toggled in-game.
+        if not isPlayer and not cfgCache.showNpcs then
             if lastSignature ~= false then
                 clearVfx(actor)
                 lastSignature = false
@@ -401,6 +426,10 @@ function M.makeUpdateHandler(actor, isPlayer)
             end
             return
         end
+
+        timer = timer + (dt or 0)
+        if timer < pollInterval() and not forceRebuild then return end
+        timer = 0
 
         if forceRebuild then
             rebuildNow()
@@ -412,9 +441,9 @@ function M.makeUpdateHandler(actor, isPlayer)
         -- poll without needing its own change subscription in every context.
         local signature = buildSignature(actor,
             w and w.recordId or nil, s and s.recordId or nil, drawn)
-            .. '|' .. tostring(cfg:get('showWeapons'))
-            .. tostring(cfg:get('showShields'))
-            .. tostring(cfg:get('showAmmo'))
+            .. '|' .. tostring(cfgCache.showWeapons)
+            .. tostring(cfgCache.showShields)
+            .. tostring(cfgCache.showAmmo)
         if signature == lastSignature then return end
 
         lastSignature = signature

@@ -58,7 +58,7 @@ this file about itself, so the pcall had to go too.
 
 ### Kept
 
-**`AnimRefresh_v1.lua` — `pcall(callback, mode, previous)`.** Calls into
+**`AnimRefresh_v2.lua` — `pcall(callback, mode, previous)`.** Calls into
 third-party subscriber code. One subscriber throwing must not stop delivery to
 the others, and the error is printed with the subscriber's key rather than
 swallowed. Isolating a boundary you do not control is the legitimate use.
