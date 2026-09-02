@@ -1,4 +1,4 @@
----@omw-context shared
+---@omw-context none
 --[[
     cake_shared.lua -- single source of truth for CAKE
 

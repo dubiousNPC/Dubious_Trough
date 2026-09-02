@@ -22,7 +22,7 @@ MENU: scripts/cake/cake_settings.lua
 
 GLOBAL: scripts/cake/cake_global.lua
 
-PLAYER: scripts/cake/AnimRefresh_v1.lua
+PLAYER: scripts/cake/AnimRefresh_v2.lua
 PLAYER: scripts/cake/cake_player.lua
 
 NPC: scripts/cake/cake_npc.lua

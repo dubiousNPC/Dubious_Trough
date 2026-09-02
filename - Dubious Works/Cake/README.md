@@ -81,7 +81,7 @@ CAKE/
     cake_npc.lua                         attachment on other actors (NPC)
     cake_settings.lua                    settings page (MENU)
     cake_anim.lua                        optional equip gestures, off by default
-    AnimRefresh_v1.lua                   bundled, version-guarded
+    AnimRefresh_v2.lua                   bundled, version-guarded
   scripts/SuperSettingsRenderers/
     SuperSelect3.lua                     bundled verbatim, optional
   tools/                                 parser, generator, checkers, tests
@@ -94,7 +94,7 @@ CAKE/
 
 ## Bundled libraries
 
-`AnimRefresh_v1.lua` and `SuperSelect3.lua` ship alongside rather than being
+`AnimRefresh_v2.lua` and `SuperSelect3.lua` ship alongside rather than being
 copied into CAKE's own files, the same way SharedRay is bundled.
 
 `SuperSelect3` provides the dropdown for the skeleton setting. It is **optional**:

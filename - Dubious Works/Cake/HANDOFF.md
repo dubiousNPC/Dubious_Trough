@@ -183,7 +183,7 @@ header also records that `types.Actor.equipment` does not exist (it is
 | `cake_npc.lua` | **Rewritten.** One inventory walk on `onActive`, no polling. |
 | `cake_settings.lua` | **Rewritten.** Four live settings, no dead keys. Skeleton options built from `CAKE.SKELETON`. Uses bundled SuperSelect3 with engine `select` fallback. |
 | `cake_anim.lua` | **Fixed.** Was summing `BONE_GROUP` into `blendMask` (=9, wrong bones); now `BLEND_MASK.UpperBody` (=14). Category keys were all OMWFW names and matched nothing; corrected and validated at load. Wired to `EQUIPANIM`. |
-| `AnimRefresh_v1.lua` | Bundled verbatim, version-guarded. |
+| `AnimRefresh_v2.lua` | Bundled verbatim, version-guarded. |
 | `CAKE.omwscripts` | **New** — the original shipped none. Now also loads bundled `SuperSelect3.lua` ahead of the settings page. |
 | `scripts/SuperSettingsRenderers/SuperSelect3.lua` | **Bundled verbatim**, like AnimRefresh. Not modified, not reimplemented. |
 
