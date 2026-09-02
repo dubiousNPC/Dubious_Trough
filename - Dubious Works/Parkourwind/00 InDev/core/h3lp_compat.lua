@@ -1,3 +1,4 @@
+---@omw-context player
 --[[
     core/h3lp_compat.lua
 

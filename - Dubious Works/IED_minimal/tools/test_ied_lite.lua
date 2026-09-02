@@ -1,0 +1,142 @@
+local DIR='iedlite/IED/scripts/show-all-weapons/'
+local fails=0
+local function check(n,c,e) if c then print('  ok   '..n) else fails=fails+1; print('  FAIL '..n..' '..tostring(e or '')) end end
+
+local W={ShortBladeOneHand=0,LongBladeOneHand=1,LongBladeTwoHand=2,BluntOneHand=3,
+         BluntTwoClose=4,BluntTwoWide=5,SpearTwoWide=6,AxeOneHand=7,AxeTwoHand=8,
+         MarksmanBow=9,MarksmanCrossbow=10,MarksmanThrown=11,Arrow=12,Bolt=13}
+local world={vfx={},bones={},equip={},stance=0,cfg={},files={}}
+local inv={}
+local recs={}
+local function mk(id,wtype,model)
+    -- record.model is a VFS path: meshes/-prefixed, forward slashes, lowercase.
+    local m = model or ('meshes/w/'..id..'.nif')
+    recs[id]={id=id,type=wtype,model=m}
+    world.files[m]=true
+    return {recordId=id,count=1,type=nil} end
+
+local WeaponT={TYPE=W, record=function(o) return recs[o.recordId] end,
+               objectIsInstance=function(o) return recs[o.recordId]~=nil end}
+local ArmorT={TYPE={Shield=8}, record=function(o) return recs[o.recordId] end,
+              objectIsInstance=function(o) return recs[o.recordId]~=nil end}
+local invObj={getAll=function(_,t)
+        local out={}
+        for _,i in ipairs(inv) do
+            local r=recs[i.recordId]
+            local isArmor = r and r.type==ArmorT.TYPE.Shield and r.armor
+            if (t==ArmorT and isArmor) or (t==WeaponT and not isArmor) then out[#out+1]=i end
+        end
+        return out end,
+    countOf=function(_,id) local n=0 for _,i in ipairs(inv) do if i.recordId==id then n=n+i.count end end return n end}
+
+package.preload['openmw.types']=function() return {
+    Weapon=WeaponT, Armor=ArmorT,
+    Actor={inventory=function() return invObj end,
+           getEquipment=function() return world.equip end,
+           getStance=function() return world.stance end,
+           STANCE={Nothing=0,Weapon=1,Spell=2},
+           EQUIPMENT_SLOT={CarriedRight='CR',CarriedLeft='CL'},
+           hasEquipped=function(_,it) return world.equip.CR==it or world.equip.CL==it
+               or world.ammoEquipped==it end},
+} end
+-- Every model the mock hands out exists; the _sh variant does not, so
+-- resolveMesh falls through to the base path.
+package.preload['openmw.vfs']=function() return {fileExists=function(p)
+    return world.files[p]==true end} end
+package.preload['openmw.animation']=function() return {
+    hasBone=function(_,b) return world.bones[b]==true end,
+    addVfx=function(_,m,o)
+        assert(type(m)=='string' and m:sub(1,7)=='meshes/' and not m:find('\\',1,true),
+               'addVfx got a non-VFS path: '..tostring(m))
+        assert(world.files[m], 'addVfx got a path not in the VFS: '..tostring(m))
+        if world.vfx[o.boneName] then world.doubled=(world.doubled or 0)+1 end
+        world.vfx[o.boneName]=o.vfxId end,
+    removeVfx=function(_,id) for b,v in pairs(world.vfx) do if v==id then world.vfx[b]=nil end end end,
+} end
+package.preload['openmw.storage']=function() return {
+    globalSection=function() return {get=function(_,k) return world.cfg[k] end} end } end
+package.preload['openmw.interfaces']=function() return {} end
+package.preload['scripts.show-all-weapons.bones']=function() return dofile(DIR..'bones.lua') end
+
+local bones=dofile(DIR..'bones.lua')
+local common=dofile(DIR..'common.lua')
+
+print('bones.lua')
+local shared=bones.sharedBones()
+check('shared bones are computed, not listed',
+      shared['Bip01 LongBladeOneHand']==true and shared['Bip01 Ammo']==true)
+check('unshared bones are not flagged', shared['Bip01 ShortBladeOneHand']==nil)
+
+for _,b in pairs({'Bip01 LongBladeOneHand','Bip01 ShortBladeOneHand','Bip01 AttachShield',
+                  'Bip01 AxeTwoClose','Bip01 MarksmanBow','Bip01 AttachWeapon'}) do
+    world.bones[b]=true
+end
+
+print('weapon sheathing clash')
+-- equipped longsword, sheathed (engine owns Bip01 LongBladeOneHand);
+-- inventory axe maps to the SAME bone
+local sword=mk('longsword',W.LongBladeOneHand)
+local axe  =mk('axe',W.AxeOneHand)
+inv={sword,axe}
+world.equip={CR=sword}; world.stance=0; world.doubled=0; world.vfx={}
+common.handler(nil, sword, nil, false)
+check('inventory axe does NOT stack on the engine-sheathed longsword',
+      (world.doubled or 0)==0 and world.vfx['Bip01 LongBladeOneHand']==nil,
+      'doubled='..tostring(world.doubled))
+
+-- drawn: engine frees the bone, so the axe may use it
+world.stance=1; world.doubled=0; world.vfx={}
+common.handler(nil, sword, nil, true)
+check('once the weapon is drawn the freed bone is reused',
+      world.vfx['Bip01 LongBladeOneHand']=='saw_w_axe',
+      tostring(world.vfx['Bip01 LongBladeOneHand']))
+
+-- two inventory weapons that share a bone
+inv={mk('ls2',W.LongBladeOneHand), mk('axe2',W.AxeOneHand)}
+world.equip={}; world.stance=0; world.doubled=0; world.vfx={}
+common.handler(nil, nil, nil, false)
+check('two carried weapons sharing a bone do not overlap', (world.doubled or 0)==0,
+      'doubled='..tostring(world.doubled))
+
+print('shield sheathing clash')
+local sh1=mk('shield1',nil); recs['shield1'].type=ArmorT.TYPE.Shield; recs['shield1'].armor=true
+local sh2=mk('shield2',nil); recs['shield2'].type=ArmorT.TYPE.Shield; recs['shield2'].armor=true
+inv={sh1,sh2}
+world.equip={CL=sh1}; world.stance=0; world.doubled=0; world.vfx={}
+common.handler(nil, nil, sh1, false)
+check('carried shield does NOT stack on the engine-sheathed one',
+      world.vfx['Bip01 AttachShield']==nil, tostring(world.vfx['Bip01 AttachShield']))
+world.stance=1; world.vfx={}
+common.handler(nil, nil, sh1, true)
+check('with the shield drawn the back is free again',
+      world.vfx['Bip01 AttachShield']~=nil)
+
+print('mesh resolution')
+-- The class of bug that made CAKE silently do nothing: a raw plugin MODL
+-- string (backslashes, mixed case, no meshes/ prefix) handed to addVfx.
+inv={}; world.equip={}; world.vfx={}
+local vfsw = mk('vfsblade', W.LongBladeOneHand, 'meshes/w/w_iron_longsword.nif')
+inv={vfsw}
+common.handler(nil,nil,nil,false)
+check('a VFS model path attaches',
+      world.vfx['Bip01 LongBladeOneHand']~=nil)
+
+-- prefers the _sh sheathed variant when the VFS has one
+world.files['meshes/w/w_iron_longsword_sh.nif']=true
+inv={mk('shblade', W.LongBladeOneHand, 'meshes/w/w_iron_longsword.nif')}
+world.vfx={}
+common.handler(nil,nil,nil,false)
+check('prefers the _sh sheathed variant when it exists',
+      world.vfx['Bip01 LongBladeOneHand']~=nil)
+world.files['meshes/w/w_iron_longsword_sh.nif']=nil
+
+-- a model not in the VFS is reported and skipped, not handed to addVfx
+local ghost = mk('ghostblade', W.LongBladeOneHand, 'meshes/w/ghost.nif')
+world.files['meshes/w/ghost.nif']=nil
+inv={ghost}; world.vfx={}
+local ok = pcall(common.handler, nil, nil, nil, false)
+check('a model missing from the VFS is skipped, not passed to addVfx',
+      ok and next(world.vfx)==nil)
+
+print(fails==0 and 'ALL PASS' or (fails..' FAILURES'))
+if fails>0 then os.exit(1) end

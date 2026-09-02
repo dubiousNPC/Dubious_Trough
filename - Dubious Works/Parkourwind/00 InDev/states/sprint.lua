@@ -1,3 +1,4 @@
+---@omw-context player
 --[[
     states/sprint.lua
 

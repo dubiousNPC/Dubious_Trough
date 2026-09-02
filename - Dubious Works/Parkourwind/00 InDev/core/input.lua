@@ -1,3 +1,4 @@
+---@omw-context player
 --- START OF FILE core/input.lua ---
 
 local input = require('openmw.input')
@@ -5,11 +6,20 @@ local self = require('openmw.self')
 local util = require('openmw.util')
 local I = require('openmw.interfaces')
 
+-- Register the Sprint Action
+input.registerAction {
+    key = "FLOW_Sprint",
+    l10n = "FLOW_AMF",
+    name = "activateInput_name",
+    defaultValue = false,
+    type = input.ACTION_TYPE.Boolean
+}
 
 local InputManager = {
     intents = {
         moveVector = util.vector2(0, 0),
         jump = false,
+        sprint = false,
         crouch = false,
         interact = false,
         -- Edge-triggered (true only on the frame the level signal goes
@@ -19,10 +29,12 @@ local InputManager = {
         -- trigger handler in states/airborne.lua - polled edges could drop a
         -- tap completed inside a single frame.
         jumpPressed = false,
+        sprintPressed = false
     }
 }
 
 local wasJumpHeld = false
+local wasSprintHeld = false
 
 function InputManager.update()
     -- UI Lock Check
@@ -54,28 +66,30 @@ function InputManager.update()
 
     -- Actions
     local jumpHeld = input.isActionPressed(input.ACTION.Jump)
+    local sprintHeld = input.getBooleanActionValue("FLOW_Sprint")
 
     InputManager.intents.jump = jumpHeld
     InputManager.intents.crouch = input.isActionPressed(input.ACTION.Sneak)
     InputManager.intents.interact = input.isActionPressed(input.ACTION.Activate)
+    InputManager.intents.sprint = sprintHeld
 
     InputManager.intents.jumpPressed = jumpHeld and not wasJumpHeld
+    InputManager.intents.sprintPressed = sprintHeld and not wasSprintHeld
 
     wasJumpHeld = jumpHeld
+    wasSprintHeld = sprintHeld
 end
-
--- Key state is tracked from the engine's key events rather than polled, so a
--- rebind applies immediately and costs nothing per frame. Wired to
--- engineHandlers in main.lua.
-
 
 function InputManager.reset()
     InputManager.intents.moveVector = util.vector2(0, 0)
     InputManager.intents.jump = false
+    InputManager.intents.sprint = false
     InputManager.intents.crouch = false
     InputManager.intents.interact = false
     InputManager.intents.jumpPressed = false
+    InputManager.intents.sprintPressed = false
     wasJumpHeld = false
+    wasSprintHeld = false
 end
 
 return InputManager
