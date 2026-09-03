@@ -1,0 +1,54 @@
+Your `.gitignore` file is functional but could be improved in several ways:
+
+## Recommendations
+
+1. **Rename the file correctly** — The file should be named `.gitignore` (with a leading dot), not `gitignore.txt`. GitHub recognizes `.gitignore` as a special file that controls version control behavior.
+
+2. **Add comments for clarity** — Organize patterns into logical sections so future contributors understand why each rule exists.
+
+3. **Refine wildcard patterns** — Your current `*AnimRefresh_v1.lua` will match this file anywhere in the repository. Use more specific patterns if you want to ignore it only in certain directories.
+
+4. **Add common patterns** — For a Lua/Python project, add:
+   - `*.pyc`, `__pycache__/` (Python bytecode)
+   - `*.swp`, `*.swo` (editor temp files)
+   - `.DS_Store` (macOS)
+   - Dependency directories if applicable
+
+5. **Consolidate archive formats** — Group `.7z` and `.zip` files together.
+
+Here's an improved version:
+
+```gitignore name=.gitignore
+# Lua scripts (specific versions/backups)
+*AnimRefresh_v1.lua
+*xhookshot2.kf
+*xhookshot2.nif
+
+# Documentation
+*BARDCRAFT_ASSESSMENT.md
+
+# Directories
+/tools
+/sources
+
+# Compiled archives (mod packages)
+*.7z
+*.zip
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.Python
+
+# Editor & OS
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+```
+
+The key change: **rename to `.gitignore`** so Git actually uses it. The current `gitignore.txt` is just a text file and won't be applied unless you explicitly reference it with `git config`.
