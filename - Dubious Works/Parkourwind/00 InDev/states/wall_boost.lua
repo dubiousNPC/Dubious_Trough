@@ -1,3 +1,4 @@
+---@omw-context player
 --[[
     states/wall_boost.lua
 
@@ -117,14 +118,6 @@ function WallBoostState:enter(syncData)
     })
 end
 
--- [SAFETY] A save taken while the bonus is held would bake it into the
--- savefile permanently - AcrobaticsEnhanced documents hitting exactly this and
--- guards its own spike the same way. Dropping it on save costs nothing: exit()
--- clears it anyway, and the arc is under two seconds.
-function WallBoostState.onSave()
-    applyAcrobatics(false)
-end
-
 function WallBoostState:exit()
     I.Controls.overrideMovementControls(false)
     EngineSync.suspendTeleportDetection(false)
@@ -145,7 +138,7 @@ function WallBoostState:update(dt, syncData, inputData)
     end
 
     if syncData.isGrounded then
-                return "Idle"
+        return "Idle"
     end
 
     -- Still in the air once the arc has been handed back: let Airborne take

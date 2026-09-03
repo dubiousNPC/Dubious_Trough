@@ -1,19 +1,16 @@
+---@omw-context player
 local BaseState = require('states/base_state')
 local core = require('openmw.core')
 local I = require('openmw.interfaces')
 local input = require('openmw.input')
 local async = require('openmw.async')
 local types = require('openmw.types')
-local util = require('openmw.util')
-local nearby = require('openmw.nearby')
 local mwSelf = require('openmw.self')
-local Settings = require('settings')
 local Sensor = require('core/sensor')
 local SensorExt = require('core/optional/sensor_ext')
 local RollState = require('states/roll')
 local InputManager = require('core/input')
 local VaultState = require('states/vault')
-local MantleState = require('states/mantle')
 
 local AirborneState = BaseState.new("Airborne")
 
@@ -61,59 +58,11 @@ local AGILITY_BONUS = 70
 -- How far below hand height the ledge lip may still be and count as
 -- grabbable. Pure forgiveness margin - at 0 the grab can never move the
 -- player downward at all, which reads as slightly too strict in play.
--- How far ABOVE the eventual hang position the player may already be and
--- still be allowed to grab. The gate exists only to stop a grab yanking the
--- player back DOWN onto a ledge they have already cleared - it is not meant
--- to be a height requirement.
---
--- [FIX] The previous form compared the lip against hand height
--- (position.z + GRAB_HEIGHT - 20), i.e. it demanded the lip sit more than 115
--- units above the feet. That is far stricter than the "don't get pulled down"
--- rule it was standing in for, and it silently rejected perfectly good
--- chest-and-head-height ledges. Comparing against the hang position instead
--- expresses the actual intent.
-local LEDGE_MAX_DROP = 50
-
--- Mirrors HANG_OFFSET_Z in states/ledge_hang.lua: how far below the lip the
--- grab actually places the player. If that changes, change this too.
-local LEDGE_HANG_DROP = 125
+local LEDGE_GRAB_TOLERANCE = 20
 
 -- Forward stick/key threshold at the moment of the tap, mirroring
 -- surfAnimations' deadzone treatment of pself.controls.movement.
 local FORWARD_DEADZONE = 0.1
-
--- Height window for arming the roll. Borrowed from AcrobaticsEnhanced, which
--- gates its own roll the same way and states the reason plainly: an arm with
--- no height check "kills the double-tap-jump-early exploit" only if the press
--- has to happen NEAR THE GROUND. FLOW's arm never expires, so without this a
--- single press at the apex of any fall armed the whole descent - no timing
--- skill involved at all.
---
--- A height window is also better than the 1-second timer it effectively
--- replaces: a timer punishes long falls (press too early, lose the attempt),
--- whereas a height gate behaves identically at any fall height because it is
--- measured against the geometry the player is actually approaching.
---
--- Cost is one downward raycast PER PRESS, not per frame.
-local ROLL_HEIGHT_WINDOW = 256.0
-local ROLL_HEIGHT_PROBE = 5000.0
-
--- No pcall: nearby.castRay is a documented, always-present API and a miss is
--- reported as res.hit == false, not an error. Wrapping it would only hide a
--- genuine mistake in the arguments.
-local HEIGHT_RAY_OPTS = {
-    ignore = mwSelf,
-    collisionType = nearby.COLLISION_TYPE.World + nearby.COLLISION_TYPE.HeightMap,
-}
-
-local function heightAboveGround()
-    local p = mwSelf.position
-    local res = nearby.castRay(p, util.vector3(p.x, p.y, p.z - ROLL_HEIGHT_PROBE), HEIGHT_RAY_OPTS)
-    if res.hit then
-        return p.z - res.hitPos.z
-    end
-    return nil
-end
 
 local armed = false
 local armTimer = 0
@@ -179,19 +128,6 @@ input.registerTriggerHandler("Jump", async:callback(function()
     -- Forward must be held at the tap.
     if InputManager.intents.moveVector.y <= FORWARD_DEADZONE then return end
 
-    -- Height gate: only counts near the ground. See ROLL_HEIGHT_WINDOW.
-    local h = heightAboveGround()
-    if not h or h > ROLL_HEIGHT_WINDOW then
-        if Settings.debugMode() then
-            print(string.format("[FLOW][roll] tap REJECTED h=%s window=%.0f",
-                h and string.format("%.0f", h) or "nil", ROLL_HEIGHT_WINDOW))
-        end
-        return
-    end
-
-    if Settings.debugMode() then
-        print(string.format("[FLOW][roll] ARMED h=%.0f", h))
-    end
     armed = true
     armTimer = 0
     applyAgility(true)
@@ -215,10 +151,9 @@ end))
 -- =============================================================================
 local landedSignal = false
 
--- The `if` above is the real guard: addTextKeyHandler is optional across
--- versions, so its ABSENCE is checked directly. No pcall - if the call itself
--- fails, that is a bug worth seeing rather than silently losing the landing
--- fast path.
+-- The `if` above is the guard: addTextKeyHandler is optional across versions,
+-- so its ABSENCE is tested directly. No pcall - if the registration itself
+-- fails that is a bug worth seeing, not a silently lost landing fast path.
 if I.AnimationController and I.AnimationController.addTextKeyHandler then
     I.AnimationController.addTextKeyHandler('jump', function(groupname, key)
             -- Naive suffix matching on 'stop' is wrong: the vanilla jump
@@ -243,9 +178,14 @@ function AirborneState.getRollDebug()
     return string.format("ROLL: idle fwd=%.2f", InputManager.intents.moveVector.y)
 end
 
+-- Health sampled while still airborne, i.e. before the engine applies fall
+-- damage. states/roll.lua compares against this to work out how much was
+-- actually lost, without having to assume when the engine applies it.
+local healthBeforeLanding = nil
 
 function AirborneState:enter(syncData)
     isActive = true
+    healthBeforeLanding = types.Actor.stats.dynamic.health(mwSelf).current
     -- Fresh airborne period starts unarmed.
     armed = false
     armTimer = 0
@@ -278,18 +218,17 @@ function AirborneState:update(dt, syncData, inputData)
             -- smoothing lag - and the lip position is already sitting in
             -- SensorExt.data from the scan that just reported the hang.
             --
-            -- The rule is simply: refuse only if grabbing would drop the
-            -- player more than LEDGE_MAX_DROP. See that constant for why an
-            -- earlier hand-height form was far too strict.
-            -- Where the grab would put us, versus where we are now.
-            local hangZ = SensorExt.data.targetPos.z - LEDGE_HANG_DROP
-            if mwSelf.position.z <= hangZ + LEDGE_MAX_DROP then
+            -- Requiring the lip to be above hand height means the grab can
+            -- only ever pull the player UP, never yank them back down to a
+            -- ledge they have already cleared.
+            local handsZ = mwSelf.position.z + SensorExt.GRAB_HEIGHT - LEDGE_GRAB_TOLERANCE
+            if SensorExt.data.targetPos.z > handsZ then
                 return "LedgeHang"
             end
         end
 
         -- C. Mantling (Medium obstacles)
-        if Sensor.data.interaction == "Mantle" and not MantleState.isBlocked() then
+        if Sensor.data.interaction == "Mantle" then
             return "Mantle"
         end
     end
@@ -306,6 +245,7 @@ function AirborneState:update(dt, syncData, inputData)
     -- handler above, not here - this only tracks the pre-impact health
     -- sample and ages the debug timer.
     if not touchedDown then
+        healthBeforeLanding = types.Actor.stats.dynamic.health(mwSelf).current
         if armed then
             armTimer = armTimer + dt   -- debug readout only; the arm never expires
         end
@@ -317,14 +257,13 @@ function AirborneState:update(dt, syncData, inputData)
         if armed then
             applyAgility(false)
             armed = false
-            if Settings.debugMode() then print("[FLOW][roll] landing -> Roll") end
-            RollState.setLandingData()
+            RollState.setLandingData(healthBeforeLanding)
             return "Roll"
         end
 
         applyAgility(false)
 
-                return "Idle"
+        return "Idle"
     end
 
     return nil

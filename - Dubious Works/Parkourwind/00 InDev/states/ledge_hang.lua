@@ -1,3 +1,4 @@
+---@omw-context player
 --[[
     states/ledge_hang.lua
 
@@ -20,6 +21,8 @@ local SensorExt = require('core/optional/sensor_ext')
 local ShimmyState = require('states/shimmy')
 
 local LedgeHangState = BaseState.new("LedgeHang")
+
+local KICK_RAY_OPTS = { ignore = mwSelf }
 
 -- =============================================================================
 -- CONFIGURATION
@@ -91,19 +94,6 @@ function LedgeHangState:enter(syncData)
     -- snap block below was skipped, leaving wallNormal stale from the previous
     -- step and the body un-anchored.
     local resumeLip, resumeNormal = ShimmyState.consumeResultLip()
-
-    -- [FIX] Sanity-check the handed-over lip before trusting it.
-    --
-    -- Shimmy sets resultLip on entry and on every in-state step, but only
-    -- LedgeHang consumes it. If a shimmy ends any other way - WallBoost, a
-    -- crouch-drop, a fall - the lip is left set, and the NEXT hang (possibly
-    -- minutes later, in another room) consumed it and snapped the player back
-    -- to that old ledge. That is the reported "teleport to a previously
-    -- attached ledge".
-    local LIP_SANITY_RANGE = 300
-    if resumeLip and (resumeLip - mwSelf.position):length() > LIP_SANITY_RANGE then
-        resumeLip, resumeNormal = nil, nil
-    end
     local lipSource = resumeLip or SensorExt.data.targetPos
 
     if lipSource then
@@ -181,7 +171,7 @@ function LedgeHangState:update(dt, syncData, inputData)
         local forward = util.transform.rotateZ(mwSelf.rotation:getYaw()):apply(util.vector3(0,1,0))
         local kickTarget = kneePos + (forward * KNEE_CHECK_DIST)
         
-        local res = nearby.castRay(kneePos, kickTarget, { ignore = mwSelf })
+        local res = nearby.castRay(kneePos, kickTarget, KICK_RAY_OPTS)
         
         if res.hit then
             local nudge = mwSelf.position + (-forward * (KICK_FORCE_BACK * 0.15)) + (util.vector3(0,0,20))

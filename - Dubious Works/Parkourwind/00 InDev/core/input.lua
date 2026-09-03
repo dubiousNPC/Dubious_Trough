@@ -1,3 +1,4 @@
+---@omw-context player
 --- START OF FILE core/input.lua ---
 
 local input = require('openmw.input')
@@ -5,6 +6,14 @@ local self = require('openmw.self')
 local util = require('openmw.util')
 local I = require('openmw.interfaces')
 
+-- No input.registerAction here.
+--
+-- That API publishes into the ENGINE'S shared action-binding registry, which
+-- every mod using it competes over; AcrobaticsEnhanced documents refusing it
+-- after confirming a clash with Character Panel. FLOW's only consumer was the
+-- sprint hotkey, and that is gone - vanilla already distinguishes walking from
+-- running, so main.lua reads the engine's own run flag instead. Nothing here
+-- touches the shared registry.
 
 local InputManager = {
     intents = {
@@ -18,7 +27,7 @@ local InputManager = {
         -- detection used to live here too, but moved to a proper engine
         -- trigger handler in states/airborne.lua - polled edges could drop a
         -- tap completed inside a single frame.
-        jumpPressed = false,
+        jumpPressed = false
     }
 }
 
@@ -63,11 +72,6 @@ function InputManager.update()
 
     wasJumpHeld = jumpHeld
 end
-
--- Key state is tracked from the engine's key events rather than polled, so a
--- rebind applies immediately and costs nothing per frame. Wired to
--- engineHandlers in main.lua.
-
 
 function InputManager.reset()
     InputManager.intents.moveVector = util.vector2(0, 0)

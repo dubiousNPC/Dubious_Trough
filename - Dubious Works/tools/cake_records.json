@@ -1,0 +1,3681 @@
+{
+ "1armunantail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1armunantail",
+  "model": "ArmoredTails/tailarmunan.nif",
+  "name": "Armun Bonemold tail armor"
+ },
+ "_RV_Blindfold1": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Blindfold1",
+  "model": "RV/blindfold1.nif",
+  "name": "Blindfold"
+ },
+ "_RV_Eyepatch1L": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Eyepatch1L",
+  "model": "RV/blindfold1.nif",
+  "name": "Eyepatch - Left"
+ },
+ "_RV_Eyepatch1R": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Eyepatch1R",
+  "model": "RV/blindfold1.nif",
+  "name": "Eyepatch - Right"
+ },
+ "_RV_Glasses1": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Glasses1",
+  "model": "RV/glasses1.nif",
+  "name": "Half Moon Spectacles"
+ },
+ "dbs_01cigar": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_01cigar",
+  "model": "ep/_01cigar.nif",
+  "name": "Orc"
+ },
+ "dbs_01cigar_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_01cigar_eq",
+  "model": "ep/_01cigar.nif",
+  "name": "Orc"
+ },
+ "dbs_02cigar": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_02cigar",
+  "model": "ep/_0cigar.nif",
+  "name": "Orc"
+ },
+ "dbs_02cigar_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_02cigar_eq",
+  "model": "ep/_0cigar.nif",
+  "name": "Orc"
+ },
+ "dbs_1adamantail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1adamantail",
+  "model": "ArmoredTails/tailadaman.nif",
+  "name": "Argonian"
+ },
+ "dbs_1adamantail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1adamantail_eq",
+  "model": "ArmoredTails/tailadaman.nif",
+  "name": "Argonian"
+ },
+ "dbs_1almaind": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1almaind",
+  "model": "ArmoredTails/tailalma.nif",
+  "name": "Argonian"
+ },
+ "dbs_1almaind_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1almaind_eq",
+  "model": "ArmoredTails/tailalma.nif",
+  "name": "Argonian"
+ },
+ "dbs_1argdomina": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1argdomina",
+  "model": "ArmoredTails/arg_dominacuir.nif",
+  "name": "Argonian"
+ },
+ "dbs_1argdomina_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1argdomina_eq",
+  "model": "ArmoredTails/arg_dominacuir.nif",
+  "name": "Argonian"
+ },
+ "dbs_1argdominaf": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1argdominaf",
+  "model": "ArmoredTails/arg_dominacuir.nif",
+  "name": "Argonian"
+ },
+ "dbs_1argdominaf_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1argdominaf_eq",
+  "model": "ArmoredTails/arg_dominacuir.nif",
+  "name": "Argonian"
+ },
+ "dbs_1armunantail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1armunantail_eq",
+  "model": "ArmoredTails/tailarmunan.nif",
+  "name": "Argonian"
+ },
+ "dbs_1bear": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1bear",
+  "model": "ArmoredTails/tailsnow_b.nif",
+  "name": "Argonian"
+ },
+ "dbs_1bear_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1bear_eq",
+  "model": "ArmoredTails/tailsnow_b.nif",
+  "name": "Argonian"
+ },
+ "dbs_1bonemoldtail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1bonemoldtail",
+  "model": "ArmoredTails/tailbonemold.nif",
+  "name": "Argonian"
+ },
+ "dbs_1bonemoldtail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1bonemoldtail_eq",
+  "model": "ArmoredTails/tailbonemold.nif",
+  "name": "Argonian"
+ },
+ "dbs_1ceph": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1ceph",
+  "model": "ArmoredTails/tailceph.nif",
+  "name": "Argonian"
+ },
+ "dbs_1ceph_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1ceph_eq",
+  "model": "ArmoredTails/tailceph.nif",
+  "name": "Argonian"
+ },
+ "dbs_1chain": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1chain",
+  "model": "ArmoredTails/tailchain.nif",
+  "name": "Argonian"
+ },
+ "dbs_1chain_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1chain_eq",
+  "model": "ArmoredTails/tailchain.nif",
+  "name": "Argonian"
+ },
+ "dbs_1chitintail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1chitintail",
+  "model": "ArmoredTails/tailchitin.nif",
+  "name": "Argonian"
+ },
+ "dbs_1chitintail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1chitintail_eq",
+  "model": "ArmoredTails/tailchitin.nif",
+  "name": "Argonian"
+ },
+ "dbs_1chuzei": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1chuzei",
+  "model": "ArmoredTails/tailchuzei.nif",
+  "name": "Argonian"
+ },
+ "dbs_1chuzei_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1chuzei_eq",
+  "model": "ArmoredTails/tailchuzei.nif",
+  "name": "Argonian"
+ },
+ "dbs_1daetail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1daetail",
+  "model": "ArmoredTails/taildaedric.nif",
+  "name": "Argonian"
+ },
+ "dbs_1daetail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1daetail_eq",
+  "model": "ArmoredTails/taildaedric.nif",
+  "name": "Argonian"
+ },
+ "dbs_1darkbro": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1darkbro",
+  "model": "ArmoredTails/taildb.nif",
+  "name": "Argonian"
+ },
+ "dbs_1darkbro_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1darkbro_eq",
+  "model": "ArmoredTails/taildb.nif",
+  "name": "Argonian"
+ },
+ "dbs_1dominatail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1dominatail",
+  "model": "ArmoredTails/taildomina.nif",
+  "name": "Argonian"
+ },
+ "dbs_1dominatail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1dominatail_eq",
+  "model": "ArmoredTails/taildomina.nif",
+  "name": "Argonian"
+ },
+ "dbs_1dreugh": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1dreugh",
+  "model": "ArmoredTails/taildreugh.nif",
+  "name": "Argonian"
+ },
+ "dbs_1dreugh_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1dreugh_eq",
+  "model": "ArmoredTails/taildreugh.nif",
+  "name": "Argonian"
+ },
+ "dbs_1dust": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1dust",
+  "model": "ArmoredTails/taildust.nif",
+  "name": "Argonian"
+ },
+ "dbs_1dust_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1dust_eq",
+  "model": "ArmoredTails/taildust.nif",
+  "name": "Argonian"
+ },
+ "dbs_1dwetail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1dwetail",
+  "model": "ArmoredTails/taildwemer.nif",
+  "name": "Argonian"
+ },
+ "dbs_1dwetail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1dwetail_eq",
+  "model": "ArmoredTails/taildwemer.nif",
+  "name": "Argonian"
+ },
+ "dbs_1ebonytail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1ebonytail",
+  "model": "ArmoredTails/tailebony.nif",
+  "name": "Argonian"
+ },
+ "dbs_1ebonytail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1ebonytail_eq",
+  "model": "ArmoredTails/tailebony.nif",
+  "name": "Argonian"
+ },
+ "dbs_1gahjulantail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1gahjulantail",
+  "model": "ArmoredTails/tailgahjulan.nif",
+  "name": "Argonian"
+ },
+ "dbs_1gahjulantail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1gahjulantail_eq",
+  "model": "ArmoredTails/tailgahjulan.nif",
+  "name": "Argonian"
+ },
+ "dbs_1glasstail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1glasstail",
+  "model": "ArmoredTails/tailglass.nif",
+  "name": "Argonian"
+ },
+ "dbs_1glasstail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1glasstail_eq",
+  "model": "ArmoredTails/tailglass.nif",
+  "name": "Argonian"
+ },
+ "dbs_1gold": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1gold",
+  "model": "ArmoredTails/tailgold.nif",
+  "name": "Argonian"
+ },
+ "dbs_1gold_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1gold_eq",
+  "model": "ArmoredTails/tailgold.nif",
+  "name": "Argonian"
+ },
+ "dbs_1helseth": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1helseth",
+  "model": "ArmoredTails/tailhels.nif",
+  "name": "Argonian"
+ },
+ "dbs_1helseth_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1helseth_eq",
+  "model": "ArmoredTails/tailhels.nif",
+  "name": "Argonian"
+ },
+ "dbs_1icetail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1icetail",
+  "model": "ArmoredTails/tailice.nif",
+  "name": "Argonian"
+ },
+ "dbs_1icetail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1icetail_eq",
+  "model": "ArmoredTails/tailice.nif",
+  "name": "Argonian"
+ },
+ "dbs_1impsteel": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1impsteel",
+  "model": "ArmoredTails/tailimperial.nif",
+  "name": "Argonian"
+ },
+ "dbs_1impsteel_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1impsteel_eq",
+  "model": "ArmoredTails/tailimperial.nif",
+  "name": "Argonian"
+ },
+ "dbs_1indoriltail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1indoriltail",
+  "model": "ArmoredTails/tailindoril.nif",
+  "name": "Argonian"
+ },
+ "dbs_1indoriltail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1indoriltail_eq",
+  "model": "ArmoredTails/tailindoril.nif",
+  "name": "Argonian"
+ },
+ "dbs_1irontail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1irontail",
+  "model": "ArmoredTails/tailiron.nif",
+  "name": "Argonian"
+ },
+ "dbs_1irontail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1irontail_eq",
+  "model": "ArmoredTails/tailiron.nif",
+  "name": "Argonian"
+ },
+ "dbs_1mole": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1mole",
+  "model": "ArmoredTails/tailmole.nif",
+  "name": "Argonian"
+ },
+ "dbs_1mole_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1mole_eq",
+  "model": "ArmoredTails/tailmole.nif",
+  "name": "Argonian"
+ },
+ "dbs_1nettail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1nettail",
+  "model": "ArmoredTails/tailnetch.nif",
+  "name": "Argonian"
+ },
+ "dbs_1nettail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1nettail_eq",
+  "model": "ArmoredTails/tailnetch.nif",
+  "name": "Argonian"
+ },
+ "dbs_1nordtail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1nordtail",
+  "model": "ArmoredTails/tailnord.nif",
+  "name": "Argonian"
+ },
+ "dbs_1nordtail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1nordtail_eq",
+  "model": "ArmoredTails/tailnord.nif",
+  "name": "Argonian"
+ },
+ "dbs_1orctail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1orctail",
+  "model": "ArmoredTails/tailorcish.nif",
+  "name": "Argonian"
+ },
+ "dbs_1orctail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1orctail_eq",
+  "model": "ArmoredTails/tailorcish.nif",
+  "name": "Argonian"
+ },
+ "dbs_1scale": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1scale",
+  "model": "ArmoredTails/tailscale.nif",
+  "name": "Argonian"
+ },
+ "dbs_1scale_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1scale_eq",
+  "model": "ArmoredTails/tailscale.nif",
+  "name": "Argonian"
+ },
+ "dbs_1steeltail": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1steeltail",
+  "model": "ArmoredTails/tailsteel.nif",
+  "name": "Argonian"
+ },
+ "dbs_1steeltail_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1steeltail_eq",
+  "model": "ArmoredTails/tailsteel.nif",
+  "name": "Argonian"
+ },
+ "dbs_1templar": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1templar",
+  "model": "ArmoredTails/tailtemplar.nif",
+  "name": "Argonian"
+ },
+ "dbs_1templar_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1templar_eq",
+  "model": "ArmoredTails/tailtemplar.nif",
+  "name": "Argonian"
+ },
+ "dbs_1watch": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1watch",
+  "model": "ArmoredTails/tailwatch.nif",
+  "name": "Argonian"
+ },
+ "dbs_1watch_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1watch_eq",
+  "model": "ArmoredTails/tailwatch.nif",
+  "name": "Argonian"
+ },
+ "dbs_1wolf": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1wolf",
+  "model": "ArmoredTails/tailwolf.nif",
+  "name": "Argonian"
+ },
+ "dbs_1wolf_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_1wolf_eq",
+  "model": "ArmoredTails/tailwolf.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fannypack": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fannypack",
+  "model": "frummyonda/fy_fannypack_b.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fannypack_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fannypack_eq",
+  "model": "frummyonda/fy_fannypack_b.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fannypack_l": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fannypack_l",
+  "model": "frummyonda/fy_fannypack_l.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fannypack_l_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fannypack_l_eq",
+  "model": "frummyonda/fy_fannypack_l.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fannypack_r": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fannypack_r",
+  "model": "frummyonda/fy_fannypack_r.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fannypack_r_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fannypack_r_eq",
+  "model": "frummyonda/fy_fannypack_r.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fpkpch": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fpkpch",
+  "model": "frummyonda/fy_fpackpouch.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fpkpch_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fpkpch_eq",
+  "model": "frummyonda/fy_fpackpouch.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fpktbg_l": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fpktbg_l",
+  "model": "frummyonda/fy_fpktbg_l.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fpktbg_l_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fpktbg_l_eq",
+  "model": "frummyonda/fy_fpktbg_l.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fpktbg_r": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fpktbg_r",
+  "model": "frummyonda/fy_fpktbg_r.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_fpktbg_r_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_fpktbg_r_eq",
+  "model": "frummyonda/fy_fpktbg_r.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_satchel_f": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_satchel_f",
+  "model": "frummyonda/fy_satchel_f.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_satchel_f_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_satchel_f_eq",
+  "model": "frummyonda/fy_satchel_f.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_satchel_m": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_satchel_m",
+  "model": "frummyonda/fy_satchel_m.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_satchel_m_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_satchel_m_eq",
+  "model": "frummyonda/fy_satchel_m.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_thighbag_l": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_thighbag_l",
+  "model": "frummyonda/fy_thighbag_l.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_thighbag_l_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_thighbag_l_eq",
+  "model": "frummyonda/fy_thighbag_l.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_thighbag_r": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_thighbag_r",
+  "model": "frummyonda/fy_thighbag_r.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_thighbag_r_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_thighbag_r_eq",
+  "model": "frummyonda/fy_thighbag_r.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_ubelt": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_ubelt",
+  "model": "frummyonda/fy_utilitybelt.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_ubelt_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_ubelt_eq",
+  "model": "frummyonda/fy_utilitybelt.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_waistbag": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_waistbag",
+  "model": "frummyonda/fy_waistbag_b.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_waistbag_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_waistbag_eq",
+  "model": "frummyonda/fy_waistbag_b.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_waistbag_l": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_waistbag_l",
+  "model": "frummyonda/fy_waistbag_l.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_waistbag_l_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_waistbag_l_eq",
+  "model": "frummyonda/fy_waistbag_l.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_waistbag_r": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_waistbag_r",
+  "model": "frummyonda/fy_waistbag_r.nif",
+  "name": "Argonian"
+ },
+ "dbs_aa_waistbag_r_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_aa_waistbag_r_eq",
+  "model": "frummyonda/fy_waistbag_r.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash1",
+  "model": "l/light_ashl_lantern_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash1_eq",
+  "model": "l/light_ashl_lantern_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash2",
+  "model": "l/light_ashl_lantern_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash2_eq",
+  "model": "l/light_ashl_lantern_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash3": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash3",
+  "model": "l/light_ashl_lantern_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash3_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash3_eq",
+  "model": "l/light_ashl_lantern_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash4": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash4",
+  "model": "l/light_ashl_lantern_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash4_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash4_eq",
+  "model": "l/light_ashl_lantern_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash5": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash5",
+  "model": "l/light_ashl_lantern_05.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash5_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash5_eq",
+  "model": "l/light_ashl_lantern_05.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash6": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash6",
+  "model": "l/light_ashl_lantern_06.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash6_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash6_eq",
+  "model": "l/light_ashl_lantern_06.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash7": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash7",
+  "model": "l/light_ashl_lantern_07.nif",
+  "name": "Argonian"
+ },
+ "dbs_ash7_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_ash7_eq",
+  "model": "l/light_ashl_lantern_07.nif",
+  "name": "Argonian"
+ },
+ "dbs_cavelant": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cavelant",
+  "model": "OAAB/l/cavern_Lantern.nif",
+  "name": "Argonian"
+ },
+ "dbs_cavelant_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cavelant_eq",
+  "model": "OAAB/l/cavern_Lantern.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt1",
+  "model": "Belts/belt_common_1.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt1_eq",
+  "model": "Belts/belt_common_1.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt2",
+  "model": "Belts/belt_common_2.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt2_eq",
+  "model": "Belts/belt_common_2.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt3": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt3",
+  "model": "Belts/belt_common_3.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt3_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt3_eq",
+  "model": "Belts/belt_common_3.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt4": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt4",
+  "model": "Belts/belt_common_4.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt4_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt4_eq",
+  "model": "Belts/belt_common_4.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt5": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt5",
+  "model": "Belts/belt_common_5.nif",
+  "name": "Argonian"
+ },
+ "dbs_cbelt5_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_cbelt5_eq",
+  "model": "Belts/belt_common_5.nif",
+  "name": "Argonian"
+ },
+ "dbs_colov2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_colov2",
+  "model": "pc/l/pc_col_lantern_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_colov2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_colov2_eq",
+  "model": "pc/l/pc_col_lantern_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_colov3": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_colov3",
+  "model": "pc/l/pc_col_lantern_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_colov3_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_colov3_eq",
+  "model": "pc/l/pc_col_lantern_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_colov4": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_colov4",
+  "model": "pc/l/pc_col_lantern_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_colov4_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_colov4_eq",
+  "model": "pc/l/pc_col_lantern_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_colov5": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_colov5",
+  "model": "pc/l/pc_col_lantern_05.nif",
+  "name": "Argonian"
+ },
+ "dbs_colov5_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_colov5_eq",
+  "model": "pc/l/pc_col_lantern_05.nif",
+  "name": "Argonian"
+ },
+ "dbs_erabinbelt": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_erabinbelt",
+  "model": "Belts/erabin.nif",
+  "name": "Argonian"
+ },
+ "dbs_erabinbelt_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_erabinbelt_eq",
+  "model": "Belts/erabin.nif",
+  "name": "Argonian"
+ },
+ "dbs_expbelt1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_expbelt1",
+  "model": "Belts/belt_expensive_1.nif",
+  "name": "Argonian"
+ },
+ "dbs_expbelt1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_expbelt1_eq",
+  "model": "Belts/belt_expensive_1.nif",
+  "name": "Argonian"
+ },
+ "dbs_expbelt2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_expbelt2",
+  "model": "Belts/belt_expensive_2.nif",
+  "name": "Argonian"
+ },
+ "dbs_expbelt2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_expbelt2_eq",
+  "model": "Belts/belt_expensive_2.nif",
+  "name": "Argonian"
+ },
+ "dbs_expbelt3": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_expbelt3",
+  "model": "Belts/belt_expensive_3.nif",
+  "name": "Argonian"
+ },
+ "dbs_expbelt3_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_expbelt3_eq",
+  "model": "Belts/belt_expensive_3.nif",
+  "name": "Argonian"
+ },
+ "dbs_exqbelt": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_exqbelt",
+  "model": "Belts/belt_exquisite_1.nif",
+  "name": "Argonian"
+ },
+ "dbs_exqbelt_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_exqbelt_eq",
+  "model": "Belts/belt_exquisite_1.nif",
+  "name": "Argonian"
+ },
+ "dbs_extravbelt1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_extravbelt1",
+  "model": "Belts/belt_extravagant_1.nif",
+  "name": "Argonian"
+ },
+ "dbs_extravbelt1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_extravbelt1_eq",
+  "model": "Belts/belt_extravagant_1.nif",
+  "name": "Argonian"
+ },
+ "dbs_extravbelt2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_extravbelt2",
+  "model": "Belts/belt_extravagant_2.nif",
+  "name": "Argonian"
+ },
+ "dbs_extravbelt2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_extravbelt2_eq",
+  "model": "Belts/belt_extravagant_2.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLantern2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLantern2",
+  "model": "l/light_de_lantern_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLantern2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLantern2_eq",
+  "model": "l/light_de_lantern_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLantern6": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLantern6",
+  "model": "l/light_de_lantern_06.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLantern6_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLantern6_eq",
+  "model": "l/light_de_lantern_06.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLanterngrn": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLanterngrn",
+  "model": "tr/l/tr_l_de_lantgl_grn01.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLanterngrn_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLanterngrn_eq",
+  "model": "tr/l/tr_l_de_lantgl_grn01.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLanternred": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLanternred",
+  "model": "tr/l/tr_l_de_lantgl_red02.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLanternred_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLanternred_eq",
+  "model": "tr/l/tr_l_de_lantgl_red02.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLanternyel": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLanternyel",
+  "model": "tr/l/tr_l_de_lantgl_yel01.nif",
+  "name": "Argonian"
+ },
+ "dbs_GLanternyel_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_GLanternyel_eq",
+  "model": "tr/l/tr_l_de_lantgl_yel01.nif",
+  "name": "Argonian"
+ },
+ "dbs_hfirebelt": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_hfirebelt",
+  "model": "Belts/belt_hfire.nif",
+  "name": "Argonian"
+ },
+ "dbs_hfirebelt_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_hfirebelt_eq",
+  "model": "Belts/belt_hfire.nif",
+  "name": "Argonian"
+ },
+ "dbs_Lantern0AABDwrn": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_Lantern0AABDwrn",
+  "model": "OAAB/l/dwrv_lantern.nif",
+  "name": "Argonian"
+ },
+ "dbs_Lantern0AABDwrn_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_Lantern0AABDwrn_eq",
+  "model": "OAAB/l/dwrv_lantern.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap1",
+  "model": "l/light_de_lantern_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap10": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap10",
+  "model": "l/light_de_lantern_10.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap10_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap10_eq",
+  "model": "l/light_de_lantern_10.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap11": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap11",
+  "model": "l/light_de_lantern_11.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap11_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap11_eq",
+  "model": "l/light_de_lantern_11.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap14": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap14",
+  "model": "l/light_de_lantern_14.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap14_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap14_eq",
+  "model": "l/light_de_lantern_14.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap1_eq",
+  "model": "l/light_de_lantern_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap5": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap5",
+  "model": "l/light_de_lantern_05.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap5_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap5_eq",
+  "model": "l/light_de_lantern_05.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap7": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap7",
+  "model": "l/light_de_lantern_07.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPap7_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPap7_eq",
+  "model": "l/light_de_lantern_07.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapblu1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapblu1",
+  "model": "tr/l/tr_l_de_lantern_blu_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapblu1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapblu1_eq",
+  "model": "tr/l/tr_l_de_lantern_blu_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapblu4": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapblu4",
+  "model": "tr/l/tr_l_de_lantern_blu_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapblu4_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapblu4_eq",
+  "model": "tr/l/tr_l_de_lantern_blu_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapgrn1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapgrn1",
+  "model": "tr/l/tr_l_de_lantern_grn_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapgrn1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapgrn1_eq",
+  "model": "tr/l/tr_l_de_lantern_grn_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapgrn4": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapgrn4",
+  "model": "tr/l/tr_l_de_lantern_grn_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapgrn4_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapgrn4_eq",
+  "model": "tr/l/tr_l_de_lantern_grn_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPappur1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPappur1",
+  "model": "tr/l/tr_l_de_lantern_prp_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPappur1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPappur1_eq",
+  "model": "tr/l/tr_l_de_lantern_prp_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPappur4": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPappur4",
+  "model": "tr/l/tr_l_de_lantern_prp_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPappur4_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPappur4_eq",
+  "model": "tr/l/tr_l_de_lantern_prp_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapyel1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapyel1",
+  "model": "tr/l/tr_l_de_lantern_ylw_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapyel1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapyel1_eq",
+  "model": "tr/l/tr_l_de_lantern_ylw_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapyel4": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapyel4",
+  "model": "tr/l/tr_l_de_lantern_ylw_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_LanternPapyel4_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_LanternPapyel4_eq",
+  "model": "tr/l/tr_l_de_lantern_ylw_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_orclan1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_orclan1",
+  "model": "sky/l/sky_lgt_orc_lantn_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_orclan1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_orclan1_eq",
+  "model": "sky/l/sky_lgt_orc_lantn_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_orclan2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_orclan2",
+  "model": "sky/l/sky_lgt_orc_lantn_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_orclan2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_orclan2_eq",
+  "model": "sky/l/sky_lgt_orc_lantn_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Ashmask1_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Ashmask1_H",
+  "model": "RV/Ashmask1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Ashmask1_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Ashmask1_H_eq",
+  "model": "RV/Ashmask1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Ashmask2_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Ashmask2_H",
+  "model": "RV/Ashmask2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Ashmask2_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Ashmask2_H_eq",
+  "model": "RV/Ashmask2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Ashmask3_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Ashmask3_H",
+  "model": "RV/Ashmask3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Ashmask3_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Ashmask3_H_eq",
+  "model": "RV/Ashmask3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Blindfold1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Blindfold1_eq",
+  "model": "RV/blindfold1.nif",
+  "name": "Blindfold"
+ },
+ "dbs_RV_Blindfold1_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Blindfold1_H",
+  "model": "RV/blindfold1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Blindfold1_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Blindfold1_H_eq",
+  "model": "RV/blindfold1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Daedramask1_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Daedramask1_H",
+  "model": "RV/Daedramask1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Daedramask1_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Daedramask1_H_eq",
+  "model": "RV/Daedramask1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Daedramask2_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Daedramask2_H",
+  "model": "RV/Daedramask2.nif"
+ },
+ "dbs_RV_Daedramask2_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Daedramask2_H_eq",
+  "model": "RV/Daedramask2.nif"
+ },
+ "dbs_RV_Daedramask3_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Daedramask3_H",
+  "model": "RV/Daedramask3.nif"
+ },
+ "dbs_RV_Daedramask3_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Daedramask3_H_eq",
+  "model": "RV/Daedramask3.nif"
+ },
+ "dbs_RV_Daedramask4_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Daedramask4_H",
+  "model": "RV/Daedramask4.nif"
+ },
+ "dbs_RV_Daedramask4_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Daedramask4_H_eq",
+  "model": "RV/Daedramask4.nif"
+ },
+ "dbs_RV_Eyepatch1L_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Eyepatch1L_eq",
+  "model": "RV/blindfold1.nif",
+  "name": "Eyepatch - Left"
+ },
+ "dbs_RV_Eyepatch1L_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Eyepatch1L_H",
+  "model": "RV/eyepatch1L.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Eyepatch1L_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Eyepatch1L_H_eq",
+  "model": "RV/eyepatch1L.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Eyepatch1R_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Eyepatch1R_eq",
+  "model": "RV/blindfold1.nif",
+  "name": "Eyepatch - Right"
+ },
+ "dbs_RV_Eyepatch1R_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Eyepatch1R_H",
+  "model": "RV/eyepatch1R.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Eyepatch1R_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Eyepatch1R_H_eq",
+  "model": "RV/eyepatch1R.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Facewrap1_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap1_H",
+  "model": "RV/Facewrap1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Facewrap1_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap1_H_eq",
+  "model": "RV/Facewrap1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Facewrap2_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap2_H",
+  "model": "RV/Facewrap2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Facewrap2_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap2_H_eq",
+  "model": "RV/Facewrap2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Facewrap3_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap3_H",
+  "model": "RV/Facewrap3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Facewrap3_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap3_H_eq",
+  "model": "RV/Facewrap3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Facewrap4_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap4_H",
+  "model": "RV/Facewrap4.nif"
+ },
+ "dbs_RV_Facewrap4_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap4_H_eq",
+  "model": "RV/Facewrap4.nif"
+ },
+ "dbs_RV_Facewrap5_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap5_H",
+  "model": "RV/Facewrap5.nif"
+ },
+ "dbs_RV_Facewrap5_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap5_H_eq",
+  "model": "RV/Facewrap5.nif"
+ },
+ "dbs_RV_Facewrap6_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap6_H",
+  "model": "RV/Facewrap6.nif"
+ },
+ "dbs_RV_Facewrap6_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap6_H_eq",
+  "model": "RV/Facewrap6.nif"
+ },
+ "dbs_RV_Facewrap7_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap7_H",
+  "model": "RV/Facewrap7.nif"
+ },
+ "dbs_RV_Facewrap7_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap7_H_eq",
+  "model": "RV/Facewrap7.nif"
+ },
+ "dbs_RV_Facewrap8_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap8_H",
+  "model": "RV/Facewrap8.nif"
+ },
+ "dbs_RV_Facewrap8_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Facewrap8_H_eq",
+  "model": "RV/Facewrap8.nif"
+ },
+ "dbs_RV_Glasses1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses1_eq",
+  "model": "RV/glasses1.nif",
+  "name": "Half Moon Spectacles"
+ },
+ "dbs_RV_Glasses1_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses1_H",
+  "model": "RV/glasses1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses1_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses1_H_eq",
+  "model": "RV/glasses1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses1s_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses1s_eq",
+  "model": "RV/glasses1s.nif",
+  "name": "Silver Half Moon Spectacles"
+ },
+ "dbs_RV_Glasses1s_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses1s_H",
+  "model": "RV/glasses1s.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses1s_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses1s_H_eq",
+  "model": "RV/glasses1s.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses2_eq",
+  "model": "RV/glasses2.nif",
+  "name": "Spectacles"
+ },
+ "dbs_RV_Glasses2_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses2_H",
+  "model": "RV/glasses2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses2_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses2_H_eq",
+  "model": "RV/glasses2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses2s_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses2s_eq",
+  "model": "RV/glasses2s.nif",
+  "name": "Silver Spectacles"
+ },
+ "dbs_RV_Glasses2s_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses2s_H",
+  "model": "RV/glasses2s.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses2s_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses2s_H_eq",
+  "model": "RV/glasses2s.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses3_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses3_eq",
+  "model": "RV/glasses3.nif",
+  "name": "Tinted Spectacles"
+ },
+ "dbs_RV_Glasses3_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses3_H",
+  "model": "RV/glasses3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses3_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses3_H_eq",
+  "model": "RV/glasses3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses4_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses4_eq",
+  "model": "RV/glasses4.nif",
+  "name": "Monocle"
+ },
+ "dbs_RV_Glasses4_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses4_H",
+  "model": "RV/glasses4.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses4_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses4_H_eq",
+  "model": "RV/glasses4.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses4s_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses4s_eq",
+  "model": "RV/glasses4s.nif",
+  "name": "Silver Monocle"
+ },
+ "dbs_RV_Glasses4s_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses4s_H",
+  "model": "RV/glasses4s.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Glasses4s_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Glasses4s_H_eq",
+  "model": "RV/glasses4s.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Goggles1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles1_eq",
+  "model": "RV/goggles1.nif",
+  "name": "Dark Brotherhood Goggles"
+ },
+ "dbs_RV_Goggles1_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles1_H",
+  "model": "RV/goggles1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Goggles1_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles1_H_eq",
+  "model": "RV/goggles1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Goggles2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles2_eq",
+  "model": "RV/goggles2.nif",
+  "name": "Morag Tong Goggles"
+ },
+ "dbs_RV_Goggles2_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles2_H",
+  "model": "RV/goggles2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Goggles2_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles2_H_eq",
+  "model": "RV/goggles2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Goggles3_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles3_eq",
+  "model": "RV/goggles3.nif",
+  "name": "Dust Goggles"
+ },
+ "dbs_RV_Goggles3_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles3_H",
+  "model": "RV/goggles3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Goggles3_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles3_H_eq",
+  "model": "RV/goggles3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Goggles4_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles4_eq",
+  "model": "RV/goggles4.nif",
+  "name": "Dwemer Scouter"
+ },
+ "dbs_RV_Goggles4_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles4_H",
+  "model": "RV/goggles4.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Goggles4_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles4_H_eq",
+  "model": "RV/goggles4.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Goggles5_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles5_eq",
+  "model": "RV/goggles5.nif",
+  "name": "Splatter Goggles"
+ },
+ "dbs_RV_Goggles5_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles5_H",
+  "model": "RV/goggles5.nif"
+ },
+ "dbs_RV_Goggles5_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles5_H_eq",
+  "model": "RV/goggles5.nif"
+ },
+ "dbs_RV_Goggles6_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles6_eq",
+  "model": "RV/goggles6.nif",
+  "name": "Tinted Goggles"
+ },
+ "dbs_RV_Goggles6_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles6_H",
+  "model": "RV/goggles6.nif"
+ },
+ "dbs_RV_Goggles6_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles6_H_eq",
+  "model": "RV/goggles6.nif"
+ },
+ "dbs_RV_Goggles7_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles7_eq",
+  "model": "RV/goggles7.nif",
+  "name": "Dwemer Goggles"
+ },
+ "dbs_RV_Goggles7_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles7_H",
+  "model": "RV/goggles7.nif"
+ },
+ "dbs_RV_Goggles7_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles7_H_eq",
+  "model": "RV/goggles7.nif"
+ },
+ "dbs_RV_Goggles8_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles8_eq",
+  "model": "RV/goggles8.nif",
+  "name": "Ashlander Goggles"
+ },
+ "dbs_RV_Goggles8_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles8_H",
+  "model": "RV/goggles8.nif"
+ },
+ "dbs_RV_Goggles8_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Goggles8_H_eq",
+  "model": "RV/goggles8.nif"
+ },
+ "dbs_RV_Lenses1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Lenses1_eq",
+  "model": "RV/Lenses1.nif",
+  "name": "Alchemist's Lenses"
+ },
+ "dbs_RV_Lenses1_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Lenses1_H",
+  "model": "RV/Lenses1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Lenses1_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Lenses1_H_eq",
+  "model": "RV/Lenses1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Lenses2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Lenses2_eq",
+  "model": "RV/Lenses2.nif",
+  "name": "Enchanter's Lens"
+ },
+ "dbs_RV_Lenses2_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Lenses2_H",
+  "model": "RV/Lenses2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Lenses2_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Lenses2_H_eq",
+  "model": "RV/Lenses2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Orcishmask1_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Orcishmask1_H",
+  "model": "RV/Orcishmask1.nif"
+ },
+ "dbs_RV_Orcishmask1_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Orcishmask1_H_eq",
+  "model": "RV/Orcishmask1.nif"
+ },
+ "dbs_RV_Orcishmask2_H": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Orcishmask2_H",
+  "model": "RV/Orcishmask2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Orcishmask2_H_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Orcishmask2_H_eq",
+  "model": "RV/Orcishmask2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_01": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_01",
+  "model": "RV/scarf1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_01_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_01_eq",
+  "model": "RV/scarf1.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_02": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_02",
+  "model": "RV/scarf2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_02_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_02_eq",
+  "model": "RV/scarf2.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_03": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_03",
+  "model": "RV/scarf3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_03_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_03_eq",
+  "model": "RV/scarf3.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_04": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_04",
+  "model": "RV/scarf4.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_04_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_04_eq",
+  "model": "RV/scarf4.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_05": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_05",
+  "model": "RV/scarf5.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_05_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_05_eq",
+  "model": "RV/scarf5.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_06": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_06",
+  "model": "RV/scarf6.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_06_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_06_eq",
+  "model": "RV/scarf6.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_07": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_07",
+  "model": "RV/scarf7.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_07_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_07_eq",
+  "model": "RV/scarf7.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_08": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_08",
+  "model": "RV/scarf8.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_08_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_08_eq",
+  "model": "RV/scarf8.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_09": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_09",
+  "model": "RV/scarf9.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_09_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_09_eq",
+  "model": "RV/scarf9.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_10": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_10",
+  "model": "RV/scarf10.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_10_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_10_eq",
+  "model": "RV/scarf10.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_11": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_11",
+  "model": "RV/scarf11.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_11_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_11_eq",
+  "model": "RV/scarf11.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_12": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_12",
+  "model": "RV/scarf12.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_12_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_12_eq",
+  "model": "RV/scarf12.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_13": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_13",
+  "model": "RV/scarf13.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_13_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_13_eq",
+  "model": "RV/scarf13.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_14": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_14",
+  "model": "RV/scarf14.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_14_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_14_eq",
+  "model": "RV/scarf14.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_15": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_15",
+  "model": "RV/scarf15.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_15_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_15_eq",
+  "model": "RV/scarf15.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_16": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_16",
+  "model": "RV/scarf16.nif",
+  "name": "Argonian"
+ },
+ "dbs_RV_Scarf_16_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_RV_Scarf_16_eq",
+  "model": "RV/scarf16.nif",
+  "name": "Argonian"
+ },
+ "dbs_TravLantern1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TravLantern1",
+  "model": "l/light_com_lantern_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_TravLantern1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TravLantern1_eq",
+  "model": "l/light_com_lantern_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_TravLantern2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TravLantern2",
+  "model": "l/light_com_lantern_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_TravLantern2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TravLantern2_eq",
+  "model": "l/light_com_lantern_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilGRLan1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilGRLan1",
+  "model": "tr/l/TR_l_de_MhLant_gr_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilGRLan1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilGRLan1_eq",
+  "model": "tr/l/TR_l_de_MhLant_gr_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilGRLan2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilGRLan2",
+  "model": "tr/l/TR_l_de_MhLant_gr_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilGRLan2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilGRLan2_eq",
+  "model": "tr/l/TR_l_de_MhLant_gr_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilGRLan3": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilGRLan3",
+  "model": "tr/l/TR_l_de_MhLant_gr_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilGRLan3_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilGRLan3_eq",
+  "model": "tr/l/TR_l_de_MhLant_gr_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilLan1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilLan1",
+  "model": "tr/l/TR_l_de_MhLant_whi_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilLan1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilLan1_eq",
+  "model": "tr/l/TR_l_de_MhLant_whi_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilLan2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilLan2",
+  "model": "tr/l/TR_l_de_MhLant_whi_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilLan2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilLan2_eq",
+  "model": "tr/l/TR_l_de_MhLant_whi_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilLan3": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilLan3",
+  "model": "tr/l/TR_l_de_MhLant_whi_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilLan3_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilLan3_eq",
+  "model": "tr/l/TR_l_de_MhLant_whi_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilPurLan1": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilPurLan1",
+  "model": "tr/l/TR_l_de_MhLant_pr_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilPurLan1_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilPurLan1_eq",
+  "model": "tr/l/TR_l_de_MhLant_pr_01.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilPurLan2": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilPurLan2",
+  "model": "tr/l/TR_l_de_MhLant_pr_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilPurLan2_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilPurLan2_eq",
+  "model": "tr/l/TR_l_de_MhLant_pr_02.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilPurLan3": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilPurLan3",
+  "model": "tr/l/TR_l_de_MhLant_pr_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_TRIndorilPurLan3_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_TRIndorilPurLan3_eq",
+  "model": "tr/l/TR_l_de_MhLant_pr_03.nif",
+  "name": "Argonian"
+ },
+ "dbs_woodlan": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_woodlan",
+  "model": "sky/l/sky_light_nord_lat_04.nif",
+  "name": "Argonian"
+ },
+ "dbs_woodlan_eq": {
+  "type": "MISC",
+  "src": "CAKE.esp",
+  "id": "dbs_woodlan_eq",
+  "model": "sky/l/sky_light_nord_lat_04.nif",
+  "name": "Argonian"
+ },
+ "keyforiegnchest": {
+  "type": "MISC",
+  "src": "CAKE34.esp",
+  "id": "keyforiegnchest",
+  "model": "m/Key_Standard_01.NIF",
+  "name": "Ja'danha's Key"
+ },
+ "MovihaFatarokey": {
+  "type": "MISC",
+  "src": "CAKE34.esp",
+  "id": "MovihaFatarokey",
+  "model": "m/Key_Temple_01.NIF",
+  "name": "Moviha Fataro's Key"
+ },
+ "_RV_Glasses1s": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Glasses1s",
+  "model": "RV/glasses1s.nif",
+  "name": "Silver Half Moon Spectacles"
+ },
+ "_RV_Glasses2": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Glasses2",
+  "model": "RV/glasses2.nif",
+  "name": "Spectacles"
+ },
+ "_RV_Glasses2s": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Glasses2s",
+  "model": "RV/glasses2s.nif",
+  "name": "Silver Spectacles"
+ },
+ "_RV_Glasses3": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Glasses3",
+  "model": "RV/glasses3.nif",
+  "name": "Tinted Spectacles"
+ },
+ "_RV_Glasses4": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Glasses4",
+  "model": "RV/glasses4.nif",
+  "name": "Monocle"
+ },
+ "_RV_Glasses4s": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Glasses4s",
+  "model": "RV/glasses4s.nif",
+  "name": "Silver Monocle"
+ },
+ "_RV_Goggles1": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Goggles1",
+  "model": "RV/goggles1.nif",
+  "name": "Dark Brotherhood Goggles"
+ },
+ "_RV_Goggles2": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Goggles2",
+  "model": "RV/goggles2.nif",
+  "name": "Morag Tong Goggles"
+ },
+ "_RV_Goggles3": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Goggles3",
+  "model": "RV/goggles3.nif",
+  "name": "Dust Goggles"
+ },
+ "_RV_Goggles4": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Goggles4",
+  "model": "RV/goggles4.nif",
+  "name": "Dwemer Scouter"
+ },
+ "_RV_Goggles5": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Goggles5",
+  "model": "RV/goggles5.nif",
+  "name": "Splatter Goggles"
+ },
+ "_RV_Goggles6": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Goggles6",
+  "model": "RV/goggles6.nif",
+  "name": "Tinted Goggles"
+ },
+ "_RV_Goggles7": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Goggles7",
+  "model": "RV/goggles7.nif",
+  "name": "Dwemer Goggles"
+ },
+ "_RV_Goggles8": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Goggles8",
+  "model": "RV/goggles8.nif",
+  "name": "Ashlander Goggles"
+ },
+ "_RV_Lenses1": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Lenses1",
+  "model": "RV/Lenses1.nif",
+  "name": "Alchemist's Lenses"
+ },
+ "_RV_Lenses2": {
+  "type": "ARMO",
+  "src": "CAKE34.esp",
+  "id": "_RV_Lenses2",
+  "model": "RV/Lenses2.nif",
+  "name": "Enchanter's Lens"
+ },
+ "1adamantail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1adamantail",
+  "model": "ArmoredTails/tailadaman.nif",
+  "name": "Adamantium tail armor"
+ },
+ "1almaind": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1almaind",
+  "model": "ArmoredTails/tailalma.nif",
+  "name": "Alma tail armor"
+ },
+ "1argdomina": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1argdomina",
+  "model": "ArmoredTails/arg_dominacuir.nif",
+  "name": "Domina tail armor"
+ },
+ "1argdominaf": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1argdominaf",
+  "model": "ArmoredTails/arg_dominacuir.nif",
+  "name": "Domina tail armor"
+ },
+ "1bear": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1bear",
+  "model": "ArmoredTails/tailsnow_b.nif",
+  "name": "Bearskin tail armor"
+ },
+ "1bonemoldtail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1bonemoldtail",
+  "model": "ArmoredTails/tailbonemold.nif",
+  "name": "Bonemold tail armor"
+ },
+ "1ceph": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1ceph",
+  "model": "ArmoredTails/tailceph.nif",
+  "name": "Cephalopod tail armor"
+ },
+ "1chain": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1chain",
+  "model": "ArmoredTails/tailchain.nif",
+  "name": "Chainmail tail armor"
+ },
+ "1chitintail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1chitintail",
+  "model": "ArmoredTails/tailchitin.nif",
+  "name": "Chitin tail armor"
+ },
+ "1chuzei": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1chuzei",
+  "model": "ArmoredTails/tailchuzei.nif",
+  "name": "Chuzei bonemold tail armor"
+ },
+ "1daetail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1daetail",
+  "model": "ArmoredTails/taildaedric.nif",
+  "name": "Daedric tail armor"
+ },
+ "1darkbro": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1darkbro",
+  "model": "ArmoredTails/taildb.nif",
+  "name": "Dark Brotherhood tail armor"
+ },
+ "1dominatail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1dominatail",
+  "model": "ArmoredTails/taildomina.nif",
+  "name": "Domina tail armor"
+ },
+ "1dreugh": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1dreugh",
+  "model": "ArmoredTails/taildreugh.nif",
+  "name": "Dreugh tail armor"
+ },
+ "1dust": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1dust",
+  "model": "ArmoredTails/taildust.nif",
+  "name": "Dust tail armor"
+ },
+ "1dwetail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1dwetail",
+  "model": "ArmoredTails/taildwemer.nif",
+  "name": "Dwemer tail armor"
+ },
+ "1ebonytail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1ebonytail",
+  "model": "ArmoredTails/tailebony.nif",
+  "name": "Ebony tail armor"
+ },
+ "1gahjulantail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1gahjulantail",
+  "model": "ArmoredTails/tailgahjulan.nif",
+  "name": "Gah Julan bonemold tail armor"
+ },
+ "1glasstail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1glasstail",
+  "model": "ArmoredTails/tailglass.nif",
+  "name": "Glass tail armor"
+ },
+ "1gold": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1gold",
+  "model": "ArmoredTails/tailgold.nif",
+  "name": "Gold tail armor"
+ },
+ "1helseth": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1helseth",
+  "model": "ArmoredTails/tailhels.nif",
+  "name": "Helseth's tail armor"
+ },
+ "1icetail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1icetail",
+  "model": "ArmoredTails/tailice.nif",
+  "name": "Ice tail armor"
+ },
+ "1impsteel": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1impsteel",
+  "model": "ArmoredTails/tailimperial.nif",
+  "name": "Imperial Steel tail armor"
+ },
+ "1indoriltail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1indoriltail",
+  "model": "ArmoredTails/tailindoril.nif",
+  "name": "Indoril tail armor"
+ },
+ "1irontail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1irontail",
+  "model": "ArmoredTails/tailiron.nif",
+  "name": "Iron tail armor"
+ },
+ "1mole": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1mole",
+  "model": "ArmoredTails/tailmole.nif",
+  "name": "Mole tail armor"
+ },
+ "1nettail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1nettail",
+  "model": "ArmoredTails/tailnetch.nif",
+  "name": "Netch Leather tail armor"
+ },
+ "1nordtail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1nordtail",
+  "model": "ArmoredTails/tailnord.nif",
+  "name": "Nord tail armor"
+ },
+ "1orctail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1orctail",
+  "model": "ArmoredTails/tailorcish.nif",
+  "name": "Orcish tail armor"
+ },
+ "1scale": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1scale",
+  "model": "ArmoredTails/tailscale.nif",
+  "name": "Scale tail armor"
+ },
+ "1steeltail": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1steeltail",
+  "model": "ArmoredTails/tailsteel.nif",
+  "name": "Steel tail armor"
+ },
+ "1templar": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1templar",
+  "model": "ArmoredTails/tailtemplar.nif",
+  "name": "Templar tail armor"
+ },
+ "1watch": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1watch",
+  "model": "ArmoredTails/tailwatch.nif",
+  "name": "Watch tail armor"
+ },
+ "1wolf": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "1wolf",
+  "model": "ArmoredTails/tailwolf.nif",
+  "name": "Wolf tail armor"
+ },
+ "_01cigar": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_01cigar",
+  "model": "ep/_01cigar.nif",
+  "name": "Cigar"
+ },
+ "_02cigar": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_02cigar",
+  "model": "ep/_0cigar.nif",
+  "name": "Cigar"
+ },
+ "_RV_Ashmask1_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Ashmask1_H",
+  "model": "RV/Ashmask1.nif",
+  "name": "Ashmask"
+ },
+ "_RV_Ashmask2_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Ashmask2_H",
+  "model": "RV/Ashmask2.nif",
+  "name": "Ashmask"
+ },
+ "_RV_Ashmask3_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Ashmask3_H",
+  "model": "RV/Ashmask3.nif",
+  "name": "tail armor"
+ },
+ "_RV_Blindfold1_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Blindfold1_H",
+  "model": "RV/blindfold1.nif",
+  "name": "Ashmask"
+ },
+ "_RV_Daedramask1_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Daedramask1_H",
+  "model": "RV/Daedramask1.nif",
+  "name": "Daedric mask"
+ },
+ "_RV_Daedramask2_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Daedramask2_H",
+  "model": "RV/Daedramask2.nif",
+  "name": "Daedric mask"
+ },
+ "_RV_Daedramask3_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Daedramask3_H",
+  "model": "RV/Daedramask3.nif",
+  "name": "Daedric mask"
+ },
+ "_RV_Daedramask4_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Daedramask4_H",
+  "model": "RV/Daedramask4.nif",
+  "name": "Daedric mask"
+ },
+ "_RV_Eyepatch1L_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Eyepatch1L_H",
+  "model": "RV/eyepatch1L.nif",
+  "name": "Eyepatch L"
+ },
+ "_RV_Eyepatch1R_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Eyepatch1R_H",
+  "model": "RV/eyepatch1R.nif",
+  "name": "Eyepatch R"
+ },
+ "_RV_Facewrap1_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Facewrap1_H",
+  "model": "RV/Facewrap1.nif",
+  "name": "Facewrap"
+ },
+ "_RV_Facewrap2_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Facewrap2_H",
+  "model": "RV/Facewrap2.nif",
+  "name": "Facewrap"
+ },
+ "_RV_Facewrap3_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Facewrap3_H",
+  "model": "RV/Facewrap3.nif",
+  "name": "Facewrap"
+ },
+ "_RV_Facewrap4_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Facewrap4_H",
+  "model": "RV/Facewrap4.nif",
+  "name": "Facewrap"
+ },
+ "_RV_Facewrap5_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Facewrap5_H",
+  "model": "RV/Facewrap5.nif",
+  "name": "Facewrap"
+ },
+ "_RV_Facewrap6_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Facewrap6_H",
+  "model": "RV/Facewrap6.nif",
+  "name": "Facewrap"
+ },
+ "_RV_Facewrap7_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Facewrap7_H",
+  "model": "RV/Facewrap7.nif",
+  "name": "Facewrap"
+ },
+ "_RV_Facewrap8_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Facewrap8_H",
+  "model": "RV/Facewrap8.nif",
+  "name": "Facewrap"
+ },
+ "_RV_Glasses1_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Glasses1_H",
+  "model": "RV/glasses1.nif",
+  "name": "Glasses"
+ },
+ "_RV_Glasses1s_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Glasses1s_H",
+  "model": "RV/glasses1s.nif",
+  "name": "Glasses"
+ },
+ "_RV_Glasses2_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Glasses2_H",
+  "model": "RV/glasses2.nif",
+  "name": "Glasses"
+ },
+ "_RV_Glasses2s_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Glasses2s_H",
+  "model": "RV/glasses2s.nif",
+  "name": "Glasses"
+ },
+ "_RV_Glasses3_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Glasses3_H",
+  "model": "RV/glasses3.nif",
+  "name": "Glasses"
+ },
+ "_RV_Glasses4_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Glasses4_H",
+  "model": "RV/glasses4.nif",
+  "name": "Glasses"
+ },
+ "_RV_Glasses4s_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Glasses4s_H",
+  "model": "RV/glasses4s.nif",
+  "name": "Glasses"
+ },
+ "_RV_Goggles1_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Goggles1_H",
+  "model": "RV/goggles1.nif",
+  "name": "Goggles"
+ },
+ "_RV_Goggles2_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Goggles2_H",
+  "model": "RV/goggles2.nif",
+  "name": "Goggles"
+ },
+ "_RV_Goggles3_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Goggles3_H",
+  "model": "RV/goggles3.nif",
+  "name": "Goggles"
+ },
+ "_RV_Goggles4_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Goggles4_H",
+  "model": "RV/goggles4.nif",
+  "name": "Goggles"
+ },
+ "_RV_Goggles5_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Goggles5_H",
+  "model": "RV/goggles5.nif"
+ },
+ "_RV_Goggles6_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Goggles6_H",
+  "model": "RV/goggles6.nif"
+ },
+ "_RV_Goggles7_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Goggles7_H",
+  "model": "RV/goggles7.nif"
+ },
+ "_RV_Goggles8_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Goggles8_H",
+  "model": "RV/goggles8.nif"
+ },
+ "_RV_Lenses1_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Lenses1_H",
+  "model": "RV/Lenses1.nif",
+  "name": "Lenses"
+ },
+ "_RV_Lenses2_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Lenses2_H",
+  "model": "RV/Lenses2.nif",
+  "name": "Lenses"
+ },
+ "_RV_Orcishmask1_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Orcishmask1_H",
+  "model": "RV/Orcishmask1.nif"
+ },
+ "_RV_Orcishmask2_H": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Orcishmask2_H",
+  "model": "RV/Orcishmask2.nif",
+  "name": "Orcish mask"
+ },
+ "_RV_Scarf_01": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_01",
+  "model": "RV/scarf1.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_02": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_02",
+  "model": "RV/scarf2.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_03": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_03",
+  "model": "RV/scarf3.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_04": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_04",
+  "model": "RV/scarf4.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_05": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_05",
+  "model": "RV/scarf5.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_06": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_06",
+  "model": "RV/scarf6.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_07": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_07",
+  "model": "RV/scarf7.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_08": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_08",
+  "model": "RV/scarf8.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_09": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_09",
+  "model": "RV/scarf9.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_10": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_10",
+  "model": "RV/scarf10.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_11": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_11",
+  "model": "RV/scarf11.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_12": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_12",
+  "model": "RV/scarf12.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_13": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_13",
+  "model": "RV/scarf13.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_14": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_14",
+  "model": "RV/scarf14.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_15": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_15",
+  "model": "RV/scarf15.nif",
+  "name": "Scarf"
+ },
+ "_RV_Scarf_16": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "_RV_Scarf_16",
+  "model": "RV/scarf16.nif",
+  "name": "Scarf"
+ },
+ "aa_fannypack": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_fannypack",
+  "model": "frummyonda/fy_fannypack_b.nif",
+  "name": "Fanny pack"
+ },
+ "aa_fannypack_l": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_fannypack_l",
+  "model": "frummyonda/fy_fannypack_l.nif",
+  "name": "Fanny pack"
+ },
+ "aa_fannypack_r": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_fannypack_r",
+  "model": "frummyonda/fy_fannypack_r.nif",
+  "name": "Fanny pack"
+ },
+ "aa_fpkpch": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_fpkpch",
+  "model": "frummyonda/fy_fpackpouch.nif",
+  "name": "Pouch"
+ },
+ "aa_fpktbg_l": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_fpktbg_l",
+  "model": "frummyonda/fy_fpktbg_l.nif",
+  "name": "Pouch"
+ },
+ "aa_fpktbg_r": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_fpktbg_r",
+  "model": "frummyonda/fy_fpktbg_r.nif",
+  "name": "Pouch R"
+ },
+ "aa_satchel_f": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_satchel_f",
+  "model": "frummyonda/fy_satchel_f.nif",
+  "name": "satchel"
+ },
+ "aa_satchel_m": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_satchel_m",
+  "model": "frummyonda/fy_satchel_m.nif",
+  "name": "satchel"
+ },
+ "aa_thighbag_l": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_thighbag_l",
+  "model": "frummyonda/fy_thighbag_l.nif",
+  "name": "satchel L"
+ },
+ "aa_thighbag_r": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_thighbag_r",
+  "model": "frummyonda/fy_thighbag_r.nif",
+  "name": "satchel R"
+ },
+ "aa_ubelt": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_ubelt",
+  "model": "frummyonda/fy_utilitybelt.nif",
+  "name": "Utility belt"
+ },
+ "aa_waistbag": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_waistbag",
+  "model": "frummyonda/fy_waistbag_b.nif",
+  "name": "Waist bag"
+ },
+ "aa_waistbag_l": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_waistbag_l",
+  "model": "frummyonda/fy_waistbag_l.nif",
+  "name": "Waist bag L"
+ },
+ "aa_waistbag_r": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "aa_waistbag_r",
+  "model": "frummyonda/fy_waistbag_r.nif",
+  "name": "Waist bag R"
+ },
+ "ash1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "ash1",
+  "model": "l/light_ashl_lantern_01.nif",
+  "name": "Ash lantern"
+ },
+ "ash2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "ash2",
+  "model": "l/light_ashl_lantern_02.nif",
+  "name": "Ash lantern"
+ },
+ "ash3": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "ash3",
+  "model": "l/light_ashl_lantern_03.nif",
+  "name": "Ash lantern"
+ },
+ "ash4": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "ash4",
+  "model": "l/light_ashl_lantern_04.nif",
+  "name": "Ash lantern"
+ },
+ "ash5": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "ash5",
+  "model": "l/light_ashl_lantern_05.nif",
+  "name": "Ash lantern"
+ },
+ "ash6": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "ash6",
+  "model": "l/light_ashl_lantern_06.nif",
+  "name": "Ash lantern"
+ },
+ "ash7": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "ash7",
+  "model": "l/light_ashl_lantern_07.nif",
+  "name": "Ash lantern"
+ },
+ "cavelant": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "cavelant",
+  "model": "OAAB/l/cavern_Lantern.nif",
+  "name": "Cavern lantern"
+ },
+ "cbelt1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "cbelt1",
+  "model": "Belts/belt_common_1.nif",
+  "name": "Common belt"
+ },
+ "cbelt2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "cbelt2",
+  "model": "Belts/belt_common_2.nif",
+  "name": "common belt"
+ },
+ "cbelt3": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "cbelt3",
+  "model": "Belts/belt_common_3.nif",
+  "name": "common belt"
+ },
+ "cbelt4": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "cbelt4",
+  "model": "Belts/belt_common_4.nif",
+  "name": "common belt"
+ },
+ "cbelt5": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "cbelt5",
+  "model": "Belts/belt_common_5.nif",
+  "name": "common belt"
+ },
+ "colov2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "colov2",
+  "model": "pc/l/pc_col_lantern_02.nif",
+  "name": "Colovian lantern"
+ },
+ "colov3": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "colov3",
+  "model": "pc/l/pc_col_lantern_03.nif",
+  "name": "Colovian lantern"
+ },
+ "colov4": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "colov4",
+  "model": "pc/l/pc_col_lantern_04.nif",
+  "name": "Colovian lantern"
+ },
+ "colov5": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "colov5",
+  "model": "pc/l/pc_col_lantern_05.nif",
+  "name": "Colovian lantern"
+ },
+ "erabinbelt": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "erabinbelt",
+  "model": "Belts/erabin.nif",
+  "name": "Ashlander belt"
+ },
+ "expbelt1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "expbelt1",
+  "model": "Belts/belt_expensive_1.nif",
+  "name": "Expensive belt"
+ },
+ "expbelt2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "expbelt2",
+  "model": "Belts/belt_expensive_2.nif",
+  "name": "Expensive belt"
+ },
+ "expbelt3": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "expbelt3",
+  "model": "Belts/belt_expensive_3.nif",
+  "name": "Expensive belt"
+ },
+ "exqbelt": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "exqbelt",
+  "model": "Belts/belt_exquisite_1.nif",
+  "name": "Exqusite belt"
+ },
+ "extravbelt1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "extravbelt1",
+  "model": "Belts/belt_extravagant_1.nif",
+  "name": "Extravagant belt"
+ },
+ "extravbelt2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "extravbelt2",
+  "model": "Belts/belt_extravagant_2.nif",
+  "name": "Extravagant belt"
+ },
+ "GLantern2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "GLantern2",
+  "model": "l/light_de_lantern_02.nif",
+  "name": "lantern"
+ },
+ "GLantern6": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "GLantern6",
+  "model": "l/light_de_lantern_06.nif",
+  "name": "lantern"
+ },
+ "GLanterngrn": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "GLanterngrn",
+  "model": "tr/l/tr_l_de_lantgl_grn01.nif",
+  "name": "lantern"
+ },
+ "GLanternred": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "GLanternred",
+  "model": "tr/l/tr_l_de_lantgl_red02.nif",
+  "name": "lantern"
+ },
+ "GLanternyel": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "GLanternyel",
+  "model": "tr/l/tr_l_de_lantgl_yel01.nif",
+  "name": "lantern"
+ },
+ "hfirebelt": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "hfirebelt",
+  "model": "Belts/belt_hfire.nif",
+  "name": "lantern"
+ },
+ "Lantern0AABDwrn": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "Lantern0AABDwrn",
+  "model": "OAAB/l/dwrv_lantern.nif",
+  "name": "lantern"
+ },
+ "LanternPap1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPap1",
+  "model": "l/light_de_lantern_01.nif",
+  "name": "lantern"
+ },
+ "LanternPap10": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPap10",
+  "model": "l/light_de_lantern_10.nif",
+  "name": "lantern"
+ },
+ "LanternPap11": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPap11",
+  "model": "l/light_de_lantern_11.nif",
+  "name": "lantern"
+ },
+ "LanternPap14": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPap14",
+  "model": "l/light_de_lantern_14.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPap5": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPap5",
+  "model": "l/light_de_lantern_05.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPap7": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPap7",
+  "model": "l/light_de_lantern_07.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPapblu1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPapblu1",
+  "model": "tr/l/tr_l_de_lantern_blu_01.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPapblu4": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPapblu4",
+  "model": "tr/l/tr_l_de_lantern_blu_04.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPapgrn1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPapgrn1",
+  "model": "tr/l/tr_l_de_lantern_grn_01.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPapgrn4": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPapgrn4",
+  "model": "tr/l/tr_l_de_lantern_grn_04.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPappur1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPappur1",
+  "model": "tr/l/tr_l_de_lantern_prp_01.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPappur4": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPappur4",
+  "model": "tr/l/tr_l_de_lantern_prp_04.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPapyel1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPapyel1",
+  "model": "tr/l/tr_l_de_lantern_ylw_01.nif",
+  "name": "Wearable paper lantern"
+ },
+ "LanternPapyel4": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "LanternPapyel4",
+  "model": "tr/l/tr_l_de_lantern_ylw_04.nif",
+  "name": "Wearable paper lantern"
+ },
+ "orclan1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "orclan1",
+  "model": "sky/l/sky_lgt_orc_lantn_01.nif",
+  "name": "Wearable Orcish lantern"
+ },
+ "orclan2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "orclan2",
+  "model": "sky/l/sky_lgt_orc_lantn_02.nif",
+  "name": "Wearable Orcish lantern"
+ },
+ "TravLantern1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TravLantern1",
+  "model": "l/light_com_lantern_01.nif",
+  "name": "Wearable lantern"
+ },
+ "TravLantern2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TravLantern2",
+  "model": "l/light_com_lantern_02.nif",
+  "name": "Wearable lantern"
+ },
+ "TRIndorilGRLan1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TRIndorilGRLan1",
+  "model": "tr/l/TR_l_de_MhLant_gr_01.nif",
+  "name": "Wearable Indoril lantern"
+ },
+ "TRIndorilGRLan2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TRIndorilGRLan2",
+  "model": "tr/l/TR_l_de_MhLant_gr_02.nif",
+  "name": "Wearable Indoril lantern"
+ },
+ "TRIndorilGRLan3": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TRIndorilGRLan3",
+  "model": "tr/l/TR_l_de_MhLant_gr_03.nif",
+  "name": "Wearable Indoril lantern"
+ },
+ "TRIndorilLan1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TRIndorilLan1",
+  "model": "tr/l/TR_l_de_MhLant_whi_01.nif",
+  "name": "Wearable Indoril lantern"
+ },
+ "TRIndorilLan2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TRIndorilLan2",
+  "model": "tr/l/TR_l_de_MhLant_whi_02.nif",
+  "name": "Wearable Indoril lantern"
+ },
+ "TRIndorilLan3": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TRIndorilLan3",
+  "model": "tr/l/TR_l_de_MhLant_whi_03.nif",
+  "name": "Wearable Indoril lantern"
+ },
+ "TRIndorilPurLan1": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TRIndorilPurLan1",
+  "model": "tr/l/TR_l_de_MhLant_pr_01.nif",
+  "name": "Wearable Indoril lantern"
+ },
+ "TRIndorilPurLan2": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TRIndorilPurLan2",
+  "model": "tr/l/TR_l_de_MhLant_pr_02.nif",
+  "name": "Wearable Indoril lantern"
+ },
+ "TRIndorilPurLan3": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "TRIndorilPurLan3",
+  "model": "tr/l/TR_l_de_MhLant_pr_03.nif",
+  "name": "Wearable Indoril lantern"
+ },
+ "woodlan": {
+  "type": "MISC",
+  "src": "CAKE402.esp",
+  "id": "woodlan",
+  "model": "sky/l/sky_light_nord_lat_04.nif",
+  "name": "Wearable lantern"
+ }
+}

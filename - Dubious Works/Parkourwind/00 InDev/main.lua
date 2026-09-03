@@ -1,9 +1,9 @@
+---@omw-context player
 local core = require('openmw.core')
 local ui = require('openmw.ui')
 local input = require('openmw.input')
 local self = require('openmw.self')
 local I = require('openmw.interfaces')
-local mwSelf = require('openmw.self')
 
 -- Import Modules
 local EngineSync = require('core/engine_sync')
@@ -62,7 +62,7 @@ local debugWasEnabled = false
 -- =================================================================
 -- The full pipeline (Sensor raycasts, SensorExt's LedgeHang fallback,
 -- StateManager.update) only runs at full rate while the active state is
--- something other than Idle - which is exactly what running (or
+-- something other than Idle - which is exactly what holding Sprint (or
 -- being mid-action) gives you. While genuinely idle, it only runs on this
 -- throttled tick instead. EngineSync/InputManager stay untouched every
 -- frame regardless - they're cheap (no raycasts) and keep isGrounded/
@@ -78,32 +78,20 @@ local debugWasEnabled = false
 -- unthrottled tick on the exact frame the key goes down, so the full
 -- pipeline still only runs at the throttled rate while genuinely idle,
 -- but never adds latency to the moment the player actually acts.
--- States permitted to hold I.Controls overrides. Anything not listed here
--- gets them cleared every tick - see the safety net in onUpdate.
+local IDLE_THROTTLE_INTERVAL = 0.15
+local idleTick = H3.every(IDLE_THROTTLE_INTERVAL)
+
+-- States permitted to hold I.Controls overrides. Anything else gets them
+-- cleared every tick by the safety net in onUpdate.
+--
+-- overrideMovementControls(true) suppresses JUMP as well as movement, so a
+-- state left without its exit() running leaves the jump key dead until some
+-- later state happens to clear it. Asserting the correct value from one place
+-- costs two boolean writes and makes the fault unable to outlive a tick.
 local OVERRIDE_STATES = {
     Vault = true, Mantle = true, LedgeHang = true,
     Shimmy = true, WallBoost = true,
 }
-
--- =============================================================================
--- IDLE THROTTLE
---
--- The full pipeline (sensor raycasts, SensorExt, StateManager) runs every tick
--- unless the player is standing around, in which case it drops to
--- IDLE_THROTTLE_INTERVAL.
---
--- This used to be gated on a dedicated Sprint state and its own hotkey, whose
--- ONLY remaining purpose was to keep the pipeline unthrottled. That state is
--- gone: vanilla already distinguishes walking from running, so the engine's own
--- run flag says whether the player is moving with intent. No extra keybind, no
--- extra state, and it also picks up Always Run - which the hotkey never did.
---
--- self.controls.run is read rather than the Run ACTION because the action is a
--- momentary toggle under Always Run, whereas the control reflects the resolved
--- state. It is only consulted while the active state is Idle, where nothing has
--- overridden the controls.
-local IDLE_THROTTLE_INTERVAL = 0.15
-local idleTick = H3.every(IDLE_THROTTLE_INTERVAL)
 
 local function onInit()
     print("[FLOW] Cold Init...")
@@ -143,27 +131,17 @@ local function onUpdate(dt)
     EngineSync.update(dt)
     InputManager.update()
 
-    -- =====================================================================
-    -- CONTROL-OVERRIDE SAFETY NET
-    --
-    -- I.Controls.overrideMovementControls(true) suppresses the player's JUMP
-    -- input as well as movement, and five states set it (Vault, Mantle,
-    -- LedgeHang, Shimmy, WallBoost). If any of them is left without its exit()
-    -- running - a refused entry, an abnormal transition, a state re-entered
-    -- before it cleared - the override stays on and the jump key goes dead
-    -- until some later state happens to clear it. That is the "jump stops
-    -- responding, then fixes itself after a few presses" symptom.
-    --
-    -- Rather than trusting every exit path, assert the correct value from
-    -- here: if the active state is not one that legitimately holds the
-    -- override, it must be off. Two boolean writes per frame, and the fault
-    -- can no longer persist beyond a single tick.
     local activeName = StateManager.getActiveStateName()
     if not OVERRIDE_STATES[activeName] then
         I.Controls.overrideMovementControls(false)
         I.Controls.overrideCombatControls(false)
     end
 
+    -- Throttle gate. The dedicated Sprint state and its hotkey existed only to
+    -- keep this pipeline unthrottled; vanilla's run flag says the same thing,
+    -- picks up Always Run, and costs no keybind. Read as a control rather than
+    -- an ACTION because Always Run makes the action momentary; only consulted
+    -- while Idle, where nothing has overridden the controls.
     local isIdle = activeName == "Idle" and not mwSelf.controls.run
     local justActed = InputManager.intents.jumpPressed
     if not isIdle or idleTick() or justActed then
@@ -180,7 +158,7 @@ local function onUpdate(dt)
             DebugHUD.update(
                 StateManager.getActiveStateName(),
                 Sensor.getDebugString(),
-                "ROLL " .. AirborneState.getRollDebug()
+                AirborneState.getRollDebug()
             )
         end
     elseif debugWasEnabled then

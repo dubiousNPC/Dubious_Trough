@@ -1,12 +1,12 @@
+---@omw-context player
 --[[
     states/roll.lua
 
     Landing roll. While airborne and holding forward, double-tap Jump (two
     full press+release cycles inside a one-second budget). That arms a
     one-second window and applies a Fortify Agility bonus; touch down inside
-    the window and the landing becomes a recovery roll. A brief Acrobatics
-    spike lets the ENGINE compute reduced fall damage (and suppress fall
-    knockdown) rather than healing anything back afterwards.
+    the window and the landing becomes a recovery roll, refunding part of
+    the fall damage.
 
     This is the "Roll" state the original states-not-finished/air.lua draft
     referenced but never built.
@@ -17,8 +17,8 @@
     state_manager plays a state's animation on ENTRY and entering while
     airborne would fire pwroll1 mid-fall.
 
-    Exits to Idle; the engine's own run state carries momentum forward, so no
-    separate sprint hand-off is needed.
+    Exits to Sprint when forward is still held so momentum chains, otherwise
+    to Idle.
 
     ANIMATION: "pwroll1", start/stop keys, registered in playerAnim.lua's
     GROUPS and ONE_SHOT_STATES. This file never calls the animation API
@@ -38,38 +38,31 @@ local RollState = BaseState.new("Roll")
 -- CONFIGURATION
 -- ==============================================
 local ROLL_DURATION = 0.45      -- recovery window before handing back to
-                                 -- Idle. Long enough to read as a
+                                 -- Idle/Sprint. Long enough to read as a
                                  -- deliberate action, short enough not to
                                  -- feel like a stun.
 
--- ACROBATICS SPIKE, replacing the old health-refund model.
---
--- Previously this watched for the engine's fall damage to land and then healed
--- part of it back. That worked, but it had two problems: it healed damage from
--- ANY source that arrived inside the watch window, and it fought the engine
--- instead of using it.
---
--- AcrobaticsEnhanced solves the same problem by spiking acrobatics.modifier
--- for the landing frame and letting the ENGINE compute reduced damage from the
--- higher skill. Nothing is healed, nothing is predicted, and the engine also
--- suppresses fall KNOCKDOWN off the same skill value - a free second benefit
--- the refund model could never give.
---
--- Spiking .modifier never touches .base, so this is leveling-safe.
-local ACRO_SPIKE = 60
+-- Fraction of the fall damage refunded, scaled by Acrobatics. A character
+-- with 0 Acrobatics gets MIN, one at 100+ gets MAX. Never a full refund -
+-- a roll should reward skill, not delete falling as a threat.
+local REFUND_MIN = 0.25
+local REFUND_MAX = 0.75
+local REFUND_SKILL_CAP = 100.0
 
--- How long to hold the spike. It only needs to cover the landing frame the
--- engine evaluates damage on; the rest is margin. Kept short deliberately -
--- AcrobaticsEnhanced notes that a SAVE taken while a spike is held bakes it
--- into the savefile permanently, so the exposure window should be minimal.
-local SPIKE_HOLD = 0.20
+-- Engine fall damage is applied by OpenMW itself, and its ordering relative
+-- to this state's first frame isn't guaranteed. Rather than assume, watch
+-- for the health drop across a short window and refund once when it shows
+-- up. If no drop ever appears (a fall too short to hurt), nothing is
+-- refunded and the roll is purely cosmetic/momentum.
+local DAMAGE_WATCH_WINDOW = 0.25
 
 -- ==============================================
 -- ENTRY DATA (set by states/airborne.lua)
 -- ==============================================
--- Kept for call-site compatibility with states/airborne.lua. The spike model
--- needs no pre-impact health sample, so the argument is now ignored.
-function RollState.setLandingData(_)
+local pendingHealthBefore = nil
+
+function RollState.setLandingData(healthBefore)
+    pendingHealthBefore = healthBefore
 end
 
 -- ==============================================
@@ -81,39 +74,47 @@ local GROUND_GRACE = 0.20   -- how long to wait for isGrounded to catch up
                              -- entry
 
 local timeInState = 0
+local healthBefore = nil
+local refundApplied = false
 local groundConfirmed = false
-local spikeApplied = false
 
--- The spike must be OFF before the state can be left by any route, or the
--- bonus is stranded on the actor - the same failure mode as a leaked Levitate.
-local function applySpike(enable)
-    if enable == spikeApplied then return end
-    local skill = types.NPC.stats.skills.acrobatics(mwSelf)
-    skill.modifier = skill.modifier + (enable and ACRO_SPIKE or -ACRO_SPIKE)
-    spikeApplied = enable
+local function refundFraction()
+    local acro = types.NPC.stats.skills.acrobatics(mwSelf).modified or 0
+    local t = math.min(1.0, math.max(0.0, acro / REFUND_SKILL_CAP))
+    return REFUND_MIN + (REFUND_MAX - REFUND_MIN) * t
 end
 
 function RollState:enter(syncData)
     timeInState = 0
+    refundApplied = false
     groundConfirmed = syncData and syncData.isGrounded or false
 
-    -- Applied immediately on entry: the engine evaluates fall damage on the
-    -- landing frame, so the higher skill has to already be in place.
-    applySpike(true)
+    healthBefore = pendingHealthBefore
+    pendingHealthBefore = nil
 end
 
 function RollState:exit()
-    applySpike(false)
+    healthBefore = nil
+    refundApplied = false
 end
 
 function RollState:update(dt, syncData, inputData)
     timeInState = timeInState + dt
 
-    -- 1. Drop the spike as soon as the landing frame has passed. Held any
-    -- longer it is just a free buff, and a save taken while it is active
-    -- would write it permanently into the savefile.
-    if spikeApplied and timeInState >= SPIKE_HOLD then
-        applySpike(false)
+    -- 1. Damage refund - watch for the engine's fall damage to land, then
+    -- give part of it back. Done once.
+    if not refundApplied and healthBefore and timeInState <= DAMAGE_WATCH_WINDOW then
+        local hp = types.Actor.stats.dynamic.health(mwSelf)
+        local lost = healthBefore - hp.current
+
+        if lost > 0 then
+            -- Don't resurrect: if the fall was fatal, leave it fatal.
+            if hp.current > 0 then
+                local refund = lost * refundFraction()
+                hp.current = math.min(hp.base, hp.current + refund)
+            end
+            refundApplied = true
+        end
     end
 
     -- 2. Interrupt: if the ground vanishes again (rolled off a ledge),
@@ -133,8 +134,9 @@ function RollState:update(dt, syncData, inputData)
     end
 
     -- 3. Recovery window over - momentum preservation, matching the
-    -- Vault/Mantle convention. Movement itself is engine-driven, so simply
-    -- returning to Idle preserves whatever the player was doing.
+    -- Vault/Mantle convention: holding forward hands to Sprint, which
+    -- bounces straight back to Idle on its own if the sprint key isn't
+    -- actually held (see states/sprint.lua).
     if timeInState >= ROLL_DURATION then
         if inputData.moveVector.y > 0 then
             return "Idle"

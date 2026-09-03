@@ -1,3 +1,4 @@
+---@omw-context player
 local async = require("openmw.async")
 local I = require("openmw.interfaces")
 local storage = require("openmw.storage")
@@ -5,50 +6,28 @@ local storage = require("openmw.storage")
 local MOD_ID = "FLOW_AMF"
 local SETTINGS_KEY = "Settings" .. MOD_ID
 
-
--- =============================================================================
--- REGISTRATION
---
--- Registered under pcall. This is the ONE place in FLOW where that is
--- justified, and only because the failure it guards is unrecoverable rather
--- than diagnostic: a rejected settings entry takes the entire page out of the
--- Scripts menu, including the Debug HUD toggle needed to diagnose anything
--- else. Both calls report their own failure to the console, so nothing is
--- silently swallowed - the error is surfaced AND the rest of the page
--- survives. Every other pcall in the mod has been removed.
---
--- The whole page vanished from the Scripts menu twice: once because the
--- custom renderer was registered after the group that named it, and again
--- for a cause that could not be pinned down without a log. Either way the
--- failure mode is the same and unacceptable - one bad entry takes down every
--- setting on the page, including the Debug HUD toggle needed to diagnose
--- anything else.
---
--- The core group therefore contains ONLY plain checkboxes with literal
--- defaults: no custom renderer, no engine constants, nothing that can be nil
--- on some build. It is the group that must never fail.
---
--- The sprint keybind that used to sit in a second group is gone entirely,
--- along with its custom menu-context renderer - see main.lua's throttle note.
--- =============================================================================
-
+-- Both registrations are wrapped, and this is the ONLY justified pcall in the
+-- mod (RESEARCH.md 2.16): a single rejected setting removes EVERY setting on
+-- the page, including the Debug HUD toggle every other diagnostic depends on.
+-- The failure is unrecoverable rather than informative. Both print, so the
+-- error is surfaced AND the rest of the page survives - that is what separates
+-- this from concealment.
 local pageOk = pcall(I.Settings.registerPage, {
     key = MOD_ID,
     l10n = MOD_ID,
     name = "FLOW Movement",
     description = "Advanced Movement Framework Configuration"
 })
-if not pageOk then
-    print("[FLOW] settings page failed to register")
-end
+if not pageOk then print("[FLOW] settings page failed to register") end
 
-local coreOk = pcall(I.Settings.registerGroup, {
+local groupOk = pcall(I.Settings.registerGroup, {
     key = SETTINGS_KEY,
     page = MOD_ID,
     l10n = MOD_ID,
     name = "SettingsFLOW_AMF",
     permanentStorage = false,
     settings = {
+        -- [NEW] Master enable/disable
         {
             key = "modEnabled",
             name = "Enable FLOW",
@@ -64,14 +43,12 @@ local coreOk = pcall(I.Settings.registerGroup, {
         {
             key = "debugMode",
             name = "Debug HUD",
-            description = "Shows the live state/sensor readout on screen, and prints roll/animation diagnostics to the console. Off by default.",
+            description = "Shows the live state/sensor readout on screen. Off by default - the HUD redraws and allocates strings every frame, and also forces the sensor to resolve object names it otherwise wouldn't need. Leave off unless diagnosing something.",
             default = false, renderer = "checkbox"
         },
     }
 })
-if not coreOk then
-    print("[FLOW] CORE settings group failed to register - this should not happen")
-end
+if not groupOk then print("[FLOW] settings group failed to register") end
 
 local section = storage.playerSection(SETTINGS_KEY)
 
@@ -112,5 +89,5 @@ end
 return {
     modEnabled = function() return get("modEnabled", true) end,
     disableInInteriors = function() return get("disableInInteriors", false) end,
-    debugMode = function() return get("debugMode", false) end,
+    debugMode = function() return get("debugMode", false) end
 }

@@ -1,3 +1,4 @@
+---@omw-context player
 --- START OF FILE states/base_state.lua ---
 
 local BaseState = {}

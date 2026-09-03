@@ -1,3 +1,4 @@
+---@omw-context player
 local BaseState = require('states/base_state')
 local core = require('openmw.core')
 local mwSelf = require('openmw.self')
@@ -257,8 +258,9 @@ function VaultState:update(dt, syncData, inputData)
     
     -- 1. Completion Check
     if timeInState >= estimatedDuration + COMPLETION_GRACE then
-        -- Momentum preservation: movement is engine-driven,
-        -- so returning to Idle preserves whatever the player was doing.
+        -- Momentum preservation: holding forward hands back to Sprint,
+        -- which immediately bounces to Idle on its own if the sprint key
+        -- isn't actually held - see states/sprint.lua.
         if inputData.moveVector.y > 0 then
             return "Idle"
         else
