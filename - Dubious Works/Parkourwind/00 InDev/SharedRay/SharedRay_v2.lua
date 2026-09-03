@@ -1,4 +1,3 @@
----@omw-context player
 --[[
     Shared Raycast Service v2
 

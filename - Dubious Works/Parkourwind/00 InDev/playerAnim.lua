@@ -1,4 +1,3 @@
----@omw-context player
 --[[
     playerAnim.lua
 
@@ -48,29 +47,40 @@ local Anim = {}
 -- =============================================================================
 -- PRIORITY TIERS
 --
--- [REGRESSION FIX] These were PRIORITY_FLOW / + 20, i.e. 15
--- and 25. The documented enum runs Default(0) .. Scripted(13), so both were off
--- the end of it. A scalar priority is a legal FORM ("a single #Priority value
+-- [BUGFIX] These were PRIORITY_FLOW / + 20, i.e. 15 and 25.
+-- The documented enum runs Default(0) .. Scripted(13), so both were off the
+-- end of it. A scalar priority is a legal FORM ("a single #Priority value
 -- assigned to all bone groups") but 15 and 25 are not #Priority values, and
--- they do NOT inherit Scripted's special behaviour -- that is tied to the exact
--- value 13, not to "big number".
+-- crucially they do NOT inherit Scripted's special behaviour -- that is tied
+-- to the exact value 13, not to "big number".
 --
---   FLOW       = Weapon (7) - above Jump(4), Movement(5), Hit(6)
---   FLOW_MAJOR = Block  (8) - above FLOW
+-- Mapped onto real enum entries that preserve the two tiers:
 --
--- Both sit BELOW Knockdown(9) and Death(12), so being knocked down or killed
--- still interrupts a parkour move, and below Scripted(13), whose documented
--- side effect is pausing every non-Scripted animation on the actor.
+--   FLOW       = Weapon (7) - above Jump(4), Movement(5) and Hit(6), so a
+--                parkour pose outranks locomotion and hit reactions.
+--   FLOW_MAJOR = Block  (8) - above FLOW, for moves that must win outright
+--                against anything FLOW itself is doing.
 --
--- Do not go back to arithmetic on the enum.
+-- Both deliberately sit BELOW Knockdown(9) and Death(12), so being knocked
+-- down or killed still interrupts a parkour move, and below Scripted(13),
+-- whose documented side effect is pausing every non-Scripted animation on the
+-- actor for as long as it is present.
+--
+-- If a pose must dominate absolutely, use animation.PRIORITY.Scripted and
+-- accept that pause. Do not go back to arithmetic on the enum.
 -- =============================================================================
 local PRIORITY_FLOW       = animation.PRIORITY.Weapon
 local PRIORITY_FLOW_MAJOR = animation.PRIORITY.Block
+local PRIORITY_FLOW_TOP   = animation.PRIORITY.Scripted
 
 local GROUPS = {
-    Vault     = { group = "pwvault1",       speed = 1 },  -- one-shot, plays over the vault's physics duration
+    Vault     = {
+        group = { "pwvault1", "pwvault2", "pwvault3" }, speed = 1,
+        -- one-shot, plays over the vault's physics duration; re-rolled
+        -- every time Vault is (re-)entered
+    },
     Mantle    = {
-        group = "pwmantle1", speed = 1,  -- kf has pwmantle1/2/3; "pwmantle" does not exist
+        group = { "pwmantle1", "pwmantle2", "pwmantle3" }, speed = 1,
         priority = PRIORITY_FLOW,
         blendMask = animation.BLEND_MASK.All,
         autoDisable = false,  -- hold the last frame instead of reverting mid-climb if
@@ -86,19 +96,9 @@ local GROUPS = {
     -- states/optional/README.md. Kept here so re-enabling one of them
     -- doesn't require touching this file at all, just uncommenting/adding
     -- its name to the ONE_SHOT_STATES/LOOPING_STATES sets below.
-    -- [SYNTAX FIX] This entry was previously closed with '}' on the first
-    -- line, leaving priority/blendMask/startKey/stopKey dangling as keys of
-    -- GROUPS ITSELF rather than of Sprint. Valid Lua, but it meant Sprint
-    -- silently lost all four settings AND GROUPS gained four junk numeric
-    -- entries - which made Anim.verifyGroups() throw, since it indexes
-    -- entry.group on every value in the table.
-    Sprint    = {
-        group = "pwrun1", speed = 1,  -- looping
-        priority = PRIORITY_FLOW,
-        blendMask = animation.BLEND_MASK.All,
-        startKey = "start",
-        stopKey = "stop",
-    },
+    -- Sprint's entry was removed with the state itself: vanilla's own run
+    -- animation is correct while running, and FLOW no longer has a state to
+    -- attach a replacement to.
 
     -- Directional entries. `variants` replaces `group`; the state selects
     -- which one via Anim.setVariant() immediately before the transition, so
@@ -122,8 +122,8 @@ local GROUPS = {
     },
 
     Roll      = {
-        group = "pwroll1", speed = 1,  -- one-shot landing roll
-        priority = PRIORITY_FLOW_MAJOR,
+        group = "pwroll1", speed = 0.5,  -- one-shot landing roll
+        priority = PRIORITY_FLOW_TOP,
         blendMask = animation.BLEND_MASK.All,
         startKey = "start",
         stopKey = "stop",
@@ -141,7 +141,7 @@ local GROUPS = {
 -- groups; if the named group has no matching clip, nothing replaces it
 -- and the character T-poses for as long as the state is active. That is
 -- exactly what the removed WallJump entry ("pwwalljump") was doing.
-local LOOPING_STATES = { LedgeHang = true, Sprint = true }
+local LOOPING_STATES = { LedgeHang = true }
 local ONE_SHOT_STATES = { Vault = true, Mantle = true, Roll = true,
                           Shimmy = true, WallBoost = true }
 
@@ -191,9 +191,30 @@ end
 -- Resolves a GROUPS entry to an actual group name, honouring `variants`.
 local function resolveGroup(entry)
     if not entry then return nil end
+
+    -- Directional: left/right picked by the state via Anim.setVariant().
     if entry.variants then
         return entry.variants[pendingVariant or "right"]
     end
+
+    -- List form: several interchangeable clips for the same action, e.g.
+    -- Mantle's pwmantle1/2/3. These are VISUAL variation only - none of them
+    -- carries root motion, so which one plays has no effect on movement and a
+    -- random pick is safe.
+    --
+    -- [CRASH FIX] entry.group was previously returned verbatim, so a list went
+    -- straight to animation.playBlended, whose second argument must be a
+    -- string. That threw inside onUpdate on EVERY Vault and Mantle
+    -- transition:
+    --   playeranim.lua:290: stack index 2, expected string, received table
+    -- and because it threw inside the update handler it took the whole tick
+    -- down with it, not just the animation.
+    if type(entry.group) == "table" then
+        local n = #entry.group
+        if n == 0 then return nil end
+        return entry.group[math.random(n)]
+    end
+
     return entry.group
 end
 
@@ -231,6 +252,10 @@ function Anim.verifyGroups()
                 for dir, g in pairs(entry.variants) do
                     probes[#probes + 1] = { stateName .. "/" .. dir, g }
                 end
+            elseif type(entry.group) == "table" then
+                for i = 1, #entry.group do
+                    probes[#probes + 1] = { stateName .. "[" .. i .. "]", entry.group[i] }
+                end
             elseif entry.group then
                 probes[#probes + 1] = { stateName, entry.group }
             end
@@ -242,10 +267,8 @@ function Anim.verifyGroups()
 
     for i = 1, #probes do
         local label, group = probes[i][1], probes[i][2]
-        local ok, present = pcall(animation.hasGroup, self, group)
-        if not ok then
-            print(string.format("[FLOW][anim] %-16s '%s' -> probe FAILED", label, group))
-        elseif present then
+        local present = animation.hasGroup(self, group)
+        if present then
             print(string.format("[FLOW][anim] %-16s '%s' -> OK", label, group))
         else
             print(string.format("[FLOW][anim] %-16s '%s' -> MISSING (will T-pose or do nothing)",
@@ -253,10 +276,8 @@ function Anim.verifyGroups()
         end
     end
 
-    local ok, present = pcall(animation.hasGroup, self, 'jump')
-    if ok then
-        print(string.format("[FLOW][anim] vanilla   'jump' -> %s", present and "OK" or "MISSING"))
-    end
+    print(string.format("[FLOW][anim] vanilla   'jump' -> %s",
+        animation.hasGroup(self, 'jump') and "OK" or "MISSING"))
 end
 
 local function stopCurrent()
@@ -270,6 +291,16 @@ local function playGroup(stateName, looping)
     local group = resolveGroup(entry)
     pendingVariant = nil   -- consumed; never let a direction leak forward
     if not group then return end
+
+    -- Defensive: playBlended requires a string and throws into the caller if
+    -- given anything else. playGroup runs inside onUpdate, so a malformed
+    -- GROUPS entry would otherwise take down the entire update loop - which
+    -- is exactly what a list-form group did. Report and skip instead.
+    if type(group) ~= "string" then
+        print(string.format("[FLOW][anim] GROUPS['%s'] resolved to %s, expected string - skipped",
+            tostring(stateName), type(group)))
+        return
+    end
 
     if currentGroup == group then return end -- already playing, avoid restart stutter
     stopCurrent()
@@ -298,16 +329,37 @@ local lastRequest = nil
 
 reissue = function()
     if not lastRequest then return end
+    -- [BUGFIX] Restore the direction before replaying. playGroup() clears
+    -- pendingVariant as soon as it resolves, so by the time AnimRefresh fires
+    -- it is nil and resolveGroup() falls back to "right" -- a POV press
+    -- mid-shimmy replayed pwshimmyr1 no matter which way the player was
+    -- actually moving. Same for WallBoost.
+    pendingVariant = lastRequest.variant
     currentGroup = nil   -- force playGroup past its "already playing" guard
     playGroup(lastRequest.state, lastRequest.looping)
 end
 
+-- Re-fire the current one-shot without a state change. playGroup short-
+-- circuits when the requested group is already current, which is right for
+-- ordinary transitions but wrong for a repeating step animation - so clear
+-- the guard first. Used by states/shimmy.lua, which now loops internally
+-- rather than bouncing through LedgeHang between steps.
+function Anim.replay()
+    if not lastRequest then return end
+    currentGroup = nil
+    playGroup(lastRequest.state, lastRequest.looping)
+end
+
 function Anim.onStateChange(newState, oldState)
+    -- Captured before playGroup() consumes it, so the reissue above can put
+    -- it back.
+    local variant = pendingVariant
+
     if ONE_SHOT_STATES[newState] then
-        lastRequest = { state = newState, looping = false }
+        lastRequest = { state = newState, looping = false, variant = variant }
         playGroup(newState, false)
     elseif LOOPING_STATES[newState] then
-        lastRequest = { state = newState, looping = true }
+        lastRequest = { state = newState, looping = true, variant = variant }
         playGroup(newState, true)
     else
         lastRequest = nil

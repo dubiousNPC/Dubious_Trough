@@ -1,4 +1,3 @@
----@omw-context player
 --[[
     states/shimmy.lua
 
@@ -182,29 +181,34 @@ end
 -- =============================================================================
 local GRAVITY_MAGNITUDE = 200
 
--- The two halves have DIFFERENT repeat semantics, which one shared function
--- hides:
---   I.Controls.override*Controls(bool)  - idempotent setter, safe to repeat.
+-- The two halves of this have DIFFERENT repeat semantics, which is easy to
+-- miss because one call does both:
+--
+--   I.Controls.override*Controls(bool)  - a plain setter, idempotent, a
+--                                         repeated call costs nothing.
 --   activeEffects:modify(+/-mag, ...)   - CUMULATIVE. Two enables and one
---                                         disable leaves +200 levitate forever.
+--                                         disable leaves the player levitating
+--                                         by 200 permanently.
+--
 -- So the levitate half is flag-guarded and the control half is not, matching
--- ledge_hang.lua's applyGravityHack.
+-- ledge_hang.lua's applyGravityHack. Enter/exit are paired through
+-- StateManager.setState today and the magnitude does balance across a
+-- traverse, but the guard makes an unpaired call harmless instead of
+-- permanent.
 local suspensionApplied = false
 
 local function applySuspension(enable)
-    if enable == suspensionApplied then
-        I.Controls.overrideMovementControls(enable)
-        I.Controls.overrideCombatControls(enable)
-        return
+    if enable ~= suspensionApplied then
+        -- No pcall: types.Actor.activeEffects and :modify are documented API
+        -- on a live actor, and ledge_hang.lua makes the identical call
+        -- unguarded. Swallowing an error here would leave the hang silently
+        -- un-suspended, which is worse than seeing the error.
+        types.Actor.activeEffects(mwSelf):modify(
+            enable and GRAVITY_MAGNITUDE or -GRAVITY_MAGNITUDE,
+            core.magic.EFFECT_TYPE.Levitate)
+        suspensionApplied = enable
     end
-    suspensionApplied = enable
-    local ok, effects = pcall(types.Actor.activeEffects, mwSelf)
-    if ok and effects then
-        pcall(function()
-            effects:modify(enable and GRAVITY_MAGNITUDE or -GRAVITY_MAGNITUDE,
-                           core.magic.EFFECT_TYPE.Levitate)
-        end)
-    end
+
     I.Controls.overrideMovementControls(enable)
     I.Controls.overrideCombatControls(enable)
 end
@@ -241,9 +245,17 @@ end
 function ShimmyState:update(dt, syncData, inputData)
     timeInState = timeInState + dt
 
-    -- WallBoost: back + jump while shimmying. Checked before the step
-    -- completes so it can be fired mid-move, which is the point of it.
-    if inputData.jump and inputData.moveVector.y < 0 then
+    -- WallBoost: JUMP alone while shimmying.
+    --
+    -- This previously also required back to be held. That combination is
+    -- close to unusable in practice: the player is already holding a lateral
+    -- key to shimmy, and adding back at the same time as jump either fights
+    -- the lateral input or ends the step. The launch direction does not need
+    -- to come from input anyway - the shimmy already knows which way the
+    -- player is facing and travelling, so `dir` picks the animation variant
+    -- and the wall normal supplies the push. Nothing about the boost is
+    -- ambiguous without the back key.
+    if inputData.jump then
         WallBoostState.setLaunch(wallNormal, dir)
         return "WallBoost"
     end
@@ -267,8 +279,45 @@ function ShimmyState:update(dt, syncData, inputData)
     })
 
     if t >= 1.0 then
-        -- Back to the hang. Holding the direction re-enters immediately for
-        -- another step, which is what makes a held key feel continuous.
+        -- [FIX] Continue IN-STATE when the direction is still held.
+        --
+        -- This used to return "LedgeHang" and rely on that state bouncing
+        -- straight back here. With a key held that meant two full state
+        -- changes per second, and each one tore down and restarted the
+        -- animation (stopCurrent + playBlended), re-snapped position, and
+        -- re-applied the Levitate and control overrides in LedgeHang's
+        -- enter/exit. That churn is the choppiness - the step movement
+        -- itself was fine.
+        --
+        -- Looping here keeps one continuous state: no transition, no
+        -- teardown, no re-snap. The one-shot clip is re-fired explicitly via
+        -- Anim.replay(), since without a state change onStateChange never
+        -- runs.
+        local held = inputData.moveVector.x
+        if math.abs(held) > 0.1 and wallNormal then
+            local nextDir = (held > 0) and 1 or -1
+            local nextLip = ShimmyState.probeStep(mwSelf.position, resultLip, wallNormal, nextDir)
+            if nextLip then
+                dir = nextDir
+                -- resultLip is what gets handed to LedgeHang on exit, so it
+                -- has to track each in-state step, not just the first.
+                resultLip = nextLip
+                -- [FIX] Chain from the previous step's TARGET, not from the
+                -- live position. Reading mwSelf.position back each step let
+                -- the small gap between the SnapTo and where the engine
+                -- actually settled accumulate; after a few seconds of held
+                -- input the accumulated offset desynced the player from the
+                -- lip the probe was tracking, and probeStep started
+                -- alternating pass/fail - the vibration.
+                startPos = endPos or mwSelf.position
+                local lateral = ShimmyState.lateralVector(wallNormal)
+                endPos = lateral and (startPos + lateral * (STEP_DISTANCE * dir)) or startPos
+                timeInState = 0
+                Anim.setVariant(dir < 0 and "left" or "right")
+                Anim.replay()
+                return nil
+            end
+        end
         return "LedgeHang"
     end
 

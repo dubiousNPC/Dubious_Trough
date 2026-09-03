@@ -1,4 +1,3 @@
----@omw-context global
 --[[
     global/flow_amf_backend.lua
 

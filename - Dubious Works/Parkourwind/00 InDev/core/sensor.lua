@@ -1,4 +1,3 @@
----@omw-context player
 --[[
     core/sensor.lua (LITE)
 
@@ -109,8 +108,11 @@ local function getObjectName(obj)
     if not obj then return "Terrain" end
     local name = nil
     if obj.type and obj.type.record then
-        local status, record = pcall(obj.type.record, obj)
-        if status and record then name = record.name end
+        -- No pcall: `obj.type and obj.type.record` above already establishes
+        -- the method exists for this object type, which was the only real
+        -- failure mode. Anything past that is a bug worth surfacing.
+        local record = obj.type.record(obj)
+        if record then name = record.name end
     end
     if not name or name == "" then name = obj.recordId end
     return name

@@ -1,4 +1,3 @@
----@omw-context player
 local ui = require('openmw.ui')
 local Anim = require('playerAnim')
 local Settings = require('settings')

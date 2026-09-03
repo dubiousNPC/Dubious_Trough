@@ -1,4 +1,3 @@
----@omw-context player
 --- START OF FILE core/debug_hud.lua ---
 
 local ui = require('openmw.ui')
@@ -95,7 +94,11 @@ function DebugHUD.update(stateName, sensorInfo, actionName)
 
     -- Only update if provided, allows persistence
     if actionName then
-        local actionText = "LAST OP: " .. tostring(actionName)
+        -- No "LAST OP:" prefix. main.lua passes a LIVE roll/arm readout here,
+        -- not a completed operation - labelling it as the last op made it look
+        -- like Roll had just fired, permanently, including while standing
+        -- still. The caller supplies its own label.
+        local actionText = tostring(actionName)
         if DebugHUD.lastAction ~= actionText then
             DebugHUD.element.layout.content.ActionLine.props.text = actionText
             DebugHUD.lastAction = actionText

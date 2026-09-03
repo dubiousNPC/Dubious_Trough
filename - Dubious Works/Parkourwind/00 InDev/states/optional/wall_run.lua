@@ -1,4 +1,3 @@
----@omw-context player
 --[[
     states/optional/wall_run.lua
 
@@ -137,9 +136,10 @@ function WallRunState:enter(syncData)
     I.Controls.overrideMovementControls(true) 
     
     anim.playBlended(mwSelf, 'runforward', {
-        -- Weapon(7), not Movement + 10: the enum ends at Scripted(13), so the
-        -- old value (15) was off the end of it. See PRIORITY TIERS in
-        -- playerAnim.lua.
+        -- Weapon(7), not Movement + 10. The enum ends at Scripted(13), so the
+        -- old value (15) was off the end of it. See the PRIORITY TIERS note in
+        -- playerAnim.lua; this file plays its own animation directly, so the
+        -- constant is repeated rather than imported.
         priority = anim.PRIORITY.Weapon,
         loops = -1,
         speed = 1.35,

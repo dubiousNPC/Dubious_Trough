@@ -1,4 +1,3 @@
----@omw-context player
 --[[
     states/ledge_hang.lua
 
@@ -92,6 +91,19 @@ function LedgeHangState:enter(syncData)
     -- snap block below was skipped, leaving wallNormal stale from the previous
     -- step and the body un-anchored.
     local resumeLip, resumeNormal = ShimmyState.consumeResultLip()
+
+    -- [FIX] Sanity-check the handed-over lip before trusting it.
+    --
+    -- Shimmy sets resultLip on entry and on every in-state step, but only
+    -- LedgeHang consumes it. If a shimmy ends any other way - WallBoost, a
+    -- crouch-drop, a fall - the lip is left set, and the NEXT hang (possibly
+    -- minutes later, in another room) consumed it and snapped the player back
+    -- to that old ledge. That is the reported "teleport to a previously
+    -- attached ledge".
+    local LIP_SANITY_RANGE = 300
+    if resumeLip and (resumeLip - mwSelf.position):length() > LIP_SANITY_RANGE then
+        resumeLip, resumeNormal = nil, nil
+    end
     local lipSource = resumeLip or SensorExt.data.targetPos
 
     if lipSource then

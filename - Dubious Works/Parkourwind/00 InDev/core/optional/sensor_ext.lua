@@ -1,4 +1,3 @@
----@omw-context player
 --[[
     core/optional/sensor_ext.lua
 

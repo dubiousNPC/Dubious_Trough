@@ -1,4 +1,3 @@
----@omw-context player
 --[[
     core/engine_sync.lua
 
