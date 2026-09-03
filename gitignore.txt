@@ -1,7 +1,7 @@
-AnimRefresh_v1.lua
-xhookshot2.kf
-xhookshot2.nif
-BARDCRAFT_ASSESSMENT.md
+*AnimRefresh_v1.lua
+*xhookshot2.kf
+*xhookshot2.nif
+*BARDCRAFT_ASSESSMENT.md
 /tools
 /sources
 
