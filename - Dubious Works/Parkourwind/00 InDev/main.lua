@@ -142,7 +142,13 @@ local function onUpdate(dt)
     -- picks up Always Run, and costs no keybind. Read as a control rather than
     -- an ACTION because Always Run makes the action momentary; only consulted
     -- while Idle, where nothing has overridden the controls.
-    local isIdle = activeName == "Idle" and not mwSelf.controls.run
+    -- `self`, not `mwSelf`. Every other file in this mod requires openmw.self
+    -- as `mwSelf`; main.lua is the one that names it `self` (line 5), so this
+    -- line -- written in the siblings' idiom -- referenced an undeclared
+    -- global. Indexing nil raised every frame, and because the throw is here,
+    -- nothing below it ran: Sensor, SensorExt, StateManager and the debug HUD
+    -- were all dead while init still logged normally.
+    local isIdle = activeName == "Idle" and not self.controls.run
     local justActed = InputManager.intents.jumpPressed
     if not isIdle or idleTick() or justActed then
         Sensor.update(dt, InputManager.intents, EngineSync.data)
