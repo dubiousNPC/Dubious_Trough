@@ -71,7 +71,7 @@ local SELECT, HAVE_SUPER = selectRenderer()
 
 -- Option keys. These are l10n keys, resolved through the group's `l10n`
 -- context -- passing display text here is what broke the old control.
-local BASE_SLOT_ITEMS = { 'standard', 'alternative' }
+local BASE_SLOT_ITEMS = { 'standard', 'alternative', 'combined' }
 
 local baseSlotsArgument = {
     items = BASE_SLOT_ITEMS,

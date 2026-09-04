@@ -2,7 +2,7 @@
 --[[
     bones.lua -- weapon type to attachment bone
 
-    Two skeletons are supported, selected by the "Sheath bones" setting.
+    Three modes are supported, selected by the "Base slots" setting.
 
     STANDARD  the bones OpenMW's own weapon sheathing uses. That overlap is
               the point -- a sheathed sword should sit where the engine would
@@ -10,6 +10,11 @@
     SEM       the extra bones added by semaroBones.nif, "Sem"-suffixed and
               positioned for sheathed gear rather than reused from the
               sheathing rig.
+
+    COMBINED  both, standard first. A weapon type that the Sem skeleton adds a
+              bone for can therefore show TWO items -- one on each -- while a
+              type it does not (Arrow, Bolt) still shows one. Shields are
+              capped at one by common.lua regardless.
 
     SEM IS AN OVERRIDE LAYER, NOT A SECOND TABLE. Anything without a Sem entry
     falls through to the standard bone, so adding a weapon type is one edit and
@@ -90,35 +95,61 @@ M.SHIELD_BONE        = "Bip01 AttachShield"
 M.SHIELD_BONE_SEM    = "Bip01 AttachShieldSem"
 M.ATTACH_WEAPON_BONE = "Bip01 AttachWeapon"
 
--- Presence of this bone means the actor has the Sem skeleton. Any of the
--- twelve would serve; this one is least likely to be added piecemeal by an
--- unrelated skeleton replacer.
-M.SEM_PROBE_BONE = "Bip01 LongBladeOneHandSem"
-
+---The standard bone for a weapon type. This is also the bone OpenMW's own
+---sheathing uses, which is why it is asked for by name in places that have
+---nothing to do with the current mode.
 ---@param weaponType number
----@param useSem boolean|nil
-function M.boneForWeapon(weaponType, useSem)
-    if useSem then
-        local sem = SEM_OVERRIDE[weaponType]
-        if sem then return sem end
-    end
+---@return string
+function M.standardBone(weaponType)
     return BONE_BY_TYPE[weaponType] or M.ATTACH_WEAPON_BONE
 end
 
----@param useSem boolean|nil
-function M.shieldBone(useSem)
-    return useSem and M.SHIELD_BONE_SEM or M.SHIELD_BONE
+---Ordered candidate bones for a weapon type under a given mode. The caller
+---takes the first that is free and present on the actor, so the ordering IS
+---the policy:
+---
+---  standard     one bone, the engine's own.
+---  alternative  Sem first, standard second. Standard is always the fallback:
+---               the Sem bones exist only where semaroBones.nif was merged into
+---               that particular skeleton, and attaching to a missing bone is a
+---               SILENT no-show. Falling back per bone rather than per actor
+---               also copes with a skeleton that has some Sem bones and not
+---               others.
+---  combined     standard first, Sem second -- so a second weapon of the same
+---               type gets the extra slot the Sem skeleton adds, and the first
+---               one still sits where it always did.
+---
+---Weapon types with no Sem override (Arrow, Bolt) return a single bone under
+---every mode, which is what keeps `combined` from doubling the quiver.
+---@param weaponType number
+---@param mode string 'standard' | 'alternative' | 'combined'
+---@return string[]
+function M.bonesForWeapon(weaponType, mode)
+    local std = M.standardBone(weaponType)
+    local sem = SEM_OVERRIDE[weaponType]
+    if not sem or mode == 'standard' then return { std } end
+    if mode == 'alternative' then return { sem, std } end
+    return { std, sem }   -- combined
 end
 
----Bones that more than one weapon type maps onto, for the ACTIVE skeleton.
----Computed rather than listed, so editing either table cannot leave a stale
----list behind -- and computed per-skeleton, because the collisions differ.
----@param useSem boolean|nil
+---Shields get ONE bone under every mode -- `combined` does not add a second.
+---@param mode string
+---@return string
+function M.shieldBone(mode)
+    return mode == 'alternative' and M.SHIELD_BONE_SEM or M.SHIELD_BONE
+end
+
+---Bones that more than one weapon type maps onto, for a given mode. Computed
+---rather than listed, so editing either table cannot leave a stale list behind,
+---and computed per mode because the collisions differ: on standard,
+---`Bip01 LongBladeOneHand` carries both long blades and one-hand axes; on
+---alternative, axes get their own bone and that collision disappears.
+---@param mode string
 ---@return table<string, boolean>
-function M.sharedBones(useSem)
+function M.sharedBones(mode)
     local seen, shared = {}, {}
     for weaponType in pairs(BONE_BY_TYPE) do
-        local bone = M.boneForWeapon(weaponType, useSem)
+        local bone = M.bonesForWeapon(weaponType, mode)[1]
         if seen[bone] then shared[bone] = true end
         seen[bone] = true
     end

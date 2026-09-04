@@ -1,106 +1,103 @@
-# Why the skeleton dropdown was invisible
-
-## The cause
-
-The settings group declares `l10n = 'IED'`. That means `name` and `description`
-on every setting in it are **localisation keys**, not display text. The old
-setting passed literal prose:
-
-```lua
-key         = 'SHEATHBONES',
-name        = 'Sheath bones',
-description = 'Which skeleton bones sheathed gear attaches to.\n\n' .. ...,
-renderer    = 'select',
-argument    = { items = { 'auto', 'standard', 'sem' } },
-```
-
-Neither string is a key in `en.yaml`, so neither resolved. And the `argument`
-had **no `l10n` field**: the built-in `select` renderer resolves each item
-through localisation too, so `auto`, `standard` and `sem` all came back empty
-and the control had nothing to draw.
-
-Every other setting in the group used real keys (`setting_shownpcs`,
-`setting_showammo`, …) and rendered fine — which is exactly why only this one
-went missing. It was not a renderer problem; it was the only setting in the
-file not written to the group's own convention.
-
-The relay chain was never at fault. `SHEATHBONES` → `sheathBones` →
-`cfg:get('sheathBones')` was consistent end to end.
-
-## What it is now
+# Base slots
 
 ```
 Base slots        [ Standard  ▾ ]
 ```
 
-| Option | Bones | Notes |
+| Option | Bones | Slots per weapon type |
 |---|---|---|
-| **Standard** (default) | the original `_sh` sheathing slots | The bones OpenMW's own weapon sheathing uses. `Bip01 LongBladeOneHand` carries both long blades and one-hand axes. |
-| **Alternative** | the `_Sem` slots from `semaroBones.nif` | Positioned for sheathed gear rather than reused from the sheathing rig. Axes get `Bip01 AxeOneHandSem`, so the standard long-blade/axe collision disappears. |
+| **Standard** (default) | the original `_sh` sheathing slots | 1 |
+| **Alternative** | the `_Sem` slots from `semaroBones.nif` | 1 |
+| **Combined** | both layers, Standard filled first | **2** |
 
-Both `name`/`description` and the two option labels are now real keys in
-`l10n/IED/en.yaml`.
+## Combined
 
-### The `auto` option is gone, but the probe is not
+Standard is the first layer; the `_Sem` bones add **one extra slot per weapon
+type** on top. Two different long blades show two swords — one where the engine
+would sheathe it, one on the Sem rig. A third has nowhere to go.
 
-You asked for two options, so there are two. The per-actor skeleton probe that
-`auto` used is kept and given a better job: **Alternative probes before
-committing.**
+Three deliberate limits:
 
-The `_Sem` bones only exist where `semaroBones.nif` was actually merged into
-that actor's skeleton. A creature, or an NPC on a third-party replacer, may not
-have them — and attaching to a bone that is not there is a *silent* no-show.
-So Alternative confirms `Bip01 LongBladeOneHandSem` exists on that specific
-actor and falls back to Standard where it does not, rather than showing nothing.
+- **No second shield, no second quiver.** Arrow and Bolt have no `_Sem`
+  override, so `bonesForWeapon` returns a single candidate for them under every
+  mode — the quiver cannot double even in principle. The shield is explicitly
+  one bone per mode, and under Combined it uses the **Standard** bone, since a
+  lone shield belongs on the layer the engine itself would use.
+- **Player only.** An NPC asked for Combined gets Standard. Doubling every
+  actor's attachments across a cell is precisely the cost this mod exists to
+  avoid.
+- **One attachment per distinct record.** The vfx tag is derived from the record
+  id, and two attachments sharing a tag remove each other. Two of the *same*
+  sword therefore fill one slot; two *different* swords fill both. Say if you
+  want stacks to fill both slots — it needs per-copy tags, which is a small but
+  real change.
 
-This is still per actor, not global, because a cell can hold a mix. The probe
-is cached per actor and re-asked only when the setting changes.
+## Standard is always the fallback
 
-## SuperSelect3
+Checked per **bone**, not per actor. `bonesForWeapon` returns the fallback as a
+later candidate and the caller tests each one against that actor's own skeleton
+before taking it, so a skeleton carrying some `_Sem` bones and not others still
+works — each type independently uses whichever layer it actually has.
 
-Bundled at `scripts/SuperSettingsRenderers/SuperSelect3.lua`, verbatim and
-unmodified, the same way AnimRefresh is shipped.
+This replaced a per-actor `hasBone` probe. The probe answered "does this actor
+have the Sem rig", which is the wrong granularity: one missing bone made the
+whole actor fall back, and a partially-merged skeleton silently showed nothing
+for the types it did have. Attaching to a bone that is not there is a **silent**
+no-show, so every candidate is verified before use. The check is memoized per
+rebuild, since a lookup is real work and a mode can offer the same bone twice.
 
-It is **optional**. It advertises itself by writing to the session-lifetime
-`InstalledSettingsRenderers` storage section as it loads, and `settings.lua`
-falls back to the engine's built-in `select` when that flag is absent. Deleting
-the folder degrades the dropdown to arrows and changes nothing else.
+The shield does the same: if the Sem shield bone is missing, it falls back to
+`Bip01 AttachShield` rather than not drawing.
 
-It must load **before** `settings.lua` — entries in one `.omwscripts` run in
-written order, and the flag is read at registration time — so the manifest lists
-it first:
+## Interaction with the engine's own sheathing
 
-```
-MENU:   scripts/SuperSettingsRenderers/SuperSelect3.lua
-MENU:   scripts/show-all-weapons/settings.lua
-```
+An equipped, undrawn weapon is on the **Standard** bone, put there by OpenMW's
+weapon sheathing. Only that bone is claimed — under Combined the Sem slot for
+that type stays open and takes a carried weapon. Drawn, the standard bone frees
+up again.
 
-If SuperSettingsRenderers is also installed standalone, delete that line and the
-bundled folder; IED will find the standalone copy.
+## Rebuild trigger
+
+`baseSlots` is part of the change signature. Switching mode changes which bones
+are used and how many attachments exist, but nothing about the inventory, so
+without it the change would not appear until the player next picked something
+up.
 
 ## Verification
 
 | Sweep | Result |
 |---|---|
-| `luacheck.py` | 8 files, 0 failures |
+| `luacheck.py` | 6 files, 0 failures |
 | `check_names.py` | clean |
 | `api_sweep.py` | nothing unrecognised |
-| l10n keys used vs defined | **0 missing, 0 unused** |
-| raw prose where a key is expected | **none remaining** |
-| `pcall` in `show-all-weapons/` | **none** |
+| l10n keys used vs defined | 0 missing, 0 unused |
+| `pcall` in `show-all-weapons/` | none |
 
-`tools/test_ied.lua` — 14/14 pass, five of them new:
+`tools/test_ied.lua` — **21/21 pass**, eight new:
 
 ```
-standard uses the original _sh slot
-alternative uses the _Sem slot
-alternative gives axes their own bone, so no collision
-alternative falls back to standard when the Sem bones are absent
-unset baseSlots behaves as standard
+combined fills the standard slot AND the Sem slot
+combined adds exactly one extra slot, not unlimited
+combined does NOT add a second shield
+combined puts the shield on the STANDARD bone
+combined does NOT add a second quiver bone
+combined is ignored on NPCs, which get standard
+combined degrades to standard when the Sem bones are absent
+an engine-sheathed weapon blocks only the standard slot
 ```
 
-The mock had to be updated in two ways to be worth anything here. It now reads
-settings **through the subscribe callback** rather than mutating the config
-table directly, because `common.lua` caches config rather than reading it live —
-a test that pokes the table tests a path the engine never takes. And its
-`addVfx` asserts a VFS path that exists in the mock VFS, per RESEARCH §4.1.
+The mock counts every time two meshes land on one bone, and that counter is
+asserted zero throughout — RESEARCH §4.1.
+
+## A note on how this went
+
+The first attempt at `bones.lua` edited an API that was no longer there:
+`bonesForWeapon(weaponType, mode)` and `shieldBone(mode)` already existed in a
+better form than the one being written, and the string replacements silently
+matched nothing. The error surfaced only when the tests called
+`shieldBoneFor`, which was never created.
+
+Every replacement in the second pass asserts it matched before writing. That is
+worth adding to RESEARCH: an unverified string replacement is the same class of
+failure as an unverified `pcall` — it turns "this did not happen" into
+"something else happened later, somewhere else".

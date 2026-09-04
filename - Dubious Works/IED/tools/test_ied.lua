@@ -136,6 +136,9 @@ common.handler(nil,nil,nil,false)
 check('absent config behaves as enabled, not disabled', next(world.vfx)~=nil)
 
 print('base slots')
+-- handler's 5th arg is isPlayer; combined is player-only.
+local function asPlayer(w,sh,drawn) common.handler(nil,w,sh,drawn,true) end
+local function asNpc(w,sh,drawn)    common.handler(nil,w,sh,drawn,nil)  end
 -- Standard must never use Sem bones, even on a skeleton that has them.
 world.bones['Bip01 LongBladeOneHandSem']=true
 world.bones['Bip01 AxeOneHandSem']=true
@@ -172,6 +175,78 @@ check('alternative falls back to standard when the Sem bones are absent',
 world.vfx={}; setCfg{}
 common.handler(nil,nil,nil,false)
 check('unset baseSlots behaves as standard', world.vfx['Bip01 LongBladeOneHand']~=nil)
+
+print('combined mode')
+world.bones['Bip01 LongBladeOneHandSem']=true
+world.bones['Bip01 AxeOneHandSem']=true
+world.bones['Bip01 AttachShieldSem']=true
+
+-- two DIFFERENT long blades: standard takes the first, Sem the second
+inv={mk('blade_a',W.LongBladeOneHand), mk('blade_b',W.LongBladeOneHand)}
+world.equip={}; world.vfx={}; world.doubled=0
+setCfg{baseSlots='combined'}
+asPlayer(nil,nil,false)
+check('combined fills the standard slot AND the Sem slot',
+      world.vfx['Bip01 LongBladeOneHand']~=nil
+      and world.vfx['Bip01 LongBladeOneHandSem']~=nil
+      and (world.doubled or 0)==0)
+
+-- a third has nowhere to go
+inv={mk('blade_c',W.LongBladeOneHand), mk('blade_d',W.LongBladeOneHand),
+     mk('blade_e',W.LongBladeOneHand)}
+world.vfx={}; world.doubled=0
+asPlayer(nil,nil,false)
+local n=0; for _ in pairs(world.vfx) do n=n+1 end
+check('combined adds exactly one extra slot, not unlimited', n==2 and (world.doubled or 0)==0, n)
+
+-- NO second shield
+local sa=mk('sh_a'); recs['sh_a'].type=ArmorT.TYPE.Shield; recs['sh_a'].armor=true
+local sb=mk('sh_b'); recs['sh_b'].type=ArmorT.TYPE.Shield; recs['sh_b'].armor=true
+inv={sa,sb}; world.equip={}; world.vfx={}
+asPlayer(nil,nil,false)
+local shields=0
+for _,v in pairs(world.vfx) do if tostring(v):find('saw_sh_') then shields=shields+1 end end
+check('combined does NOT add a second shield', shields==1, shields)
+check('combined puts the shield on the STANDARD bone',
+      world.vfx['Bip01 AttachShield']~=nil and world.vfx['Bip01 AttachShieldSem']==nil)
+
+-- NO second quiver: Arrow has no Sem override
+world.bones['Bip01 Ammo 1']=true; world.bones['Bip01 Ammo 2']=true
+local bow=mk('bow1',W.MarksmanBow); local arrow=mk('arrow1',W.Arrow)
+inv={bow,arrow}; world.equip={}; world.ammoEquipped=arrow
+world.vfx={}
+asPlayer(nil,nil,false)
+check('combined does NOT add a second quiver bone',
+      world.vfx['Bip01 AmmoSem']==nil and world.vfx['Bip01 AmmoSem 1']==nil)
+world.ammoEquipped=nil
+
+-- player only
+inv={mk('blade_f',W.LongBladeOneHand), mk('blade_g',W.LongBladeOneHand)}
+world.equip={}; world.vfx={}
+asNpc(nil,nil,false)
+check('combined is ignored on NPCs, which get standard',
+      world.vfx['Bip01 LongBladeOneHand']~=nil
+      and world.vfx['Bip01 LongBladeOneHandSem']==nil)
+
+-- standard is always the fallback
+world.bones['Bip01 LongBladeOneHandSem']=nil
+world.bones['Bip01 AxeOneHandSem']=nil
+inv={mk('blade_h',W.LongBladeOneHand), mk('blade_i',W.LongBladeOneHand)}
+world.vfx={}
+asPlayer(nil,nil,false)
+check('combined degrades to standard when the Sem bones are absent',
+      world.vfx['Bip01 LongBladeOneHand']~=nil)
+
+-- the engine's sheathed weapon holds the standard bone; the Sem slot stays open
+world.bones['Bip01 LongBladeOneHandSem']=true
+local eq=mk('blade_eq',W.LongBladeOneHand)
+inv={eq, mk('blade_j',W.LongBladeOneHand)}
+world.equip={CR=eq}; world.vfx={}; world.doubled=0
+asPlayer(eq,nil,false)
+check('an engine-sheathed weapon blocks only the standard slot',
+      world.vfx['Bip01 LongBladeOneHand']==nil
+      and world.vfx['Bip01 LongBladeOneHandSem']~=nil
+      and (world.doubled or 0)==0)
 
 print(fails==0 and 'ALL PASS' or (fails..' FAILURES'))
 if fails>0 then os.exit(1) end

@@ -153,32 +153,23 @@ end
 -- ---------------------------------------------------------------------------
 -- SKELETON SELECTION
 -- ---------------------------------------------------------------------------
--- 'alternative' probes the actor's own skeleton once and caches the answer,
--- per actor rather than globally, because a cell can hold a mix: the player on
--- a Sem skeleton and vanilla NPCs beside them, or the reverse.
---
--- hasBone is a real lookup, so it is asked once and only re-asked if the
--- setting changes -- refreshCfgCache bumps the generation to invalidate.
-local semResolved  = nil
-local semGeneration = -1
-
-local function useSemBones(actor)
-    if semResolved ~= nil and semGeneration == cfgGeneration then
-        return semResolved
-    end
-    if (cfgCache.baseSlots or 'standard') ~= 'alternative' then
-        semResolved = false
-    else
-        -- Alternative selected, but the Sem bones only exist where
-        -- semaroBones.nif was actually merged into that actor's skeleton. A
-        -- creature or an NPC on a replacer skeleton may not have them, and
-        -- attaching to a bone that is not there is a SILENT no-show -- so
-        -- confirm before committing, and fall back to the standard bones
-        -- rather than showing nothing.
-        semResolved = anim.hasBone(actor, bones.SEM_PROBE_BONE)
-    end
-    semGeneration = cfgGeneration
-    return semResolved
+---Slot mode for this actor.
+---
+---`combined` is PLAYER ONLY. It is the mode that doubles the number of
+---attachments, and doing that on every NPC in a cell is exactly the cost this
+---mod exists to avoid, so an NPC asked for `combined` gets `standard`.
+---
+---There is no per-actor Sem probe any more. bones.bonesForWeapon already
+---returns the fallback as a later candidate, and the caller checks each
+---candidate against the actor's own skeleton -- which degrades PER BONE rather
+---than per actor, and so copes with a skeleton carrying some Sem bones and not
+---others.
+---@param isPlayer boolean|nil
+---@return string
+local function slotMode(isPlayer)
+    local mode = cfgCache.baseSlots or 'standard'
+    if mode == 'combined' and not isPlayer then return 'standard' end
+    return mode
 end
 
 local function normPath(path)
@@ -306,9 +297,22 @@ end
 -- REBUILD
 -- ---------------------------------------------------------------------------
 
-local function handler(actor, equippedWeapon, equippedShield, isDrawn)
-    local useSem = useSemBones(actor)
+local function handler(actor, equippedWeapon, equippedShield, isDrawn, isPlayer)
+    local mode = slotMode(isPlayer)
     clearVfx(actor)
+
+    -- Attaching to a bone the skeleton lacks is a SILENT no-show, so every
+    -- candidate is checked before it is taken. Memoized for this rebuild only:
+    -- hasBone is a real lookup and a weapon type can offer the same bone twice.
+    local boneExists = {}
+    local function usable(bone)
+        local known = boneExists[bone]
+        if known == nil then
+            known = anim.hasBone(actor, bone)
+            boneExists[bone] = known
+        end
+        return known
+    end
 
     local inv = types.Actor.inventory(actor)
     local equippedWeaponId = equippedWeapon and equippedWeapon.recordId or nil
@@ -332,7 +336,10 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
         local rec = weaponRecord(equippedWeapon)
         if rec then
             if not isDrawn then
-                boneTaken[bones.boneForWeapon(rec.type, useSem)] = true
+                -- The engine sheathes it on the STANDARD bone. Claim only that
+                -- one: under `combined` the Sem slot for this type is still
+                -- free and should take a carried weapon.
+                boneTaken[bones.standardBone(rec.type)] = true
             end
             if RANGED_TYPES[rec.type] then
                 rangedPresent[rec.type]  = true
@@ -353,10 +360,26 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
                     ammoForRanged[wt] = item
                 end
             else
-                local bone = bones.boneForWeapon(wt, useSem)
-                if enabled('showWeapons') and not boneTaken[bone]
-                   and rid ~= equippedWeaponId
+                -- Take the first candidate that is still free. Under
+                -- `combined` that is the standard bone for the first weapon of
+                -- a type and the Sem bone for the second; under the other
+                -- modes there is only ever one candidate.
+                local bone = nil
+                if enabled('showWeapons') and rid ~= equippedWeaponId
                    and not seen[rid] then
+                    for _, candidate in ipairs(bones.bonesForWeapon(wt, mode)) do
+                        if not boneTaken[candidate] and usable(candidate) then
+                            bone = candidate
+                            break
+                        end
+                    end
+                end
+
+                if bone then
+                    -- One attachment per distinct record: the vfx tag is
+                    -- derived from the record id, and two attachments sharing a
+                    -- tag would remove each other. Two of the SAME sword
+                    -- therefore fill one slot, two different swords fill both.
                     seen[rid] = true
                     boneTaken[bone] = true
                     if RANGED_TYPES[wt] then rangedPresent[wt] = true end
@@ -376,7 +399,10 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
            and not (isDrawn and rangedEquipped[rangedType]) then
             local rec = weaponRecord(ammoItem)
             if rec then
-                local baseBone = bones.boneForWeapon(ammoType, useSem)
+                -- One quiver under every mode. Arrow and Bolt have no Sem
+                -- override, so bonesForWeapon returns a single candidate here
+                -- whatever the mode -- combined adds no second quiver.
+                local baseBone = bones.bonesForWeapon(ammoType, mode)[1]
                 local mesh     = normPath(rec.model)
                 if baseBone and mesh then
                     local count = math.min(inv:countOf(rec.id), MAX_AMMO_DISPLAY)
@@ -399,13 +425,20 @@ local function handler(actor, equippedWeapon, equippedShield, isDrawn)
     if enabled('showShields') and not (equippedShield and not isDrawn) then
         shieldsShown = 0
     end
+
+    -- One shield under every mode; `combined` adds no second slot. Standard is
+    -- the fallback here too, so a skeleton without the Sem shield bone still
+    -- shows the shield rather than nothing.
+    local shieldBone = bones.shieldBone(mode)
+    if not usable(shieldBone) then shieldBone = bones.SHIELD_BONE end
     for _, item in ipairs(inv:getAll(types.Armor)) do
         if shieldsShown >= MAX_SHIELDS then break end
         local rid = item.recordId
         if rid ~= equippedShieldId then
             local rec = armorRecord(item)
             if rec and rec.model and rec.type == types.Armor.TYPE.Shield then
-                if attachVfx(actor, normPath(rec.model), bones.shieldBone(useSem),
+                if attachVfx(actor, normPath(rec.model),
+                             shieldBone,
                              "saw_sh_" .. shieldsShown) then
                     shieldsShown = shieldsShown + 1
                 end
@@ -429,7 +462,7 @@ function M.makeUpdateHandler(actor, isPlayer)
         local w, s, drawn = readState(actor)
         lastSignature = buildSignature(actor,
             w and w.recordId or nil, s and s.recordId or nil, drawn)
-        handler(actor, w, s, drawn)
+        handler(actor, w, s, drawn, isPlayer)
         forceRebuild = false
     end
 
@@ -480,10 +513,15 @@ function M.makeUpdateHandler(actor, isPlayer)
             .. '|' .. tostring(cfgCache.showWeapons)
             .. tostring(cfgCache.showShields)
             .. tostring(cfgCache.showAmmo)
+            -- baseSlots belongs here too: switching to combined changes which
+            -- bones are used and how many attachments there are, but nothing
+            -- about the inventory, so without it the change would not be seen
+            -- until the player next picked something up.
+            .. tostring(cfgCache.baseSlots)
         if signature == lastSignature then return end
 
         lastSignature = signature
-        handler(actor, w, s, drawn)
+        handler(actor, w, s, drawn, isPlayer)
     end
 end
 
