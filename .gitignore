@@ -1,22 +1,14 @@
-# Lua scripts (specific versions/backups)
-*AnimRefresh_v1.lua
-*xhookshot2.kf
-*xhookshot2.nif
-
-# Documentation
-*BARDCRAFT_ASSESSMENT.md
-
-# Directories
-/tools
-/sources
-
-# Compiled archives (mod packages)
+# Archives and distribution packages
 *.7z
 *.zip
+*.rar
+
+# Lua artifacts
+*.luac
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.egg-info/
 .Python
@@ -28,6 +20,15 @@ __pycache__/
 *~
 .vscode/
 .idea/
-```
 
-The key change: **rename to `.gitignore`** so Git actually uses it. The current `gitignore.txt` is just a text file and won't be applied unless you explicitly reference it with `git config`.
+# Local directories you don't want in source
+/tools/
+/sources/
+
+# Builds / dist
+/dist/
+/build/
+
+# Logs / temp
+*.log
+tmp/
