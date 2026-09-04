@@ -72,7 +72,7 @@ local cfgGeneration = 0
 
 local function refreshCfgCache()
     cfgCache.showNpcs    = cfg:get('showNpcs')    ~= false
-    cfgCache.sheathBones = cfg:get('sheathBones') or 'auto'
+    cfgCache.baseSlots   = cfg:get('baseSlots')   or 'standard'
     cfgCache.showWeapons = cfg:get('showWeapons') ~= false
     cfgCache.showShields = cfg:get('showShields') ~= false
     cfgCache.showAmmo    = cfg:get('showAmmo')    ~= false
@@ -153,9 +153,9 @@ end
 -- ---------------------------------------------------------------------------
 -- SKELETON SELECTION
 -- ---------------------------------------------------------------------------
--- 'auto' probes the actor's own skeleton once and caches the answer. Per actor
--- rather than globally, because a cell can hold a mix: the player on a Sem
--- skeleton and vanilla NPCs beside them, or the reverse.
+-- 'alternative' probes the actor's own skeleton once and caches the answer,
+-- per actor rather than globally, because a cell can hold a mix: the player on
+-- a Sem skeleton and vanilla NPCs beside them, or the reverse.
 --
 -- hasBone is a real lookup, so it is asked once and only re-asked if the
 -- setting changes -- refreshCfgCache bumps the generation to invalidate.
@@ -166,16 +166,16 @@ local function useSemBones(actor)
     if semResolved ~= nil and semGeneration == cfgGeneration then
         return semResolved
     end
-    local mode = cfgCache.sheathBones or 'auto'
-    if mode == 'standard' then
+    if (cfgCache.baseSlots or 'standard') ~= 'alternative' then
         semResolved = false
-    elseif mode == 'sem' then
-        semResolved = true
     else
-        -- Probe. A failure counts as "no Sem bones", which falls back to the
-        -- standard set: the bones the engine itself uses and the safer guess.
-        local ok, has = pcall(anim.hasBone, actor, bones.SEM_PROBE_BONE)
-        semResolved = (ok and has) or false
+        -- Alternative selected, but the Sem bones only exist where
+        -- semaroBones.nif was actually merged into that actor's skeleton. A
+        -- creature or an NPC on a replacer skeleton may not have them, and
+        -- attaching to a bone that is not there is a SILENT no-show -- so
+        -- confirm before committing, and fall back to the standard bones
+        -- rather than showing nothing.
+        semResolved = anim.hasBone(actor, bones.SEM_PROBE_BONE)
     end
     semGeneration = cfgGeneration
     return semResolved

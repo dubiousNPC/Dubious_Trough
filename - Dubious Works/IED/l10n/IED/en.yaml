@@ -3,6 +3,12 @@ settings_modDesc: "Shows carried weapons, shields and ammunition on the body, us
 
 settings_general: "General"
 
+setting_baseslots: "Base slots"
+setting_baseslots_desc: "Which set of skeleton bones sheathed gear attaches to.\n\nStandard uses the original _sh sheathing slots, the same bones OpenMW's own weapon sheathing uses.\n\nAlternative uses the _Sem slots added by semaroBones.nif, positioned for sheathed gear rather than reused from the sheathing rig. On a skeleton that lacks them, that actor falls back to Standard rather than showing nothing."
+
+standard: "Standard"
+alternative: "Alternative"
+
 setting_shownpcs: "NPCs display carried gear"
 setting_shownpcs_desc: "Show carried weapons and shields on other actors. Turning this off strips them immediately; your own gear is unaffected."
 

@@ -1,14 +1,18 @@
-local DIR='iedfix/IED/scripts/show-all-weapons/'
+local DIR='iedsem/IED/scripts/show-all-weapons/'
 local fails=0
 local function check(n,c,e) if c then print('  ok   '..n) else fails=fails+1; print('  FAIL '..n..' '..tostring(e or '')) end end
 
 local W={ShortBladeOneHand=0,LongBladeOneHand=1,LongBladeTwoHand=2,BluntOneHand=3,
          BluntTwoClose=4,BluntTwoWide=5,SpearTwoWide=6,AxeOneHand=7,AxeTwoHand=8,
          MarksmanBow=9,MarksmanCrossbow=10,MarksmanThrown=11,Arrow=12,Bolt=13}
-local world={vfx={},bones={},equip={},stance=0,cfg={}}
+local world={vfx={},bones={},equip={},stance=0,cfg={},files={}}
 local inv={}
 local recs={}
-local function mk(id,wtype,model) recs[id]={id=id,type=wtype,model=model or ('m/'..id..'.nif')}
+local function mk(id,wtype,model)
+    -- record.model is a VFS path: meshes/-prefixed, forward slashes, lowercase.
+    local m = model or ('meshes/w/'..id..'.nif')
+    recs[id]={id=id,type=wtype,model=m}
+    world.files[m]=true
     return {recordId=id,count=1,type=nil} end
 
 local WeaponT={TYPE=W, record=function(o) return recs[o.recordId] end,
@@ -35,21 +39,41 @@ package.preload['openmw.types']=function() return {
            hasEquipped=function(_,it) return world.equip.CR==it or world.equip.CL==it
                or world.ammoEquipped==it end},
 } end
-package.preload['openmw.vfs']=function() return {fileExists=function() return false end} end
+package.preload['openmw.vfs']=function() return {fileExists=function(p)
+    return world.files[p]==true end} end
 package.preload['openmw.animation']=function() return {
     hasBone=function(_,b) return world.bones[b]==true end,
     addVfx=function(_,m,o)
+        assert(type(m)=='string' and m:sub(1,7)=='meshes/' and not m:find('\\',1,true),
+               'addVfx got a non-VFS path: '..tostring(m))
+        assert(world.files[m], 'addVfx got a path not in the VFS: '..tostring(m))
         if world.vfx[o.boneName] then world.doubled=(world.doubled or 0)+1 end
         world.vfx[o.boneName]=o.vfxId end,
     removeVfx=function(_,id) for b,v in pairs(world.vfx) do if v==id then world.vfx[b]=nil end end end,
 } end
+-- cfg is read through a cache refreshed on subscribe, so the mock needs both
+-- get and subscribe, and a way to fire the callback when world.cfg changes.
+local cfgSubs={}
 package.preload['openmw.storage']=function() return {
-    globalSection=function() return {get=function(_,k) return world.cfg[k] end} end } end
+    globalSection=function() return {
+        get=function(_,k) return world.cfg[k] end,
+        subscribe=function(_,cb) cfgSubs[#cfgSubs+1]=cb end,
+    } end } end
+package.preload['openmw.async']=function() return {
+    callback=function(_,f) return f end,
+    newUnsavableSimulationTimer=function(_,_,f) f() end } end
 package.preload['openmw.interfaces']=function() return {} end
 package.preload['scripts.show-all-weapons.bones']=function() return dofile(DIR..'bones.lua') end
 
 local bones=dofile(DIR..'bones.lua')
 local common=dofile(DIR..'common.lua')
+
+-- Settings are cached, not read live, so the test must push a change the same
+-- way the engine would rather than mutating world.cfg silently.
+local function setCfg(t)
+    world.cfg=t
+    for _,cb in ipairs(cfgSubs) do cb('IED_global', nil) end
+end
 
 print('bones.lua')
 local shared=bones.sharedBones()
@@ -103,13 +127,51 @@ check('with the shield drawn the back is free again',
 
 print('settings')
 inv={mk('ls3',W.LongBladeOneHand)}
-world.equip={}; world.vfx={}; world.cfg={showWeapons=false}
+world.equip={}; world.vfx={}; setCfg{showWeapons=false}
 common.handler(nil,nil,nil,false)
 check('showWeapons=false hides carried weapons', next(world.vfx)==nil)
-world.cfg={}
+setCfg{}
 world.vfx={}
 common.handler(nil,nil,nil,false)
 check('absent config behaves as enabled, not disabled', next(world.vfx)~=nil)
+
+print('base slots')
+-- Standard must never use Sem bones, even on a skeleton that has them.
+world.bones['Bip01 LongBladeOneHandSem']=true
+world.bones['Bip01 AxeOneHandSem']=true
+inv={mk('ls9',W.LongBladeOneHand)}; world.equip={}; world.vfx={}
+setCfg{baseSlots='standard'}
+common.handler(nil,nil,nil,false)
+check('standard uses the original _sh slot',
+      world.vfx['Bip01 LongBladeOneHand']~=nil and world.vfx['Bip01 LongBladeOneHandSem']==nil)
+
+world.vfx={}; setCfg{baseSlots='alternative'}
+common.handler(nil,nil,nil,false)
+check('alternative uses the _Sem slot',
+      world.vfx['Bip01 LongBladeOneHandSem']~=nil and world.vfx['Bip01 LongBladeOneHand']==nil)
+
+-- On Sem, axes get their own bone, so the standard collision disappears.
+inv={mk('ls10',W.LongBladeOneHand), mk('axe10',W.AxeOneHand)}
+world.vfx={}; world.doubled=0
+common.handler(nil,nil,nil,false)
+check('alternative gives axes their own bone, so no collision',
+      world.vfx['Bip01 LongBladeOneHandSem']~=nil
+      and world.vfx['Bip01 AxeOneHandSem']~=nil and (world.doubled or 0)==0)
+
+-- A skeleton without the Sem bones must fall back, not show nothing.
+world.bones['Bip01 LongBladeOneHandSem']=nil
+world.bones['Bip01 AxeOneHandSem']=nil
+inv={mk('ls11',W.LongBladeOneHand)}; world.vfx={}
+setCfg{baseSlots='alternative'}
+common.handler(nil,nil,nil,false)
+check('alternative falls back to standard when the Sem bones are absent',
+      world.vfx['Bip01 LongBladeOneHand']~=nil,
+      'a missing bone is a SILENT no-show, so this must be checked')
+
+-- unset config must not break
+world.vfx={}; setCfg{}
+common.handler(nil,nil,nil,false)
+check('unset baseSlots behaves as standard', world.vfx['Bip01 LongBladeOneHand']~=nil)
 
 print(fails==0 and 'ALL PASS' or (fails..' FAILURES'))
 if fails>0 then os.exit(1) end
