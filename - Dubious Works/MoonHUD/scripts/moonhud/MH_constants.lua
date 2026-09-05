@@ -1,3 +1,4 @@
+---@omw-context player
 -- MH_constants.lua
 -- Static lunar data for OpenMW / Morrowind, and the verified engine phase model.
 --

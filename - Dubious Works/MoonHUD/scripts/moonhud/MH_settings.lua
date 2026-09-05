@@ -1,3 +1,4 @@
+---@omw-context player
 -- MH_settings.lua
 --
 -- Settings groups for MoonHUD. Layout, naming and behaviour follow TimeHUD and

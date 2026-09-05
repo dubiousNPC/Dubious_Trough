@@ -1,3 +1,4 @@
+---@omw-context none
 -- Offline check of the heading -> atlas frame mapping.
 -- Reimplements tileForHeading exactly as BSC_p.lua has it, then verifies it
 -- against the needle angles measured out of BSCompasAtlas.png.

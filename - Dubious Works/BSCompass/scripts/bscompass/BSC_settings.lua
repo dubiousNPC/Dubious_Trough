@@ -1,3 +1,4 @@
+---@omw-context player
 -- BSC_settings.lua
 --
 -- Settings for BSCompass. Group layout and key naming follow TimeHUD and

@@ -1,3 +1,4 @@
+---@omw-context player
 -- BSC_border.lua
 -- Border template builder, reused unchanged from TimeHUD / LocationHUD
 -- (TH_makeborder.lua) so the border styles match across the HUD set.

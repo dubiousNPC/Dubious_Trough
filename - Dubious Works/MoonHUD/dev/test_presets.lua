@@ -1,3 +1,4 @@
+---@omw-context none
 package.path = '/mnt/user-data/outputs/MoonHUD/?.lua;' .. package.path
 local stubs = { ['openmw.core'] = { weather = { MOON_PHASE = {} } } }
 local real = require

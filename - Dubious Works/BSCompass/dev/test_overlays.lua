@@ -1,3 +1,4 @@
+---@omw-context none
 -- Cardinal band logic and the named-overlay API, offline.
 local fails, checks = 0, 0
 local function check(c, m) checks = checks + 1; if not c then fails = fails + 1; print('  FAIL: ' .. m) end end

@@ -1,3 +1,4 @@
+---@omw-context none
 -- load_check.lua
 --
 -- Executes a mod's player scripts against a stubbed OpenMW API, so load-time

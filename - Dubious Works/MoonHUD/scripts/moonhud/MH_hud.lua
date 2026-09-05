@@ -1,3 +1,4 @@
+---@omw-context player
 -- MH_hud.lua  (PLAYER script)
 --
 -- On-screen moon phase widget. Structure, drag/scroll handling, border templates
@@ -6,25 +7,39 @@
 -- Reads phases from the MoonTracker interface (MH_tracker.lua), never from the
 -- engine directly, so the HUD keeps showing something sensible in interiors.
 
-ui      = require('openmw.ui')
-util    = require('openmw.util')
-core    = require('openmw.core')
-async   = require('openmw.async')
-storage = require('openmw.storage')
-input   = require('openmw.input')
-types   = require('openmw.types')
+local ui      = require('openmw.ui')
+local util    = require('openmw.util')
+local core    = require('openmw.core')
+local async   = require('openmw.async')
+local storage = require('openmw.storage')
+local input   = require('openmw.input')
+local types   = require('openmw.types')
 self    = require('openmw.self')
-time    = require('openmw_aux.time')
-I       = require('openmw.interfaces')
-v2      = util.vector2
+local time    = require('openmw_aux.time')
+local I       = require('openmw.interfaces')
+local v2      = util.vector2
+
+-- Forward declarations for this file's PRIVATE helpers, which were
+-- implicit globals. Declared up here rather than as `local function` at
+-- each definition, because at least one is referenced above its
+-- definition line and a local is not in scope before its declaration.
+--
+-- NOT localised: createMoonHud, updateMoonDisplay.
+-- This mod uses _G as an inter-module bus. MH_settings.lua is
+-- require()d into this same environment and calls those by name, and it
+-- writes changed setting values back with `_G[setting] = ...`. Making
+-- them local does not error -- the call sites are guarded with
+-- `if fn then` -- it silently turns every settings callback into a
+-- no-op, which is worse.
+local refreshUiVisibility, UiModeChanged
 
 MODNAME = 'MoonHUD'
 
 local C = require('scripts.moonhud.MH_constants')
-borderTemplates = require('scripts.moonhud.MH_makeborder')
+local borderTemplates = require('scripts.moonhud.MH_makeborder')
 
-generalSection    = storage.playerSection('Settings' .. MODNAME .. 'General')
-appearanceSection = storage.playerSection('Settings' .. MODNAME .. 'Appearance')
+local generalSection    = storage.playerSection('Settings' .. MODNAME .. 'General')
+local appearanceSection = storage.playerSection('Settings' .. MODNAME .. 'Appearance')
 
 require('scripts.moonhud.MH_settings')
 
@@ -32,7 +47,7 @@ require('scripts.moonhud.MH_settings')
 -- State
 --------------------------------------------------------------------------------
 
-moonHud        = nil
+local moonHud        = nil
 local moonFlex = nil
 local rowFor   = {}          -- moonName -> { icon = elem, text = elem }
 local atlasCache = {}

@@ -1,3 +1,4 @@
+---@omw-context player
 -- MH_makeborder.lua
 -- Border template builder. Byte-for-byte the same module TimeHUD and LocationHUD
 -- ship as TH_makeborder.lua / LH_makeborder.lua, reused so the border styles match.

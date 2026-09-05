@@ -1,3 +1,4 @@
+---@omw-context player
 -- self.cell is nil while a save loads. That was the one call shape the old
 -- pcall could plausibly have been catching, so it now has an explicit guard.
 local mod = _G.LOADED['scripts.moonhud.MH_tracker']

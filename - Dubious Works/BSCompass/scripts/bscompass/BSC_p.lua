@@ -1,3 +1,4 @@
+---@omw-context player
 -- BSC_p.lua  (PLAYER script)
 --
 -- A dial compass driven by a vertical texture atlas.
@@ -18,17 +19,31 @@
 -- Settings are read from globals rather than storage for the same reason; see
 -- BSC_settings.lua.
 
-ui      = require('openmw.ui')
-util    = require('openmw.util')
-core    = require('openmw.core')
-async   = require('openmw.async')
-storage = require('openmw.storage')
-input   = require('openmw.input')
-types   = require('openmw.types')
-camera  = require('openmw.camera')
+local ui      = require('openmw.ui')
+local util    = require('openmw.util')
+local core    = require('openmw.core')
+local async   = require('openmw.async')
+local storage = require('openmw.storage')
+local input   = require('openmw.input')
+local types   = require('openmw.types')
+local camera  = require('openmw.camera')
 self    = require('openmw.self')
-I       = require('openmw.interfaces')
-v2      = util.vector2
+local I       = require('openmw.interfaces')
+local v2      = util.vector2
+
+-- Forward declarations for this file's PRIVATE helpers, which were
+-- implicit globals. Declared up here rather than as `local function` at
+-- each definition, because at least one is referenced above its
+-- definition line and a local is not in scope before its declaration.
+--
+-- NOT localised: rebuildTiles, createCompassHud, applyCompassStyle.
+-- This mod uses _G as an inter-module bus. BSC_settings.lua is
+-- require()d into this same environment and calls those by name, and it
+-- writes changed setting values back with `_G[setting] = ...`. Making
+-- them local does not error -- the call sites are guarded with
+-- `if fn then` -- it silently turns every settings callback into a
+-- no-op, which is worse.
+local atlasGeometry, refreshUiVisibility, UiModeChanged
 
 MODNAME = 'BSCompass'
 
@@ -44,7 +59,7 @@ MODNAME = 'BSCompass'
 --   cols    columns in the sheet; 1 means a vertical strip
 --   cell    pixel size of one square frame
 --   overlay optional static art the rotating frame is drawn on top of
-ATLAS_PRESETS = {
+local ATLAS_PRESETS = {
 	['BSCompasAtlas'] = {
 		path = 'textures/bscompass/BSCompasAtlas.png',
 		frames = 36, cols = 1, cell = 88,
@@ -93,12 +108,12 @@ ATLAS_PRESETS = {
 	},
 }
 
-ATLAS_PRESET_ORDER = { 'BSCompasAtlas', 'BSCompasAtlas_360', 'DBS_CompassARROW' }
+local ATLAS_PRESET_ORDER = { 'BSCompasAtlas', 'BSCompasAtlas_360', 'DBS_CompassARROW' }
 
-borderTemplates = require('scripts.bscompass.BSC_border')
+local borderTemplates = require('scripts.bscompass.BSC_border')
 
-generalSection = storage.playerSection('Settings' .. MODNAME .. 'General')
-compassSection = storage.playerSection('Settings' .. MODNAME .. 'Compass')
+local generalSection = storage.playerSection('Settings' .. MODNAME .. 'General')
+local compassSection = storage.playerSection('Settings' .. MODNAME .. 'Compass')
 
 require('scripts.bscompass.BSC_settings')
 
@@ -106,7 +121,7 @@ require('scripts.bscompass.BSC_settings')
 -- State
 --------------------------------------------------------------------------------
 
-compassHud = nil
+local compassHud = nil
 local compassImage        = nil    -- the layout table, poked directly
 local tiles               = {}     -- pre-built ui.texture, 1-based
 local tileCount           = 0
@@ -753,7 +768,7 @@ end))
 
 local interface
 
-interface = {
+local interface = {
 	version = 2,
 
 	--- Raise a named overlay.

@@ -1,3 +1,4 @@
+---@omw-context player
 -- The colour validator now has to do the job pcall was doing.
 local util = require('openmw.util')
 local COLOR_KEYS = { TEXT_COLOR = true }

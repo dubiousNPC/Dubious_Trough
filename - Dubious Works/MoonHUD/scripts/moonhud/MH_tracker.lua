@@ -1,3 +1,4 @@
+---@omw-context player
 -- MH_tracker.lua  (PLAYER script)
 --
 -- Lunar phase tracking for OpenMW, primary source core.weather.getCurrentMoons(),

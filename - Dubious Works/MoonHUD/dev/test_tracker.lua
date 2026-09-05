@@ -1,3 +1,4 @@
+---@omw-context none
 -- Offline harness: stubs the OpenMW API and exercises MH_constants + MH_tracker.
 package.path = '/home/claude/work/out/MoonHUD/?.lua;' .. package.path
 

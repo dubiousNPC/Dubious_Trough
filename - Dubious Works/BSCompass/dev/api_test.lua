@@ -1,3 +1,4 @@
+---@omw-context none
 local mod = _G.LOADED['scripts.bscompass.BSC_p']
 local I = mod.interface
 local H = mod.eventHandlers
