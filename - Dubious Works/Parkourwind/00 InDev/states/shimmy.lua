@@ -156,6 +156,7 @@ end
 local timeInState = 0
 local dir = 0
 local startPos = nil
+local stepDuration = 1.0
 local endPos = nil
 local wallNormal = nil
 
@@ -214,7 +215,14 @@ function ShimmyState:enter(syncData)
     dir = pendingDir
     wallNormal = pendingWallNormal
 
-    Anim.setVariant(dir < 0 and "left" or "right")
+    local variant = dir < 0 and "left" or "right"
+    Anim.setVariant(variant)
+
+    -- Drive the step over the clip's ACTUAL length rather than a fixed
+    -- constant. The left and right clips are separate assets and need not
+    -- match; assuming they did made one direction drift out of sync with its
+    -- animation and judder. Falls back to the constant if the keys are absent.
+    stepDuration = Anim.getGroupDuration("Shimmy", variant) or STEP_DURATION
 
     startPos = mwSelf.position
     local lateral = ShimmyState.lateralVector(wallNormal)
@@ -257,7 +265,7 @@ function ShimmyState:update(dt, syncData, inputData)
         return "LedgeHang"
     end
 
-    local t = math.min(1.0, timeInState / STEP_DURATION)
+    local t = math.min(1.0, timeInState / stepDuration)
     local pos = startPos + (endPos - startPos) * t
 
     core.sendGlobalEvent('FLOW_SnapTo', {

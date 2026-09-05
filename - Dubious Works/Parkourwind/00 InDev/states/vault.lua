@@ -93,6 +93,10 @@ function VaultState.isBlocked()
 end
 
 function VaultState:enter(syncData)
+    -- Cleared first: state_manager reads this immediately after enter() to
+    -- decide whether to announce and animate, so a stale true from a previous
+    -- refusal must not leak into a successful entry.
+    self.abort = false
     -- 1. Sanity Check
     if Sensor.data.interaction ~= "Vault" or not Sensor.data.targetPos then
         self.abort = true

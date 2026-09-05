@@ -122,7 +122,12 @@ input.registerTriggerHandler("Jump", async:callback(function()
     -- now runs on onUpdate, which does not. Without this guard a Jump press
     -- in a menu could bank taps against a stale isActive/moveVector snapshot
     -- and pre-arm a roll from outside gameplay.
-    if core.isWorldPaused then return end
+    -- NOTE THE PARENTHESES. core.isWorldPaused is a FUNCTION; referencing it
+    -- without calling yields the function object, which is truthy, so
+    -- `if core.isWorldPaused then return end` returned on every single
+    -- invocation and the roll could never arm. This one missing pair of
+    -- brackets accounted for the entire "Roll never fires" symptom.
+    if core.isWorldPaused() then return end
     if not isActive or armed then return end
 
     -- Forward must be held at the tap.

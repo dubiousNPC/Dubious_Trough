@@ -75,6 +75,22 @@ function StateManager.setState(nextStateName, syncData)
     -- Pass syncData to enter()
     StateManager.activeState:enter(syncData)
 
+    -- [FIX] A state may REFUSE on entry - Vault and Mantle both validate their
+    -- destination in enter() and set self.abort when the move is not viable.
+    -- Announcing and animating regardless is what produced "the message says
+    -- MANTLE but nothing moves and no animation plays": the banner fired, the
+    -- clip started, and the next tick bounced to Airborne and cancelled it.
+    --
+    -- An aborted entry now announces nothing and plays nothing. The state
+    -- still returns to Airborne on its own next update.
+    if StateManager.activeState.abort then
+        if Settings.debugMode() then
+            ui.printToConsole("[FLOW:FSM] " .. nextStateName .. " REFUSED on entry",
+                ui.CONSOLE_COLOR.Failure)
+        end
+        return
+    end
+
     -- Single choke point for animations - states never call the animation
     -- API themselves, see playerAnim.lua.
     Anim.onStateChange(nextStateName, prevStateName)

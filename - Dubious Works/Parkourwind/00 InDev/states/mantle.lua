@@ -8,6 +8,7 @@ local core = require('openmw.core')
 local ui = require('openmw.ui')
 local camera = require('openmw.camera')
 local nearby = require('openmw.nearby')
+local Settings = require('settings')
 local Sensor = require('core/sensor') 
 local EngineSync = require('core/engine_sync')
 
@@ -58,10 +59,17 @@ end
 -- State Interface
 
 function MantleState:enter(syncData)
+    -- Cleared first: state_manager reads this immediately after enter() to
+    -- decide whether to announce and animate, so a stale true from a previous
+    -- refusal must not leak into a successful entry.
+    self.abort = false
     -- Sanity check: only enter if the Sensor actually flagged Mantle.
     -- (If you re-enable states/optional/ledge_hang.lua later, add back:
     --  `or Sensor.data.interaction == "LedgeHang"` to allow climbing up from a hang.)
     if Sensor.data.interaction ~= "Mantle" then
+        if Settings.debugMode() then
+            print("[FLOW][mantle] refused: no Mantle target from sensor")
+        end
         self.abort = true
         return
     end
@@ -78,6 +86,9 @@ function MantleState:enter(syncData)
     
     -- Safety Check: Ensure target exists
     if not rawLedge then
+        if Settings.debugMode() then
+            print("[FLOW][mantle] refused: sensor target missing")
+        end
         self.abort = true
         return
     end
@@ -105,6 +116,9 @@ function MantleState:enter(syncData)
     
     -- Validate Height
     if targetPos.z <= startPos.z then
+        if Settings.debugMode() then
+            print("[FLOW][mantle] refused: target at or below start height")
+        end
         self.abort = true
         return
     end
@@ -127,10 +141,16 @@ function MantleState:enter(syncData)
     local floorRes = nearby.castRay(destTop, targetPos - util.vector3(0, 0, DEST_FLOOR_PROBE),
                                     DEST_RAY_OPTS)
     if not floorRes.hit or (targetPos.z - floorRes.hitPos.z) > DEST_FLOOR_TOLERANCE then
+        if Settings.debugMode() then
+            print("[FLOW][mantle] refused: no floor under destination")
+        end
         self.abort = true
         return
     end
     if nearby.castRay(targetPos, destTop, DEST_RAY_OPTS).hit then
+        if Settings.debugMode() then
+            print("[FLOW][mantle] refused: no headroom above destination")
+        end
         self.abort = true
         return
     end

@@ -173,13 +173,21 @@ function LedgeHangState:update(dt, syncData, inputData)
         
         local res = nearby.castRay(kneePos, kickTarget, KICK_RAY_OPTS)
         
+        -- Face the way you are kicking. Hanging, the player is turned INTO
+        -- the wall; releasing without turning leaves them travelling backwards
+        -- and looking at the surface they just pushed off, which reads as the
+        -- kick having failed. Rotate 180 degrees so the jump goes forward.
+        local awayYaw = mwSelf.rotation:getYaw() + math.pi
+        local awayRot = util.transform.rotateZ(awayYaw)
+
         if res.hit then
             local nudge = mwSelf.position + (-forward * (KICK_FORCE_BACK * 0.15)) + (util.vector3(0,0,20))
-            snapTo(nudge)
-            return "Airborne"
+            snapTo(nudge, awayRot)
         else
-            return "Airborne"
+            -- Nothing to push off, but still turn to face the fall.
+            snapTo(mwSelf.position, awayRot)
         end
+        return "Airborne"
     end
 
     -- 2. CLIMB UP (Mantle) - any jump press that isn't a deliberate
