@@ -1524,6 +1524,21 @@ play through `I.AnimationController`, check the pairing first.
   validates its keys against it. Prune empties at generation time.
 - **Registration must be idempotent.** `onInit` and `onLoad` both call it and
   only one runs on a given start.
+- **Register with the host's convention, and do not reassign the host's
+  tables.** Every Sun's Dusk module registers a settings hook with
+  `table.insert(G_settingsChangedJobs, fn)` (p_clean.lua:2499, p_temp.lua:3752).
+  A module that instead wrote a named key *and* opened with
+  `G_settingsChangedJobs = G_settingsChangedJobs or {}` worked — the consumers
+  iterate with `pairs()`, so both forms are called — but it reassigned a table
+  the host owns on the strength of a load-order assumption that was never
+  checked. If the host had created it after the module loaded, the module's
+  handler would have been silently discarded. Match the convention; it is
+  usually load-bearing for a reason you have not found yet.
+- **A file loaded from two contexts needs a token covering both.** A Sun's Dusk
+  settings file is required by the framework's GLOBAL script *and* by the
+  module's own PLAYER script — the two halves of
+  `if world then registerGroup else registerPage end`. Annotating it `global`
+  describes half of what it does. `runtime` covers it.
 - **Bundle shared libraries, do not copy them in.** Version-guard the file
   itself (`if I.X and I.X.version >= MY_VERSION then return end`) so only the
   newest loaded copy runs. `AnimRefresh`, `SharedRay`, `SuperSettingsRenderers`.
@@ -1628,6 +1643,7 @@ is in doubt.)
 | `api_sweep.py` | Every `module.member` call vs the Cod3x stubs. **Run this** — a misspelled API inside a pcall-wrapped call is §2.2 again. |
 | `sweep.py` | Settings declared vs read, categories used vs defined, events sent vs handled, l10n keys, orphaned modules. |
 | `check_manifest.py` | **One script path declared under two flags.** Fatal at load and trivially detectable; nothing else in this toolchain read manifests at all. |
+| `ctxcheck.py` | `---@omw-context` annotations vs the Cod3x context policy — module, member and interface availability. See §4.7. |
 | `test_*.lua` | Mocked-API behaviour tests. |
 
 ## 4.1 A mock that accepts everything tests nothing
@@ -1761,6 +1777,71 @@ as a settings change does.
 Ask of every mock: does the production code reach this value the way my test
 supplies it? Caches, subscriptions and event relays are where the answer is no.
 
+## 4.7 Cod3x 0.4 moved the goalposts, and the old checker passed everything
+
+0.4 restructured the context plugin ("Centralize Cod3x module registrations and
+policy tables"). The previous `ctxcheck` read inline `{ global = true, ... }`
+literals out of `AVAILABILITY`; 0.4 uses symbolic context sets resolved from
+`contextSet(...)` declarations, so the old parser found **zero modules and
+silently passed every file**. A checker that stops matching its input does not
+fail — it goes quiet, which looks exactly like success.
+
+Rebuilt for 0.4, it also gained two axes the module-level check never had:
+
+- **Member availability.** `openmw.core`, `openmw.storage` and
+  `openmw.interfaces` are scoped member by member. `storage.playerSection` is
+  player/menu even though `openmw.storage` itself is available everywhere.
+- **Interface availability.** `I.Camera` is player-only, `I.AI` local-only,
+  `I.Activation` and `I.ItemUsage` global-only.
+
+The one behavioural change in 0.4 that breaks existing code:
+
+> `openmw.types` went `EVERY_CONTEXT` → `OBJECT_CONTEXT` — it **lost `menu` and
+> `load`**. A MENU script requiring `openmw.types` was always wrong and is now
+> reported. Check every settings script.
+
+Two live findings on first run over this suite, both worth their own rule.
+
+### Fix the generator, not the file it generated
+
+`cake_shared.lua` carried `---@omw-context shared`, which is not a valid token
+(§3.6). It had been corrected once, by hand, in the file. Then the registry was
+regenerated — from a generator still emitting `shared` — and the fix was
+overwritten. Nothing complained, because an invalid token and a missing one are
+poisoned identically and neither is a syntax error.
+
+**A hand-fix to a generated file is a fix with a countdown on it.** When
+`ctxcheck` reports a generated file, correct the emitter and record *why* in the
+emitter, then regenerate.
+
+### Vendored files are not yours to annotate
+
+The other finding was `SuperSelect3.lua` — bundled third-party, no annotation.
+Adding one would mean editing a vendored file, which §3.6 says not to do. This
+is an accepted, permanent finding rather than a bug, and it is worth knowing
+your sweep will always show it, so nobody "fixes" it later.
+
+## 4.8 A framework's environment globals need a preset, not a suppression
+
+Sun's Dusk assigns `core`, `types`, `world`, `saveData`, the `G_*` job tables
+and a dozen more as **globals on purpose**, then `require()`s its modules, which
+share the requiring script's environment. Sweeping a Sun's Dusk module with
+`globalcheck.py` therefore produced ~70 findings and **not one was a bug**.
+
+The wrong answers are to switch the checker off or to skip the directory. The
+right one is a named preset read out of the host (`sd_p.lua`, `sd_g.lua`,
+`constants.lua`) rather than assumed:
+
+```
+globalcheck.py --preset sunsdusk <module>
+```
+
+That takes the module to zero findings while still reporting anything the host
+does *not* define — verified by renaming one call site to
+`typesActorInvSelf` and confirming it is still caught. A preset that silences
+everything is a suppression; a preset that silences exactly the host's
+vocabulary is a specification of what the host provides.
+
 ---
 
 # Part 5 — Checklist before changing anything here
@@ -1811,9 +1892,13 @@ supplies it? Caches, subscriptions and event relays are where the answer is no.
     and a `select`'s `items` are all **keys**, not text (§3.6).
 19. Are you editing files through scripted replacements? Assert every one
     matched, and re-read the file first (§4.5).
-20. Run `luacheck.py`, `globalcheck.py`, `check_names.py`, `api_sweep.py`,
-    `sweep.py`, `check_manifest.py` and the tests. All of them, not the first
+20. Is the file you are fixing **generated**? Fix the emitter and regenerate, or
+    the next regeneration silently reverts you (§4.7).
+21. Sweeping a module that runs inside a framework's environment? Use the
+    preset, not a suppression (§4.8).
+22. Run `luacheck.py`, `globalcheck.py`, `check_names.py`, `api_sweep.py`,
+    `sweep.py`, `check_manifest.py`, `ctxcheck.py` and the tests. All of them, not the first
     one. After a `pcall` sweep, `check_names.py` is the one that matters
     (§2.10).
-21. If you added behaviour, does the mock enforce the engine's contract (§4.1),
+23. If you added behaviour, does the mock enforce the engine's contract (§4.1),
     and does it reach the code the way the engine does (§4.6)?

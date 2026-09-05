@@ -297,11 +297,16 @@ end)
 
 -- A settings change alters the magnitude, not the worn item, so only the
 -- abilities need revisiting.
-G_settingsChangedJobs = G_settingsChangedJobs or {}
-G_settingsChangedJobs.sdScarves = function(_section, setting)
+-- table.insert, not a named key. Every Sun's Dusk module registers this way
+-- (p_clean.lua:2499, p_temp.lua:3752, ...), and sd_p.lua:135 already creates the
+-- table before player_modules are loaded -- so the `= G_settingsChangedJobs or
+-- {}` that used to be here was reassigning a table the host owns, on the
+-- strength of an ordering assumption that was never checked. The consumers
+-- iterate with pairs(), so both forms are called; only one is the convention.
+table.insert(G_settingsChangedJobs, function(_section, setting)
 	if setting == "SCARVES_WARMTH" or setting == "SCARVES_ENABLED" then
 		refreshWarmth()
 	elseif setting == "MASKS_BLIGHT_RES" or setting == "MASKS_ENABLED" then
 		refreshBlight()
 	end
-end
+end)

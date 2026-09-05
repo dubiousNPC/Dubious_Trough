@@ -1,4 +1,3 @@
----@omw-context menu
 local ui = require('openmw.ui')
 local util = require('openmw.util')
 local async = require('openmw.async')
