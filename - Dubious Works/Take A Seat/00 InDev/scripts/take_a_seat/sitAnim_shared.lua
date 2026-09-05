@@ -63,6 +63,7 @@ local SEAT_ANIM = {
     [T.BARSTOOL]          = "dbssit6",
     [T.SINGLE_SEAT_BENCH] = "dbssit4",
     [T.CUSHION]           = "rasit6",
+    [T.THRONE]            = "dbssit8",
 }
 
 -- Per-plugin animation overrides, merged only when the plugin is loaded.
@@ -136,8 +137,12 @@ local BASE_SEATS = {
 
 local MOD_SEAT_DATABASE = {
     ["tamriel_data.esm"] = {
-        -- backed_chair
+        -- throne
         ["t_ayl_dngruin_f_throne_01"] = T.BACKED_CHAIR,
+        ["t_ayl_dngruin_f_chair_01"]  = T.BACKED_CHAIR,
+        ["t_ayl_dngruin_f_chair_02"]  = T.BACKED_CHAIR,
+
+        -- backed_chair
         ["t_imp_furnm_chair01brown"]  = T.BACKED_CHAIR,
         ["t_imp_furnm_chair01green"]  = T.BACKED_CHAIR,
         ["t_imp_furnr_chair_01"]      = T.BACKED_CHAIR,
@@ -188,6 +193,10 @@ local MOD_SEAT_DATABASE = {
 
     ["oaab_data.esm"] = {
         ["ab_furn_commidchaircushgreen"] = T.BACKED_CHAIR,
+        ["ab_furn_commidchaircushbrown"] = T.BACKED_CHAIR,
+        ["ab_furn_commidchaircushgrey"]  = T.BACKED_CHAIR,
+        ["ab_furn_daemetalchair01"]      = T.BACKED_CHAIR,
+        ["ab_furn_deexchair01"]          = T.BACKED_CHAIR,
         ["ab_furn_demidchair"]           = T.BACKED_CHAIR,
         ["ab_furn_demidbench"]           = T.BENCH,
         ["ab_furn_deplnbench04"]         = T.BENCH,
@@ -208,13 +217,11 @@ local MOD_SEAT_DATABASE = {
 
 local SEAT_TYPE_PATTERNS = {
     { seat = T.BARSTOOL, patterns = { "barstool", "bar_stool" } },
-    -- Only one profiled record is a single-seat bench and its name gives no
-    -- signal, so there is no reliable substring. Left near-empty deliberately
-    -- rather than guessing patterns that would misfile real benches.
     { seat = T.SINGLE_SEAT_BENCH, patterns = { "single_seat", "seat_bench" } },
     { seat = T.BENCH,    patterns = { "bench", "furn_nord_bench", "furn_com_bench" } },
     { seat = T.STOOL,    patterns = { "stool" } },
-    { seat = T.BACKED_CHAIR, patterns = { "chair", "throne", "seat", "com_m_chr" } },
+    { seat = T.BACKED_CHAIR, patterns = { "chair", "seat", "com_m_chr" } },
+    { seat = T.THRONE, patterns = { "throne" } },
 }
 
 -- Never sittable, whatever else matches.
