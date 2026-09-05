@@ -40,7 +40,19 @@ local ShimmyState = BaseState.new("Shimmy")
 -- CONFIGURATION
 -- ==============================================
 local STEP_DISTANCE = 30.0   -- units per step, roughly a hitbox width
-local STEP_DURATION = 1.0    -- seconds; matches the one-shot clip length
+-- Seconds per step. Matches the clip length in xParkourwind1.kf, which is now
+-- authored so both directions share the same timing.
+--
+-- [REVERTED] A previous version measured this per direction at runtime via
+-- animation.getTextKeyTime, to compensate for pwshimmyl1 and pwshimmyr1 being
+-- different lengths. The real fault was a misalignment in the .kf and it has
+-- been fixed at source; querying the track per step reintroduced severe screen
+-- judder, because the duration could shift between consecutive steps and the
+-- lerp restarted against a different denominator each time.
+--
+-- Read the timing from the asset once, at authoring time, and keep it a
+-- constant here. If the clips are ever re-timed, change this number.
+local STEP_DURATION = 1.0
 
 -- Validation probes for the destination. Without these a shimmy walks the
 -- player off the end of a ledge into thin air, or through a corner.
@@ -156,7 +168,6 @@ end
 local timeInState = 0
 local dir = 0
 local startPos = nil
-local stepDuration = 1.0
 local endPos = nil
 local wallNormal = nil
 
@@ -222,7 +233,6 @@ function ShimmyState:enter(syncData)
     -- constant. The left and right clips are separate assets and need not
     -- match; assuming they did made one direction drift out of sync with its
     -- animation and judder. Falls back to the constant if the keys are absent.
-    stepDuration = Anim.getGroupDuration("Shimmy", variant) or STEP_DURATION
 
     startPos = mwSelf.position
     local lateral = ShimmyState.lateralVector(wallNormal)
@@ -265,7 +275,7 @@ function ShimmyState:update(dt, syncData, inputData)
         return "LedgeHang"
     end
 
-    local t = math.min(1.0, timeInState / stepDuration)
+    local t = math.min(1.0, timeInState / STEP_DURATION)
     local pos = startPos + (endPos - startPos) * t
 
     core.sendGlobalEvent('FLOW_SnapTo', {

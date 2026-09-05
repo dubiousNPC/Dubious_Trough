@@ -292,27 +292,13 @@ reissue = function()
     playGroup(lastRequest.state, lastRequest.looping)
 end
 
--- Real duration of a state's clip, read from the .kf's own start/stop text
--- keys. Returns nil if the group or its keys are absent.
---
--- States that drive movement over the length of an animation must not assume a
--- hardcoded duration: pwshimmyl1 and pwshimmyr1 are separate clips and need not
--- be the same length, which is exactly how a fixed STEP_DURATION produced a
--- smooth shimmy in one direction and a juddering one in the other.
-function Anim.getGroupDuration(stateName, variant)
-    local entry = GROUPS[stateName]
-    if not entry then return nil end
-    local group = entry.variants and entry.variants[variant or "right"] or entry.group
-    if type(group) ~= "string" then return nil end
-    if not animation.hasGroup(self, group) then return nil end
-
-    local startKey = entry.startKey or "start"
-    local stopKey = entry.stopKey or "stop"
-    local t0 = animation.getTextKeyTime(self, group .. ": " .. startKey)
-    local t1 = animation.getTextKeyTime(self, group .. ": " .. stopKey)
-    if t0 and t1 and t1 > t0 then return t1 - t0 end
-    return nil
-end
+-- NOTE: an Anim.getGroupDuration() helper lived here, reading a clip's length
+-- from its start/stop text keys so a state could drive movement over the
+-- animation's real duration. It was removed with its only consumer (Shimmy):
+-- a duration that can change between steps makes the lerp restart against a
+-- different denominator each time, which judders far worse than a slightly
+-- mismatched constant. Timing mismatches belong in the .kf, not in a runtime
+-- query.
 
 function Anim.onStateChange(newState, oldState)
     if ONE_SHOT_STATES[newState] then

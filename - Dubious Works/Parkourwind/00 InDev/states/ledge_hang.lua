@@ -174,10 +174,20 @@ function LedgeHangState:update(dt, syncData, inputData)
         local res = nearby.castRay(kneePos, kickTarget, KICK_RAY_OPTS)
         
         -- Face the way you are kicking. Hanging, the player is turned INTO
-        -- the wall; releasing without turning leaves them travelling backwards
-        -- and looking at the surface they just pushed off, which reads as the
-        -- kick having failed. Rotate 180 degrees so the jump goes forward.
-        local awayYaw = mwSelf.rotation:getYaw() + math.pi
+        -- the wall; releasing without turning leaves them looking at the
+        -- surface they just pushed off.
+        --
+        -- 90 degrees, not 180. A full reversal points the camera straight down
+        -- the flight path and hides the wall entirely, which loses the sense of
+        -- having pushed off something. A quarter turn puts the wall in
+        -- peripheral view while opening up the direction of travel - the
+        -- player can see both where they came from and where they are going.
+        --
+        -- Sign follows the shimmy direction so the turn continues the way the
+        -- player was already moving; a kick from a standing hang defaults to
+        -- turning right.
+        local turnSign = (ShimmyState.lastDirection() < 0) and -1 or 1
+        local awayYaw = mwSelf.rotation:getYaw() + (turnSign * math.pi * 0.5)
         local awayRot = util.transform.rotateZ(awayYaw)
 
         if res.hit then
