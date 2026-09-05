@@ -1,3 +1,31 @@
+---@omw-context player
+--[[
+    Sun's Dusk addon module. NOT registered in an .omwscripts of its own --
+    sd_p.lua (PLAYER context) walks its directory with
+    vfs.pathsWithPrefix and require()s every file it finds, so this file runs
+    inside that script's environment and inherits its context.
+
+    That is also why the names below are read without ever being declared or
+    required here. Sun's Dusk assigns them as GLOBALS on purpose (sd_p.lua
+    lines 6-20), and `require` shares the requiring script's environment:
+
+        core  types  util  world  I  animation  async  storage  MODNAME
+        saveData  typesActorInventorySelf  typesActorSpellsSelf
+        G_eventHandlers  G_onFrameJobs
+        log                     -- a global function from constants.lua:124,
+                                -- which both sd_p and sd_g require
+
+    Every name in that list was checked against sd_p.lua / sd_g.lua /
+    constants.lua rather than assumed; it is exactly the set these three files
+    read, no more.
+
+    Requiring them locally here would work but would diverge from every other
+    module in that directory, and the G_* job tables have no local equivalent
+    at all -- they are the host's scheduler bus.
+
+    Static checkers will report these as undeclared globals. That is correct
+    and expected; pass the list above via --globals when sweeping this mod.
+]]
 --[[
 	p_scarves.lua -- Scarves & Masks, worn state and bonuses
 
