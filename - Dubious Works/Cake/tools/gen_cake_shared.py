@@ -54,9 +54,15 @@ for eqid, a in assign.items():
 out = io.StringIO()
 W = out.write
 
-W('''---@omw-context shared
+W('''---@omw-context none
 --[[
     cake_shared.lua -- single source of truth for CAKE
+
+    `none`, not `shared`: `shared` is not a valid ---@omw-context token and the
+    Cod3x plugin poisons an invalid annotation exactly as it poisons a missing
+    one. `none` is right here because this file requires no openmw.* module at
+    all -- meshFor takes `types` as a parameter rather than requiring it, which
+    is what keeps that true.
 
     Generated from the corrected CAKE402 plugin and from the node names in
     meshes/dbs/xbase_anim_dbs.nif. Nothing in this file is typed by hand, so

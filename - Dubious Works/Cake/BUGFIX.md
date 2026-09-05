@@ -113,7 +113,7 @@ bug took a session to find.
 
 ### Kept
 
-**`AnimRefresh_v2.lua` — `pcall(callback, mode, previous)`.** Calls into
+**`AnimRefresh_v1.lua` — `pcall(callback, mode, previous)`.** Calls into
 *third-party* code. A subscriber throwing must not stop delivery to the others,
 and the error is printed with the subscriber's key, not swallowed. This is the
 legitimate use: isolating a boundary you do not control.
