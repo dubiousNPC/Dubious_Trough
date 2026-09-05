@@ -1,0 +1,87 @@
+---
+title: Cod3x Changelog
+slug: changelog
+version: 0.4
+---
+<details><summary class="no-underline">Version 0.4:</summary><a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/564ed875">564ed875 - DOC: Actually Cod3x is on version 0.4 now</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/25e571d2">25e571d2 - DOC: Simplify and expand upon Cod3x readme</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/4f488e47">4f488e47 - PERF: Less-allocatey string parsing path for up to 30% improved performance in Cod3x's context plugin</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/f1f8b84f">f1f8b84f - CLEANUP: Centralize Cod3x module registrations and policy tables</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/ca292ab3">ca292ab3 - FEAT: Allow contextually scoping interfaces</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/89ae94c5">89ae94c5 - FIX: Correct string parsing bugs in context plugin</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/fb9f3587">fb9f3587 - FIX: Add some missing (deprecated) Actor and Container functions</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/0f0fabaa">0f0fabaa - CLEANUP: Fix annotation shape on setMode</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/4f303c61">4f303c61 - CLEANUP: Use correct enum type names</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/1d171b9a">1d171b9a - CLEANUP: Correct leveled creature type names</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/a84aeb44">a84aeb44 - CLEANUP: Nil-able values in ui elements</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/2908f696">2908f696 - FIX: Add .52 fields missing from the first pass</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/9272a9c3">9272a9c3 - CLEANUP: Fix warnings in core.lua and calendarconfig.lua</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/d34c7f69">d34c7f69 - CLEANUP: We don't need two of these</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/61f4938b">61f4938b - FIX: More strictly-typed enum values so they actually work</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/9c052d64">9c052d64 - CLEANUP: Add omw-context annotations</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/f834f17e">f834f17e - FIX: CELLs don't necessarily have pathgrids</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/5a2d4e4b">5a2d4e4b - FIX: TeleportOptions fields are both optional</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/1a340156">1a340156 - CLEANUP: `ignore` is an optional field also</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/44cdfee0">44cdfee0 - FIX: More optional fields and similar shenanigans</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/8f3e075d">8f3e075d - FIX: `types` is not actually available in `MENU` scripts</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/243072b4">243072b4 - CLEANUP: Remove useless comments and run stylua on the whole thing</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/b7582334">b7582334 - FEAT: .52 dehardcoded some projectile and spellcasting functions</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/23f8323e">23f8323e - CLEANUP: Add omw-context annotation to openmw.lua</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/0c02705c">0c02705c - FIX: Except MOON_PHASE wasn't actually exposed</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/f0224d83">f0224d83 - FEAT: .52 allows creating spell and enchantment records</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/ffe64477">ffe64477 - FEAT: Expose region record functions in core</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/0edb1ea6">0edb1ea6 - FEAT: .52 added Weather.getCurrentMoons</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/c05faed0">c05faed0 - FEAT: Expose MOON_PHASE and saveState in core</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/e9c92e59">e9c92e59 - FIX: More number-to-string changed for effect and spell ids</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/b61d4b4c">b61d4b4c - FEAT: .52 added some magic effect fields</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/96784937">96784937 - CLEANUP: Change MagicEffectId to string</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/3f08bd2c">3f08bd2c - FIX: More nil-able fields</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/220fa093">220fa093 - FIX: Magic effect records are string-keyed now</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/988f6cbd">988f6cbd - FIX: More nil-able fields</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/db82f65e">db82f65e - FIX: Correct some nil-able fields and bad names in nearby</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/73297a8b">73297a8b - CLEANUP: These are actually on the base object</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/ae5cd8b1">ae5cd8b1 - FEAT: .52 adds many new packages to openmw.content</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/107bab3e">107bab3e - CLEANUP: Correct many nil-able values in core module</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/30fff86c">30fff86c - FEAT: .52 exposes moon phases</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/c119bbb8">c119bbb8 - FEAT: .52 allows mutating weather probabilities per-region</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/7330e5d8">7330e5d8 - FEAT: .52 exposes more autoCalc info</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/75cab972">75cab972 - FEAT: .52 exposes werewolf attribute values</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/8260908a">8260908a - FIX: Correct some fields which should be optional</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/3270b6d4">3270b6d4 - FIX: Correct some magic effect names</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/2075ac3c">2075ac3c - FIX: Correct magic effect field types</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/ba653239">ba653239 - CLEANUP: .52 finally removed Book.SKILL</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/88429403">88429403 - FEAT: .52 allows creating ingredient records</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/e5366252">e5366252 - FEAT: .52 exposes gameobject persistence</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/82113ccf">82113ccf - FEAT: .52 exposes item leveled lists</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/af0df35c">af0df35c - FEAT: .52 allows getting an active spell by id</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/0e3985a4">0e3985a4 - FEAT: .52 added some actor functions relating to knockdown state and hit recovery</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/451f7320">451f7320 - FEAT: .52 added getElements</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/d24ed57d">d24ed57d - FIX: missing texture fields</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/6d9f14f0">6d9f14f0 - FEAT:FEAT: .52 added MouseWheelEvent</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/38f23a2e">38f23a2e - FEAT: .52 added object.saveState</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/5a68fff2">5a68fff2 - FIX: Owner members are nil-able</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/bc03adb9">bc03adb9 - FEAT: .52 added getObjectsInRange and getObjectsByRecordId</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/6bf69626">6bf69626 - FEAT: .52 added camera.getFocusRay</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/92e1cd54">92e1cd54 - FEAT: .52 added additional options to animation.addVfx</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/bfa01cf2">bfa01cf2 - CLEANUP: Bump cod3x version and add nexus info</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/f0d1d6c2">f0d1d6c2 - CLEANUP: Fix util types in core module</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/67f5678d">67f5678d - FIX: Correct example mod breaking site build (damnit)</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/4ce8d0a5">4ce8d0a5 - CLEANUP: Document potential VSCode issues in cod3x</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/3ebf75df">3ebf75df - fix(cod3x): mark settings group fields optional</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/8d68387e">8d68387e - fix(cod3x): mark UI layout fields optional</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/6b66c846">6b66c846 - fix(cod3x): reject root openmw_aux require</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/55109d60">55109d60 - feat(cod3x): add openmw_aux stubs</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/d40ee9f2">d40ee9f2 - fix(cod3x): narrow module aliases with casts</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/f959c809">f959c809 - docs(cod3x): add LuaLS example config</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/82b032c6">82b032c6 - cod3x: fix UI layout userData annotation</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/5cfe8b3f">5cfe8b3f - cod3x: leave unknown members to LuaLS</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/cc01ee11">cc01ee11 - cod3x: fix texture resource options</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/436e5fef">436e5fef - cod3x: refine UI layout annotations</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/0add8bfa">0add8bfa - cod3x: type chained storage requires</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/17828a40">17828a40 - cod3x: add storage context typing</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/c65fb61d">c65fb61d - cod3x: add scoped context overrides</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/0fe352ca">0fe352ca - cod3x: refine OpenMW context typing</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/c02195a9">c02195a9 - FEAT: Add an `any` context for modules which truly work in any context</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/05e23e74">05e23e74 - FEAT: Add `none` context in cod3x plugin and enforce its usage in API-agnostic files</a><br><br>
+<a href="https://github.com/DreamWeave-MP/S3ctors-S3cret-St4sh/commit/8fc83639">8fc83639 - FEAT: Add Cod3x</a><br><br>
+</details>
