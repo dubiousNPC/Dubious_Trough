@@ -22,6 +22,8 @@ __pycache__/
 .idea/
 
 # Local directories you don't want in source
+/Parkourwind/
+/Hookshot Redux/
 /tools/
 /sources/
 
