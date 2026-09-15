@@ -55,8 +55,22 @@ scripts/forcechoke/
   global.lua   -- state machine, records, teleports, stat writes
   player.lua   -- cast detection, target acquisition, player pose, messages
   target.lua   -- NPC pose + throw integration
-xbase_anim/    -- animation assets
+animations/
+  xbase_anim/          -- animation assets, male 3rd person
+  xbase_anim_female/   -- same assets, female skeleton
+  xbase_animkna/       -- same assets, beast races (Khajiit / Argonian)
 ```
+
+Animations live under `animations/<skeleton>/`, which is OpenMW's
+additional-animation-sources convention and the layout OSSC uses. This
+**requires** `use additional anim sources = true` under `[Game]` in
+`settings.cfg`. The raw xForceThrow download ships these files as a bare
+`xbase_anim/` folder at the archive root, which OpenMW will not load — the
+same files must sit under `animations/` to be picked up.
+
+There is no `animations/xbase_anim.1st/` copy. The clips are authored for the
+third-person skeleton; dropping them into the first-person folder unverified
+would be a guess. Test in third person first.
 
 ## Changes in this revision
 
