@@ -1397,6 +1397,99 @@ For each `pcall`, in order. Any "no" means remove it.
 17. If it stays: does it print the error, and enough context to identify the
     subscriber or path? A `pcall` that discards the error is concealment.
 
+## 2.21 First-party corroboration: the Cod3x agent contract
+
+Cod3x 1.0 ships `AGENTS.md` and a `docs/anti-patterns/` corpus. Everything in
+this Part was derived independently by breaking this suite; the upstream
+annotation project arrived at the same rules from its own evidence. Where the
+two differ, upstream is **stricter**, and the wording is worth adopting because
+it is testable.
+
+From `AGENTS.md`:
+
+> **DO NOT USE PCALL OR YOU WILL BE UNPLUGGED.**
+>
+> A new `pcall`/`xpcall` requires a concrete documented recovery,
+> cleanup/rethrow, host/plugin isolation, or introspection/probing requirement.
+> "Defensive" is not a requirement.
+
+From `docs/anti-patterns/pcall-everything.md`:
+
+> `pcall` requires a concrete, documented recovery, translation, probing, or
+> cleanup requirement. **If you cannot name it, remove the `pcall`.**
+
+That is §2.10 and §2.20 stated upstream, and it supplies the taxonomy this Part was
+missing. **Four categories, and nothing else:**
+
+| category | example here |
+|---|---|
+| **recovery** — a valid post-failure state you can name | §2.3's optional `require`; the actor left the cell mid-clip, so skip the sound |
+| **cleanup / rethrow** — restore an invariant, then preserve the failure | §2.11's `pcall(updateBody, dt)` … `error(err, 0)` |
+| **host / plugin isolation** — you are running third-party chunks | §2.3's subscriber callbacks in `AnimRefresh` |
+| **introspection / probing** — asking whether a capability exists | §2.8's `getActiveTarget` availability probe |
+
+Their diagnosis of *why* the habit forms matches §2.1's:
+
+> `pcall` feels defensive because it prevents an immediate traceback from
+> escaping. That is useful only when **you can establish a valid post-failure
+> state**. If not, the call has merely moved the failure.
+
+And the damage list is worth quoting in full, because it names consequences this
+document had only recorded one at a time — suppressing programmer errors,
+breaking downstream invariants, replacing precise tracebacks with vague log
+messages, **making required dependencies appear optional**, converting
+deterministic failures into intermittent state bugs, and making tests pass while
+behaviour silently degrades.
+
+Two upstream rules that go beyond anything here and should be treated as part of
+the ruleset:
+
+- **"Required dependencies and broken invariants fail loudly. Do not silently
+  downgrade them into optional behaviour."** This is the compatibility argument
+  in one line, and it is exactly what the `pcall`-wrapped `require` in §2.10
+  violated.
+- **"Do not import host-level fault isolation into every internal function."**
+  The legitimate cases are boundaries — a plugin host, a subscriber list. An
+  ordinary feature script has no such boundary, and borrowing the pattern from
+  code that does is how the count reaches three figures.
+
+### The contract also constrains everything around it
+
+`AGENTS.md` is not only about `pcall`. Rules that bear directly on Parts 1, 3
+and 4:
+
+- **"Every OpenMW-facing Lua source file needs the narrowest correct
+  `---@omw-context` contract."** *Narrowest* — not merely legal. `runtime` where
+  `local|player` is correct passes a checker and still overstates the contract
+  (§4.4).
+- **"Do not optimize engine-bound code as though it were pure Lua. Count the
+  engine calls."** §1.10's clock cache is exactly this: the win was not fewer
+  Lua operations but 28 engine calls per NPC per frame reduced to one.
+- **"Do not cache without defining key identity, semantic lifetime,
+  invalidation, and cached-absence behaviour."** Four questions, all four of
+  which §1.6 and §1.10 had to answer the hard way.
+- **"Do not use global events as a generic same-context message bus."**
+- **"Do not put expensive work on `onFrame` merely because it is convenient."**
+
+### `core.quit()` is not `return`
+
+`docs/paid-for-with-blood/quit-is-not-return.md`, generalised, is a rule this
+suite has hit twice from other directions:
+
+> Engine state changes may be scheduled or become visible on a later frame.
+> Read the contract rather than inferring synchronous behaviour from the verb.
+
+Seen here as: a mode transition that is not atomic (§1.12's camera work), and a
+teleport that lands a frame later. `core.quit()` returning to the next statement
+is the same class.
+
+18. Can you name its category — **recovery, cleanup/rethrow, host isolation,
+    or probing**? If not, remove it. "Defensive" is not a category. This is
+    upstream's own test (§2.21).
+19. Is the thing it protects **already protected** — by a `type()` gate
+    directly above it, or by an outer `pcall` further up the call tree? Double
+    protection is never correct; remove the inner one (§2.21).
+
 ---
 
 # Part 3 — Bug catalogue
@@ -1841,6 +1934,43 @@ does *not* define — verified by renaming one call site to
 `typesActorInvSelf` and confirming it is still caught. A preset that silences
 everything is a suppression; a preset that silences exactly the host's
 vocabulary is a specification of what the host provides.
+
+## 4.9 Cod3x 1.0: a reformat is a silent parser break
+
+§4.7 records the 0.4 restructure defeating the old context checker. 1.0 did it
+again by a different mechanism, and the case is worth keeping because the
+release looked like a no-op.
+
+**1.0 changes no API at all** — 679 symbols, none added or removed, availability
+policy byte-identical to 0.4. It is documentation and rebranding. One commit in
+it is `CLEANUP: Run formatter on omw_context_plugin.lua`.
+
+After that reformat `ctxcheck.py` resolved **19 modules and 33 scoped members
+instead of 25 and 44**, and reported no error. Six modules dropped out of the
+policy, so any file requiring one passed unchecked.
+
+The cause is Lua sugar the formatter introduced:
+
+```lua
+local LOCAL_CONTEXT = contextSet('local')   -- 0.4
+local LOCAL_CONTEXT = contextSet 'local'    -- 1.0
+```
+
+A single-argument call written without parentheses is the same call. The parser
+required `contextSet\(`, so five sets went unresolved and every module declared
+with them vanished.
+
+It was caught only because §4.7's fix had already made the checker print its own
+inputs: `19 modules` beside a remembered `25` is visible at a glance. Without
+that line the sweep returns green.
+
+> A checker that parses another project's source depends on that source's
+> **formatting**, not only its content. Re-validate against every upstream
+> release, and never let a short read look like a clean one.
+
+And the corollary the release itself demonstrates: **"no API changes" does not
+mean "nothing to do".** A version can change nothing you call and still break
+how you verify what you call.
 
 ---
 
