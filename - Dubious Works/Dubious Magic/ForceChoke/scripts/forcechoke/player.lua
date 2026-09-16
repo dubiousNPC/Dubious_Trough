@@ -1,45 +1,30 @@
--- ============================================================
--- ForceChoke — PLAYER
---
--- Jobs:
---   1. Hold the player's upper-body "fchoke1" pose while a choke is active
---      (playBlended needs SelfObject, so the player's own pose cannot be
---      driven from global.lua).
---   2. Detect that the player CAST Force Choke, and turn that into either a
---      grab or a throw depending on whether a choke is already running.
---   3. Acquire the target under the crosshair via SharedRay.
---   4. Show messages. global.lua cannot: ui is player-side only.
---
--- CAST DETECTION — why this is not a keybind
--- -----------------------------------------
--- Earlier revisions bound the attack key directly and then re-implemented
--- the magicka charge and the success roll in global.lua. That was wrong on
--- four counts, all of which this file now avoids by letting the ENGINE cast
--- the spell and only reacting once it has:
---
---   * skill progression   - a hand-rolled cast never trains the school.
---                           I.SkillProgression fires only on a successful
---                           cast, so reacting to it trains for free.
---   * the success roll    - the engine already rolls it, exactly, using the
---                           real formula. A failed cast simply never calls
---                           this handler, which IS the "grip slips" outcome.
---   * magicka             - charged by the engine, including on failure.
---   * cast anim + VFX     - the engine plays them, because a real spell was
---                           really cast.
---
--- Both the grab and the throw are genuine casts of the same spell. With a
--- spell readied the attack key IS the cast key, so the controls are what the
--- design asked for; they are just no longer intercepted.
---
--- THE 0.05s DEFERRAL
--- ------------------
--- The crosshair ray is read one timer tick after the cast, not inline. Two
--- independent reasons, and the reference mods hit both:
---   * Banishing calls its variable viewportBugfixDelay -- camera/viewport
---     state is not yet settled at the instant the skill-used handler runs.
---   * SharedRay's cast is async and its result lags a frame, so an inline
---     read returns what was under the crosshair BEFORE the cast.
--- ============================================================
+---@omw-context player
+--[[
+    ForceChoke / player.lua
+
+    Jobs:
+      1. Hold the player's upper-body "fchoke1" pose while a choke is active.
+      2. Detect that the player CAST Force Choke, and turn that into a grab or
+         a throw depending on whether a grip is already running.
+      3. Acquire the target under the crosshair via SharedRay.
+      4. Show messages -- global.lua has no ui module.
+
+    CAST DETECTION
+    --------------
+    The engine casts the spell; this file only reacts. I.SkillProgression
+    fires on a SUCCESSFUL cast, which means magicka, the real success roll,
+    the cast animation, the VFX and skill progression are all vanilla
+    behaviour. A failed cast never reaches here, which IS the "grip slips"
+    outcome. Nothing in this mod charges or rolls anything.
+
+    THE 0.05s DEFERRAL
+    ------------------
+    The crosshair ray is read one timer tick after the cast, never inline.
+    Two independent reasons, and the reference mods hit both: camera/viewport
+    state has not settled when the skill-used handler runs (Banishing names
+    its variable viewportBugfixDelay), and SharedRay's cast is async, so an
+    inline read returns what was under the crosshair BEFORE the cast.
+]]--
 
 local self   = require('openmw.self')
 local core   = require('openmw.core')
@@ -57,138 +42,65 @@ local T = S.TUNING
 -- ============================================================
 -- STATE
 -- ============================================================
-local holding      = false  -- is a choke active (per global.lua)?
-local posePlaying  = false
-local chokeSpellId = nil    -- told to us by global.lua, which owns the record
-local lastDropAt   = -1
-
--- Set at init: true if an .omwaddon in the load order provides the custom
--- marker effect, in which case spellmaker variants work too.
-local markerEffectAvailable = false
-
--- Guard against re-entering our own handler if this file ever calls
--- skillUsed from inside it. Utility Spells uses the identical pattern.
-local skipSkillUse = false
+local holding     = false
+local posePlaying = false
+local lastDropAt  = -1
 
 local DEDUPE_WINDOW = 0.15
-
-local function now()
-    local ok, t = pcall(core.getRealTime)
-    if ok and type(t) == "number" then return t end
-    return 0
-end
 
 -- ============================================================
 -- PLAYER POSE
 -- ============================================================
 local function startPose()
     if posePlaying then return end
+    -- A missing animation asset is a supported state, as in target.lua: the
+    -- grip still works, it just is not posed. Checked rather than attempted.
+    if not anim.hasGroup(self, S.GROUPS.CAST) then return end
+    anim.playBlended(self, S.GROUPS.CAST, S.playerPoseOptions())
     posePlaying = true
-    pcall(function()
-        I.AnimationController.playBlendedAnimation(
-            S.GROUPS.CAST, S.playerPoseOptions(S.GROUPS.CAST))
-    end)
 end
 
 local function stopPose()
     if not posePlaying then return end
     posePlaying = false
-    pcall(function()
-        I.AnimationController.playBlendedAnimation(S.GROUPS.CAST, {
-            startKey    = S.START_KEY[S.GROUPS.CAST] or "start",
-            stopKey     = S.STOP_KEY[S.GROUPS.CAST] or "stop",
-            priority    = anim.PRIORITY.Default,
-            blendMask   = S.UPPERBODY_BLEND_MASK,
-            loops       = 0,
-            autoDisable = true,
-        })
-    end)
+    anim.cancel(self, S.GROUPS.CAST)
 end
 
 -- ============================================================
 -- REACH
 -- ============================================================
 -- Vanilla reach rules, matching Banishing: activation distance plus the
--- third-person camera offset, extended by any active Telekinesis. A flat
--- constant would make Telekinesis useless for this spell, which is the kind
--- of quiet inconsistency that makes a spell feel bolted-on.
+-- third-person camera offset, extended by active Telekinesis. castRange is a
+-- floor, not a cap -- the spell should never reach less far than a plain
+-- activation, and Telekinesis only ever adds.
 local function castReach()
-    local reach = T.castRange
-    pcall(function()
-        local base = core.getGMST("iMaxActivateDist") or 192
-        local r = base + camera.getThirdPersonDistance()
-        local tk = types.Actor.activeEffects(self):getEffect(core.magic.EFFECT_TYPE.Telekinesis)
-        if tk and tk.magnitude then
-            r = r + tk.magnitude * 22
-        end
-        -- castRange is a floor, not a cap: the spell should never reach less
-        -- far than a plain activation, and Telekinesis only ever adds.
-        if r > reach then reach = r end
-    end)
-    return reach
-end
+    local reach = (core.getGMST("iMaxActivateDist") or 192)
+                + camera.getThirdPersonDistance()
 
--- SharedRay clips its shared cast to the longest distance anyone asked for.
--- Requesting the boosted reach up front keeps a target detectable at full
--- range instead of being clipped to the service default.
-if I.SharedRay and I.SharedRay.requestDistance then
-    pcall(I.SharedRay.requestDistance, castReach())
+    local tk = types.Actor.activeEffects(self):getEffect(core.magic.EFFECT_TYPE.Telekinesis)
+    if tk then
+        reach = reach + tk.magnitude * 22
+    end
+
+    if reach < T.castRange then reach = T.castRange end
+    return reach
 end
 
 -- ============================================================
 -- TARGET ACQUISITION
 -- ============================================================
 local function lookedAtNPC(reach)
-    if not (I.SharedRay and I.SharedRay.get) then return nil end
     local result = I.SharedRay.get()
     if not result or not result.hit then return nil end
 
     local obj = result.hitObject
-    -- SharedRay validates hitObject at delivery, but delivery was last frame;
-    -- touching an object invalidated since then raises.
+    -- SharedRay validates hitObject at delivery, but delivery was last frame,
+    -- so re-check: an object invalidated since then is a normal occurrence.
     if not obj or not obj:isValid() then return nil end
     if result.distance and result.distance > reach then return nil end
-
-    local isNPC = false
-    pcall(function() isNPC = types.NPC.objectIsInstance(obj) end)
-    if not isNPC or obj == self.object then return nil end
+    if not types.NPC.objectIsInstance(obj) then return nil end
+    if obj == self.object then return nil end
     return obj
-end
-
--- ============================================================
--- SPELL MATCHING
--- ============================================================
---- Is `spell` a Force Choke? See shared.lua MARKER_EFFECT for why this is
---- effect-based when a plugin supplies the marker and id-based otherwise.
-local function isChokeSpell(spell)
-    if not spell then return false end
-    if markerEffectAvailable then
-        for _, effect in pairs(spell.effects or {}) do
-            local id = effect.id or (effect.effect and effect.effect.id)
-            if id == S.MARKER_EFFECT then return true end
-        end
-        return false
-    end
-    return chokeSpellId ~= nil and spell.id == chokeSpellId
-end
-
---- The skill a successful cast of `spell` trains, derived from the effect's
---- own school rather than hardcoded. Force Choke is built on vanilla
---- paralyze, which is Alteration -- an earlier revision assumed Mysticism
---- and would have filtered out every real cast.
-local function schoolOf(spell)
-    local school = nil
-    pcall(function()
-        for _, effect in pairs(spell.effects or {}) do
-            local id = effect.id or (effect.effect and effect.effect.id)
-            local rec = id and core.magic.effects.records[id]
-            if rec and rec.school then
-                school = rec.school
-                break
-            end
-        end
-    end)
-    return school
 end
 
 -- ============================================================
@@ -208,46 +120,49 @@ local function doGrab()
     })
 end
 
-local function onChokeCast()
+I.SkillProgression.addSkillUsedHandler(function(skillId, params)
+    if skillId ~= S.SCHOOL then return end
+    if params.useType ~= I.SkillProgression.SKILL_USE_TYPES.Spellcast_Success then return end
+
+    local spell = types.Player.getSelectedSpell(self)
+    if not spell then return end
+
+    -- Matched on EFFECT id, not spell record id, so any spell carrying the
+    -- effect works -- including ones the player builds at a spellmaker. This
+    -- is the pattern Ablution Intervention, Banishing and NiftySpellPack all
+    -- use. It is only safe because load.lua declares a dedicated custom
+    -- effect: matching on raw "paralyze" would fire on every paralyze spell
+    -- in the game.
+    local match = false
+    for _, eff in ipairs(spell.effects) do
+        if eff.id == S.EFFECT_ID then
+            match = true
+            break
+        end
+    end
+    if not match then return end
+
     if holding then
-        -- Already gripping: this cast is the squeeze-and-throw. No ray, no
+        -- Already gripping: this cast is the squeeze-and-throw. No ray and no
         -- deferral -- the target is the one already held, and global.lua
         -- still owns it.
         core.sendGlobalEvent('ForceChoke_ThrowRequest', { player = self.object })
         return
     end
-    -- Fresh grab: defer, then read the crosshair. See header.
+
     async:newUnsavableSimulationTimer(0.05, doGrab)
-end
-
-I.SkillProgression.addSkillUsedHandler(function(skillId, params)
-    if skipSkillUse then return end
-    if core.isWorldPaused() then return end
-
-    local ok, spell = pcall(types.Actor.getSelectedSpell, self)
-    if not ok or not isChokeSpell(spell) then return end
-
-    -- useType alone is ambiguous -- Spellcast_Success and
-    -- Armor_HitByOpponent are both 0 -- so it only becomes meaningful once
-    -- the skill has been confirmed to be this spell's own school.
-    if skillId ~= schoolOf(spell) then return end
-    local useTypes = I.SkillProgression.SKILL_USE_TYPES
-    if params and params.useType and useTypes
-       and params.useType ~= useTypes.Spellcast_Success then
-        return
-    end
-
-    onChokeCast()
 end)
 
 -- ============================================================
 -- SHEATHE -> DROP
 -- ============================================================
--- Still an input handler, because sheathing is not a cast and so never
--- reaches the skill-used path.
+-- An input handler, because sheathing is not a cast and so never reaches the
+-- skill-used path. Both the trigger API and the onInputAction engine handler
+-- are wired: which one carries the built-in bindings varies by build, and the
+-- dedupe window collapses a double delivery to one request.
 local function requestDrop()
     if not holding then return end
-    local t = now()
+    local t = core.getRealTime()
     if t - lastDropAt < DEDUPE_WINDOW then return end
     lastDropAt = t
     core.sendGlobalEvent('ForceChoke_DropRequest', { player = self.object })
@@ -266,42 +181,34 @@ local function onHoldEnd()
     stopPose()
 end
 
--- global.lua owns the spell record and tells us its id once it exists.
-local function onSpellId(data)
-    chokeSpellId = data and data.spellId or nil
+local function onNotify(data)
+    if data and data.message then ui.showMessage(data.message) end
 end
 
--- global.lua has no ui module; anything it wants to say arrives here.
-local function onNotify(data)
-    local msg = data and data.message
-    if msg then ui.showMessage(msg) end
+-- ============================================================
+-- CONSOLE
+-- ============================================================
+-- Testing aid, following the template's ablution_give. Typing
+--   luap
+--   forcechoke_give
+-- in the console grants the spell without hunting for a teacher.
+local function onConsoleCommand(mode, command)
+    local cmd = command:lower():gsub("^lua%s+", ""):gsub("^%s+", ""):gsub("%s+$", "")
+    if cmd ~= "forcechoke_give" then return end
+    types.Player.spells(self):add(S.SPELL_ID)
+    ui.printToConsole("You have learned the spell Force Choke.", ui.CONSOLE_COLOR.Success)
 end
 
 -- ============================================================
 -- REGISTRATION
 -- ============================================================
-local initialised = false
+local registered = false
 local function onInit()
-    if initialised then return end
-    initialised = true
-
-    pcall(function()
-        markerEffectAvailable = core.magic.effects.records[S.MARKER_EFFECT] ~= nil
-    end)
-    if markerEffectAvailable then
-        print("[ForceChoke] Marker effect '" .. S.MARKER_EFFECT ..
-              "' found: spellmaker variants supported.")
-    end
-
-    pcall(function()
-        input.registerTriggerHandler('ToggleSpell', async:callback(requestDrop))
-    end)
+    if registered then return end
+    registered = true
+    input.registerTriggerHandler('ToggleSpell', async:callback(requestDrop))
 end
 
--- Legacy/engine input path, for builds where the built-in bindings arrive
--- here rather than through the trigger API. The dedupe window collapses a
--- double delivery. Only ToggleSpell is wired now: Use is no longer
--- intercepted at all, since casting is detected properly upstream.
 local function onInputAction(id)
     if id == input.ACTION.ToggleSpell then
         requestDrop()   -- itself a no-op unless holding
@@ -310,14 +217,14 @@ end
 
 return {
     engineHandlers = {
-        onInit        = onInit,
-        onLoad        = onInit,
-        onInputAction = onInputAction,
+        onInit           = onInit,
+        onLoad           = onInit,
+        onInputAction    = onInputAction,
+        onConsoleCommand = onConsoleCommand,
     },
     eventHandlers = {
         ForceChoke_HoldStart = onHoldStart,
         ForceChoke_HoldEnd   = onHoldEnd,
-        ForceChoke_SpellId   = onSpellId,
         ForceChoke_Notify    = onNotify,
     },
 }

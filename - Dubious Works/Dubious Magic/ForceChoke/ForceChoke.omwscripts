@@ -1,8 +1,11 @@
 # ForceChoke
 #
-# SharedRay is bundled and version-guards itself, so if another mod in your
-# load order ships a newer copy only that one runs. It must load before
-# player.lua, which reads the crosshair target from it.
+# LOAD runs once at startup and declares the magic effect + spell records.
+# It must precede everything that references them.
+LOAD:   scripts/forcechoke/load.lua
+
+# SharedRay version-guards itself, so if another mod ships a newer copy only
+# that one runs. Must load before player.lua, which reads the crosshair from it.
 PLAYER: scripts/SharedRay/SharedRay_v2.lua
 
 GLOBAL: scripts/forcechoke/global.lua
