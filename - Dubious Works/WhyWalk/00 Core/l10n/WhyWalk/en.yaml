@@ -1,0 +1,62 @@
+# WhyWalk -- English strings.
+#
+# VFS path is load-bearing: l10n/<ContextName>/<Locale>.yaml, where
+# <ContextName> must match the `l10n` field passed to I.Settings.registerPage
+# and registerGroup -- "WhyWalk" here.
+#
+# Keys, not source strings. OpenMW falls back to returning the KEY when no
+# localisation is found, which is why `l10n = "none"` appeared to work: the
+# literal English text was being used as its own key and echoed back. That
+# silently forecloses translation and turns any typo into displayed text, so
+# every string below is addressed by a stable identifier instead.
+#
+# To translate: copy this file to the same directory as <locale>.yaml
+# (de.yaml, fr.yaml, ru.yaml ...) and translate the values only. Leave every
+# key exactly as it is. A missing key in a translation falls back to this
+# file, so a partial translation is safe to ship.
+
+# --- Settings page -------------------------------------------------------
+settings_page_name: "WhyWalk"
+settings_page_description: "Animated creature riding."
+
+# --- Camera group --------------------------------------------------------
+camera_group_name: "Camera offset"
+camera_group_description: |-
+  Adjusts the camera while riding. Each perspective is offset separately;
+  neither changes which view you are in.
+
+camera_enabled_name: "Adjust camera"
+camera_enabled_description: "Turn off to leave the camera exactly as it is normally."
+
+# The two perspectives are deliberately worded the same way: both measure in
+# world units and both treat negative as "lower". Only the axis count differs
+# under the hood, and that is not something the player needs to know.
+camera_fp_v_name: "First person: vertical offset"
+camera_fp_v_description: |-
+  Negative lowers the view.
+
+  First person usually needs nothing, since the camera already sits at head
+  height. Adjust this if the view sits inside the mount.
+
+  Default is 0.
+
+camera_fp_h_name: "First person: horizontal offset"
+camera_fp_h_description: |-
+  Positive shifts right, negative left.
+
+  Default is 0.
+
+camera_tp_v_name: "Third person: vertical offset"
+camera_tp_v_description: |-
+  Negative lowers the view.
+
+  Third person frames riding from too high without help, because the camera
+  tracks a rider sitting at mount height.
+
+  Default is -75.
+
+camera_tp_h_name: "Third person: horizontal offset"
+camera_tp_h_description: |-
+  Positive shifts right, negative left.
+
+  Default is 0.
