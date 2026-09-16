@@ -114,8 +114,22 @@ local function bridgeReady()
     if mwBridge ~= nil then return mwBridge end
 
     local g = world.mwscript.getGlobalVariables(world.players[1])
-    local ok = pcall(function() return g[TUNING.mwGlobals.active] end)
-    mwBridge = ok and g or false
+
+    -- [BUGFIX] The value is now checked, not just whether the index raised.
+    --
+    -- MWScriptVariables is annotated `table<string, number>`, but engine
+    -- wrappers are userdata and need not obey table semantics -- an unknown
+    -- name may raise via __index, or may simply come back nil. This probe has
+    -- to survive BOTH, and the previous form only caught the first: with a
+    -- nil-returning implementation `ok` is true, so the bridge was declared
+    -- ready with no ESP loaded and every pin went to a global that does not
+    -- exist.
+    --
+    -- pcall retained deliberately: this is a capability probe, which is one of
+    -- the four cases that justify one. The closure is unavoidable -- an index
+    -- is not a call, so there is nothing to pass to pcall directly.
+    local ok, value = pcall(function() return g[TUNING.mwGlobals.active] end)
+    mwBridge = (ok and value ~= nil) and g or false
 
     if not mwBridge then
         print("[WhyWalk] MWScript bridge unavailable ('" .. tostring(TUNING.mwGlobals.active)

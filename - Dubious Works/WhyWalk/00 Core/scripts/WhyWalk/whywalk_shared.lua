@@ -52,6 +52,15 @@ local S = M.STATE
 -- `false` meaning "this mount has no such state, do NOT fall back to the
 -- generic clip". `nil` means unspecified and DOES fall back.
 M.RIDE_ANIM = {
+    -- HORSE and GUAR are verified against the shipped .kf text keys, not just
+    -- against the mods that supply them:
+    --   xHorseDBSRide2.kf  -> rideh1 rideh2 rideh3 rideh4 rideh5
+    --   xGuarDBSRide1.kf   -> rideg1 rideg2 rideg3 rideg4 rideg5
+    -- present in all three skeleton variants (xbase_anim, .1st, kna), each
+    -- with matching `: start` / `: stop` keys. Everything below is still a
+    -- placeholder: the group names are structurally correct but no .kf in this
+    -- package defines them, so playBlended will find nothing and the fallback
+    -- set is what actually plays.
     [T.HORSE] = {   -- VERIFIED: Devilish Horse Riding
         [S.IDLE] = "rideh1", [S.WALK] = "rideh2", [S.GALLOP] = "rideh3",
         [S.REVERSE] = "rideh4", [S.JUMP] = "rideh5",
