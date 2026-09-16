@@ -264,8 +264,14 @@ end
 -- INPUT
 -- ---------------------------------------------------------------------------
 
+---True when a menu, dialogue or cutscene has the player's attention.
+---Same gate SunsDusk puts on its interaction actions.
+local function hudHidden()
+    return I.UI and I.UI.isHudVisible and not I.UI.isHudVisible()
+end
+
 local function requestMount()
-    if I.UI and I.UI.isHudVisible and not I.UI.isHudVisible() then return end
+    if hudHidden() then return end
 
     if mounted then
         core.sendGlobalEvent(EV.REQUEST_DISMOUNT, { player = self.object })
@@ -286,8 +292,15 @@ local KEYMAP = {
     w = "forward", s = "back", a = "left", d = "right",
 }
 
+-- PRESS is gated, RELEASE deliberately is not. The asymmetry is the point:
+-- gating both would strand a key that was physically held when the menu opened,
+-- because the release that clears it would be the event thrown away -- the
+-- rider would keep galloping on a key nobody is holding. Ignoring presses
+-- stops a menu from steering the mount; processing every release can only ever
+-- clear state, which is safe in any UI mode.
 local function onKeyPress(key)
     if not mounted then return end
+    if hudHidden() then return end
     local sym = key and key.symbol
     if not sym then return end
 
