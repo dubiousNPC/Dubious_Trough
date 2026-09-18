@@ -1,7 +1,6 @@
 -- Drives the real g_scarves/p_scarves against a mocked Sun's Dusk environment.
-local SETTINGS='sdfix/Scarves/scripts/SunsDusk/settings/'
-local GLOBALM='sdfix/Scarves/scripts/SunsDusk/global_modules/'
-local PLAYERM='sdfix/Scarves/scripts/SunsDusk/player_modules/'
+local GLOBALM='scripts/SunsDusk/global_modules/'
+local PLAYERM='scripts/SunsDusk/player_modules/'
 local fails=0
 local function check(n,c,e) if c then print('  ok   '..n) else fails=fails+1; print('  FAIL '..n..' '..tostring(e or '')) end end
 
@@ -50,6 +49,9 @@ env.typesActorSpellsSelf={add=function(_,id) world_.spells[id]=true end,
                           remove=function(_,id) world_.spells[id]=nil end}
 env.typesActorInventorySelf={find=function(_,id) return has(id) end}
 env.log=function() end
+-- Sun's Dusk exposes vfs as a global (sd_p.lua:18); the module uses it to
+-- check a mesh is actually present before attaching.
+env.vfs={fileExists=function(p) return world_.files[p]==true end}
 env.G_eventHandlers={}; env.G_onFrameJobsSluggish={}; env.G_onFrameJobs={}
 env.G_onLoadJobs={}; env.G_UiModeChangedJobs={}; env.G_settingsChangedJobs={}
 env.SCARVES_ENABLED=true; env.SCARVES_WARMTH=4
@@ -68,6 +70,19 @@ env.require=function(path)
     end
     error('unexpected require: '..tostring(path))
 end
+-- Dispatch the way Sun's Dusk does: its settings files iterate the whole job
+-- list with pairs(). Calling the handler by name would test a path the host
+-- never takes (RESEARCH 4.6) -- and would have passed even while the module
+-- registered itself in a way the host could not see.
+local function fireSettingsChanged(setting)
+    local n = 0
+    for _, func in pairs(env.G_settingsChangedJobs) do
+        func('SettingsSCARVES', setting, nil)
+        n = n + 1
+    end
+    assert(n > 0, 'nothing registered in G_settingsChangedJobs')
+end
+
 run(GLOBALM..'g_scarves.lua')
 run(PLAYERM..'p_scarves.lua')
 
@@ -118,11 +133,11 @@ local scarf3=add('dbs_rv_scarf_09'); onUse(scarf3, player)
 check('warmth 7 sets bits 1+2+4', world_.spells['sd_scarf_w1'] and world_.spells['sd_scarf_w2']
       and world_.spells['sd_scarf_w3'] and not world_.spells['sd_scarf_w4'])
 env.MASKS_BLIGHT_RES=50
-env.G_settingsChangedJobs.sdScarves(nil,'MASKS_BLIGHT_RES')
+fireSettingsChanged('MASKS_BLIGHT_RES')
 check('changing blight % swaps to the right record',
       world_.spells['sd_mask_blight_50']==true and world_.spells['sd_mask_blight_30']==nil)
 env.MASKS_ENABLED=false
-env.G_settingsChangedJobs.sdScarves(nil,'MASKS_ENABLED')
+fireSettingsChanged('MASKS_ENABLED')
 check('disabling masks drops the ability', world_.spells['sd_mask_blight_50']==nil)
 env.MASKS_ENABLED=true
 
@@ -139,6 +154,18 @@ world_.bones['Bip01 scarfDBS']=nil
 env.G_UiModeChangedJobs[1]({oldMode='Rest'})
 check('scarf falls back to a vanilla bone when the DBS rig is absent',
       world_.vfx['Bip01 Neck']~=nil, 'a missing bone is a SILENT no-show')
+
+print('missing mesh')
+-- A record whose mesh is not in the VFS must be reported and skipped, not
+-- attached silently. This is the mask case: the ids ship, the meshes come from
+-- CAKE or Fashionwind.
+local ghost = add('dbs_rv_ashmask9_h')
+recs['dbs_rv_ashmask9_h_eq'] = {id='dbs_rv_ashmask9_h_eq', model='meshes/rv/absent.nif'}
+world_.files['meshes/rv/absent.nif'] = nil
+world_.vfx = {}
+onUse(ghost, player)
+check('a record with no mesh in the VFS attaches nothing and does not error',
+      world_.vfx['Bip01 mouthDBS']==nil)
 
 print(fails==0 and 'ALL PASS' or (fails..' FAILURES'))
 if fails>0 then os.exit(1) end

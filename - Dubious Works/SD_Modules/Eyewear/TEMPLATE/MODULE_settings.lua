@@ -1,4 +1,10 @@
----@omw-context global
+---@omw-context runtime
+--[[
+    Runs in TWO contexts, which is why it is `runtime` and not `global`:
+    sd_g.lua (GLOBAL) scans scripts/SunsDusk/settings/ and requires it there,
+    where `world` is set and registerGroup runs; the module's player script
+    requires it by name, where `world` is nil and registerPage runs.
+]]
 --[[
     Sun's Dusk addon module. NOT registered in an .omwscripts of its own --
     sd_g.lua walks its directory with vfs.pathsWithPrefix and require()s every file

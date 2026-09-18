@@ -217,6 +217,19 @@ local function refreshVfx(category, retries)
 		return
 	end
 
+	-- The mesh has to actually be in the VFS. addVfx on a path that is not
+	-- there attaches nothing and says nothing -- the item still swaps to its
+	-- worn record, the bonus still applies, and the player sees no change.
+	--
+	-- This mod ships the 16 scarf meshes. The 17 mask meshes come from CAKE or
+	-- Fashionwind, so a user with masks enabled and neither installed hits
+	-- exactly that silence. Report it once per record instead.
+	if not vfs.fileExists(record.model) then
+		log(3, "[SD Scarves] mesh not in VFS, skipping:", record.model,
+		    "(masks need CAKE or Fashionwind installed)")
+		return
+	end
+
 	-- record.model, NOT a path from a table. The record's model is a VFS path;
 	-- a plugin's raw MODL string is not, and attaches nothing.
 	animation.addVfx(self, record.model, {
@@ -297,11 +310,17 @@ end)
 
 -- A settings change alters the magnitude, not the worn item, so only the
 -- abilities need revisiting.
-G_settingsChangedJobs = G_settingsChangedJobs or {}
-G_settingsChangedJobs.sdScarves = function(_section, setting)
+-- table.insert, not a named key. Every Sun's Dusk module registers this way
+-- (p_clean.lua:2499, p_temp.lua:3752, ...), and sd_p.lua:135 already creates the
+-- table before player_modules are loaded -- so `= G_settingsChangedJobs or {}`
+-- reassigns a table the host owns, on an ordering assumption never checked. If
+-- the host ever created it AFTER this module loaded, the handler would be
+-- silently discarded. The consumers iterate with pairs(), so both forms are
+-- called; only one is the convention.
+table.insert(G_settingsChangedJobs, function(_section, setting)
 	if setting == "SCARVES_WARMTH" or setting == "SCARVES_ENABLED" then
 		refreshWarmth()
 	elseif setting == "MASKS_BLIGHT_RES" or setting == "MASKS_ENABLED" then
 		refreshBlight()
 	end
-end
+end)

@@ -180,6 +180,17 @@ local function refreshVfx(retries)
 		end
 	end
 
+	-- The mesh has to actually be in the VFS. addVfx on a path that is not
+	-- there attaches nothing and says nothing: the item still swaps to its worn
+	-- record and the ability still applies, so a user missing the eyewear mesh
+	-- pack gets an item that equips, buffs and is invisible, with a clean log.
+	-- Report it instead.
+	if not vfs.fileExists(rec.model) then
+		log(3, "[SD Goggles] mesh not in VFS, skipping:", rec.model,
+		    "(eyewear meshes ship separately)")
+		return
+	end
+
 	animation.addVfx(self, rec.model, {
 		vfxId = VFX_EYEWEAR,
 		boneName = bone,
@@ -247,9 +258,12 @@ table.insert(G_UiModeChangedJobs, function(data)
 end)
 
 -- A settings change alters whether the boon applies, not the worn item.
-G_settingsChangedJobs = G_settingsChangedJobs or {}
-G_settingsChangedJobs.sdGoggles = function(_section, setting)
+-- table.insert, not a named key. Every Sun's Dusk module registers this way
+-- (p_clean.lua:2499, p_temp.lua:3752, ...), and sd_p.lua:135 creates the table
+-- before player_modules load -- so `= G_settingsChangedJobs or {}` reassigns a
+-- table the host owns on an ordering assumption never checked.
+table.insert(G_settingsChangedJobs, function(_section, setting)
 	if setting == "GOGGLES_ENABLED" then
 		refreshLuck()
 	end
-end
+end)

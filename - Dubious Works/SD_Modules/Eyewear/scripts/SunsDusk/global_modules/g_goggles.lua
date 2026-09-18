@@ -71,9 +71,13 @@ local EYEWEAR_IDS = {
 
 local CATEGORY_OF = {}
 local BASE_OF_EQ  = {}
+-- Both directions indexed. The base -> _eq direction used to be answered by
+-- walking EYEWEAR_IDS on every Miscellaneous use.
+local EQ_OF_BASE  = {}
 for _, base in ipairs(EYEWEAR_IDS) do
 	CATEGORY_OF[base .. "_eq"] = "eyewear"
 	BASE_OF_EQ[base .. "_eq"]  = base
+	EQ_OF_BASE[base]           = base .. "_eq"
 end
 
 local function consumeOne(item)
@@ -109,10 +113,10 @@ I.ItemUsage.addHandlerForType(types.Miscellaneous, function(item, actor)
 
 	-- Putting a pair on: swap the base item for its _eq twin, after taking off
 	-- anything already worn.
-	local eqId = nil
-	for _, b in ipairs(EYEWEAR_IDS) do
-		if b == id then eqId = id .. "_eq" break end
-	end
+	-- Hash lookup, not a linear scan. This handler runs on EVERY Miscellaneous
+	-- item use in the game, so walking a 20-entry list to answer a question a
+	-- table answers in one step is work done on every potion and every key.
+	local eqId = EQ_OF_BASE[id]
 	if not eqId then return true end
 
 	local inv = types.Actor.inventory(actor)
