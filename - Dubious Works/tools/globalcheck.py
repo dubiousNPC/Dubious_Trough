@@ -68,11 +68,6 @@ DECL_PATTERNS = [
 ]
 
 ASSIGN_AT_ROOT = re.compile(r'^([A-Za-z_][\w]*)\s*=(?!=)', re.M)
-# `function foo()` with no `local` is also a global write, and is the form most
-# often written by accident -- it looks like a definition rather than an
-# assignment. Without this the name is reported as UNDECLARED, which sends the
-# reader hunting for a missing require instead of a missing `local`.
-DEFINE_AT_ROOT = re.compile(r'^function\s+([A-Za-z_][\w]*)\s*\(', re.M)
 
 
 def strip_lua(src: str) -> str:
@@ -80,15 +75,8 @@ def strip_lua(src: str) -> str:
     src = re.sub(r'--\[(=*)\[.*?\]\1\]', ' ', src, flags=re.S)
     src = re.sub(r'\[(=*)\[.*?\]\1\]', ' ', src, flags=re.S)
     src = re.sub(r'--[^\n]*', '', src)
-    # NOTE the \n in both character classes. Without it, [^"\\] matches
-    # newlines, so a single unbalanced quote swallows every line up to the next
-    # one -- 214 lines of WhyWalk's global.lua in the case that found this,
-    # taking the `local function` declarations with it and leaving their call
-    # sites behind. The checker then reported eight declared functions as
-    # undeclared globals. A Lua short string cannot contain a raw newline, so
-    # excluding it is also just correct.
-    src = re.sub(r'"(\\.|[^"\\\n])*"', '""', src)
-    src = re.sub(r"'(\\.|[^'\\\n])*'", "''", src)
+    src = re.sub(r'"(\\.|[^"\\])*"', '""', src)
+    src = re.sub(r"'(\\.|[^'\\])*'", "''", src)
     return src
 
 
@@ -112,7 +100,7 @@ def check(path: str):
     src = open(path, encoding='utf-8', errors='ignore').read()
     code = strip_lua(src)
     declared = declared_names(code)
-    root_assigned = set(ASSIGN_AT_ROOT.findall(code)) | set(DEFINE_AT_ROOT.findall(code))
+    root_assigned = set(ASSIGN_AT_ROOT.findall(code))
 
     # Candidate reads: a bare name used as a value, not preceded by . : or a
     # declaring keyword, and not immediately followed by = (that is a write).
@@ -131,42 +119,12 @@ def main(argv):
     # A test harness may inject globals its scripts legitimately read -- CAKE's
     # luarun.py does `lua_setglobal(L, b'M')` before running test_shared.lua.
     # Declare those with --globals, or let the default tools/ skip handle it.
-    # A framework whose modules run inside its own script environment reads
-    # names no file in that module ever declares. Sun's Dusk is the case here:
-    # sd_p.lua / sd_g.lua assign these as globals on purpose and then require()
-    # the module files, which share the requiring script's environment. Sweeping
-    # such a module without this preset produces ~70 findings, none of them bugs
-    # -- and a checker that cries wolf gets switched off (see RESEARCH 4.4).
-    #
-    # This list was read out of sd_p.lua, sd_g.lua and constants.lua, not
-    # assumed. Anything a module reads that is NOT here is still reported, which
-    # is the point: it keeps the real misses visible.
-    PRESETS = {
-        'sunsdusk': (
-            'core types util world I animation ambient camera input nearby '
-            'storage vfs async self MODNAME saveData log makeButton '
-            'typesActorInventorySelf typesActorSpellsSelf '
-            'G_eventHandlers G_onFrameJobs G_onFrameJobsSluggish G_onLoadJobs '
-            'G_onSaveJobs G_UiModeChangedJobs G_settingsChangedJobs '
-            'G_perMinuteJobs G_onConsumeJobs G_onInventoryChangedJobs '
-            'G_removeAbilitiesJobs G_globalSettingDefaults'
-        ).split(),
-    }
-
     extra = set()
     include_tools = False
     args = []
     i = 0
     while i < len(argv):
-        if argv[i] == '--preset' and i + 1 < len(argv):
-            name = argv[i + 1].strip().lower()
-            if name not in PRESETS:
-                print('unknown preset %r; have: %s'
-                      % (name, ', '.join(sorted(PRESETS))))
-                return 2
-            extra |= set(PRESETS[name])
-            i += 2
-        elif argv[i] == '--globals' and i + 1 < len(argv):
+        if argv[i] == '--globals' and i + 1 < len(argv):
             extra |= {x.strip() for x in argv[i + 1].split(',') if x.strip()}
             i += 2
         elif argv[i] == '--all':
@@ -204,7 +162,7 @@ def main(argv):
             total += len(lines)
         for name, lines in sorted(accidental.items()):
             shown = ', '.join(str(x) for x in lines[:6])
-            print(f"    GLOBAL-WRITE {name:<23} line {shown}  (missing `local`)")
+            print(f"    GLOBAL-WRITE {name:<23} line {shown}  (assigned at file scope)")
     print(f"\n{len(targets)} file(s) checked, {total} undeclared read(s)")
     return 1 if total else 0
 
