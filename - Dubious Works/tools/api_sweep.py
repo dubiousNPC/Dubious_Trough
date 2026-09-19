@@ -6,8 +6,9 @@ message in the log. Checking statically is the only way to see them.
 """
 import re, os, sys, collections
 
-PKG = sys.argv[1] if len(sys.argv) > 1 else 'out/pkg/CAKE/scripts/cake'
-COD = 'ref/Cod3x/Cod3x/openmw'
+# usage: api_sweep.py <scripts-dir> [<cod3x-dir>]   (cod3x-dir contains openmw/)
+PKG = sys.argv[1] if len(sys.argv) > 1 else 'scripts'
+COD = os.path.join(sys.argv[2] if len(sys.argv) > 2 else 'Cod3x_0.4', 'openmw')
 
 
 def strip(src):
@@ -45,12 +46,26 @@ def iface_members(name):
 
 
 findings = []
-for fn in sorted(os.listdir(PKG)):
-    if not fn.endswith('.lua'):
-        continue
-    src = strip(open(os.path.join(PKG, fn), encoding='utf-8').read())
+def strip_comments(src):
+    src = re.sub(r'--\[\[.*?\]\]', ' ', src, flags=re.S)
+    return re.sub(r'--[^\n]*', ' ', src)
 
-    aliases = dict(re.findall(r"local\s+(\w+)\s*=\s*require\('openmw\.(\w+)'\)", src))
+files = []
+for root, _, names in os.walk(PKG):
+    for n in names:
+        if n.endswith('.lua'):
+            files.append(os.path.relpath(os.path.join(root, n), PKG))
+assert files, 'no .lua files under ' + PKG
+nalias = 0
+for fn in sorted(files):
+    raw = open(os.path.join(PKG, fn), encoding='utf-8').read()
+    # Aliases MUST come from the source before string literals are blanked --
+    # the module name IS a string literal. Blanking first made this tool report
+    # "nothing unrecognised" for every package it was ever run on.
+    aliases = dict(re.findall(
+        r"local\s+(\w+)\s*=\s*require\s*\(?\s*['\"]openmw\.(\w+)['\"]\s*\)?", strip_comments(raw)))
+    nalias += len(aliases)
+    src = strip(raw)
     # local Actor = types.Actor  -> treat Actor as types.Actor
     # (sub-aliases like `local Actor = types.Actor` are resolved below)
 
@@ -77,7 +92,10 @@ for fn in sorted(os.listdir(PKG)):
                 if u not in members:
                     findings.append('%s: I.%s.%s' % (fn, iname, u))
 
-print('API sweep against Cod3x stubs\n')
+import os
+assert os.path.isdir(COD) and os.listdir(COD), 'Cod3x stubs not found at '+COD
+print('API sweep against Cod3x stubs (%d files, %d openmw aliases)\n' % (len(files), nalias))
+assert nalias, 'no openmw requires recognised -- the sweep would be vacuous'
 if not findings:
     print('  nothing unrecognised')
 else:
