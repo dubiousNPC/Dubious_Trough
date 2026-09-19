@@ -1,6 +1,6 @@
 -- Mocks enough of the OpenMW API to run the real cake_* scripts and drive the
 -- equip/unequip/refresh flows.
-local DIR = 'out/pkg/CAKE/scripts/cake/'
+local DIR = 'scripts/cake/'
 local fails = 0
 local function check(n,c,e) if c then print('  ok   '..n) else fails=fails+1; print('  FAIL '..n..' '..tostring(e or '')) end end
 
