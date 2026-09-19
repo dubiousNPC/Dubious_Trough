@@ -98,6 +98,16 @@ local function unwearCategory(inv, category)
 	return nil
 end
 
+-- LOAD BEACON. Sun's Dusk finds this file by scanning the VFS prefix
+-- "scripts/SunsDusk/global_modules/", so it only loads if THIS module folder is
+-- its own data= entry. Point data= at the parent folder instead and the prefix
+-- never matches, nothing here runs, the ItemUsage handler is never registered,
+-- and using an item does nothing -- with no error, because no code ran.
+--
+-- One line at load turns that silence into evidence: no line in the log means
+-- the module is not installed, not that it is broken.
+log(2, "[SD Eyewear] module loaded; ItemUsage handler registering")
+
 I.ItemUsage.addHandlerForType(types.Miscellaneous, function(item, actor)
 	local id = item.recordId
 

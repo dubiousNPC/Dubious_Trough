@@ -1,0 +1,280 @@
+[
+  {
+    "type": "Header",
+    "flags": [
+      0,
+      0
+    ],
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "Scarves",
+    "description": "Sun's Dusk :: Scarves and Masks -- ability records.",
+    "num_objects": 10,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ]
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_mask_blight_10",
+    "name": "Mask: Blight Resistance",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "ResistBlightDisease",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 10,
+        "max_magnitude": 10
+      }
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_mask_blight_20",
+    "name": "Mask: Blight Resistance",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "ResistBlightDisease",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 20,
+        "max_magnitude": 20
+      }
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_mask_blight_30",
+    "name": "Mask: Blight Resistance",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "ResistBlightDisease",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 30,
+        "max_magnitude": 30
+      }
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_mask_blight_40",
+    "name": "Mask: Blight Resistance",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "ResistBlightDisease",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 40,
+        "max_magnitude": 40
+      }
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_mask_blight_50",
+    "name": "Mask: Blight Resistance",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "ResistBlightDisease",
+        "skill": "None",
+        "attribute": "None",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 50,
+        "max_magnitude": 50
+      }
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_scarf_w1",
+    "name": "Scarf Warmth",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "FortifyAttribute",
+        "skill": "None",
+        "attribute": "Willpower",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 1,
+        "max_magnitude": 1
+      }
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_scarf_w2",
+    "name": "Scarf Warmth",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "FortifyAttribute",
+        "skill": "None",
+        "attribute": "Willpower",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 2,
+        "max_magnitude": 2
+      }
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_scarf_w3",
+    "name": "Scarf Warmth",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "FortifyAttribute",
+        "skill": "None",
+        "attribute": "Willpower",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 4,
+        "max_magnitude": 4
+      }
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_scarf_w4",
+    "name": "Scarf Warmth",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "FortifyAttribute",
+        "skill": "None",
+        "attribute": "Willpower",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 8,
+        "max_magnitude": 8
+      }
+    ]
+  },
+  {
+    "type": "Spell",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "sd_scarf_w5",
+    "name": "Scarf Warmth",
+    "data": {
+      "spell_type": "Ability",
+      "spell_cost": 0,
+      "flags": 0
+    },
+    "effects": [
+      {
+        "magic_effect": "FortifyAttribute",
+        "skill": "None",
+        "attribute": "Willpower",
+        "range": 0,
+        "area": 0,
+        "duration": 0,
+        "min_magnitude": 16,
+        "max_magnitude": 16
+      }
+    ]
+  }
+]

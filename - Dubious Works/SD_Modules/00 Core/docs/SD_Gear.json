@@ -1,0 +1,1788 @@
+[
+  {
+    "type": "Header",
+    "flags": [
+      0,
+      0
+    ],
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "",
+    "description": "",
+    "num_objects": 110,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ],
+      [
+        "Tribunal.esm",
+        4565686
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ],
+      [
+        "Tamriel_Data.esm",
+        14887395
+      ]
+    ]
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_01cigar",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Cigar 1",
+    "mesh": "ep\\_01cigar.nif"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_01cigar_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Cigar 1",
+    "mesh": "ep\\_01cigar.nif"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_02cigar",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Cigar 2",
+    "mesh": "ep\\_0cigar.nif"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_02cigar_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Cigar 2",
+    "mesh": "ep\\_0cigar.nif"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Ashmask1_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Ashmask 1",
+    "mesh": "RV\\Ashmask1.nif",
+    "icon": "RV\\ashmask1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Ashmask1_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Ashmask 1",
+    "mesh": "RV\\Ashmask1.nif",
+    "icon": "RV\\ashmask1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Ashmask2_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Ashmask 2",
+    "mesh": "RV\\Ashmask2.nif",
+    "icon": "RV\\ashmask2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Ashmask2_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Ashmask 2",
+    "mesh": "RV\\Ashmask2.nif",
+    "icon": "RV\\ashmask2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Ashmask3_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Ashmask 3",
+    "mesh": "RV\\Ashmask3.nif",
+    "icon": "RV\\ashmask3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Ashmask3_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Ashmask 3",
+    "mesh": "RV\\Ashmask3.nif",
+    "icon": "RV\\ashmask3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Blindfold1_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Blindfold",
+    "mesh": "RV\\blindfold1.nif",
+    "icon": "RV\\Blindfold_1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Blindfold1_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Blindfold",
+    "mesh": "RV\\blindfold1.nif",
+    "icon": "RV\\Blindfold_1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Daedramask1_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Daedric mask 1",
+    "mesh": "RV\\Daedramask1.nif",
+    "icon": "RV\\Daedramask1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Daedramask1_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Daedric mask 1",
+    "mesh": "RV\\Daedramask1.nif",
+    "icon": "RV\\Daedramask1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Daedramask2_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Daedric mask 2",
+    "mesh": "RV\\Daedramask2.nif",
+    "icon": "RV\\Daedramask2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Daedramask2_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Daedric mask 2",
+    "mesh": "RV\\Daedramask2.nif",
+    "icon": "RV\\Daedramask2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Daedramask3_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Daedric mask 3",
+    "mesh": "RV\\Daedramask3.nif",
+    "icon": "RV\\Daedramask3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Daedramask3_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Daedric mask 3",
+    "mesh": "RV\\Daedramask3.nif",
+    "icon": "RV\\Daedramask3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Daedramask4_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Daedric mask 4",
+    "mesh": "RV\\Daedramask4.nif",
+    "icon": "RV\\Daedramask4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Daedramask4_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Daedric mask 4",
+    "mesh": "RV\\Daedramask4.nif",
+    "icon": "RV\\Daedramask4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Eyepatch1L_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Eyepatch L",
+    "mesh": "RV\\eyepatch1L.nif",
+    "icon": "RV\\Eyepatch1L.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Eyepatch1L_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Eyepatch L",
+    "mesh": "RV\\eyepatch1L.nif",
+    "icon": "RV\\Eyepatch1L.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Eyepatch1R_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Eyepatch R",
+    "mesh": "RV\\eyepatch1R.nif",
+    "icon": "RV\\Eyepatch1R.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Eyepatch1R_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Eyepatch R",
+    "mesh": "RV\\eyepatch1R.nif",
+    "icon": "RV\\Eyepatch1R.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap1_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 1",
+    "mesh": "RV\\Facewrap1.nif",
+    "icon": "RV\\facewrap1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap1_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 1",
+    "mesh": "RV\\Facewrap1.nif",
+    "icon": "RV\\facewrap1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap2_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 2",
+    "mesh": "RV\\Facewrap2.nif",
+    "icon": "RV\\facewrap2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap2_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 2",
+    "mesh": "RV\\Facewrap2.nif",
+    "icon": "RV\\facewrap2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap3_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 3",
+    "mesh": "RV\\Facewrap3.nif",
+    "icon": "RV\\facewrap3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap3_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 3",
+    "mesh": "RV\\Facewrap3.nif",
+    "icon": "RV\\facewrap3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap4_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 4",
+    "mesh": "RV\\Facewrap4.nif",
+    "icon": "RV\\facewrap4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap4_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 4",
+    "mesh": "RV\\Facewrap4.nif",
+    "icon": "RV\\facewrap4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap5_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 5",
+    "mesh": "RV\\Facewrap5.nif",
+    "icon": "RV\\facewrap5.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap5_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 5",
+    "mesh": "RV\\Facewrap5.nif",
+    "icon": "RV\\facewrap5.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap6_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 6",
+    "mesh": "RV\\Facewrap6.nif",
+    "icon": "RV\\facewrap6.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap6_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 6",
+    "mesh": "RV\\Facewrap6.nif",
+    "icon": "RV\\facewrap6.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap7_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 7",
+    "mesh": "RV\\Facewrap7.nif",
+    "icon": "RV\\facewrap7.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap7_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 7",
+    "mesh": "RV\\Facewrap7.nif",
+    "icon": "RV\\facewrap7.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap8_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 8",
+    "mesh": "RV\\Facewrap8.nif",
+    "icon": "RV\\facewrap8.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Facewrap8_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Facewrap 8",
+    "mesh": "RV\\Facewrap8.nif",
+    "icon": "RV\\facewrap8.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses1_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 1",
+    "mesh": "RV\\glasses1.nif",
+    "icon": "RV\\Glasses_1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses1_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 1",
+    "mesh": "RV\\glasses1.nif",
+    "icon": "RV\\Glasses_1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses1s_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 2",
+    "mesh": "RV\\glasses1s.nif",
+    "icon": "RV\\Glasses_1s.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses1s_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 2",
+    "mesh": "RV\\glasses1s.nif",
+    "icon": "RV\\Glasses_1s.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses2_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 3",
+    "mesh": "RV\\glasses2.nif",
+    "icon": "RV\\Glasses_2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses2_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 3",
+    "mesh": "RV\\glasses2.nif",
+    "icon": "RV\\Glasses_2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses2s_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 4",
+    "mesh": "RV\\glasses2s.nif",
+    "icon": "RV\\Glasses_2s.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses2s_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 4",
+    "mesh": "RV\\glasses2s.nif",
+    "icon": "RV\\Glasses_2s.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses3_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 5",
+    "mesh": "RV\\glasses3.nif",
+    "icon": "RV\\Glasses_3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses3_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 5",
+    "mesh": "RV\\glasses3.nif",
+    "icon": "RV\\Glasses_3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses4_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 6",
+    "mesh": "RV\\glasses4.nif",
+    "icon": "RV\\Glasses_4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses4_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 6",
+    "mesh": "RV\\glasses4.nif",
+    "icon": "RV\\Glasses_4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses4s_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 7",
+    "mesh": "RV\\glasses4s.nif",
+    "icon": "RV\\Glasses_4s.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Glasses4s_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Glasses 7",
+    "mesh": "RV\\glasses4s.nif",
+    "icon": "RV\\Glasses_4s.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles1_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 1",
+    "mesh": "RV\\goggles1.nif",
+    "icon": "RV\\Goggles_1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles1_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 1",
+    "mesh": "RV\\goggles1.nif",
+    "icon": "RV\\Goggles_1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles2_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 2",
+    "mesh": "RV\\goggles2.nif",
+    "icon": "RV\\Goggles_2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles2_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 2",
+    "mesh": "RV\\goggles2.nif",
+    "icon": "RV\\Goggles_2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles3_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 3",
+    "mesh": "RV\\goggles3.nif",
+    "icon": "RV\\Goggles_3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles3_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 3",
+    "mesh": "RV\\goggles3.nif",
+    "icon": "RV\\Goggles_3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles4_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 4",
+    "mesh": "RV\\goggles4.nif",
+    "icon": "RV\\Goggles_4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles4_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 4",
+    "mesh": "RV\\goggles4.nif",
+    "icon": "RV\\Goggles_4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles5_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 5",
+    "mesh": "RV\\goggles5.nif",
+    "icon": "RV\\Goggles_5.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles5_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 5",
+    "mesh": "RV\\goggles5.nif",
+    "icon": "RV\\Goggles_5.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles6_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 6",
+    "mesh": "RV\\goggles6.nif",
+    "icon": "RV\\Goggles_6.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles6_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 6",
+    "mesh": "RV\\goggles6.nif",
+    "icon": "RV\\Goggles_6.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles7_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 7",
+    "mesh": "RV\\goggles7.nif",
+    "icon": "RV\\Goggles_7.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles7_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 7",
+    "mesh": "RV\\goggles7.nif",
+    "icon": "RV\\Goggles_7.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles8_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 8",
+    "mesh": "RV\\goggles8.nif",
+    "icon": "RV\\Goggles_8.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Goggles8_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Goggles 8",
+    "mesh": "RV\\goggles8.nif",
+    "icon": "RV\\Goggles_8.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Lenses1_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Lenses 1",
+    "mesh": "RV\\Lenses1.nif",
+    "icon": "RV\\Lenses_1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Lenses1_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Lenses 1",
+    "mesh": "RV\\Lenses1.nif",
+    "icon": "RV\\Lenses_1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Lenses2_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Lenses 2",
+    "mesh": "RV\\Lenses2.nif",
+    "icon": "RV\\Lenses_2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Lenses2_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Lenses 2",
+    "mesh": "RV\\Lenses2.nif",
+    "icon": "RV\\Lenses_2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Orcishmask1_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Orcish Mask",
+    "mesh": "RV\\Orcishmask1.nif",
+    "icon": "RV\\Orcishmask1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Orcishmask1_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Orcish Mask",
+    "mesh": "RV\\Orcishmask1.nif",
+    "icon": "RV\\Orcishmask1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Orcishmask2_H",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Orcish mask",
+    "mesh": "RV\\Orcishmask2.nif",
+    "icon": "RV\\Orcishmask2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Orcishmask2_H_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Orcish mask",
+    "mesh": "RV\\Orcishmask2.nif",
+    "icon": "RV\\Orcishmask2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_01",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 1",
+    "mesh": "RV\\scarf1.nif",
+    "icon": "RV\\scarf1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_01_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 1",
+    "mesh": "RV\\scarf1.nif",
+    "icon": "RV\\scarf1.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_02",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 2",
+    "mesh": "RV\\scarf2.nif",
+    "icon": "RV\\scarf2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_02_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 2",
+    "mesh": "RV\\scarf2.nif",
+    "icon": "RV\\scarf2.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_03",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 3",
+    "mesh": "RV\\scarf3.nif",
+    "icon": "RV\\scarf3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_03_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 3",
+    "mesh": "RV\\scarf3.nif",
+    "icon": "RV\\scarf3.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_04",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 4",
+    "mesh": "RV\\scarf4.nif",
+    "icon": "RV\\scarf4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_04_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 4",
+    "mesh": "RV\\scarf4.nif",
+    "icon": "RV\\scarf4.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_05",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 5",
+    "mesh": "RV\\scarf5.nif",
+    "icon": "RV\\scarf5.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_05_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 5",
+    "mesh": "RV\\scarf5.nif",
+    "icon": "RV\\scarf5.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_06",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 6",
+    "mesh": "RV\\scarf6.nif",
+    "icon": "RV\\scarf6.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_06_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 6",
+    "mesh": "RV\\scarf6.nif",
+    "icon": "RV\\scarf6.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_07",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 7",
+    "mesh": "RV\\scarf7.nif",
+    "icon": "RV\\scarf7.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_07_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 7",
+    "mesh": "RV\\scarf7.nif",
+    "icon": "RV\\scarf7.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_08",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 8",
+    "mesh": "RV\\scarf8.nif",
+    "icon": "RV\\scarf8.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_08_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 8",
+    "mesh": "RV\\scarf8.nif",
+    "icon": "RV\\scarf8.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_09",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 9",
+    "mesh": "RV\\scarf9.nif",
+    "icon": "RV\\scarf9.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_09_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 9",
+    "mesh": "RV\\scarf9.nif",
+    "icon": "RV\\scarf9.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_10",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 10",
+    "mesh": "RV\\scarf10.nif",
+    "icon": "RV\\scarf10.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_10_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 10",
+    "mesh": "RV\\scarf10.nif",
+    "icon": "RV\\scarf10.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_11",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 11",
+    "mesh": "RV\\scarf11.nif",
+    "icon": "RV\\scarf11.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_11_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 11",
+    "mesh": "RV\\scarf11.nif",
+    "icon": "RV\\scarf11.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_12",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 12",
+    "mesh": "RV\\scarf12.nif",
+    "icon": "RV\\scarf12.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_12_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 12",
+    "mesh": "RV\\scarf12.nif",
+    "icon": "RV\\scarf12.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_13",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 13",
+    "mesh": "RV\\scarf13.nif",
+    "icon": "RV\\scarf13.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_13_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 13",
+    "mesh": "RV\\scarf13.nif",
+    "icon": "RV\\scarf13.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_14",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 14",
+    "mesh": "RV\\scarf14.nif",
+    "icon": "RV\\scarf14.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_14_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 14",
+    "mesh": "RV\\scarf14.nif",
+    "icon": "RV\\scarf14.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_15",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 15",
+    "mesh": "RV\\scarf15.nif",
+    "icon": "RV\\scarf15.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_15_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 15",
+    "mesh": "RV\\scarf15.nif",
+    "icon": "RV\\scarf15.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_16",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 16",
+    "mesh": "RV\\scarf16.nif",
+    "icon": "RV\\scarf16.tga"
+  },
+  {
+    "type": "MiscItem",
+    "flags": [
+      0,
+      0
+    ],
+    "id": "dbs_RV_Scarf_16_eq",
+    "data": {
+      "weight": 0.5,
+      "value": 2,
+      "flags": 0
+    },
+    "name": "Scarf 16",
+    "mesh": "RV\\scarf16.nif",
+    "icon": "RV\\scarf16.tga"
+  }
+]
