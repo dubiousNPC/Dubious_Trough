@@ -1,3 +1,35 @@
+# Eyewear v0.03
+
+**Fatal load error fixed: `p_goggles.lua` killed all of Sun's Dusk.**
+
+Log, OpenMW 0.51.0:
+
+```
+Can't start L@0x1[scripts/sunsdusk/sd_p.lua]; Lua error:
+[string "scripts/sunsdusk/player_modules/p_goggles.lua"]:125:
+attempt to index global 'I' (a userdata value)
+```
+
+`I.SunsDuskGoggles = { isWorn = isWorn }` assigned a field to
+`openmw.interfaces`. That table is a read-only userdata; writing to it raises.
+The module is `require()`d at top level by `sd_p.lua`, so the error aborted
+`sd_p.lua` itself: every Sun's Dusk player module (Scarves included) was dead,
+and `sd_p.lua`'s timers later failed with "Script doesn't exist".
+
+Fix: removed the assignment. `G_gogglesIsWorn()` already served every
+same-context caller (all player modules share `sd_p.lua`'s environment), so no
+caller loses anything. A module cannot publish an interface at all: only a
+registered script returning `interfaceName` does that.
+
+Fixed in `TEMPLATE/p_MODULE.lua` too, which is where it came from. Any module
+built from the template before v0.03 carries the same fatal line.
+
+Checker gap: none of luacheck / globalcheck / ctxcheck flags a write to `I`,
+because `I` is on the declared-globals list. A write to a host-provided global
+is never legitimate in a module; worth a dedicated rule.
+
+---
+
 # Eyewear v0.02
 
 Same verification pass run on Scarves. **Records and bones check out

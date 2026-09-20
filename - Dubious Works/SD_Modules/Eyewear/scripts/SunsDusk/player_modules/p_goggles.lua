@@ -102,14 +102,18 @@ end
 -- bag" rather than "is a pair being worn" -- and would be wrong for a looted
 -- one. It is also a getAll walk per caller per call.
 --
--- Exposed two ways because addon modules have two kinds of caller:
+-- Exposed as G_gogglesIsWorn(), the plain-global convention Sun's Dusk itself
+-- uses for cross-module reads. Every other player module shares this
+-- environment, so the global reaches all of them.
 --
---   I.SunsDuskGoggles.isWorn()      same-context scripts (other player
---                                   modules, which share this environment)
---   G_gogglesIsWorn()               the plain-global convention Sun's Dusk
---                                   itself uses for cross-module reads
+-- NOT exposed as I.SunsDuskGoggles. openmw.interfaces is a read-only userdata:
+-- assigning a field to it raises "attempt to index global 'I' (a userdata
+-- value)", and because this file is require()d at the top level of sd_p.lua
+-- that error aborts sd_p.lua itself -- every Sun's Dusk player module dies with
+-- it. An interface only exists when a registered script RETURNS interfaceName,
+-- and a module is not a registered script; it cannot publish one.
 --
--- Both return the same three things, so a caller can branch on which pair:
+-- Returns, so a caller can branch on which pair:
 --   worn (boolean), base record id or nil, _eq record id or nil
 local function isWorn()
 	local eqId = wornId()
@@ -119,10 +123,6 @@ local function isWorn()
 end
 
 G_gogglesIsWorn = isWorn
-
-I.SunsDuskGoggles = {
-	isWorn = isWorn,
-}
 
 -- ---------------------------------------------------------------------------
 -- BOON

@@ -20,15 +20,16 @@ load. See `TEMPLATE/README.md`.
 
 ## The hook
 
-Other scripts ask whether eyewear is worn. Two forms, same answer:
+Other Sun's Dusk player modules ask whether eyewear is worn through the
+plain-global convention Sun's Dusk uses internally:
 
 ```lua
--- same-context scripts (other Sun's Dusk player modules)
-local worn, baseId, eqId = I.SunsDuskGoggles.isWorn()
-
--- the plain-global convention Sun's Dusk uses internally
 local worn, baseId, eqId = G_gogglesIsWorn()
 ```
+
+There is no `I.SunsDuskGoggles`. A module runs inside `sd_p.lua` and cannot
+publish an interface; v0.02 tried to assign one, which aborted `sd_p.lua` on
+load and took every Sun's Dusk player module down with it (fixed in v0.03).
 
 Returns `false, nil, nil` when nothing is worn, otherwise `true` plus both
 record ids so a caller can branch on **which** pair.

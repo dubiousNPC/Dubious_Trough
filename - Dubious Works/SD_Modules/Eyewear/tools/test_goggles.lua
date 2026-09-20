@@ -44,7 +44,16 @@ env.world = { createObject = function(id)
 end }
 env.util = { vector3 = function(x, y, z) return { x = x, y = y, z = z } end }
 local itemHandlers = {}
-env.I = { ItemUsage = { addHandlerForType = function(_, fn) itemHandlers[#itemHandlers + 1] = fn end } }
+local interfaces = { ItemUsage = { addHandlerForType = function(_, fn) itemHandlers[#itemHandlers + 1] = fn end } }
+-- openmw.interfaces is a read-only userdata in the engine: reads work, any
+-- write raises. A plain table here let v0.02's `I.SunsDuskGoggles = {...}`
+-- pass every test while it aborted sd_p.lua in game. Keep this proxy.
+env.I = setmetatable({}, {
+    __index = interfaces,
+    __newindex = function(_, k)
+        error("attempt to index global 'I' (a userdata value) [write to I." .. tostring(k) .. "]", 2)
+    end,
+})
 env.animation = {
     removeVfx = function(_, id)
         for b, v in pairs(world.vfx) do if v == id then world.vfx[b] = nil end end
