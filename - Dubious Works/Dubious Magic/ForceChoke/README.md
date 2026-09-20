@@ -27,6 +27,64 @@ Console: `luap` then `forcechoke_give` grants the spell.
 
 ## Changes in this revision
 
+### Load cleanup errored on every disabled actor
+
+In-game log, on loading a save:
+
+```
+L@0x18ce[scripts/forcechoke/target.lua] onLoad failed: Lua error: Can't use a disabled object
+L@0x18fc[scripts/forcechoke/target.lua] onLoad failed: Lua error: Object has no animation
+```
+
+`onLoad` cancelled all four choke groups to clear a pose stranded by a
+mid-choke save. `onLoad` runs for every NPC and creature carrying the script,
+so it ran on disabled actors and actors not yet in the scene, and the engine
+refused both. It also meant four cancels on every actor in the save to fix a
+case that applies to at most one.
+
+Now:
+- `onSave` returns the playing group, and only when one is playing.
+- `onLoad` just notes it.
+- `onActive` issues the cancel once the actor is in the scene. A disabled
+  actor gets it when enabled.
+
+Every other actor does nothing.
+
+`tools/test_target.lua` drives the real save/load path against a mock whose
+`animation.cancel` raises the engine's two errors. The previous revision fails
+7 of 10 checks, reproducing both log lines. This one passes all 10.
+
+### The global script never started
+
+In-game log:
+
+```
+Can't start Global[scripts/forcechoke/global.lua]; Lua error: module not found: openmw.animation
+```
+
+`global.lua` requires `shared.lua`, and `shared.lua` required
+`openmw.animation` to build its priority and blend-mask tables. That module
+exists only in local and player scripts. The state machine, paralysis,
+teleports and throw were therefore all dead. Casting did nothing beyond the
+player's own pose.
+
+`shared.lua` was annotated `---@omw-context any`. `any` is not a Cod3x
+context, so the context checker had nothing to compare against, and the
+static checks in the table below all passed on a mod that could not start.
+
+Fixed by splitting along the context boundary:
+
+- `shared.lua` is now `---@omw-context none` with no requires: ids, groups,
+  text keys, tuning. Legal in every context that loads it.
+- `poses.lua` (new, `---@omw-context local | player`) holds everything built
+  from `openmw.animation`: `FULLBODY_/UPPERBODY_PRIORITY`,
+  `*_BLEND_MASK`, `targetPoseOptions`, `playerPoseOptions`. Moved verbatim.
+  Only `player.lua` and `target.lua` require it.
+
+Verified by loading each entry point under a sandbox whose `require` mirrors
+the engine's per-context module list. Before the split, `global.lua` fails
+with the same error as the log. After it, all three entry points start.
+
 ### Records are declared, not generated
 
 `load.lua` declares the magic effect and both spells through `openmw.content`,
@@ -101,7 +159,8 @@ symbols makes the code correct under either.
 ForceChoke.omwscripts
 scripts/forcechoke/
   load.lua     -- LOAD: declares effect + spell records (fixed ids)
-  shared.lua   -- data only: ids, groups, keys, priorities, masks, tuning
+  shared.lua   -- data only, any context: ids, groups, keys, tuning
+  poses.lua    -- actor-only: priorities, blend masks, pose options
   global.lua   -- state machine, paralysis, teleports, stat writes
   player.lua   -- cast detection, targeting, player pose, messages, console
   target.lua   -- NPC pose + throw integration
@@ -115,7 +174,10 @@ Checked with the project toolchain before delivery:
 
 | Check | Result |
 |---|---|
-| `luacheck.py` (liblua5.4 parser) | 5 files, 0 failed |
+| `luacheck.py` (liblua5.4 parser) | 6 files, 0 failed |
+| Per-context load simulation | global, player, local entry points all start |
+| `tools/test_target.lua` (save/load) | 10/10 |
+| `ctxcheck.py` vs Cod3x 0.4 policy | 7 files, 0 issues (was: `shared.lua` INVALID-TOKEN `any`) |
 | `globalcheck.py` | 0 undeclared global reads |
 | `api_sweep.py` vs Cod3x stubs | nothing unrecognised |
 | pcall audit | 0 in code |

@@ -26,6 +26,7 @@ local nearby = require('openmw.nearby')
 local anim   = require('openmw.animation')
 
 local S = require('scripts.forcechoke.shared')
+local P = require('scripts.forcechoke.poses')
 local T = S.TUNING
 
 -- ============================================================
@@ -76,7 +77,7 @@ local function playPose(group, looping)
         return
     end
 
-    anim.playBlended(self, group, S.targetPoseOptions(looping))
+    anim.playBlended(self, group, P.targetPoseOptions(looping))
     currentGroup = group
 end
 
@@ -232,7 +233,7 @@ local function onUpdate(dt)
 end
 
 -- ============================================================
--- LOAD
+-- SAVE / LOAD
 -- ============================================================
 -- Without this, a save taken mid-choke stranded the actor forever. The hold
 -- pose is full-body at PRIORITY.Scripted, and Scripted pauses every
@@ -241,22 +242,45 @@ end
 -- NPC kept the choke pose and could never play any other animation again.
 -- (The paralysis self-heals -- it is timed and expires. The pose does not.)
 --
--- Cancelled by name rather than via currentGroup, which is a module local and
--- is nil again by the time this runs. Cancelling a group that is not playing
--- is a no-op.
-local function onLoad()
-    throwing     = false
-    waiting      = false
-    currentGroup = nil
-    for _, group in pairs(S.GROUPS) do
-        anim.cancel(self, group)
+-- The cancel happens in onActive, NOT onLoad. onLoad runs for every actor
+-- carrying this script -- every NPC and creature in the save -- including
+-- disabled ones and ones not yet in the scene. The previous revision
+-- cancelled there and the engine refused both kinds:
+--     onLoad failed: Lua error: Can't use a disabled object
+--     onLoad failed: Lua error: Object has no animation
+-- onActive fires once the actor is actually in the scene, which is the only
+-- time it has an animation to cancel. A disabled actor gets it when enabled.
+--
+-- And only for actors that were posed when the game was saved: onSave returns
+-- nothing otherwise, so every other actor in the world does no work at all,
+-- where the old onLoad issued four cancels on each of them.
+local pendingCancel = nil   -- group saved as playing; cancelled on activation
+
+local function onSave()
+    if currentGroup then
+        return { group = currentGroup }
     end
+end
+
+local function onLoad(data)
+    throwing      = false
+    waiting       = false
+    currentGroup  = nil
+    pendingCancel = data and data.group or nil
+end
+
+local function onActive()
+    if not pendingCancel then return end
+    anim.cancel(self, pendingCancel)
+    pendingCancel = nil
 end
 
 return {
     engineHandlers = {
         onUpdate = onUpdate,
+        onSave   = onSave,
         onLoad   = onLoad,
+        onActive = onActive,
     },
     eventHandlers = {
         ForceChoke_Grab     = onGrab,

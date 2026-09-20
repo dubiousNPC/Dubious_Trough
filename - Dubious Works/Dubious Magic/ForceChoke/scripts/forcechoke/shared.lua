@@ -1,13 +1,18 @@
----@omw-context any
+---@omw-context none
 --[[
     ForceChoke / shared.lua
 
-    Pure data and pure helpers. No engine handlers, no interface, no side
-    effects. Controllers require this; this file requires only
-    openmw.animation, for the enum values it maps.
-]]--
+    Pure data. No engine handlers, no interface, no side effects, and NO
+    requires: global.lua, player.lua and target.lua all load this file, so
+    it must be legal in every one of those contexts.
 
-local anim = require('openmw.animation')
+    It used to require openmw.animation for the priority/blend-mask enums.
+    That module exists only in local and player scripts, so global.lua died
+    at startup with "module not found: openmw.animation" and the whole mod
+    was inert. The header said `any`, which is not a Cod3x context, so the
+    context checker never saw the conflict. Anything that needs
+    openmw.animation lives in poses.lua, which only the actor scripts load.
+]]--
 
 local M = {}
 
@@ -61,41 +66,6 @@ M.START_KEY = "start"
 M.STOP_KEY  = "stop"
 
 -- ============================================================
--- PRIORITIES AND BLEND MASKS
--- ============================================================
--- Target poses are full-body at PRIORITY.Scripted, uniformly across all four
--- bone groups. Scripted pauses all non-Scripted animation on that actor,
--- which is exactly what "held, paralyzed" wants. Applying the SAME priority
--- to every bone group is what keeps this correct: mixing Scripted on one bone
--- group with a lower priority on another silently freezes the actor's other
--- animations.
---
--- Keys are the BONE_GROUP enum values, never numeric literals. Cod3x
--- annotates them 1-4 while the corpus records them as 0-3; using the symbols
--- makes this code correct either way.
-M.FULLBODY_PRIORITY = {
-    [anim.BONE_GROUP.LowerBody] = anim.PRIORITY.Scripted,
-    [anim.BONE_GROUP.Torso]     = anim.PRIORITY.Scripted,
-    [anim.BONE_GROUP.LeftArm]   = anim.PRIORITY.Scripted,
-    [anim.BONE_GROUP.RightArm]  = anim.PRIORITY.Scripted,
-}
-
--- Player pose is upper-body only: LowerBody is absent from both the priority
--- table and the mask, so locomotion stays under normal engine control and the
--- player can walk while maintaining the grip. Weapon is the band OpenMW uses
--- for casting, so this reads as a held cast rather than an override.
-M.UPPERBODY_PRIORITY = {
-    [anim.BONE_GROUP.Torso]    = anim.PRIORITY.Weapon,
-    [anim.BONE_GROUP.LeftArm]  = anim.PRIORITY.Weapon,
-    [anim.BONE_GROUP.RightArm] = anim.PRIORITY.Weapon,
-}
-
--- Engine-provided composites rather than hand-summed flags: All is 15,
--- UpperBody is 14 (Torso + both arms, no LowerBody).
-M.FULLBODY_BLEND_MASK  = anim.BLEND_MASK.All
-M.UPPERBODY_BLEND_MASK = anim.BLEND_MASK.UpperBody
-
--- ============================================================
 -- TUNING
 -- ============================================================
 M.TUNING = {
@@ -124,37 +94,5 @@ M.TUNING = {
     throwRayRadius      = 45,
     throwMaxSeconds     = 6,    -- hard cap so a stuck actor always lands
 }
-
--- ============================================================
--- HELPERS
--- ============================================================
-
---- Options for a full-body scripted target pose.
--- `looping` groups run until explicitly cancelled; DROP is played once so it
--- runs to the clip's real end and settles on the final collapsed frame.
-function M.targetPoseOptions(looping)
-    return {
-        startKey    = M.START_KEY,
-        stopKey     = M.STOP_KEY,
-        priority    = M.FULLBODY_PRIORITY,
-        blendMask   = M.FULLBODY_BLEND_MASK,
-        loops       = looping and -1 or 0,
-        forceLoop   = looping and true or false,
-        autoDisable = false,
-    }
-end
-
---- Options for the player's looping upper-body pose.
-function M.playerPoseOptions()
-    return {
-        startKey    = M.START_KEY,
-        stopKey     = M.STOP_KEY,
-        priority    = M.UPPERBODY_PRIORITY,
-        blendMask   = M.UPPERBODY_BLEND_MASK,
-        loops       = -1,
-        forceLoop   = true,
-        autoDisable = false,
-    }
-end
 
 return M

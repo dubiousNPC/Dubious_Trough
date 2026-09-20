@@ -37,6 +37,7 @@ local camera = require('openmw.camera')
 local I      = require('openmw.interfaces')
 
 local S = require('scripts.forcechoke.shared')
+local P = require('scripts.forcechoke.poses')
 local T = S.TUNING
 
 -- ============================================================
@@ -56,7 +57,7 @@ local function startPose()
     -- A missing animation asset is a supported state, as in target.lua: the
     -- grip still works, it just is not posed. Checked rather than attempted.
     if not anim.hasGroup(self, S.GROUPS.CAST) then return end
-    anim.playBlended(self, S.GROUPS.CAST, S.playerPoseOptions())
+    anim.playBlended(self, S.GROUPS.CAST, P.playerPoseOptions())
     posePlaying = true
 end
 
