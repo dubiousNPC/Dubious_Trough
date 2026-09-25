@@ -213,8 +213,29 @@ G_eventHandlers.SunsDuskGoggles_equipped = onEquipped
 -- Sluggish list, not per-frame: this is Sun's Dusk's own throttle, and it is
 -- where p_backpacks puts the identical check. State leads; the inventory
 -- audits it.
+--
+-- p_backpacks keeps TWO checks here and this module had only copied one. The
+-- other is the perspective check below: switching first/third person rebuilds
+-- the player's animation object and silently drops every attached VFX, and
+-- nothing in Sun's Dusk re-attaches a module's VFX for it. Without it, worn
+-- eyewear disappeared on every perspective switch and came back only when the
+-- item was taken off and put on again.
+--
+-- The throttled tick is also what makes it reliable: it lands after the
+-- rebuild has finished, so the re-attach is not racing it.
+local wasFirstPerson = camera.getMode() == camera.MODE.FirstPerson
+
 local function onSluggishFrame()
+	-- Only the first-person boundary rebuilds anything -- ThirdPerson, Preview
+	-- and Vanity are the same model. The baseline updates even with nothing
+	-- worn, so a switch made while bare-faced is not replayed later.
+	local nowFirstPerson = camera.getMode() == camera.MODE.FirstPerson
+	local perspectiveChanged = nowFirstPerson ~= wasFirstPerson
+	wasFirstPerson = nowFirstPerson
+
 	if not saveData.sdGogglesId then return end
+
+	if perspectiveChanged then refreshVfx() end
 
 	local id = wornId()
 	if id and not typesActorInventorySelf:find(id) then
@@ -251,8 +272,12 @@ end
 table.insert(G_onLoadJobs, onLoad)
 
 -- Rest and Travel rebuild the player model and drop attached VFX.
+-- Training and Jail rebuild the model the same way Rest and Travel do; they
+-- are simply rarer, so they were missed.
+local REBUILD_UI_MODES = { Rest = true, Travel = true, Training = true, Jail = true }
+
 table.insert(G_UiModeChangedJobs, function(data)
-	if data.oldMode == "Rest" or data.oldMode == "Travel" then
+	if data and data.oldMode and REBUILD_UI_MODES[data.oldMode] then
 		refreshVfx()
 	end
 end)

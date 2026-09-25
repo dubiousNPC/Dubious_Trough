@@ -1,3 +1,49 @@
+# SD Scarves v0.05
+
+## Worn items vanished until taken off and put back on
+
+The symptom: a worn scarf, mask or pair of goggles disappears, and only
+re-equipping brings it back. Rest and loading a save showed it too.
+
+**Cause: half of p_backpacks' sluggish job was copied.** Switching first/third
+person rebuilds the player's animation object and silently drops every
+attached VFX. Sun's Dusk does **not** re-attach a module's VFX for it —
+`p_backpacks` notices the change itself, in its own throttled job, right beside
+the inventory check. This module had the inventory check and not the camera
+check, so nothing ever re-attached after a perspective switch. Re-equipping
+worked because that calls `refreshVfx` directly.
+
+### Fix
+
+The camera check now sits in the same throttled job, as it does in
+`p_backpacks`:
+
+- It compares the **first-person boundary**, not the raw mode. ThirdPerson,
+  Preview and Vanity all draw the same model, so idling into auto-vanity must
+  not re-attach anything.
+- The baseline advances even when nothing is worn, so a switch made while
+  bare is not replayed the moment something is put on.
+- Being on the throttled list is also what makes it reliable: the tick lands
+  after the rebuild has finished, so the re-attach is not racing it.
+
+`UiModeChanged` now also covers **Training** and **Jail**, which rebuild the
+model exactly as Rest and Travel do.
+
+### Tests
+
+Five new checks in `tools/test_scarves.lua`, and they **fail on the previous build** —
+verified by running them against it:
+
+```
+  FAIL vfx re-attached after switching to first person
+  FAIL vfx re-attached after switching back
+```
+
+Sweep clean: luacheck, check_load, globalcheck, ctxcheck, api_sweep (all with
+`--preset sunsdusk` where applicable).
+
+---
+
 # Scarves v0.04
 
 Bug sweep of the uploaded package. **One fatal regression, two reverted fixes,

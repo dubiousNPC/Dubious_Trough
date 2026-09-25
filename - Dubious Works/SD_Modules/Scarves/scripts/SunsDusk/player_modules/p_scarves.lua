@@ -259,8 +259,34 @@ G_eventHandlers.SunsDuskScarves_equipped = onEquipped
 
 -- Sluggish list, not per-frame: this is Sun's Dusk's own throttle, and it is
 -- where p_backpacks puts the identical check.
+--
+-- p_backpacks keeps TWO checks here and this module had only copied one. The
+-- other is the perspective check below: switching first/third person rebuilds
+-- the player's animation object and silently drops every attached VFX, and
+-- nothing in Sun's Dusk re-attaches a module's VFX for it. p_backpacks
+-- refreshes its own; without the same check a worn scarf or mask disappeared
+-- on every perspective switch and only came back when the item was taken off
+-- and put on again, which is the reported symptom.
+--
+-- Checked on the throttled list rather than per frame, and that is also why it
+-- is reliable: the tick lands after the rebuild has finished, so the re-attach
+-- is not racing it.
+local wasFirstPerson = camera.getMode() == camera.MODE.FirstPerson
+
 local function onSluggishFrame()
+	-- Only the first-person boundary rebuilds anything. ThirdPerson, Preview
+	-- and Vanity all draw the same model, so hopping between them (idle
+	-- auto-vanity, holding the POV key) must not trigger a refresh.
+	--
+	-- The baseline is updated even when nothing is worn, so a switch made
+	-- while bare-headed is not replayed the moment something is put on.
+	local nowFirstPerson = camera.getMode() == camera.MODE.FirstPerson
+	local perspectiveChanged = nowFirstPerson ~= wasFirstPerson
+	wasFirstPerson = nowFirstPerson
+
 	if not saveData.sdScarfId and not saveData.sdMaskId then return end
+
+	if perspectiveChanged then refreshAllVfx() end
 
 	for _, category in ipairs({ "scarves", "masks" }) do
 		local id = wornId(category)
@@ -302,8 +328,12 @@ end
 table.insert(G_onLoadJobs, onLoad)
 
 -- Rest and Travel rebuild the player model and drop attached VFX.
+-- Training and Jail rebuild the model the same way Rest and Travel do; they
+-- are simply rarer, so they were missed.
+local REBUILD_UI_MODES = { Rest = true, Travel = true, Training = true, Jail = true }
+
 table.insert(G_UiModeChangedJobs, function(data)
-	if data.oldMode == "Rest" or data.oldMode == "Travel" then
+	if data and data.oldMode and REBUILD_UI_MODES[data.oldMode] then
 		refreshAllVfx()
 	end
 end)

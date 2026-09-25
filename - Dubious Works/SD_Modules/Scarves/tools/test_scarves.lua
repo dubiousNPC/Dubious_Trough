@@ -52,6 +52,10 @@ env.log=function() end
 -- Sun's Dusk exposes vfs as a global (sd_p.lua:18); the module uses it to
 -- check a mesh is actually present before attaching.
 env.vfs={fileExists=function(p) return world_.files[p]==true end}
+-- Sun's Dusk exposes camera as a global (sd_p.lua). p_backpacks reads it in
+-- its sluggish job to notice perspective changes; this module must too.
+env.camera={MODE={FirstPerson='first',ThirdPerson='third',Vanity='vanity',Preview='preview'},
+            getMode=function() return world_.mode or 'third' end}
 env.G_eventHandlers={}; env.G_onFrameJobsSluggish={}; env.G_onFrameJobs={}
 env.G_onLoadJobs={}; env.G_UiModeChangedJobs={}; env.G_settingsChangedJobs={}
 env.SCARVES_ENABLED=true; env.SCARVES_WARMTH=4
@@ -166,6 +170,59 @@ world_.vfx = {}
 onUse(ghost, player)
 check('a record with no mesh in the VFS attaches nothing and does not error',
       world_.vfx['Bip01 mouthDBS']==nil)
+
+-- ---------------------------------------------------------------------------
+-- PERSPECTIVE SWITCH
+-- Switching first/third person rebuilds the player model and drops every
+-- attached VFX. Nothing in Sun's Dusk re-attaches a module's VFX; p_backpacks
+-- notices the change in its own sluggish job and re-attaches. This module did
+-- not, which is why a worn scarf vanished until it was taken off and put back
+-- on. These checks pin that it now does.
+-- ---------------------------------------------------------------------------
+print('perspective switch')
+world_.bones['Bip01 scarfDBS']=true
+world_.mode='third'
+env.G_onFrameJobsSluggish[1]()          -- settle the baseline
+local scarf2 = add('dbs_rv_scarf_02')
+onUse(scarf2, player)
+check('scarf attached before the switch', world_.vfx['Bip01 scarfDBS']~=nil)
+
+world_.mode='first'; world_.vfx={}      -- the engine drops attached VFX
+env.G_onFrameJobsSluggish[1]()
+check('vfx re-attached after switching to first person', world_.vfx['Bip01 scarfDBS']~=nil)
+
+world_.mode='third'; world_.vfx={}
+env.G_onFrameJobsSluggish[1]()
+check('vfx re-attached after switching back', world_.vfx['Bip01 scarfDBS']~=nil)
+
+-- Vanity and Preview draw the SAME model as ThirdPerson and rebuild nothing,
+-- so they must not cause a re-attach; idling in third person drifts into
+-- vanity on its own.
+local reattached=0
+local realAdd=env.animation.addVfx
+env.animation.addVfx=function(a,m,o) reattached=reattached+1; realAdd(a,m,o) end
+for _,m in ipairs({'vanity','preview','third'}) do
+    world_.mode=m; env.G_onFrameJobsSluggish[1]()
+end
+check('vanity and preview do not re-attach anything', reattached==0, reattached)
+env.animation.addVfx=realAdd
+
+-- A switch made while nothing is worn must not be replayed afterwards: the
+-- baseline has to advance even on the early-out path, or the first tick after
+-- something is put on re-attaches for a change that happened while bare.
+onUse(has('dbs_rv_scarf_02_eq') or scarf2, player)   -- take it off
+world_.mode='first'
+env.G_onFrameJobsSluggish[1]()                       -- switch while wearing nothing
+world_.mode='first'
+local spurious=0
+local realAdd2=env.animation.addVfx
+env.animation.addVfx=function(a,m,o) spurious=spurious+1; realAdd2(a,m,o) end
+onUse(has('dbs_rv_scarf_02') or scarf2, player)      -- put it back on: 1 attach
+local afterEquip=spurious
+env.G_onFrameJobsSluggish[1]()
+check('a switch made with nothing worn is not replayed later',
+      spurious==afterEquip, spurious-afterEquip)
+env.animation.addVfx=realAdd2
 
 print(fails==0 and 'ALL PASS' or (fails..' FAILURES'))
 if fails>0 then os.exit(1) end

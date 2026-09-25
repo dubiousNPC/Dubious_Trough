@@ -78,6 +78,11 @@ env.typesActorSpellsSelf = { add = function(_, id) world.spells[id] = true end,
                              remove = function(_, id) world.spells[id] = nil end }
 env.typesActorInventorySelf = { find = function(_, id) return has(id) end }
 env.log = function() end
+-- Sun's Dusk exposes camera as a global (sd_p.lua). p_backpacks reads it in
+-- its sluggish job to notice perspective changes; this module must too.
+env.camera = { MODE = { FirstPerson = 'first', ThirdPerson = 'third',
+                        Vanity = 'vanity', Preview = 'preview' },
+               getMode = function() return world.mode or 'third' end }
 env.G_eventHandlers, env.G_onFrameJobsSluggish = {}, {}
 env.G_onFrameJobs, env.G_onLoadJobs = {}, {}
 env.G_UiModeChangedJobs, env.G_settingsChangedJobs = {}, {}
@@ -149,6 +154,38 @@ world.vfx = {}
 onUse(ghost, player)
 check('a record with no mesh in the VFS attaches nothing and does not error',
       next(world.vfx) == nil)
+
+-- ---------------------------------------------------------------------------
+-- PERSPECTIVE SWITCH
+-- Switching first/third person rebuilds the player model and drops attached
+-- VFX. Sun's Dusk does not re-attach a module's VFX for it -- p_backpacks
+-- notices the change in its own sluggish job. This module did not, so worn
+-- eyewear vanished until it was taken off and put back on.
+-- ---------------------------------------------------------------------------
+print('perspective switch')
+world.mode = 'third'
+env.G_onFrameJobsSluggish[1]()             -- settle the baseline
+local g4 = add('dbs_rv_goggles1_h')
+onUse(g4, player)
+check('eyewear attached before the switch', next(world.vfx) ~= nil)
+
+world.mode = 'first'; world.vfx = {}       -- the engine drops attached VFX
+env.G_onFrameJobsSluggish[1]()
+check('vfx re-attached after switching to first person', next(world.vfx) ~= nil)
+
+world.mode = 'third'; world.vfx = {}
+env.G_onFrameJobsSluggish[1]()
+check('vfx re-attached after switching back', next(world.vfx) ~= nil)
+
+-- Vanity and Preview draw the same model as ThirdPerson and rebuild nothing.
+local reattached = 0
+local realAdd = env.animation.addVfx
+env.animation.addVfx = function(a, m, o) reattached = reattached + 1; realAdd(a, m, o) end
+for _, m in ipairs({ 'vanity', 'preview', 'third' }) do
+    world.mode = m; env.G_onFrameJobsSluggish[1]()
+end
+check('vanity and preview do not re-attach anything', reattached == 0, reattached)
+env.animation.addVfx = realAdd
 
 print(fails == 0 and 'ALL PASS' or (fails .. ' FAILURES'))
 if fails > 0 then os.exit(1) end
