@@ -133,23 +133,79 @@ local function bridgeReady()
 
     if not mwBridge then
         print("[WhyWalk] MWScript bridge unavailable ('" .. tostring(TUNING.mwGlobals.active)
-              .. "' not found) -- falling back to the teleport backend."
+              .. "' not found); falling back to the teleport backend."
               .. " Install the ESP to use the MWScript pin.")
     end
     return mwBridge
 end
 
+-- BRIDGE LIVENESS -- the globals existing is NOT proof the pin runs.
+--
+-- Found in game 2026-09-29, and it is the same class of mistake this file's
+-- own probe comment warns about one function up: the probe tested something
+-- adjacent to the thing that actually has to work.
+--
+-- A .omwaddon can declare `whywalk_x` and friends and carry the pin script's
+-- SOURCE TEXT while containing no compiled bytecode for it. That is exactly
+-- what shipped: the SCPT record's SCTX held the script, but SCHD reported
+-- scriptDataSize = 0 and numFloats = 0, and OpenMW executes the compiled SCDT,
+-- not the text. So the globals resolved, bridgeReady() said yes,
+-- placeRiderMWScript wrote four numbers into variables nothing read, returned
+-- true -- and placeRider returned before ever reaching the teleport fallback.
+-- The rider was silently not pinned at all.
+--
+-- The fix is to verify the EFFECT rather than the capability. We already know
+-- where the rider should be, and next frame we can see where it is. If the pin
+-- is live the player tracks the target within a frame; if it is dead the
+-- player never moves toward it. A short run of misses is a real failure, not
+-- noise, because nothing else is placing the rider in the meantime.
+local BRIDGE_TRUST_DISTANCE = 96     -- world units; generous, this is one frame of lag
+local BRIDGE_FAIL_FRAMES    = 20     -- ~0.3s at 60fps before declaring it dead
+
+local bridgeLive      = nil          -- nil = unproven, true/false = decided
+local bridgeLastTarget = nil
+local bridgeMisses     = 0
+
+---Judge last frame's write before issuing this frame's. Returns false once the
+---bridge has been proven dead, so placeRider can fall through permanently.
+local function bridgeStillLive(player)
+    if bridgeLive == false then return false end
+    if bridgeLastTarget == nil then return true end   -- nothing to judge yet
+
+    if (player.position - bridgeLastTarget):length() <= BRIDGE_TRUST_DISTANCE then
+        bridgeLive, bridgeMisses = true, 0
+        return true
+    end
+
+    bridgeMisses = bridgeMisses + 1
+    if bridgeMisses < BRIDGE_FAIL_FRAMES then return true end
+
+    bridgeLive = false
+    -- Unconditional, not behind DEBUG: this is a broken install, the symptom
+    -- is "the mod does nothing", and this line is the only thing that names
+    -- the cause.
+    print("[WhyWalk] The MWScript rider pin is not running; its globals exist"
+          .. " but nothing consumes them. The shipped WhyWalk.omwaddon contains"
+          .. " the pin script as SOURCE TEXT ONLY, with no compiled bytecode;"
+          .. " recompile WhyWalkRiderPin in the OpenMW-CS script editor (open"
+          .. " it and save) to fix this properly. Falling back to the Lua"
+          .. " teleport pin for now.")
+    return false
+end
+
 -- Writes the target into MWScript globals; a compiled MWScript in the ESP
 -- reads them and does the SetPos. Devilish warns that a per-frame Lua player
 -- teleport loop triggers an engine bug involving nearby NPCs, which is why
--- this is the default path.
+-- this is the preferred path when it actually works.
 --
 -- Writes bare: bridgeReady() already established that these names resolve, so
 -- an assignment failing here would be a genuine bug worth surfacing rather
 -- than absorbing once per frame.
-local function placeRiderMWScript(pos, yaw)
+local function placeRiderMWScript(player, pos, yaw)
     local g = bridgeReady()
     if not g then return false end
+    if not bridgeStillLive(player) then return false end
+
     local names = TUNING.mwGlobals
 
     g[names.active] = 1
@@ -168,20 +224,33 @@ local function placeRiderMWScript(pos, yaw)
     --
     -- Degrees, because SetAngle takes degrees.
     g[names.angle] = math.deg(yaw or 0)
+
+    bridgeLastTarget = pos
     return true
 end
 
 local function clearRiderMWScript()
+    bridgeLastTarget, bridgeMisses = nil, 0
     local g = bridgeReady()
     if not g then return end
     g[TUNING.mwGlobals.active] = 0
 end
 
 local function placeRiderTeleport(player, pos, yaw, firstPerson)
-    -- Body yaw is forced to the mount's ONLY in third person. In first person
-    -- the player's yaw IS the look direction, so overwriting it every frame
-    -- fights mouse-look and wrenches the view out of your hands.
-    if yaw and not firstPerson then
+    -- Body yaw is set in BOTH perspectives now.
+    --
+    -- It used to be third person only, on the reasoning that in first person
+    -- the player's yaw IS the look direction and overwriting it fights
+    -- mouse-look. That reasoning holds for the MWScript path, where the gate
+    -- lives in the script as PCGet3rdPerson -- but on this path it left the
+    -- body with NO yaw applied at all in first person, so the rider kept
+    -- whatever facing it had when it mounted and read as sitting backwards.
+    --
+    -- teleport's rotation is the BODY's, not the camera's. In first person
+    -- OpenMW drives the view from the camera's own yaw, so aligning the body
+    -- to the mount is what makes the rider sit correctly without touching
+    -- where the player is looking.
+    if yaw then
         player:teleport(player.cell or '', pos, util.transform.rotateZ(yaw))
     else
         player:teleport(player.cell or '', pos)
@@ -191,10 +260,10 @@ end
 
 local function placeRider(player, pos, yaw, firstPerson)
     if TUNING.riderBackend == "mwscript" then
-        if placeRiderMWScript(pos, yaw) then return end
-        -- Fall through rather than leave the rider behind: a missing ESP
-        -- should degrade to the working-but-buggier path, not to nothing.
-        if DEBUG then print("[WhyWalk] MWScript bridge unavailable, using teleport") end
+        if placeRiderMWScript(player, pos, yaw) then return end
+        -- Fall through rather than leave the rider behind: a missing or
+        -- uncompiled ESP should degrade to the working-but-buggier path,
+        -- not to nothing at all.
     end
     placeRiderTeleport(player, pos, yaw, firstPerson)
 end
@@ -202,16 +271,6 @@ end
 -- ---------------------------------------------------------------------------
 -- GEOMETRY
 -- ---------------------------------------------------------------------------
-
--- Which saddle pose applies right now. Third person shows the body, so it
--- uses the true seated position; first person only cares where the HEAD lands,
--- so it uses the lower//further-forward pose (see saddleFP in
--- whywalk_shared.lua for the full reasoning). Profiles without a measured
--- saddleFP get their own saddle back, so this is a no-op for them.
-local function saddleFor(s)
-    if s.firstPerson then return s.profile.saddleFP or s.profile.saddle end
-    return s.profile.saddle
-end
 
 local function saddlePosition(mountPos, yaw, saddle)
     local sinY, cosY = math.sin(yaw), math.cos(yaw)
@@ -412,33 +471,33 @@ local function onUpdate(dt)
     -- itself under its own AI and we only follow it with the rider.
     if s.freeRide then
         local mountYaw = s.mount.rotation:getYaw()
-        local pos = saddlePosition(s.mount.position, mountYaw, saddleFor(s))
+        local pos = saddlePosition(s.mount.position, mountYaw, s.profile.saddle)
         placeRider(s.player, pos, mountYaw, s.firstPerson)
         return
     end
 
     local pos = stepMovement(s, dt)
-    -- FLAGGED, NOT CHANGED -- verify in game before touching.
-    -- The mount is placed with rotateZ(-s.yaw) while the rider is placed with
-    -- rotateZ(s.yaw) (see the drift-resync branch below). Same yaw, opposite
-    -- signs, in the same function: one of the two must be wrong.
+    -- SETTLED IN GAME, 2026-09-29. This was rotateZ(-s.yaw) while the rider
+    -- was placed with rotateZ(s.yaw) -- same yaw, opposite signs, one
+    -- function apart. The negation was wrong and is the single cause of both
+    -- "rider is backwards" and "controls are reversed":
     --
-    -- Which one is wrong depends on something only a look in game settles.
-    -- By the API, +s.yaw is correct for BOTH: stepMovement derives heading as
-    -- fwd = (sin yaw, cos yaw), which is the standard Morrowind convention
-    -- (0 = +Y, increasing toward +X), and Cod3x documents rotateZ(a) as
-    -- rotate(a, vector3(0,0,-1)) -- rotation about -Z, which maps +Y to
-    -- exactly that fwd. So rotateZ(s.yaw) is the transform whose forward IS
-    -- the travel direction, and the negation here mirrors the mount.
+    --   * stepMovement derives heading as fwd = (sin yaw, cos yaw), the
+    --     standard Morrowind convention (0 = +Y, increasing toward +X).
+    --   * Cod3x documents rotateZ(a) as rotate(a, vector3(0,0,-1)), so
+    --     rotateZ(yaw) * (0,1,0) == (sin yaw, cos yaw) == fwd exactly.
+    --   * Devilish Guar Riding -- the reference this mod's offsets came from,
+    --     and the one that feels correct in game -- derives forward the same
+    --     way (forwardVector: rotateZ(yaw):apply(vector3(0,1,0))) and teleports
+    --     its mount with rotation = rotateZ(yaw). POSITIVE.
     --
-    -- BUT a negation here is also exactly what you would write to compensate
-    -- for a creature NIF whose mesh faces -Y, which is not unheard of. If the
-    -- mount visibly faces its travel direction as-is, this negation is load
-    -- bearing and correcting it to +s.yaw would spin every mount around.
-    -- Check a horse and a guar walking away from you before deciding.
-    s.mount:teleport(s.mount.cell or '', pos, util.transform.rotateZ(-s.yaw))
+    -- With the negation the mount travelled along fwd(+yaw) while facing
+    -- fwd(-yaw): mirrored about the N-S axis. Pressing D increased yaw, so the
+    -- mount slid right while visibly turning left, and the correctly-oriented
+    -- rider ended up facing the mount's tail.
+    s.mount:teleport(s.mount.cell or '', pos, util.transform.rotateZ(s.yaw))
 
-    local riderPos = saddlePosition(pos, s.yaw, saddleFor(s))
+    local riderPos = saddlePosition(pos, s.yaw, s.profile.saddle)
 
     -- Hard resync guard: if the rider has drifted far from where it should be
     -- (cell load, physics shove, another mod teleporting the player) snap

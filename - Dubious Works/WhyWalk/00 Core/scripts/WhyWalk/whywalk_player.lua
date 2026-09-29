@@ -362,10 +362,52 @@ local function onLoad(data)
     -- still active, which re-enters onMounted above.
 end
 
+-- ---------------------------------------------------------------------------
+-- COMPETING RIDING MOD DETECTION
+-- ---------------------------------------------------------------------------
+-- WhyWalk REPLACES Devilish Horse/Guar Riding and Sturdy Steed. It does not
+-- layer on them. Running both is not a degraded experience, it is two mods
+-- driving one creature with different conventions, and the symptoms are
+-- bizarre rather than obviously duplicated:
+--
+--   * Devilish re-asserts camera.setMode(FirstPerson, true) every 0.10s while
+--     ITS ride is active, so pressing the POV key appears to do nothing --
+--     "the camera will not change to third person while riding". WhyWalk
+--     never touches camera mode; it cannot win that fight and should not try.
+--   * Both pin the rider, at different offsets, on different frames.
+--   * WhyWalk claims `detd_guarride1` and `ttd_horseride` by record id, the
+--     exact creatures those mods add, so activating one starts BOTH rides.
+--
+-- Detected behaviourally rather than by content-file name: these mods ship
+-- their Lua separately from their plugin, and a renamed ESP would defeat a
+-- filename check. Their mount events are the reliable tell, and an event
+-- handler that never fires costs nothing.
+local RIVAL_MOUNT_EVENTS = {
+    "DETD_GuarRiding_Mounted",
+    "DETD_HorseRiding_Mounted",
+    "SimpleHorseBaseRideAttach",
+}
+
+local rivalWarned = false
+
+local function onRivalMount()
+    if rivalWarned then return end
+    rivalWarned = true
+    print("[WhyWalk] Another riding mod (Devilish Horse/Guar Riding, or Sturdy"
+          .. " Steed) just started its own ride. WhyWalk replaces those mods"
+          .. " rather than layering on them. Running both means two mods"
+          .. " pinning one rider and fighting over the camera, which is why"
+          .. " the view will not leave first person and the rider sits wrong."
+          .. " Disable the other riding mod's .omwscripts, or disable WhyWalk.")
+end
+
 return {
     eventHandlers = {
         [EV.MOUNTED]    = onMounted,
         [EV.DISMOUNTED] = onDismounted,
+        [RIVAL_MOUNT_EVENTS[1]] = onRivalMount,
+        [RIVAL_MOUNT_EVENTS[2]] = onRivalMount,
+        [RIVAL_MOUNT_EVENTS[3]] = onRivalMount,
     },
     engineHandlers = {
         onKeyPress   = onKeyPress,
