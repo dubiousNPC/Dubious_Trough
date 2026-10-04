@@ -1,215 +1,214 @@
 #!/usr/bin/env python3
-"""Validate handler table keys against OpenMW's documented engine handlers.
-
-THE BUG THIS EXISTS FOR
------------------------
-AnimRefresh v4 registered `UiModeChanged` under `engineHandlers`. It is an
-EVENT, sent to player scripts by built-in scripts, so the engine rejected it:
-
-    Not supported handler 'UiModeChanged' in
-    L@0x1[scripts/animrefresh/animrefresh_v4.lua]
-
-One line in the log, once per game, and the Rest/Travel/Training/Jail refresh
-the version was written to add never ran -- in any mod shipping that file.
-Nothing in the toolchain looked at handler names, and the unit test called
-`engineHandlers.UiModeChanged` directly, so it passed against wiring the
-engine refuses.
-
-Two rules, both cheap:
-
-  * every OpenMW engine handler is named `on*`. Anything else under
-    `engineHandlers` is an event or a typo, and the engine will reject it.
-  * an `on*` name under `eventHandlers` is the same mistake inverted: nothing
-    sends an event by that name, so it is never called.
-
-Names are also checked against the context in the file's `---@omw-context`
-annotation, so a global-only handler in a player script is reported.
-
-HOW IT READS THE FILE
----------------------
-It LOADS the module (through check_load.py's stub harness) and inspects the
-table the module returns -- exactly what the engine reads. Parsing the source
-with a regex cannot reliably tell a table key from an assignment inside an
-inline `function() ... end` handler, and a checker that quietly reads half its
-input is worse than no checker at all (RESEARCH 4.9).
-
-Usage:  check_handlers.py <file.lua|dir> ... [--preset sunsdusk]
 """
-import os
+check_handlers.py - validate engine handler names and their context.
+
+THE BUG CLASS. A name under `engineHandlers` that is not a documented engine
+handler is REJECTED by the engine, with one log line and no further warning:
+
+    [E] Not supported handler 'UiModeChanged' in L@0x1[...animrefresh_v4.lua]
+
+AnimRefresh v4 registered `UiModeChanged` - which is an EVENT, sent to player
+scripts by OpenMW's built-in scripts - under `engineHandlers`. Its Rest, Travel,
+Training and Jail refresh therefore never ran, in every mod shipping that file.
+Nothing in this toolchain looked at handler names, so a one-line mistake
+survived a full sweep and a release.
+
+The inverse is just as quiet: an engine handler placed under `eventHandlers` is
+never called by anything, and there is no log line at all.
+
+HOW THIS DIFFERS FROM LOADING THE MODULE. The upstream checker loads each file
+and inspects the table the engine would read, which is the stronger method.
+There is no Lua interpreter in this environment, so this one parses instead -
+and the objection to parsing is real: a regex cannot tell a table key from an
+assignment inside an inline `function() ... end`. This handles that by
+brace-matching the table literal and taking keys at depth 1 ONLY, so a nested
+assignment cannot be mistaken for a handler name. It reports the file and key
+count it inspected, so a run that parsed nothing cannot look like a pass.
+
+Usage:  check_handlers.py <root> [--skip NAME,NAME]
+Exit 0 clean, 1 on any finding, 2 on a setup problem.
+"""
 import re
 import sys
+from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import check_load  # noqa: E402  -- same directory, reused loader
-
-# https://openmw.readthedocs.io/en/latest/reference/lua-scripting/engine_handlers.html
-GROUPS = {
-    'ALL':        {'onInterfaceOverride'},
-    'NONMENU':    {'onInit', 'onUpdate', 'onSave', 'onLoad'},
-    'GLOBAL':     {'onNewGame', 'onPlayerAdded', 'onObjectActive', 'onActorActive',
-                   'onItemActive', 'onActivate', 'onNewExterior', 'onDropped', 'onPlaced'},
-    'LOCAL':      {'onActive', 'onInactive', 'onTeleported', 'onActivated', 'onConsume'},
-    'MENUPLAYER': {'onFrame', 'onKeyPress', 'onKeyRelease', 'onControllerButtonPress',
-                   'onControllerButtonRelease', 'onInputAction', 'onTouchPress',
-                   'onTouchRelease', 'onTouchMove', 'onMouseButtonPress',
-                   'onMouseButtonRelease', 'onMouseWheel', 'onConsoleCommand',
-                   'onViewportResized'},
-    'PLAYER':     {'onQuestUpdate'},
-    'MENU':       {'onStateChanged'},
-    'LOAD':       {'onContentFilesLoaded'},
+# From the OpenMW engine-handlers reference. Context sets, not just names.
+HANDLERS = {
+    "onInterfaceOverride": {"global", "menu", "local", "player", "load"},
+    "onInit": {"global", "local", "player"},
+    "onUpdate": {"global", "local", "player"},
+    "onSave": {"global", "local", "player"},
+    "onLoad": {"global", "local", "player"},
+    "onNewGame": {"global"},
+    "onPlayerAdded": {"global"},
+    "onObjectActive": {"global"},
+    "onActorActive": {"global"},
+    "onItemActive": {"global"},
+    "onActivate": {"global"},
+    "onNewExterior": {"global"},
+    "onDropped": {"global"},
+    "onPlaced": {"global"},
+    "onActive": {"local", "player"},
+    "onInactive": {"local", "player"},
+    "onTeleported": {"local", "player"},
+    "onActivated": {"local", "player"},
+    "onConsume": {"local", "player"},
+    "onFrame": {"menu", "player"},
+    "onKeyPress": {"menu", "player"},
+    "onKeyRelease": {"menu", "player"},
+    "onControllerButtonPress": {"menu", "player"},
+    "onControllerButtonRelease": {"menu", "player"},
+    "onInputAction": {"menu", "player"},
+    "onTouchPress": {"menu", "player"},
+    "onTouchRelease": {"menu", "player"},
+    "onTouchMove": {"menu", "player"},
+    "onMouseButtonPress": {"menu", "player"},
+    "onMouseButtonRelease": {"menu", "player"},
+    "onMouseWheel": {"menu", "player"},
+    "onConsoleCommand": {"menu", "player"},
+    "onViewportResized": {"menu", "player"},
+    "onQuestUpdate": {"player"},
+    "onStateChanged": {"menu"},
+    "onContentFilesLoaded": {"load"},
 }
-ALL_HANDLERS = set().union(*GROUPS.values())
 
-# Which groups each ---@omw-context token may use. A missing or multi-context
-# annotation is checked against everything, so this never invents a finding.
-BY_CONTEXT = {
-    'global': ('ALL', 'NONMENU', 'GLOBAL'),
-    'local':  ('ALL', 'NONMENU', 'LOCAL'),
-    'player': ('ALL', 'NONMENU', 'LOCAL', 'MENUPLAYER', 'PLAYER'),
-    'menu':   ('ALL', 'MENUPLAYER', 'MENU'),
-    'load':   ('ALL', 'NONMENU', 'LOAD'),
-}
+# Known events, sent by built-in scripts. These belong under eventHandlers.
+KNOWN_EVENTS = {"UiModeChanged"}
 
-# Events commonly mistaken for handlers. The on* rule already catches them;
-# naming them turns a generic complaint into the actual fix.
-KNOWN_EVENTS = {
-    'UiModeChanged': 'an EVENT sent to player scripts (oldMode, newMode, arg); '
-                     'move it to eventHandlers',
-    'OMWMusicCombatTargetsChanged': 'an event; move it to eventHandlers',
-    'AddVfx': 'an event you SEND to an actor, not a handler',
-}
-
-# Inspect the returned table instead of reporting that the chunk loaded.
-_PATCH_FROM = '''        local ok, runErr = pcall(chunk)
-        if ok then
-            print(("  ok      %s"):format(path))'''
-_PATCH_TO = '''        local ok, runErr = pcall(chunk)
-        if ok then
-            local mod = runErr
-            if type(mod) == "table" then
-                for _, which in ipairs({"engineHandlers", "eventHandlers"}) do
-                    local t = mod[which]
-                    if type(t) == "table" then
-                        for k in pairs(t) do
-                            if type(k) == "string" then
-                                print(("KEY\\t%s\\t%s\\t%s"):format(path, which, k))
-                            end
-                        end
-                    end
-                end
-            end
-            print(("  ok      %s"):format(path))'''
+ALL_CTX = {"global", "local", "player", "menu", "load"}
+HEADER_RE = re.compile(r"---@omw-context\s+([a-z|]+)")
 
 
-def context_of(path):
-    head = open(path, encoding='utf-8', errors='replace').read(4096)
-    m = re.search(r'---@omw-context\s+([\w|]+)', head)
-    return m.group(1).strip().lower() if m else None
+def strip_comments(src):
+    src = re.sub(r"--\[(=*)\[.*?\]\1\]", "", src, flags=re.S)
+    return re.sub(r"--[^\n]*", "", src)
 
 
-def collect(files):
-    """{path: [(table, key)]} read out of each module's returned table."""
-    assert _PATCH_FROM in check_load.HARNESS, \
-        'check_load.py harness changed shape; update _PATCH_FROM'
-    check_load.HARNESS = check_load.HARNESS.replace(_PATCH_FROM, _PATCH_TO, 1)
-
-    # Lua's print writes to fd 1 directly, so a Python-level redirect captures
-    # nothing. Swap the descriptor itself.
-    import tempfile
-    with tempfile.TemporaryFile('w+') as tmp:
-        saved = os.dup(1)
-        os.dup2(tmp.fileno(), 1)
-        try:
-            failed = check_load.run(files)
-        finally:
-            sys.stdout.flush()
-            os.dup2(saved, 1)
-            os.close(saved)
-        tmp.seek(0)
-        out = tmp.read()
-
-    keys = {}
-    for line in out.split('\n'):
-        if line.startswith('KEY\t'):
-            _, path, table, key = line.split('\t')
-            keys.setdefault(path, []).append((table, key))
-    return keys, failed, out
+def table_body(src, name):
+    """The text inside `name = { ... }`, brace-matched. None if absent."""
+    m = re.search(re.escape(name) + r"\s*=\s*\{", src)
+    if not m:
+        return None
+    i = m.end() - 1
+    depth = 0
+    for j in range(i, len(src)):
+        c = src[j]
+        if c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+            if depth == 0:
+                return src[i + 1:j]
+    return None
 
 
-def main(argv):
-    args, skip, i = [], set(), 0
-    while i < len(argv):
-        if argv[i] == '--preset' and i + 1 < len(argv):
-            check_load.PRESET_GLOBALS.update(check_load.PRESETS[argv[i + 1]])
-            i += 2
-        elif argv[i] == '--skip' and i + 1 < len(argv):
-            # A file that cannot be loaded standalone cannot be inspected; the
-            # same names check_load.py skips (a vendored renderer feeding an
-            # engine value into string.gmatch) are skipped here.
-            skip |= {x.strip() for x in argv[i + 1].split(',') if x.strip()}
-            i += 2
-        else:
-            args.append(argv[i])
-            i += 1
+def depth1_keys(body):
+    """Keys written at depth 1 of a table literal. Nested assignments ignored.
 
-    files = []
-    for arg in args or ['.']:
-        if os.path.isdir(arg):
-            for root, _, names in os.walk(arg):
-                if os.sep + 'tools' in root:
+    Brackets AND function bodies both count as nesting. Counting only brackets
+    is not enough: `onUpdate = function() local x = {...} end` closes its paren
+    immediately, so `local x` would read as depth 1 and be reported as a bogus
+    handler. That false positive is the whole reason parsing has a bad name
+    here, so it is handled rather than tolerated.
+    """
+    keys = []
+    depth = 0
+    i = 0
+    n = len(body)
+    while i < n:
+        c = body[i]
+        word = re.match(r"[A-Za-z_]\w*", body[i:])
+        if word:
+            w = word.group(0)
+            prev_ok = i == 0 or not re.match(r"[\w.:]", body[i - 1])
+            if w == "function" and prev_ok:
+                depth += 1
+                i += word.end()
+                continue
+            # `end` closes a function body; `do`/`then` open blocks inside one.
+            if w in ("do", "then", "repeat") and prev_ok:
+                depth += 1
+                i += word.end()
+                continue
+            if w in ("end", "until") and prev_ok:
+                depth -= 1
+                i += word.end()
+                continue
+            if depth == 0 and prev_ok:
+                m = re.match(r"([A-Za-z_]\w*)\s*=(?!=)", body[i:])
+                if m:
+                    keys.append(m.group(1))
+                    i += m.end()
                     continue
-                files += [os.path.join(root, n) for n in names if n.endswith('.lua')]
-        elif arg.endswith('.lua'):
-            files.append(arg)
-    files = sorted({f for f in files if os.path.basename(f) not in skip})
-    if not files:
-        sys.exit('no .lua files found')
-
-    keys, load_failures, raw = collect(files)
-
-    total = 0
-    for path in files:
-        ctx = context_of(path)
-        allowed = ALL_HANDLERS
-        if ctx and '|' not in ctx and ctx in BY_CONTEXT:
-            allowed = set().union(*(GROUPS[g] for g in BY_CONTEXT[ctx]))
-
-        findings = []
-        for table, key in sorted(keys.get(path, [])):
-            if table == 'engineHandlers':
-                if key in KNOWN_EVENTS:
-                    findings.append(('EVENT-AS-HANDLER', key, KNOWN_EVENTS[key]))
-                elif not key.startswith('on'):
-                    findings.append(('NOT-A-HANDLER', key,
-                                     'every engine handler is named on*; the engine '
-                                     'rejects this with "Not supported handler"'))
-                elif key not in ALL_HANDLERS:
-                    findings.append(('UNKNOWN-HANDLER', key,
-                                     'not in the documented set: typo, or newer than '
-                                     'this tool'))
-                elif key not in allowed:
-                    findings.append(('WRONG-CONTEXT', key,
-                                     'not available to a `%s` script' % ctx))
-            elif key in ALL_HANDLERS:
-                findings.append(('HANDLER-AS-EVENT', key,
-                                 'an engine handler under eventHandlers is never '
-                                 'called; move it to engineHandlers'))
-        if findings:
-            print('%s  (context: %s)' % (path, ctx or 'none declared'))
-            for kind, key, why in findings:
-                print('    %-18s %-30s %s' % (kind, key, why))
-            total += len(findings)
-
-    inspected = sum(len(v) for v in keys.values())
-    # A file that cannot load cannot be inspected, so say so rather than
-    # reporting a clean pass over nothing.
-    print('\n%d file(s) checked, %d handler/event key(s) inspected, %d finding(s)'
-          % (len(files), inspected, total))
-    if load_failures:
-        print('%d file(s) failed to LOAD and were not inspected -- run check_load.py'
-              % load_failures)
-    return 1 if (total or load_failures) else 0
+            i += word.end()
+            continue
+        if c in "{([":
+            depth += 1
+        elif c in "})]":
+            depth -= 1
+        i += 1
+    return keys
 
 
-if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        return 2
+    root = Path(sys.argv[1])
+    skip = set()
+    if "--skip" in sys.argv:
+        skip = set(sys.argv[sys.argv.index("--skip") + 1].split(","))
+
+    findings = []
+    files = inspected = 0
+
+    for f in sorted(root.rglob("*.lua")):
+        if f.name in skip or "tools" in f.parts:
+            continue
+        raw = f.read_text(encoding="utf-8", errors="replace")
+        src = strip_comments(raw)
+
+        m = HEADER_RE.search(raw[:400])
+        ctxs = set(m.group(1).split("|")) if m else set()
+        if "all" in ctxs or "runtime" in ctxs or not ctxs:
+            ctxs = set(ALL_CTX)
+
+        eh = table_body(src, "engineHandlers")
+        ev = table_body(src, "eventHandlers")
+        if eh is None and ev is None:
+            continue
+        files += 1
+
+        for k in depth1_keys(eh or ""):
+            inspected += 1
+            if k in KNOWN_EVENTS:
+                findings.append(f"{f}: EVENT-AS-HANDLER '{k}' under engineHandlers "
+                                f"- the engine rejects it; move to eventHandlers")
+            elif not k.startswith("on"):
+                findings.append(f"{f}: NOT-A-HANDLER '{k}' under engineHandlers")
+            elif k not in HANDLERS:
+                findings.append(f"{f}: UNKNOWN-HANDLER '{k}' - not in the documented set")
+            elif ctxs and not (ctxs & HANDLERS[k]):
+                findings.append(f"{f}: WRONG-CONTEXT '{k}' allowed in "
+                                f"[{'|'.join(sorted(HANDLERS[k]))}], file declares "
+                                f"[{'|'.join(sorted(ctxs))}]")
+
+        for k in depth1_keys(ev or ""):
+            inspected += 1
+            if k in HANDLERS:
+                findings.append(f"{f}: HANDLER-AS-EVENT '{k}' under eventHandlers "
+                                f"- nothing will ever call it")
+
+    for x in findings:
+        print("  " + x)
+
+    if findings:
+        print(f"\nFAIL  {len(findings)} finding(s); inspected {inspected} key(s) "
+              f"in {files} file(s)")
+        return 1
+    print(f"OK    {inspected} handler/event key(s) in {files} file(s), 0 findings")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

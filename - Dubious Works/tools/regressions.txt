@@ -1,0 +1,186 @@
+# regressions.txt - fixes that have been lost in a merge before.
+#
+# One record per fix. `needs` is literal text, or a bare identifier matched on
+# word boundaries. Comments in the target file are stripped before matching, so
+# a marker cannot be satisfied by a comment that only mentions the constant.
+#
+# Run:  python3 tools/check_regressions.py .
+#
+# ADD A RECORD whenever a fix is verified in play. The cost is two lines; the
+# alternative is rediscovering it in a testing session, which has now happened
+# five times.
+
+file: global/flow_amf_backend.lua
+why: the collision cage clamped Vault and Mantle to zero movement - Hookshot's stuck threshold measures over a 50ms window and was applied per tick. Reverted to a direct teleport; MAX_SNAP_DISTANCE is the backstop that replaced it.
+needs: MAX_SNAP_DISTANCE
+
+file: global/flow_amf_backend.lua
+why: openmw.nearby is local|player only. Requiring it here raised 'module not found' at load, so the entire backend never started and every move fired its state and animation while nothing moved. This asserts the require has not come back.
+needs: not-present openmw.nearby
+
+file: states/ledge_hang.lua
+why: without LIP_SANITY_RANGE a stale lip handed over by Shimmy was accepted and the player was teleported to 0,0.
+needs: LIP_SANITY_RANGE
+
+file: playerAnim.lua
+why: GROUPS.Vault and GROUPS.Mantle must stay in LIST form. A merge reverted them to a plain string and only pwvault1 ever played.
+needs: pwvault1
+needs: pwvault2
+needs: pwvault3
+needs: pwmantle1
+needs: pwmantle2
+needs: pwmantle3
+
+file: playerAnim.lua
+why: resolveGroup must handle the list form. Without the table branch, playBlended received a table and raised 'expected string, received table'.
+needs: type(entry.group) == "table"
+
+file: playerAnim.lua
+why: reissue() must be idempotent. AnimRefresh v4 delivers on subscribe and twice on load, so without the isPlaying guard a cell change restarts a hang pose from frame 0 - and FLOW's verify opt-in does it again a second later.
+needs: animation.isPlaying
+
+file: playerAnim.lua
+why: FLOW's verify opt-in is only valid while the isPlaying guard above exists. Guarded together so removing one flags the other.
+needs: verify = true
+
+file: states/shimmy.lua
+why: WallBoost fires on JUMP ALONE. A merge restored 'jump AND back', which is close to unreachable - holding a lateral key is what keeps you in Shimmy.
+needs: not-present inputData.moveVector.y < 0
+
+file: states/airborne.lua
+why: core.isWorldPaused is a FUNCTION. Referenced without calling, the truthy function object made the Jump trigger handler return on line one every invocation and the roll could never arm.
+needs: core.isWorldPaused()
+
+file: core/state_manager.lua
+why: a state may refuse on entry. Announcing and animating before checking abort is what made a refused Mantle look like a successful one for several sessions.
+needs: StateManager.activeState.abort
+
+file: core/sensor.lua
+why: SharedRay's interface SHAPE is not guaranteed by its version number. Reading ray.distance directly raised 'attempt to compare nil with number' 1604 times in one session; the distance must be derived from hitPos.
+needs: I.SharedRay.getUnclipped or I.SharedRay.get
+needs: type(dist) ~= "number"
+
+file: core/sensor.lua
+why: height bands are derived from PLAYER_HEIGHT fractions. Hand-tuned unit constants are what put the spread of influence wrong - MIN_VAULT_HEIGHT at 25 offered a vault over an ankle-high curb.
+needs: VAULT_MIN_FRAC
+needs: VAULT_MAX_FRAC
+needs: MANTLE_MAX_FRAC
+
+file: core/sensor.lua
+why: the Vault height cap must apply to THIN obstacles too. Without it a chest-high railing got the hurdle the thick branch correctly refused.
+needs: vaultHeight
+
+file: core/optional/sensor_ext.lua
+why: the LedgeHang catch band must be declared, not emergent. It used to fall out of a cast height, a hard-coded +40 and a 60-unit drop, which multiplied out to 90-137% of player height and overlapped Mantle's band.
+needs: GRAB_MIN_FRAC
+needs: GRAB_MAX_FRAC
+
+file: states/airborne.lua
+why: the LedgeHang reach check measures against the band floor, not the wall-probe height. GRAB_HEIGHT sits below the band on purpose, so reading it here let the grab reach slightly downwards.
+needs: SensorExt.grabMinHeight()
+
+file: main.lua
+why: the throttle gate reads self.controls.run. Written as mwSelf - the idiom every other file uses - it indexed an undeclared global and threw every frame, killing Sensor, SensorExt, StateManager and the HUD while init still logged normally.
+needs: self.controls.run
+
+file: main.lua
+why: Anim.verifyGroups must stay guarded. Unguarded it raised 'attempt to call field verifyGroups (a nil value)' and took down onUpdate when main.lua and playerAnim.lua came from different builds.
+needs: if Anim.verifyGroups then
+
+file: FLOW_AMF.omwscripts
+why: AnimRefresh must be registered at the SHARED path so OpenMW merges FLOW's copy with every other mod's into one script. The filename carries the version, so a bump changes this line.
+needs: scripts/AnimRefresh/AnimRefresh_v5.lua
+
+file: FLOW_AMF.omwscripts
+why: SharedRay must be registered at the shared path for the same reason. Third-party file - never edit its contents.
+needs: scripts/SharedRay/SharedRay_v2.lua
+
+file: core/state_manager.lua
+why: ui.CONSOLE_COLOR has exactly four members - Default, Error, Success, Info. '.Failure' was nil and was handed to printToConsole, whose colour argument is not optional.
+needs: not-present CONSOLE_COLOR.Failure
+
+file: core/h3lp_compat.lua
+why: the soft dependency is tested with vfs.fileExists, not pcall(require). The pcall could not tell 'h3lp absent' from 'h3lp threw while loading', so a broken h3lp was silently replaced by FLOW's fallback with nothing printed.
+needs: vfs.fileExists
+needs: not-present pcall
+
+file: playerAnim.lua
+why: the WallJump animation group is pwwalljump1 WITH the digit. The removed WallJump named "pwwalljump", which exists in none of the three shipped .kf sets, and the full-body blend mask then masked out vanilla's animation with nothing to replace it - that was the T-pose.
+needs: pwwalljump1
+
+file: main.lua
+why: Roll and WallJump both hold a movement override that is load-bearing - Roll uses it to suppress jump and drive forward motion. A state holding an override without being listed in OVERRIDE_STATES has it released on the next tick by the safety net, silently, and the feature just looks broken.
+needs: Roll = true
+
+file: states/roll.lua
+why: the roll is uninterruptible except by knockdown or death. types.Actor.canMove covers dead, paralyzed AND knocked down in one call; the old isGrounded bail-out cut the animation when rolling off a ledge and is deliberately gone.
+needs: types.Actor.canMove
+needs: not-present return "Airborne"
+
+file: states/airborne.lua
+why: WallJump detection is cast ONLY in the Jump trigger handler, never per frame. Its window and the Roll's minimum air time are what separate the two gestures, so one tap can never satisfy both.
+needs: WALL_JUMP_WINDOW
+needs: ROLL_MIN_AIR_TIME
+needs: WALL_JUMP_COOLDOWN
+
+file: core/body.lua
+why: actor dimensions come from getBoundingBox, not a hardcoded 128. Wrong for beast races, NPC.setScale and any body mod; every height band and the wall-jump reach derive from it.
+needs: getBoundingBox
+
+file: global/flow_amf_backend.lua
+why: WallJump uses the Hop move type, not Boost. Boost integrates a velocity and teleports to position+v*dt, which double-applies gravity (the engine already moved the actor) and launched at ~970 u/s. Hop drives Z on a fixed curve and reads X/Y live so engine movement and collision still apply.
+needs: Hop
+
+file: states/airborne.lua
+why: wallJumpUsed must NOT be cleared in enter(). WallJump exits back into Airborne, so clearing on entry re-arms the move at the top of every wall jump and gives an unlimited vertical climb. Touchdown clears it.
+needs: wallJumpUsed = false
+
+# NOTE ON WHAT CANNOT BE GUARDED HERE. This record first also carried
+# `needs: velocity_getter_research.md`, pointing at the doc that explains the
+# decision. It can never pass: that pointer lives in a comment in the file
+# header, and this checker strips comments before matching precisely so a
+# comment cannot satisfy a marker. The checker was right and the marker was
+# wrong - a decision recorded in prose is documentation, not something a
+# mechanical check can hold in place. Only the code-level guard below belongs
+# here. Don't re-add it.
+
+file: core/engine_sync.lua
+why: the differencing must NOT be swapped for types.Actor.getCurrentSpeed until its semantics are settled - if it includes the vertical component it silently retunes Vault/Mantle reach during any fall, arriving disguised as a performance change. See docs/velocity_getter_research.md before removing this marker.
+needs: not-present getCurrentSpeed(
+
+file: playerAnim.lua
+why: every clip in the .kf is keyed start/stop. An earlier pass "fixed" Mantle, LedgeHang and left-Shimmy to startxw/startgf, which are not keys at all - they were an artifact of a regex that read past each string's length prefix into the next string. Naming a key that does not exist leaves the group unplayable and silent. Verify keys with a length-prefixed read, or with Anim.verifyGroups in game.
+needs: not-present startxw
+needs: not-present startgf
+needs: not-present variantStopKey = { up = false
+
+file: playerAnim.lua
+why: FLOW's default priority must out-rank the engine. Jump is 4 and Movement is 5, and equal priority in all four bone groups means NEITHER animation is visible - that was the mid-air tie and the on-the-ground loss.
+needs: not-present BONE_GROUP.Torso] = animation.PRIORITY.Jump
+
+file: states/airborne.lua
+why: priority ladder. Vault, then Mantle, then LedgeHang, then WallJump last - WallJump used to be consumed at the top of update() and pre-empted every other action.
+needs: jumpEdge
+needs: lookingAtLedge
+needs: not-present wallJumpRequested
+
+file: states/roll.lua
+why: ROLL_DURATION must not be shorter than pwroll1 (1.07s) or the state ends mid-clip.
+needs: ROLL_DURATION = 1.07
+
+file: core/sensor.lua
+why: WallJump reads Sensor.data.tooHigh - a top surface that exists but sits above the Mantle band. Without it, a featureless wall offers no action at all, every rung refuses, and repeated presses wall-jump up a flat face.
+needs: tooHigh
+
+file: states/airborne.lua
+why: wallJumpUsed clears only after the feet have been down for GROUND_CONFIRM. A single frame of isGrounded next to geometry re-armed the move mid-climb.
+needs: GROUND_CONFIRM
+
+file: states/wall_jump.lua
+why: Levitate is held for the duration of the hop. The hop drives Z absolutely while engine gravity keeps accumulating, so without it the actor drops at full accumulated speed the instant the hop ends - the "sudden teleport" feel.
+needs: LEVITATE_MAG
+needs: BRACE_DURATION
+
+file: playerAnim.lua
+why: verifyGroups probes the text KEYS as well as the group. A group that exists but whose named start key does not is unplayable and silent, which is how a bad key survived a release.
+needs: getTextKeyTime
