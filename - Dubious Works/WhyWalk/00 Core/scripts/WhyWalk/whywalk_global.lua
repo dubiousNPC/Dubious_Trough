@@ -83,6 +83,9 @@ local function newSession(player, mount, mountType, freeRide)
         profile   = shared.profileFor(mountType),
         freeRide  = freeRide == true,
         firstPerson = false,   -- reported by the player script; see placeRider
+        -- Heading last applied to the RIDER, so the next frame can hand over
+        -- only the change. nil until the first placement.
+        riderYawApplied = nil,
 
         throttle  = 0,      -- -1..1 commanded
         steer     = 0,      -- -1..1 commanded
@@ -128,15 +131,34 @@ local function bridgeReady()
     -- pcall retained deliberately: this is a capability probe, which is one of
     -- the four cases that justify one. The closure is unavoidable -- an index
     -- is not a call, so there is nothing to pass to pcall directly.
-    local ok, value = pcall(function() return g[TUNING.mwGlobals.active] end)
+    -- Probes yawDelta, NOT active. Deliberate: `whywalk_angle` from the old
+    -- ESP carried an ABSOLUTE angle and `whywalk_yawdelta` carries a change,
+    -- so a stale plugin that still has the old globals must be rejected
+    -- rather than fed deltas it would apply as absolute headings -- which
+    -- would snap the rider to near-north every frame. Probing the name that
+    -- only the NEW script declares makes an out-of-date ESP fail safe into
+    -- the teleport pin.
+    local probe = TUNING.mwGlobals.yawDelta
+    local ok, value = pcall(function() return g[probe] end)
     mwBridge = (ok and value ~= nil) and g or false
 
     if not mwBridge then
-        print("[WhyWalk] MWScript bridge unavailable ('" .. tostring(TUNING.mwGlobals.active)
-              .. "' not found); falling back to the teleport backend."
-              .. " Install the ESP to use the MWScript pin.")
+        print("[WhyWalk] MWScript bridge unavailable ('" .. tostring(probe)
+              .. "' not found); falling back to the teleport backend. If you"
+              .. " have an older WhyWalk.omwaddon, it declares whywalk_angle"
+              .. " instead; add the whywalk_yawdelta global and recompile"
+              .. " WhyWalkRiderPin to use the MWScript pin.")
     end
     return mwBridge
+end
+
+-- Shortest signed arc from a to b, so a heading crossing north hands over
+-- a small delta rather than nearly a full turn.
+local TWO_PI = math.pi * 2
+local function yawDeltaBetween(a, b)
+    local d = (b - a) % TWO_PI
+    if d > math.pi then d = d - TWO_PI end
+    return d
 end
 
 -- BRIDGE LIVENESS -- the globals existing is NOT proof the pin runs.
@@ -201,7 +223,7 @@ end
 -- Writes bare: bridgeReady() already established that these names resolve, so
 -- an assignment failing here would be a genuine bug worth surfacing rather
 -- than absorbing once per frame.
-local function placeRiderMWScript(player, pos, yaw)
+local function placeRiderMWScript(player, pos, yawDelta)
     local g = bridgeReady()
     if not g then return false end
     if not bridgeStillLive(player) then return false end
@@ -223,7 +245,10 @@ local function placeRiderMWScript(player, pos, yaw)
     --     endif
     --
     -- Degrees, because SetAngle takes degrees.
-    g[names.angle] = math.deg(yaw or 0)
+    -- Degrees, because SetAngle takes degrees. A DELTA, not an absolute:
+    -- the script adds it to the player's current angle and zeroes it, so a
+    -- frame with no turn writes nothing and leaves mouse-look alone.
+    g[names.yawDelta] = math.deg(yawDelta or 0)
 
     bridgeLastTarget = pos
     return true
@@ -236,36 +261,49 @@ local function clearRiderMWScript()
     g[TUNING.mwGlobals.active] = 0
 end
 
-local function placeRiderTeleport(player, pos, yaw, firstPerson)
-    -- Body yaw is set in BOTH perspectives now.
-    --
-    -- It used to be third person only, on the reasoning that in first person
-    -- the player's yaw IS the look direction and overwriting it fights
-    -- mouse-look. That reasoning holds for the MWScript path, where the gate
-    -- lives in the script as PCGet3rdPerson -- but on this path it left the
-    -- body with NO yaw applied at all in first person, so the rider kept
-    -- whatever facing it had when it mounted and read as sitting backwards.
-    --
-    -- teleport's rotation is the BODY's, not the camera's. In first person
-    -- OpenMW drives the view from the camera's own yaw, so aligning the body
-    -- to the mount is what makes the rider sit correctly without touching
-    -- where the player is looking.
-    if yaw then
-        player:teleport(player.cell or '', pos, util.transform.rotateZ(yaw))
+-- Yaw is applied as a DELTA, never as an absolute.
+--
+-- Setting the player's absolute yaw every frame is what produced "camera
+-- movement is almost entirely restricted, instantly pulled back to facing".
+-- In OpenMW the player's body yaw and the third-person camera yaw are the
+-- same number: mouse-look turns the actor. Writing an absolute yaw once per
+-- frame therefore overwrites every mouse movement before it can be seen, and
+-- the view snaps back to the mount's heading. Riding becomes unsteerable
+-- precisely because the player cannot look where they want to go.
+--
+-- The rider still has to turn WITH the mount, or they end up sitting sideways
+-- the moment it corners. Both requirements are satisfied by applying the
+-- CHANGE in the mount's heading rather than its value:
+--
+--     playerYaw = playerYaw + (mountYaw - mountYawLastFrame)
+--
+-- Mount turns 10 degrees right, rider turns 10 degrees right and stays seated
+-- correctly; whatever the player added with the mouse is preserved, because it
+-- is already in playerYaw when the delta lands on top of it.
+--
+-- Zero is a safe "do nothing" sentinel here, unlike p37z's absolute-angle
+-- version (RESEARCH 1.13): a delta of zero genuinely means the heading did not
+-- change, so skipping the write is exactly right rather than a lost update.
+local YAW_EPSILON = 1e-4
+
+local function placeRiderTeleport(player, pos, yawDelta)
+    if yawDelta and math.abs(yawDelta) > YAW_EPSILON then
+        local newYaw = player.rotation:getYaw() + yawDelta
+        player:teleport(player.cell or '', pos, util.transform.rotateZ(newYaw))
     else
         player:teleport(player.cell or '', pos)
     end
     return true
 end
 
-local function placeRider(player, pos, yaw, firstPerson)
+local function placeRider(player, pos, yawDelta)
     if TUNING.riderBackend == "mwscript" then
-        if placeRiderMWScript(player, pos, yaw) then return end
+        if placeRiderMWScript(player, pos, yawDelta) then return end
         -- Fall through rather than leave the rider behind: a missing or
         -- uncompiled ESP should degrade to the working-but-buggier path,
         -- not to nothing at all.
     end
-    placeRiderTeleport(player, pos, yaw, firstPerson)
+    placeRiderTeleport(player, pos, yawDelta)
 end
 
 -- ---------------------------------------------------------------------------
@@ -359,6 +397,49 @@ end
 -- MOUNT / DISMOUNT
 -- ---------------------------------------------------------------------------
 
+-- ---------------------------------------------------------------------------
+-- MOUNT GAIT SCRIPT
+-- ---------------------------------------------------------------------------
+-- The creature does not animate itself while ridden. A teleport is not
+-- movement, so OpenMW's character controller is never asked to move the
+-- creature, never selects a locomotion group, and the actor renders at bind
+-- pose: the reported T-pose. See whywalk_mount.lua for the full account.
+--
+-- Attached on mount and removed on dismount, so an unridden creature carries
+-- no script at all. That is the condition this file's own header set for
+-- bringing a mount script back, and it is now met.
+local MOUNT_SCRIPT = 'scripts/WhyWalk/whywalk_mount.lua'
+
+-- Declared here, assigned where the ride loop lives. Clearing it on mount
+-- forces the next onUpdate to treat the current gait as a change, which is
+-- how the freshly attached mount script gets its first state.
+local lastRiderState
+
+local function attachMountScript(mount, freeRide)
+    -- Free ride deliberately skipped. There the creature keeps its own AI and
+    -- the engine drives it normally, so it already animates; adding a second
+    -- source of locomotion groups would be the gait fighting this file's
+    -- header warned about. Only a STEERED mount, which is teleported and
+    -- therefore never animated by the controller, needs this.
+    if freeRide then return end
+    if not mount or not mount:isValid() then return end
+    if mount:hasScript(MOUNT_SCRIPT) then return end
+    mount:addScript(MOUNT_SCRIPT)
+    -- addScript is deferred to next frame, so do NOT sendEvent here: the
+    -- handler does not exist yet and the event would be dropped. The caller
+    -- clears lastRiderState instead, which makes the next onUpdate treat the
+    -- current gait as a change and broadcast it once the script is live.
+end
+
+local function detachMountScript(mount)
+    if not mount or not mount:isValid() then return end
+    if not mount:hasScript(MOUNT_SCRIPT) then return end
+    -- Release the held loop before the handler goes away, or the creature
+    -- keeps walking on the spot for the rest of its life.
+    mount:sendEvent('WhyWalk_MountRelease', {})
+    mount:removeScript(MOUNT_SCRIPT)
+end
+
 local function doDismount(reason)
     if not session then return end
     local s = session
@@ -377,6 +458,8 @@ local function doDismount(reason)
         -- expected condition.
         s.player:teleport(s.player.cell or '', off)
     end
+
+    detachMountScript(s.mount)
 
     if s.player and s.player:isValid() then
         s.player:sendEvent(EV.DISMOUNTED, { reason = reason })
@@ -400,6 +483,9 @@ local function onRequestMount(data)
 
     session = newSession(player, mount, mountType, freeRide)
     session.yaw = mount.rotation:getYaw()
+
+    attachMountScript(mount, freeRide)
+    lastRiderState = nil
 
     player:sendEvent(EV.MOUNTED, {
         mount = mount, mountType = mountType, freeRide = freeRide,
@@ -443,7 +529,7 @@ end
 -- THE PER-FRAME HANDLER
 -- ---------------------------------------------------------------------------
 
-local lastRiderState = nil
+lastRiderState = nil
 
 local function onUpdate(dt)
     -- Single early-out. Everything below is ride-only.
@@ -472,7 +558,9 @@ local function onUpdate(dt)
     if s.freeRide then
         local mountYaw = s.mount.rotation:getYaw()
         local pos = saddlePosition(s.mount.position, mountYaw, s.profile.saddle)
-        placeRider(s.player, pos, mountYaw, s.firstPerson)
+        local d = s.riderYawApplied and yawDeltaBetween(s.riderYawApplied, mountYaw) or 0
+        s.riderYawApplied = mountYaw
+        placeRider(s.player, pos, d)
         return
     end
 
@@ -504,15 +592,18 @@ local function onUpdate(dt)
     -- rather than easing, which would otherwise take seconds to converge.
     local drift = (s.player.position - riderPos):length()
     if drift > TUNING.maxRiderDrift then
-        -- Bare: both objects were validated at the top of this function.
-        if s.firstPerson then
-            s.player:teleport(s.player.cell or '', riderPos)
-        else
-            s.player:teleport(s.player.cell or '', riderPos,
-                              util.transform.rotateZ(s.yaw))
-        end
+        -- Absolute yaw is right HERE and only here. This is a one-off snap
+        -- after the rider has been displaced hundreds of units, not a
+        -- per-frame pin, so re-seating them square on the mount is the whole
+        -- point and there is no mouse-look to preserve across a teleport of
+        -- that size. The delta baseline is reset to match.
+        s.player:teleport(s.player.cell or '', riderPos,
+                          util.transform.rotateZ(s.yaw))
+        s.riderYawApplied = s.yaw
     else
-        placeRider(s.player, riderPos, s.yaw, s.firstPerson)
+        local d = s.riderYawApplied and yawDeltaBetween(s.riderYawApplied, s.yaw) or 0
+        s.riderYawApplied = s.yaw
+        placeRider(s.player, riderPos, d)
     end
 
     -- Tell the animation layer only when the state actually changes.
@@ -520,6 +611,12 @@ local function onUpdate(dt)
     if st ~= lastRiderState then
         lastRiderState = st
         s.player:sendEvent('WhyWalk_AnimState', { state = st })
+        -- Same state string drives the creature's own locomotion group. Sent
+        -- on CHANGE only, like the rider pose, so a straight-line walk costs
+        -- nothing. Free rides have no mount script to receive it.
+        if not s.freeRide and s.mount and s.mount:isValid() then
+            s.mount:sendEvent('WhyWalk_MountGait', { state = st })
+        end
     end
 end
 
@@ -554,6 +651,9 @@ local function onLoad(data)
 
     -- Re-announce so the player script and animation controller re-enter their
     -- mounted state; neither persists it across a load by design.
+    attachMountScript(data.mount, data.freeRide)
+    lastRiderState = nil
+
     data.player:sendEvent(EV.MOUNTED, {
         mount = data.mount, mountType = data.mountType, freeRide = data.freeRide,
     })

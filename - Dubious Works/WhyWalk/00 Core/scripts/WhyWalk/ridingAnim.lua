@@ -426,6 +426,7 @@ local function onAnimMounted(data)
     mountType      = data and data.mountType or nil
     cancelOneShot()
     replayDisabled = false
+    reissueTotal, rideStartedAt = 0, core.getSimulationTime()
     currentState   = nil
     currentGroup   = nil
     lastLocomotion = STATE.IDLE
@@ -445,6 +446,22 @@ local function onAnimMounted(data)
 end
 
 local function onAnimDismounted()
+    -- Report before clearing, and only when it actually happened. One or two
+    -- over a long ride is normal recovery; several per second is the flicker.
+    if mounted and reissueTotal > 0 then
+        local secs = math.max(0.001, core.getSimulationTime() - rideStartedAt)
+        local rate = reissueTotal / secs
+        if rate >= 1.0 then
+            print(string.format(
+                "[WhyWalk] rider pose was re-issued %d times in %.1fs (%.1f/s)."
+                .. " Each one is a visible flicker: the engine is interrupting"
+                .. " the pose, most likely the fall/levitate animation on a"
+                .. " pinned rider. Try turning useLevitation off in"
+                .. " whywalk_shared.lua to confirm.",
+                reissueTotal, secs, rate))
+        end
+    end
+
     mounted       = false
     mountType     = nil
     cancelOneShot()
@@ -493,6 +510,16 @@ local REPLAY_BURST_LIMIT  = 5
 local REPLAY_BURST_WINDOW = 1.0
 local replayCount, replayWindowStart = 0, 0
 
+-- Lifetime count for this ride, separate from the burst window.
+--
+-- Every entry here is the engine having interrupted the rider pose and this
+-- handler putting it back, which is a VISIBLE one-frame flicker. The burst
+-- guard only speaks up above 5 per second, so a steady 2-4 per second -- more
+-- than enough to look like the reported "flickering or jumpy, especially when
+-- running and jumping" -- is currently silent. Reported once on dismount so
+-- the rate is measurable from a log instead of guessed at.
+local reissueTotal, rideStartedAt = 0, 0
+
 I.AnimationController.addAnimationEndedHandler(function(groupname)
     if not mounted or oneShotActive or replayDisabled then return end
     if groupname ~= currentGroup then return end
@@ -513,6 +540,7 @@ I.AnimationController.addAnimationEndedHandler(function(groupname)
         return
     end
 
+    reissueTotal = reissueTotal + 1
     local state = currentState or lastLocomotion
     currentState = nil
     playLoop(state)

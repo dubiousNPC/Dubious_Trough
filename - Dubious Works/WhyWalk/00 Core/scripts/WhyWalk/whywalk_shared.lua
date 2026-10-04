@@ -256,7 +256,7 @@ M.TUNING = {
     mwGlobals = {
         active = "whywalk_active",
         x = "whywalk_x", y = "whywalk_y", z = "whywalk_z",
-        angle = "whywalk_angle",
+        yawDelta = "whywalk_yawdelta",
     },
 
     dismountClearance = 115,   -- sideways offset when stepping off

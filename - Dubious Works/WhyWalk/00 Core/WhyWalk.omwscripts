@@ -3,13 +3,17 @@
 # Shared services first. Both are bundled in every mod of the suite and
 # version-guard themselves, so only the newest loaded copy runs.
 PLAYER: scripts/SharedRay/SharedRay_v2.lua
-PLAYER: scripts/AnimRefresh/AnimRefresh_v4.lua
+PLAYER: scripts/AnimRefresh/AnimRefresh_v5.lua
 
 GLOBAL: scripts/WhyWalk/whywalk_global.lua
 PLAYER: scripts/WhyWalk/whywalk_player.lua
 PLAYER: scripts/WhyWalk/ridingAnim.lua
 
-# No mount-side script. See the MOUNT SCRIPTS note in whywalk_global.lua.
+# Mount-side gait animation. CUSTOM so it exists only on a creature that is
+# actually being ridden: whywalk_global attaches it with addScript on mount and
+# removes it on dismount. Without it a steered mount is teleported but never
+# animated, and renders at bind pose (T-pose).
+CUSTOM: scripts/WhyWalk/whywalk_mount.lua
 #
 # Catalogue only, not loaded. Uncomment when the silt strider path ships.
 # GLOBAL: scripts/WhyWalk/whywalk_siltstrider.lua

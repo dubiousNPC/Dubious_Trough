@@ -1,0 +1,76 @@
+; ===========================================================================
+; WhyWalk rider pin -- GLOBAL script
+; ===========================================================================
+; Paste into the OpenMW-CS script editor, SAVE so it COMPILES, and make sure
+; it is in the start-script list.
+;
+; A script that is present as text but never compiled loads without complaint
+; and does nothing. That is not hypothetical: the shipped WhyWalk.omwaddon had
+; exactly this state (SCPT record with 333 bytes of SCTX, scriptDataSize = 0),
+; so the pin silently never ran. After saving, the plugin's SCDT should be
+; non-empty and SCHD should report 4 floats.
+;
+; GLOBALS REQUIRED (declare these in the CS as floats, short for active):
+;   whywalk_active     short
+;   whywalk_x          float
+;   whywalk_y          float
+;   whywalk_z          float
+;   whywalk_yawdelta   float   -- DEGREES, and a CHANGE, not a heading
+;
+; NOTE THE RENAME. Earlier versions used `whywalk_angle` and wrote an ABSOLUTE
+; heading. If you are updating, add `whywalk_yawdelta` alongside; the Lua side
+; probes for it by name and falls back to its own teleport pin if it is
+; missing, so a half-updated plugin degrades instead of misbehaving.
+; ===========================================================================
+
+Begin WhyWalkRiderPin
+
+float px
+float py
+float pz
+float pa
+
+if ( whywalk_active == 0 )
+    return
+endif
+
+set px to whywalk_x
+set py to whywalk_y
+set pz to whywalk_z
+player->SetPos X px
+player->SetPos Y py
+player->SetPos Z pz
+
+; ---------------------------------------------------------------------------
+; ROTATION -- a delta, applied on top of wherever the player is already facing.
+; ---------------------------------------------------------------------------
+; The old version set an absolute angle here, gated on PCGet3rdPerson. That
+; gate was the right instinct for the wrong problem: in OpenMW the player's
+; body yaw IS the third-person camera yaw, so writing an absolute heading once
+; per frame overwrote every mouse movement and the view snapped back to the
+; mount's facing. Steering became almost impossible, because the player could
+; not look where they wanted to go.
+;
+; Adding the mount's CHANGE in heading instead keeps the rider square on the
+; mount through corners while leaving mouse-look completely free. A frame in
+; which the mount did not turn writes nothing at all.
+;
+; The zero test is safe here in a way it is NOT for an absolute angle: zero
+; means "the heading did not change", which is exactly when doing nothing is
+; correct. (An absolute-angle version cannot distinguish "facing north" from
+; "no request" -- that is a real bug in p37z's pin.)
+;
+; No PCGet3rdPerson gate any more. A delta is harmless in first person too:
+; it rotates the body with the mount, which is what should happen, and it adds
+; nothing when the mount is going straight.
+
+if ( whywalk_yawdelta != 0 )
+    set pa to ( player->GetAngle Z + whywalk_yawdelta )
+    player->SetAngle Z pa
+    ; Consume on use. Lua writes a fresh delta every frame it wants one, so
+    ; zeroing here means a dropped or repeated frame cannot re-apply a turn
+    ; the mount already made.
+    set whywalk_yawdelta to 0
+endif
+
+End WhyWalkRiderPin
