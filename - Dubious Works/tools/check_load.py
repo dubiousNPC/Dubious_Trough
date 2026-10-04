@@ -46,6 +46,11 @@ stub = setmetatable({}, {
     -- out. A checker that hangs is worse than one that misses.
     __index    = function(_, k)
         if type(k) == "number" then return nil end
+        -- A stubbed engine string (`core.getGMST(...)`) walked with
+        -- `for s in str:gmatch(p)` would call the stub as its iterator forever,
+        -- since a call returns the stub and never nil. The engine supplies a
+        -- real string there; an empty iteration lets the chunk finish.
+        if k == "gmatch" then return function() return function() return nil end end end
         return stub
     end,
     __call     = function() return stub end,
@@ -89,6 +94,18 @@ setmetatable(package.preload, { __index = function(_, name)
     end
 end })
 
+-- Host-provided globals (--preset). A Sun's Dusk module reads names its host
+-- assigns on purpose; without them every module fails to load for a reason the
+-- engine would never give. Seeded with the right SHAPE -- a string where the host
+-- has a string, a function where it has a function, a real table for the job
+-- buses so table.insert works -- not a blanket stub.
+for name, kind in pairs(PRESET_GLOBALS) do
+    if kind == "string" then _G[name] = "SunsDusk"
+    elseif kind == "func" then _G[name] = function() end
+    elseif kind == "table" then _G[name] = {}
+    else _G[name] = stub end
+end
+
 local fails = 0
 for _, path in ipairs(files) do
     local chunk, loadErr = loadfile(path)
@@ -110,6 +127,23 @@ end
 print(("\n%d file(s) checked, %d failed to load"):format(#files, fails))
 FAILED = fails
 '''
+
+
+# Same names as globalcheck.py's `sunsdusk` preset, read out of sd_p.lua,
+# sd_g.lua and constants.lua. Kinds match what the host assigns.
+PRESETS = {
+    'sunsdusk': dict(
+        [(n, 'stub') for n in ('core types util world I animation ambient camera '
+                               'input nearby storage vfs async self '
+                               'typesActorInventorySelf typesActorSpellsSelf').split()]
+        + [('MODNAME', 'string'), ('log', 'func'), ('makeButton', 'func'),
+           ('saveData', 'table'), ('G_globalSettingDefaults', 'table')]
+        + [(n, 'table') for n in ('G_eventHandlers G_onFrameJobs G_onFrameJobsSluggish '
+                                  'G_onLoadJobs G_onSaveJobs G_UiModeChangedJobs '
+                                  'G_settingsChangedJobs G_perMinuteJobs G_onConsumeJobs '
+                                  'G_onInventoryChangedJobs G_removeAbilitiesJobs').split()]),
+}
+PRESET_GLOBALS = {}
 
 
 def run(files):
@@ -136,7 +170,8 @@ def run(files):
     roots = sorted({f.split(os.sep + 'scripts' + os.sep)[0]
                     for f in files if os.sep + 'scripts' + os.sep in f})
     path = ';'.join(os.path.join(r, '?.lua') for r in roots) or '?.lua'
-    src = (HARNESS.replace('FILES', listing)
+    pg = '{' + ','.join('[%r]=%r' % (k, v) for k, v in PRESET_GLOBALS.items()) + '}'
+    src = (HARNESS.replace('PRESET_GLOBALS', pg).replace('FILES', listing)
                   .replace('ROOTS', '[[%s]]' % path)).encode()
 
     L = lua.luaL_newstate()
@@ -164,7 +199,12 @@ def main(argv):
     args = []
     i = 0
     while i < len(argv):
-        if argv[i] == '--skip' and i + 1 < len(argv):
+        if argv[i] == '--preset' and i + 1 < len(argv):
+            if argv[i + 1] not in PRESETS:
+                raise SystemExit('unknown preset %r; have: %s' % (argv[i + 1], ', '.join(PRESETS)))
+            PRESET_GLOBALS.update(PRESETS[argv[i + 1]])
+            i += 2
+        elif argv[i] == '--skip' and i + 1 < len(argv):
             skip += [x.strip() for x in argv[i + 1].split(',') if x.strip()]
             i += 2
         else:
