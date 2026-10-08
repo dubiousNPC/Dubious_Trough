@@ -173,48 +173,43 @@ M.BLACKLIST = {
 --         defaulting to 0. Adjust those if the view needs moving; moving the
 --         body instead desynchronises what third person shows from where the
 --         rider actually is.
--- speed:  world units/sec at full gallop; walk/reverse derive from it, so
---         there is one number per mount to tune (Devilish's approach).
--- flying: skips ground clamping entirely.
+-- turnRate: radians/sec at full steer. Scaled by dt and written to
+--         controls.yawChange by whywalk_mount.lua. This is the one movement
+--         number still set here, because turn rate is the only part of riding
+--         the engine does not already have an opinion about.
+-- flying: marks mounts whose locomotion is airborne. Informational now -- the
+--         engine picks the locomotion type from the creature's own record.
+--
+-- WHAT USED TO BE HERE: speed, walkMul, revMul and a jump table (up, gravity,
+-- maxFall). All four are gone with the controls port. Speed is the creature's
+-- own Speed stat, scaled by the throttle magnitude passed to
+-- controls.movement; the jump is the engine's. Shipping the numbers anyway
+-- would mean four fields per mount that nothing reads and that would quietly
+-- drift away from the behaviour they appear to describe.
 local DEFAULT_PROFILE = {
     saddle   = { forward = -10, right = 0, up = 130 },
-    speed   = 600,
-    walkMul = 230 / 520,
-    revMul  = 115 / 520,
-    turnRate = 2.6,          -- radians/sec at full steer
-    flying  = false,
-    jump    = { up = 480, gravity = 900, maxFall = 950 },
+    turnRate = 2.6,
+    flying   = false,
 }
 
 M.PROFILE = {
-    -- VERIFIED offsets/speed from Devilish Guar Riding config.lua
-    [T.GUAR] = {
-        saddle   = { forward = -10, right = 0, up = 130 },
-        speed = 600, walkMul = 230 / 520, revMul = 115 / 520,
-        turnRate = 2.6, flying = false,
-        jump = { up = 480, gravity = 900, maxFall = 950 },
-    },
-    [T.HORSE] = {
-        saddle   = { forward = -10, right = 0, up = 130 },
-        speed = 700, walkMul = 230 / 520, revMul = 115 / 520,
-        turnRate = 2.4, flying = false,
-        jump = { up = 480, gravity = 900, maxFall = 950 },
-    },
-    [T.BOAR]     = { saddle = { forward = -8,  right = 0, up = 95  }, speed = 520, turnRate = 3.0 },
-    [T.NIX]      = { saddle = { forward = -6,  right = 0, up = 110 }, speed = 640, turnRate = 3.2 },
-    [T.STRIDENT] = { saddle = { forward = -12, right = 0, up = 150 }, speed = 760, turnRate = 2.2 },
-    [T.KAGOUTI]  = { saddle = { forward = -10, right = 0, up = 120 }, speed = 580, turnRate = 2.8 },
-    [T.SKYRENDER]= { saddle = { forward = 0,   right = 0, up = 90  }, speed = 900, turnRate = 1.8, flying = true },
-    [T.NETCH]    = { saddle = { forward = 0,   right = 0, up = 200 }, speed = 420, turnRate = 1.2, flying = true },
+    -- Saddle offsets VERIFIED against Devilish Guar Riding config.lua.
+    [T.GUAR]     = { saddle = { forward = -10, right = 0, up = 130 },  turnRate = 2.6 },
+    [T.HORSE]    = { saddle = { forward = -10, right = 0, up = 130 },  turnRate = 2.4 },
+    [T.BOAR]     = { saddle = { forward = -8,  right = 0, up = 95  },  turnRate = 3.0 },
+    [T.NIX]      = { saddle = { forward = -6,  right = 0, up = 110 },  turnRate = 3.2 },
+    [T.STRIDENT] = { saddle = { forward = -12, right = 0, up = 150 },  turnRate = 2.2 },
+    [T.KAGOUTI]  = { saddle = { forward = -10, right = 0, up = 120 },  turnRate = 2.8 },
+    [T.SKYRENDER]= { saddle = { forward = 0,   right = 0, up = 90  },  turnRate = 1.8, flying = true },
+    [T.NETCH]    = { saddle = { forward = 0,   right = 0, up = 200 },  turnRate = 1.2, flying = true },
     -- MEASURED, not estimated: from Immersive Travel's a_siltstrider.json,
     -- whose front passenger slot sits at (0, 80, 1223) relative to the "Body"
     -- niNode. The earlier 1300 here was a guess off a different mod.
     -- Caveat: that data defines THREE passenger slots spread +/-81 on X, plus
     -- a separate guide slot. PROFILE can only express one saddle, so this is
-    -- the front seat only -- see whywalk_siltstrider.lua, SCHEMA GAP.
+    -- the front seat only -- see SILTSTRIDER_NOTES.md, SCHEMA GAP.
     [T.SILT_STRIDER] = {
-        saddle = { forward = 80, right = 0, up = 1223 },
-        speed = 400, turnRate = 0.6, flying = false,
+        saddle = { forward = 80, right = 0, up = 1223 }, turnRate = 0.6,
     },
 }
 
@@ -259,9 +254,34 @@ M.TUNING = {
         yawDelta = "whywalk_yawdelta",
     },
 
+    -- Suppress the ridden creature's own AI while it is being steered.
+    --
+    -- THIS IS THE ONE SWITCH TO TRY FIRST IF A MOUNT WILL NOT MOVE AT ALL.
+    --
+    -- The controls port rests on an assumption that could not be tested
+    -- outside the game: that self:enableAI(false) disables the AI DECISION
+    -- layer only, leaving the character controller free to act on controls
+    -- written by script. Cod3x's wording supports it -- "Enables or disables
+    -- standard AI" -- and it is the only way to stop the creature's own AI
+    -- fighting every steering input.
+    --
+    -- What the two reference mods prove, separately and not together:
+    --   * p37z writes controls on a creature and never disables AI, so
+    --     controls demonstrably work with AI ENABLED.
+    --   * Devilish Guar Riding calls enableAI(false), but teleports rather
+    --     than driving, so it proves nothing about controls.
+    --
+    -- So if the mount stands still with the controls being written, set this
+    -- to false. Steering will work; the creature's AI will also be free to
+    -- wander, which looks like the mount drifting or turning on its own. That
+    -- combination identifies the cause immediately, which a silent failure
+    -- would not.
+    suppressMountAI = true,
+
     dismountClearance = 115,   -- sideways offset when stepping off
     maxRiderDrift     = 700,   -- hard resync distance
-    groundProbeUp     = 200,
+    -- groundProbeUp is gone with groundZ. Nothing probes the ground any more;
+    -- the engine does.
 }
 
 -- ---------------------------------------------------------------------------
@@ -295,20 +315,129 @@ function M.isBlacklisted(recordId)
     return recordId ~= nil and M.BLACKLIST[recordId:lower()] == true
 end
 
+-- ALWAYS returns a FRESH table, including on the fallback path.
+--
+-- It used to `return DEFAULT_PROFILE` directly, which handed out the shared
+-- module-level table by reference. That was harmless only as long as nobody
+-- wrote to the result -- and whywalk_global now does exactly that, replacing
+-- `profile.saddle` with one derived from an unknown creature's bounding box.
+-- With the old form, riding one unrecognised creature would have rewritten the
+-- default saddle for every later ride in the session: mount a silt strider
+-- once and every subsequent unknown mount seats its rider 1000 units in the
+-- air.
+--
+-- Copying costs one table per mount, which happens on a key press.
 function M.profileFor(mountType)
     local p = mountType and M.PROFILE[mountType]
-    if not p then return DEFAULT_PROFILE end
+    if not p then
+        return {
+            saddle   = {
+                forward = DEFAULT_PROFILE.saddle.forward,
+                right   = DEFAULT_PROFILE.saddle.right,
+                up      = DEFAULT_PROFILE.saddle.up,
+            },
+            turnRate = DEFAULT_PROFILE.turnRate,
+            flying   = DEFAULT_PROFILE.flying,
+        }
+    end
     -- Fill gaps from the default rather than requiring every profile to spell
     -- out every field.
+    --
+    -- speed / walkMul / revMul / jump are deliberately NOT carried any more.
+    -- The engine owns movement since the controls port: a creature's speed is
+    -- its own Speed stat and its jump is the engine's jump. Keeping the fields
+    -- would mean shipping four numbers that nothing reads -- see
+    -- PROFILE's own note.
+    -- The saddle is copied too, for the same reason: PROFILE's tables are
+    -- module-level and a caller that adjusts one would change it for every
+    -- future mount of that type.
+    local sd = p.saddle or DEFAULT_PROFILE.saddle
     return {
-        saddle   = p.saddle   or DEFAULT_PROFILE.saddle,
-        speed    = p.speed    or DEFAULT_PROFILE.speed,
-        walkMul  = p.walkMul  or DEFAULT_PROFILE.walkMul,
-        revMul   = p.revMul   or DEFAULT_PROFILE.revMul,
+        saddle   = { forward = sd.forward, right = sd.right, up = sd.up },
         turnRate = p.turnRate or DEFAULT_PROFILE.turnRate,
         flying   = p.flying == true,
-        jump     = p.jump     or DEFAULT_PROFILE.jump,
     }
+end
+
+-- ---------------------------------------------------------------------------
+-- SADDLE FROM THE BOUNDING BOX
+-- ---------------------------------------------------------------------------
+-- For a creature PROFILE has never heard of. Every mount added by another mod
+-- lands here, and the alternative is dropping the rider at the creature's
+-- origin -- which for a quadruped is ground level between its feet.
+--
+-- WHAT IS SAFE TO READ, AND WHAT IS NOT
+--
+-- Object:getBoundingBox() returns a util.Box with `center`, `halfSize`,
+-- `transform` and `vertices`. Cod3x documents `vertices` as "taking rotation
+-- into account", which means the rotation lives in `transform` and `halfSize`
+-- is therefore in the BODY's own axes, not the world's.
+--
+-- That reading matters for only one of the two numbers wanted here, so this
+-- function is built to be correct either way:
+--
+--   * VERTICAL is taken from halfSize.z, which is yaw-invariant under BOTH
+--     readings -- creatures rotate about Z only, so no amount of turning
+--     changes the box's vertical extent. This is the number that decides
+--     whether the rider sits on the creature or inside it, and it is the one
+--     that can be trusted.
+--
+--   * FORWARD is left at zero rather than derived from halfSize.y. Under the
+--     body-axes reading halfSize.y is half the body length; under the other it
+--     is a yaw-dependent mix of length and width, and at 45 degrees there is
+--     no way to separate them. Zero is not a cop-out: the eight measured
+--     profiles use forward offsets of -6 to -12 units on bodies 100+ units
+--     long, so sitting at the box's centre is within a few units of every
+--     hand-tuned value in the table.
+--
+-- The vertical fraction is the one judgement call. A quadruped's bounding box
+-- top is its head or its dorsal fin, not its back, so the saddle sits below
+-- the top of the box. 0.72 of the half-height above centre reproduces the
+-- guar's measured up = 130 for a body whose box is about 90 units to the
+-- shoulder -- but it IS a fit to one animal, which is why the derived value is
+-- printed once per new creature. Read it out of the log and promote it into
+-- PROFILE to stop guessing.
+local SADDLE_TOP_FRACTION = 0.72
+
+local reportedBoxes = {}
+
+---Derive a saddle offset for a creature with no profile entry.
+---@param mount any a creature object (any context -- getBoundingBox is on Object)
+---@return table|nil saddle `{forward, right, up}`, or nil if the box is unusable
+function M.saddleFromBoundingBox(mount)
+    if not mount then return nil end
+
+    local box = mount:getBoundingBox()
+    -- A box with no vertical extent means the model failed to load or has no
+    -- geometry. Guessing an offset from it would put the rider at the
+    -- creature's feet with no indication why, so refuse and let the caller
+    -- fall back to the default profile.
+    if not box or not box.halfSize or not box.center then return nil end
+    if not (box.halfSize.z > 0) then return nil end
+
+    -- center is world-space; the offset wanted is relative to the object's
+    -- own origin, which for a creature sits at ground level.
+    local centreAboveOrigin = box.center.z - mount.position.z
+    local up = centreAboveOrigin + box.halfSize.z * SADDLE_TOP_FRACTION
+
+    local saddle = { forward = 0, right = 0, up = up }
+
+    -- Once per record, not per mount and not per frame. This is the only way
+    -- the real number ever reaches a human, and a creature ridden repeatedly
+    -- should not reprint it.
+    local id = mount.recordId
+    if id and not reportedBoxes[id] then
+        reportedBoxes[id] = true
+        print(string.format(
+            "[WhyWalk] '%s' has no mount profile; saddle derived from its"
+            .. " bounding box as up = %.1f (box half-height %.1f, centre %.1f"
+            .. " above origin). To pin it down, add it to"
+            .. " whywalk_shared.M.PROFILE with"
+            .. " saddle = { forward = 0, right = 0, up = %.0f }.",
+            tostring(id), up, box.halfSize.z, centreAboveOrigin, up))
+    end
+
+    return saddle
 end
 
 -- Resolve one state to a concrete group name, or nil when the mount has none.

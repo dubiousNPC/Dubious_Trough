@@ -23,11 +23,12 @@
 
 local self   = require('openmw.self')
 local core   = require('openmw.core')
-local camera = require('openmw.camera')
 local input  = require('openmw.input')
 local types  = require('openmw.types')
 local async  = require('openmw.async')
 local I      = require('openmw.interfaces')
+local ui     = require('openmw.ui')
+local storage = require('openmw.storage')
 
 local shared = require('scripts.WhyWalk.whywalk_shared')
 
@@ -37,12 +38,67 @@ local EV = {
     REQUEST_MOUNT   = 'WhyWalk_RequestMount',
     REQUEST_DISMOUNT= 'WhyWalk_RequestDismount',
     CONTROL         = 'WhyWalk_Control',
-    PERSPECTIVE     = 'WhyWalk_Perspective',
     MOUNTED         = 'WhyWalk_Mounted',
     DISMOUNTED      = 'WhyWalk_Dismounted',
+    MOUNT_REFUSED   = 'WhyWalk_MountRefused',
 }
 
 local DEBUG = false
+
+-- ---------------------------------------------------------------------------
+-- SETTINGS
+-- ---------------------------------------------------------------------------
+-- THE PAGE IS REGISTERED HERE, NOT IN ridingAnim.lua, AND THE REASON IS LOAD
+-- ORDER.
+--
+-- registerGroup takes `page = <key>`, so the page has to exist first. Both
+-- files are PLAYER scripts and the manifest lists this one before
+-- ridingAnim.lua, so declaring the page here makes "page before group" a
+-- property of the manifest rather than a coincidence. The camera group stays
+-- in ridingAnim.lua, which owns the camera.
+--
+-- Strings are KEYS into l10n/WhyWalk/<locale>.yaml, never display text.
+-- OpenMW echoes an unresolved key back as-is, so literal English here would
+-- look like it worked while foreclosing translation.
+local L10N_CONTEXT   = "WhyWalk"
+local SETTINGS_PAGE  = "WhyWalk"
+local SETTINGS_GROUP = "SettingsWhyWalkRiding"
+
+I.Settings.registerPage {
+    key         = SETTINGS_PAGE,
+    l10n        = L10N_CONTEXT,
+    name        = "settings_page_name",
+    description = "settings_page_description",
+}
+
+I.Settings.registerGroup {
+    key              = SETTINGS_GROUP,
+    page             = SETTINGS_PAGE,
+    l10n             = L10N_CONTEXT,
+    name             = "riding_group_name",
+    description      = "riding_group_description",
+    permanentStorage = true,
+    order            = -1,          -- above the camera group
+    settings = {
+        {
+            key         = "ALLOW_INTERIORS",
+            name        = "riding_interiors_name",
+            description = "riding_interiors_description",
+            renderer    = "checkbox",
+            default     = false,
+        },
+    },
+}
+
+local ridingSettings = storage.playerSection(SETTINGS_GROUP)
+
+-- Read at mount time and sent with the request, not watched. A global script
+-- cannot read player storage, and the value only matters at the moment of
+-- mounting and on a cell change -- both of which already send or hold it. No
+-- subscription, no per-frame read.
+local function allowInteriors()
+    return ridingSettings:get("ALLOW_INTERIORS") == true
+end
 
 -- ---------------------------------------------------------------------------
 -- STATE
@@ -154,39 +210,24 @@ local function sendControl(force)
 end
 
 -- ---------------------------------------------------------------------------
--- PERSPECTIVE REPORTING
+-- (PERSPECTIVE REPORTING -- REMOVED)
 -- ---------------------------------------------------------------------------
--- The global script pins the rider and needs to know which view is active,
--- because the rider's BODY yaw is only forced to the mount in third person.
--- In first person the body yaw IS the look direction, so overwriting it every
--- frame would fight mouse-look. Camera state is player-context only, hence
--- this relay.
+-- This file used to relay camera mode to the global script, and hold a second
+-- AnimRefresh subscription ("WhyWalkPerspective") for the whole ride to do it.
+-- The global script stored the result in session.firstPerson.
 --
--- Sent on change, not per frame: AnimRefresh already detects perspective
--- changes for the animation layer, so this rides on the same notification
--- rather than adding a poll of its own.
-
-local lastFirstPerson = nil
-
-local function sendPerspective(force)
-    if not mounted then return end
-    local fp = camera.getMode() == camera.MODE.FirstPerson
-    if not force and fp == lastFirstPerson then return end
-    lastFirstPerson = fp
-    core.sendGlobalEvent(EV.PERSPECTIVE, { player = self.object, firstPerson = fp })
-end
-
-local function subscribePerspective()
-    if I.AnimRefresh and I.AnimRefresh.subscribe then
-        I.AnimRefresh.subscribe("WhyWalkPerspective", function() sendPerspective(false) end)
-    end
-end
-
-local function unsubscribePerspective()
-    if I.AnimRefresh and I.AnimRefresh.unsubscribe then
-        I.AnimRefresh.unsubscribe("WhyWalkPerspective")
-    end
-end
+-- Nothing read it. The consumer was placeRider's first-person gate, and that
+-- gate was removed on 2026-10-04 when rider yaw became a DELTA -- a delta is
+-- correct in both perspectives, so there is nothing left to branch on.
+--
+-- It was not free. It held an AnimRefresh subscriber open for every ride,
+-- which under v5 means a delivery on every first-person boundary crossing,
+-- each one relaying a global event that nothing consumed. The service's whole
+-- cost model is "no subscribers, one count check" -- so a dead subscriber is
+-- the one kind of leftover that actually shows up in a profile.
+--
+-- Removed with it: the openmw.camera require, lastFirstPerson, sendPerspective,
+-- subscribePerspective/unsubscribePerspective and EV.PERSPECTIVE.
 
 -- ---------------------------------------------------------------------------
 -- TARGETING
@@ -233,9 +274,6 @@ local function onMounted(data)
 
     lockControls()
     addLevitation()
-    subscribePerspective()
-    lastFirstPerson = nil
-    sendPerspective(true)
 
     -- Hand off to the animation controller, which is a separate player script
     -- on the same object and needs no reference to this one.
@@ -255,9 +293,19 @@ local function onDismounted()
 
     releaseControls()
     removeLevitation()
-    unsubscribePerspective()
-    lastFirstPerson = nil
     self.object:sendEvent('WhyWalk_AnimDismounted', {})
+end
+
+-- The global script refused the mount. Only one reason exists today, but the
+-- event carries one so a second does not need a new event.
+--
+-- A message rather than silence: activating a guar and having nothing happen
+-- reads as a broken mod. This says which setting to change.
+local function onMountRefused(data)
+    local reason = data and data.reason
+    if reason == 'interior' then
+        ui.showMessage(core.l10n(L10N_CONTEXT)('msg_interior_refused'))
+    end
 end
 
 -- ---------------------------------------------------------------------------
@@ -283,6 +331,7 @@ local function requestMount()
 
     core.sendGlobalEvent(EV.REQUEST_MOUNT, {
         player = self.object, mount = target, mountType = mt, freeRide = free,
+        allowInteriors = allowInteriors(),
     })
 end
 
@@ -351,8 +400,6 @@ local function onLoad(data)
 
     -- Undo only what we recorded holding, rather than blanket-clearing: a
     -- blanket clear would stomp a lock another mod legitimately holds.
-    unsubscribePerspective()
-    lastFirstPerson = nil
     controlsLocked  = data and data.controlsLocked == true or false
     levitationAdded = data and data.levitationAdded == true or false
     releaseControls()
@@ -403,8 +450,9 @@ end
 
 return {
     eventHandlers = {
-        [EV.MOUNTED]    = onMounted,
-        [EV.DISMOUNTED] = onDismounted,
+        [EV.MOUNTED]       = onMounted,
+        [EV.DISMOUNTED]    = onDismounted,
+        [EV.MOUNT_REFUSED] = onMountRefused,
         [RIVAL_MOUNT_EVENTS[1]] = onRivalMount,
         [RIVAL_MOUNT_EVENTS[2]] = onRivalMount,
         [RIVAL_MOUNT_EVENTS[3]] = onRivalMount,

@@ -108,6 +108,19 @@ local lastLocomotion = STATE.IDLE
 -- for jump specifically, since mount/dismount clips use the same path.
 local oneShotActive = false
 
+-- DECLARED HERE, ABOVE ITS FIRST USE. It used to sit next to the handler that
+-- increments it, 90 lines further down -- which in Lua means onAnimMounted and
+-- onAnimDismounted, both defined above that point, were reading and writing
+-- GLOBALS of the same name instead. The handler incremented the local; the
+-- dismount report read the global, which onAnimMounted had just set to 0. So
+-- the condition was always `0 > 0` and this diagnostic could never fire.
+--
+-- Nothing in the toolchain catches this: luacheck accepts it, globalcheck only
+-- reports undeclared READS, and no checker models declaration ORDER. The one
+-- defence is keeping a local's declaration above every function that touches
+-- it.
+local reissueTotal, rideStartedAt = 0, 0
+
 -- Set when the burst guard trips. Cleared on the next mount, so a broken group
 -- name costs one burst per ride instead of one burst per second forever.
 local replayDisabled = false
@@ -255,13 +268,12 @@ local CAMERA_TAG     = "WhyWalk"
 -- key itself when a context is missing, which is why the previous
 -- l10n = "none" appeared to work -- the English text was acting as its own
 -- key. That echoes rather than translates, so a real context is used here.
-I.Settings.registerPage {
-    key         = SETTINGS_PAGE,
-    l10n        = L10N_CONTEXT,
-    name        = "settings_page_name",
-    description = "settings_page_description",
-}
-
+--
+-- THE PAGE IS NOT REGISTERED HERE. It is registered in whywalk_player.lua,
+-- which the manifest loads BEFORE this file, so the page a group attaches to
+-- is guaranteed to exist by the time this runs. Registering it in both places
+-- would be a duplicate key; registering it only here made the ordering a
+-- coincidence of which file happened to load first.
 I.Settings.registerGroup {
     key              = SETTINGS_GROUP,
     page             = SETTINGS_PAGE,
@@ -509,16 +521,6 @@ end
 local REPLAY_BURST_LIMIT  = 5
 local REPLAY_BURST_WINDOW = 1.0
 local replayCount, replayWindowStart = 0, 0
-
--- Lifetime count for this ride, separate from the burst window.
---
--- Every entry here is the engine having interrupted the rider pose and this
--- handler putting it back, which is a VISIBLE one-frame flicker. The burst
--- guard only speaks up above 5 per second, so a steady 2-4 per second -- more
--- than enough to look like the reported "flickering or jumpy, especially when
--- running and jumping" -- is currently silent. Reported once on dismount so
--- the rate is measurable from a log instead of guessed at.
-local reissueTotal, rideStartedAt = 0, 0
 
 I.AnimationController.addAnimationEndedHandler(function(groupname)
     if not mounted or oneShotActive or replayDisabled then return end

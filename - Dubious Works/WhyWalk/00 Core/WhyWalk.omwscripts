@@ -16,4 +16,5 @@ PLAYER: scripts/WhyWalk/ridingAnim.lua
 CUSTOM: scripts/WhyWalk/whywalk_mount.lua
 #
 # Catalogue only, not loaded. Uncomment when the silt strider path ships.
-# GLOBAL: scripts/WhyWalk/whywalk_siltstrider.lua
+# Silt strider: no script. The source catalogue is SILTSTRIDER_NOTES.md --
+# it was a .lua file that was 99% comment and loaded by nothing.

@@ -60,3 +60,25 @@ camera_tp_h_description: |-
   Positive shifts right, negative left.
 
   Default is 0.
+
+# --- Riding group --------------------------------------------------------
+riding_group_name: "Riding"
+riding_group_description: |-
+  Where riding is allowed.
+
+riding_interiors_name: "Allow riding indoors"
+riding_interiors_description: |-
+  Off by default.
+
+  Riding indoors works -- the engine moves the mount through interiors the
+  same way it does outdoors, with full collision. The reason this is off is
+  scale, not stability: Morrowind's interiors are built for a walking player,
+  so a mount clears most doorframes only just, and the rider's head does not
+  clear low ceilings at all.
+
+  Turn it on if you are riding through large interiors, or using a mod that
+  adds them. With it off, mounting indoors is refused and riding into an
+  interior dismounts you at the door.
+
+# --- Messages ------------------------------------------------------------
+msg_interior_refused: "You cannot ride indoors. Enable it in WhyWalk's settings if you want to."

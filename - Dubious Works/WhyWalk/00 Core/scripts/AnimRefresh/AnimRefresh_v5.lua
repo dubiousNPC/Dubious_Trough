@@ -136,7 +136,23 @@ local I      = require('openmw.interfaces')
 
 local MY_VERSION = 5
 
-if I.AnimRefresh and I.AnimRefresh.version >= MY_VERSION then
+-- `or 0` is not defensive padding, it is the correct answer to a real case.
+-- Interface names are a single global namespace and this guard runs against
+-- whatever already holds "AnimRefresh" -- which need not be this file at all.
+-- A copy predating versioning, or an unrelated mod using the same name,
+-- exposes no `version`, and `nil >= 5` does not resolve to false: it raises
+-- "attempt to compare nil with number" and takes THIS file down with it. The
+-- whole service would then be missing, silently, for every subscriber.
+--
+-- Checked: v3 (shipped in Take a Seat) and v4 both expose `version`, so no
+-- known copy triggers this today. It is the unknown copy the guard is for, and
+-- treating "no version field" as version 0 is exactly right -- it is older
+-- than the field.
+--
+-- This is not the pcall anti-pattern. Nothing is being swallowed: the absent
+-- field has one unambiguous meaning and the guard reaches the same decision it
+-- would with the field present.
+if I.AnimRefresh and (I.AnimRefresh.version or 0) >= MY_VERSION then
     return
 end
 

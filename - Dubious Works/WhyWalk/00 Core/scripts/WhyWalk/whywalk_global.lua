@@ -1,50 +1,45 @@
 ---@omw-context global
 --[[
-    whywalk_global.lua -- mount orchestration, movement integration, rider pin
+    whywalk_global.lua -- mount orchestration and the rider pin
 
-    THE ONE PER-FRAME HANDLER IN THE MOD
-    ------------------------------------
-    onUpdate exists here and nowhere else. Its first statement is:
+    WHAT THIS FILE NO LONGER DOES
+
+    It used to integrate the mount's movement: speed easing, a steering
+    integrator, a hand-written jump arc with its own gravity constant, a
+    heightmap ground clamp, and a per-frame teleport of the creature to the
+    result. All of that is gone. whywalk_mount.lua now writes the creature's
+    `controls` and OpenMW's character controller moves it, which is how every
+    other creature in the game moves.
+
+    Deleted with it: stepMovement, targetSpeed, riderState's airborne branch,
+    groundZ, and the interior-floor workaround that existed only because
+    groundZ cannot see interiors. Roughly 120 lines, and four bugs that lived
+    in them -- the T-pose, the missing collision, the interior fall-through
+    and the jitter. See whywalk_mount.lua for the full account.
+
+    WHAT IT STILL DOES, AND WHY IT STILL HAS A PER-FRAME HANDLER
+
+    The rider. There is no API to parent one object's transform to another --
+    checked the whole surface: no attach, no setParent, and Actor.setVelocity
+    is not in the documented API. So the player has to be placed on the mount
+    every frame by somebody, and only a global script can teleport the player.
+
+    That is now the ONLY work onUpdate does, and its first statement is still:
 
         if not session then return end
 
-    so when nobody is mounted the entire mod costs one nil check per frame. No
-    raycasts, no actor scans, no storage reads, no allocation. For comparison,
-    both reference implementations keep three per-frame handlers alive and do
-    real work in them (nearby.actors scans, storage reads, control sends)
-    whether or not a ride is in progress.
+    so when nobody is mounted the whole file costs one nil check per frame.
 
-    WHY IT CANNOT BE EVENT-DRIVEN
-    -----------------------------
-    There is no API to parent one object's transform to another. Checked the
-    whole surface: no attach, no setParent, and Actor.setVelocity is not in the
-    documented API (Sturdy Steed calls it behind an existence check). So the
-    rider has to be placed every frame by somebody. Everything else in WhyWalk
-    -- input, targeting, animation, mounting, dismounting -- is event-driven.
+    The mount's position and heading are now READ from the creature rather than
+    computed. That is not merely simpler -- it is the only correct source, now
+    that the engine is free to stop the creature against a wall, slow it on a
+    slope or shove it aside. A computed position would describe where the
+    creature was told to go, which is no longer where it is.
 
-    NO MOUNT-SIDE SCRIPT
-    --------------------
-    There deliberately isn't one, so an unridden creature carries no WhyWalk
-    code whatsoever -- not even a dormant handler.
+    THE MOUNT SCRIPT
 
-    The obvious job for a mount script would be suppressing the creature's own
-    AI while ridden. It turns out not to be needed: this script teleports the
-    mount to a computed position and rotation every frame, so whatever its AI
-    decides to do is overwritten before it can take effect. The creature cannot
-    walk off because it is being placed, not driven.
-
-    It is also the job that is hardest to do well. Actor.setStance is local-on-
-    self only, so global cannot call it; and the AI interface offers only
-    removePackages/filterPackages, both of which DELETE packages rather than
-    suspend them, with no way to restore what was there. A mount script would
-    have to destroy the creature's AI to borrow it, then guess at a
-    replacement on dismount.
-
-    What would justify adding one back: visible gait animation fighting (the
-    creature playing a walk cycle in a direction it is not moving), or ridden
-    hostiles continuing to attack. Both are testable; neither is assumed here.
-    If it does come back, register it CUSTOM and attach with addScript on mount
-    / removeScript on dismount, so the cost stays scoped to an active ride.
+    Registered CUSTOM, attached with addScript on mount and removed on
+    dismount, so an unridden creature carries no WhyWalk code whatsoever.
 ]]
 
 local world = require('openmw.world')
@@ -55,15 +50,14 @@ local core  = require('openmw.core')
 local shared = require('scripts.WhyWalk.whywalk_shared')
 
 local TUNING = shared.TUNING
-local STATE  = shared.STATE
 
 local EV = {
     REQUEST_MOUNT    = 'WhyWalk_RequestMount',
     REQUEST_DISMOUNT = 'WhyWalk_RequestDismount',
     CONTROL          = 'WhyWalk_Control',
-    PERSPECTIVE      = 'WhyWalk_Perspective',
     MOUNTED          = 'WhyWalk_Mounted',
     DISMOUNTED       = 'WhyWalk_Dismounted',
+    MOUNT_REFUSED    = 'WhyWalk_MountRefused',
 }
 
 local DEBUG = false
@@ -82,19 +76,22 @@ local function newSession(player, mount, mountType, freeRide)
         mountType = mountType,
         profile   = shared.profileFor(mountType),
         freeRide  = freeRide == true,
-        firstPerson = false,   -- reported by the player script; see placeRider
         -- Heading last applied to the RIDER, so the next frame can hand over
         -- only the change. nil until the first placement.
         riderYawApplied = nil,
 
-        throttle  = 0,      -- -1..1 commanded
-        steer     = 0,      -- -1..1 commanded
-        gallop    = false,
-        speed     = 0,      -- current world units/sec
-        yaw       = 0,
-        vz        = 0,      -- vertical velocity, jump arc
-        airborne  = false,
+        -- Carried from the mount request. The setting lives in player-side
+        -- storage, which a global script cannot read, so its value rides along
+        -- with the request and is remembered for the cell-change check.
+        allowInteriors = false,
+        -- Last cell seen, so a cell change can be detected. The mount walks
+        -- through load doors now that the engine moves it.
+        lastCell = nil,
 
+        -- No throttle/steer/speed/yaw/vz/airborne any more. The commanded
+        -- intent lives in whywalk_mount.lua, which is the thing that acts on
+        -- it, and the resulting position and heading are read back off the
+        -- creature. Keeping a second copy here was how the two drifted apart.
     }
 end
 
@@ -319,124 +316,88 @@ local function saddlePosition(mountPos, yaw, saddle)
         saddle.up)
 end
 
--- Terrain height instead of a downward raycast. core.land.getHeightAt is a
--- direct heightmap query -- no ray, no collision traversal -- which matters
--- because this runs every frame while mounted. Learned from the Rideable Silt
--- Striders mod, which uses it to floor its flight path.
+-- riderState USED TO LIVE HERE. It is now whywalk_mount.lua's job, and the
+-- reason is a context restriction worth recording.
 --
--- Cod3x documents the cell argument as one "in their exterior world space",
--- so interiors are the expected failure -- and Cell.isExterior is a documented
--- field, so that case is checkable outright instead of caught. No pcall: if
--- getHeightAt throws on a loaded exterior cell that is a bug worth seeing,
--- not one worth absorbing sixty times a second.
-local function groundZ(pos, cell)
-    if not (cell and cell.isExterior) then return nil end
-    return core.land.getHeightAt(util.vector3(pos.x, pos.y, 0), cell)
-end
-
--- ---------------------------------------------------------------------------
--- MOVEMENT
--- ---------------------------------------------------------------------------
-
-local function targetSpeed(s)
-    local p = s.profile
-    if s.throttle > 0 then
-        return s.gallop and p.speed or p.speed * p.walkMul
-    elseif s.throttle < 0 then
-        return -p.speed * p.revMul
-    end
-    return 0
-end
-
-local function riderState(s)
-    if s.airborne then return STATE.JUMP end
-    if s.throttle > 0 then return s.gallop and STATE.GALLOP or STATE.WALK end
-    if s.throttle < 0 then return STATE.REVERSE end
-    return STATE.IDLE
-end
-
-local function stepMovement(s, dt)
-    local p = s.profile
-
-    -- Steering. Commanded steer is held state from the player script, so this
-    -- integrates an intent that was sent once, not re-sent per frame.
-    if s.steer ~= 0 then
-        s.yaw = s.yaw + s.steer * p.turnRate * dt
-    end
-
-    -- Speed easing toward the commanded target. Deliberately simple: hard cuts
-    -- suit the animation layer, but raw speed steps look wrong on a mount.
-    local want = targetSpeed(s)
-    local rate = (want == 0) and 4.0 or 2.0
-    s.speed = s.speed + (want - s.speed) * math.min(1, rate * dt)
-    if math.abs(s.speed) < 1 then s.speed = 0 end
-
-    local fwd = util.vector3(math.sin(s.yaw), math.cos(s.yaw), 0)
-    local pos = s.mount.position + fwd * (s.speed * dt)
-
-    -- Vertical
-    if p.flying then
-        -- Flyers hold their commanded altitude; no gravity, no ground clamp.
-        pos = util.vector3(pos.x, pos.y, s.mount.position.z)
-    else
-        if s.airborne then
-            s.vz = math.max(-p.jump.maxFall, s.vz - p.jump.gravity * dt)
-            pos = util.vector3(pos.x, pos.y, pos.z + s.vz * dt)
-        end
-        local gz = groundZ(pos, s.mount.cell)
-        if gz and pos.z <= gz then
-            pos = util.vector3(pos.x, pos.y, gz)
-            if s.airborne then s.airborne, s.vz = false, 0 end
-        end
-    end
-
-    return pos
-end
+-- The rider's pose should follow what the creature actually does, not what the
+-- player commanded -- a mount pressed into a wall is not walking. Deriving
+-- that needs two readings:
+--
+--     types.Actor.getCurrentSpeed(mount)   -- @param openmw.Object, fine here
+--     types.Actor.isOnGround(mount)        -- "Can be called only from a
+--                                             local script", @param LObject
+--
+-- The second one is not available to a global script, which rules out doing
+-- this here. whywalk_mount.lua is LOCAL on the creature and has both, plus the
+-- commanded throttle for the forward/reverse distinction, so it derives the
+-- state and sends WhyWalk_AnimState to the player on CHANGE only. Same event,
+-- same consumer (ridingAnim.lua) -- just raised where the facts are.
 
 -- ---------------------------------------------------------------------------
 -- MOUNT / DISMOUNT
 -- ---------------------------------------------------------------------------
 
 -- ---------------------------------------------------------------------------
--- MOUNT GAIT SCRIPT
+-- INTERIOR GATE
 -- ---------------------------------------------------------------------------
--- The creature does not animate itself while ridden. A teleport is not
--- movement, so OpenMW's character controller is never asked to move the
--- creature, never selects a locomotion group, and the actor renders at bind
--- pose: the reported T-pose. See whywalk_mount.lua for the full account.
---
--- Attached on mount and removed on dismount, so an unridden creature carries
--- no script at all. That is the condition this file's own header set for
--- bringing a mount script back, and it is now met.
+-- Cell.isExterior is a documented field, so this is a plain read with no
+-- probing. A nil cell (an object mid-teleport) is treated as an exterior:
+-- refusing to ride because a cell handle was briefly unavailable would be a
+-- worse failure than allowing it.
+local function interiorAllowed(mount, allow)
+    if allow then return true end
+    local cell = mount and mount.cell
+    if not cell then return true end
+    return cell.isExterior ~= false
+end
+
+-- ---------------------------------------------------------------------------
+-- MOUNT SCRIPT
+-- ---------------------------------------------------------------------------
+-- The creature is DRIVEN by whywalk_mount.lua, which writes its `controls` and
+-- lets the engine move it. Attached on mount and removed on dismount, so an
+-- unridden creature carries no script at all.
 local MOUNT_SCRIPT = 'scripts/WhyWalk/whywalk_mount.lua'
 
--- Declared here, assigned where the ride loop lives. Clearing it on mount
--- forces the next onUpdate to treat the current gait as a change, which is
--- how the freshly attached mount script gets its first state.
-local lastRiderState
+local EV_MOUNT = {
+    START   = 'WhyWalk_MountStart',
+    STOP    = 'WhyWalk_MountStop',
+    CONTROL = 'WhyWalk_MountControl',
+}
 
-local function attachMountScript(mount, freeRide)
-    -- Free ride deliberately skipped. There the creature keeps its own AI and
-    -- the engine drives it normally, so it already animates; adding a second
-    -- source of locomotion groups would be the gait fighting this file's
-    -- header warned about. Only a STEERED mount, which is teleported and
-    -- therefore never animated by the controller, needs this.
+-- Pending MountStart, because addScript is deferred to the next frame.
+--
+-- This replaces the old lastRiderState-clearing trick. Sending MountStart from
+-- attachMountScript would land before the handler exists and be dropped
+-- silently -- and MountStart is now load-bearing (it disables the creature's
+-- AI), not just a first animation nudge. So the send is deferred to the first
+-- onUpdate that sees the script attached.
+local pendingStart = nil
+
+local function attachMountScript(mount, freeRide, player, profile)
+    -- Free ride deliberately skipped: the creature keeps its own AI and the
+    -- engine drives it normally. Disabling its AI there would strand it.
     if freeRide then return end
     if not mount or not mount:isValid() then return end
-    if mount:hasScript(MOUNT_SCRIPT) then return end
-    mount:addScript(MOUNT_SCRIPT)
-    -- addScript is deferred to next frame, so do NOT sendEvent here: the
-    -- handler does not exist yet and the event would be dropped. The caller
-    -- clears lastRiderState instead, which makes the next onUpdate treat the
-    -- current gait as a change and broadcast it once the script is live.
+    if not mount:hasScript(MOUNT_SCRIPT) then
+        mount:addScript(MOUNT_SCRIPT)
+    end
+    pendingStart = {
+        mount    = mount,
+        player   = player,
+        turnRate = profile.turnRate,
+    }
 end
 
 local function detachMountScript(mount)
+    pendingStart = nil
     if not mount or not mount:isValid() then return end
     if not mount:hasScript(MOUNT_SCRIPT) then return end
-    -- Release the held loop before the handler goes away, or the creature
-    -- keeps walking on the spot for the rest of its life.
-    mount:sendEvent('WhyWalk_MountRelease', {})
+    -- MountStop re-enables the creature's standard AI. It MUST arrive before
+    -- the script goes away, or the creature is left with AI off and the last
+    -- controls still written -- a statue, or something walking into a wall
+    -- until the cell unloads.
+    mount:sendEvent(EV_MOUNT.STOP, {})
     mount:removeScript(MOUNT_SCRIPT)
 end
 
@@ -446,17 +407,19 @@ local function doDismount(reason)
 
     clearRiderMWScript()
 
-    -- Step the rider off to the side, clamped to terrain so they do not land
-    -- inside the mount or under the world.
+    -- Step the rider off to the side. The ground clamp that used to be here is
+    -- gone with groundZ, and nothing replaces it: teleport takes an `onGround`
+    -- option, so the engine drops the player onto whatever is actually below
+    -- them -- floor, bridge, stairs -- instead of a heightmap value that was
+    -- wrong indoors and wrong on anything placed.
     if s.player and s.player:isValid() and s.mount and s.mount:isValid() then
-        local right = util.vector3(math.cos(s.yaw), -math.sin(s.yaw), 0)
-        local off = s.mount.position + right * TUNING.dismountClearance
-        local gz = groundZ(off, s.mount.cell)
-        if gz then off = util.vector3(off.x, off.y, gz + 10) end
+        local yaw   = s.mount.rotation:getYaw()
+        local right = util.vector3(math.cos(yaw), -math.sin(yaw), 0)
+        local off   = s.mount.position + right * TUNING.dismountClearance
         -- Bare: the enclosing guard already established that both objects are
         -- valid, so a failure here would be a real bug rather than an
         -- expected condition.
-        s.player:teleport(s.player.cell or '', off)
+        s.player:teleport(s.player.cell or '', off, { onGround = true })
     end
 
     detachMountScript(s.mount)
@@ -481,11 +444,38 @@ local function onRequestMount(data)
     local freeRide  = data.freeRide == true or mountType == nil
     if freeRide and not TUNING.freeRideEnabled then return end
 
-    session = newSession(player, mount, mountType, freeRide)
-    session.yaw = mount.rotation:getYaw()
+    -- INTERIOR GATE. The player script owns the setting and sends its value
+    -- with the request, because I.Settings and openmw.storage are player-side
+    -- and a global script cannot read either.
+    --
+    -- Default is to refuse. Riding indoors is not broken any more -- the engine
+    -- handles interiors like anywhere else -- but Morrowind's interiors are
+    -- built to human scale, and a mounted player clips doorframes and ceilings
+    -- with the rider's head. Opt-in rather than opt-out.
+    if not interiorAllowed(mount, data.allowInteriors) then
+        player:sendEvent(EV.MOUNT_REFUSED, { reason = 'interior' })
+        return
+    end
 
-    attachMountScript(mount, freeRide)
-    lastRiderState = nil
+    session = newSession(player, mount, mountType, freeRide)
+
+    -- UNKNOWN CREATURE: derive the saddle from its bounding box.
+    --
+    -- mountType is nil for any creature PROFILE has never heard of, which is
+    -- every mount added by another mod. profileFor falls back to the default
+    -- saddle in that case -- up = 130, a guar's height -- which puts a rider
+    -- inside a boar and under a silt strider.
+    --
+    -- The box is the only measurement available without the mod author telling
+    -- us anything, and it scales: see M.saddleFromBoundingBox for exactly which
+    -- parts of it are safe to read. A nil result means the box was unusable, so
+    -- the default stands.
+    if not mountType then
+        local derived = shared.saddleFromBoundingBox(mount)
+        if derived then session.profile.saddle = derived end
+    end
+
+    attachMountScript(mount, freeRide, player, session.profile)
 
     player:sendEvent(EV.MOUNTED, {
         mount = mount, mountType = mountType, freeRide = freeRide,
@@ -501,35 +491,33 @@ local function onRequestDismount()
     doDismount('player request')
 end
 
-local function onPerspective(data)
-    if not session then return end
-    if data.player and data.player ~= session.player then return end
-    session.firstPerson = data.firstPerson == true
-end
 
+-- Intent is RELAYED, not stored. The mount script is what acts on it, and a
+-- second copy here was how the commanded state and the actual state drifted
+-- apart. The player script sends on change only, so this fires on input edges
+-- rather than per frame.
 local function onControl(data)
     if not session then return end
     if data.player and data.player ~= session.player then return end
+    local s = session
 
-    if data.jump then
-        local p = session.profile
-        if not p.flying and not session.airborne then
-            session.airborne = true
-            session.vz = p.jump.up
-        end
-        return
-    end
+    -- Free ride has no mount script: the creature drives itself and steering
+    -- input has nowhere to go.
+    if s.freeRide then return end
+    if not s.mount:isValid() then return end
 
-    session.throttle = data.throttle or 0
-    session.steer    = data.steer or 0
-    session.gallop   = data.gallop == true
+    s.mount:sendEvent(EV_MOUNT.CONTROL, {
+        throttle = data.throttle,
+        steer    = data.steer,
+        gallop   = data.gallop,
+        jump     = data.jump,
+    })
 end
 
 -- ---------------------------------------------------------------------------
 -- THE PER-FRAME HANDLER
 -- ---------------------------------------------------------------------------
-
-lastRiderState = nil
+-- All it does now is place the rider. The mount moves itself.
 
 local function onUpdate(dt)
     -- Single early-out. Everything below is ride-only.
@@ -553,39 +541,41 @@ local function onUpdate(dt)
 
     if core.isWorldPaused() or dt <= 0 then return end
 
-    -- Free ride: no steering, no movement integration. The creature drives
-    -- itself under its own AI and we only follow it with the rider.
-    if s.freeRide then
-        local mountYaw = s.mount.rotation:getYaw()
-        local pos = saddlePosition(s.mount.position, mountYaw, s.profile.saddle)
-        local d = s.riderYawApplied and yawDeltaBetween(s.riderYawApplied, mountYaw) or 0
-        s.riderYawApplied = mountYaw
-        placeRider(s.player, pos, d)
-        return
+    -- The deferred MountStart. addScript lands a frame late, so this is the
+    -- earliest point the handler is guaranteed to exist. Sending it from
+    -- attachMountScript would drop it, and with it the enableAI(false) that
+    -- stops the creature wandering off under its own AI.
+    if pendingStart then
+        local st = pendingStart
+        pendingStart = nil
+        if st.mount:isValid() and st.mount:hasScript(MOUNT_SCRIPT) then
+            st.mount:sendEvent(EV_MOUNT.START, {
+                player   = st.player,
+                turnRate = st.turnRate,
+            })
+        end
     end
 
-    local pos = stepMovement(s, dt)
-    -- SETTLED IN GAME, 2026-09-29. This was rotateZ(-s.yaw) while the rider
-    -- was placed with rotateZ(s.yaw) -- same yaw, opposite signs, one
-    -- function apart. The negation was wrong and is the single cause of both
-    -- "rider is backwards" and "controls are reversed":
-    --
-    --   * stepMovement derives heading as fwd = (sin yaw, cos yaw), the
-    --     standard Morrowind convention (0 = +Y, increasing toward +X).
-    --   * Cod3x documents rotateZ(a) as rotate(a, vector3(0,0,-1)), so
-    --     rotateZ(yaw) * (0,1,0) == (sin yaw, cos yaw) == fwd exactly.
-    --   * Devilish Guar Riding -- the reference this mod's offsets came from,
-    --     and the one that feels correct in game -- derives forward the same
-    --     way (forwardVector: rotateZ(yaw):apply(vector3(0,1,0))) and teleports
-    --     its mount with rotation = rotateZ(yaw). POSITIVE.
-    --
-    -- With the negation the mount travelled along fwd(+yaw) while facing
-    -- fwd(-yaw): mirrored about the N-S axis. Pressing D increased yaw, so the
-    -- mount slid right while visibly turning left, and the correctly-oriented
-    -- rider ended up facing the mount's tail.
-    s.mount:teleport(s.mount.cell or '', pos, util.transform.rotateZ(s.yaw))
+    -- Cell change while riding. The mount walks through load doors now that
+    -- the engine moves it, so the rider has to follow into the new cell --
+    -- and an interior arrival is where the setting gets enforced a second
+    -- time, since the first check only covered mounting.
+    if s.mount.cell ~= s.lastCell then
+        s.lastCell = s.mount.cell
+        if not interiorAllowed(s.mount, s.allowInteriors) then
+            doDismount('entered an interior with interior riding off')
+            return
+        end
+    end
 
-    local riderPos = saddlePosition(pos, s.yaw, s.profile.saddle)
+    -- READ, not computed. The engine owns where the creature is and which way
+    -- it faces; a computed value would describe where it was told to go, which
+    -- after a wall, a slope or a shove is not where it is. This is the whole
+    -- point of the port.
+    local mountPos = s.mount.position
+    local mountYaw = s.mount.rotation:getYaw()
+
+    local riderPos = saddlePosition(mountPos, mountYaw, s.profile.saddle)
 
     -- Hard resync guard: if the rider has drifted far from where it should be
     -- (cell load, physics shove, another mod teleporting the player) snap
@@ -598,26 +588,17 @@ local function onUpdate(dt)
         -- point and there is no mouse-look to preserve across a teleport of
         -- that size. The delta baseline is reset to match.
         s.player:teleport(s.player.cell or '', riderPos,
-                          util.transform.rotateZ(s.yaw))
-        s.riderYawApplied = s.yaw
-    else
-        local d = s.riderYawApplied and yawDeltaBetween(s.riderYawApplied, s.yaw) or 0
-        s.riderYawApplied = s.yaw
-        placeRider(s.player, riderPos, d)
+                          util.transform.rotateZ(mountYaw))
+        s.riderYawApplied = mountYaw
+        return
     end
 
-    -- Tell the animation layer only when the state actually changes.
-    local st = riderState(s)
-    if st ~= lastRiderState then
-        lastRiderState = st
-        s.player:sendEvent('WhyWalk_AnimState', { state = st })
-        -- Same state string drives the creature's own locomotion group. Sent
-        -- on CHANGE only, like the rider pose, so a straight-line walk costs
-        -- nothing. Free rides have no mount script to receive it.
-        if not s.freeRide and s.mount and s.mount:isValid() then
-            s.mount:sendEvent('WhyWalk_MountGait', { state = st })
-        end
-    end
+    -- Yaw handed over as a DELTA so mouse-look survives. See the long note at
+    -- placeRiderTeleport; unchanged by the port, because the rider pin is the
+    -- one part of this file the port did not touch.
+    local d = s.riderYawApplied and yawDeltaBetween(s.riderYawApplied, mountYaw) or 0
+    s.riderYawApplied = mountYaw
+    placeRider(s.player, riderPos, d)
 end
 
 -- ---------------------------------------------------------------------------
@@ -632,27 +613,49 @@ local function onSave()
         mount     = session.mount,
         mountType = session.mountType,
         freeRide  = session.freeRide,
-        yaw       = session.yaw,
+        -- yaw is NOT saved any more: the creature carries its own rotation
+        -- through a save, and reading it back is both shorter and correct.
+        -- The saved copy could only ever disagree with the creature.
+        allowInteriors = session.allowInteriors,
     }
 end
 
 local function onLoad(data)
     session = nil
-    lastRiderState = nil
+    pendingStart = nil
     -- Re-probe the bridge after a load: the handle is tied to the previous
     -- game session, and the load order can differ between saves.
     mwBridge = nil
-    if not (data and data.riding) then return end
-    if not data.player or not data.player:isValid() then return end
-    if not data.mount or not data.mount:isValid() then return end
+    -- whywalk_mount.lua is attached with addScript, so it PERSISTS on the
+    -- creature in the save -- unlike the player scripts, which the manifest
+    -- re-creates. So the decision "are we resuming this ride?" has to be made
+    -- before any early return, or a load that does not resume leaves the
+    -- script bound to that creature for the rest of the save.
+    --
+    -- This matters more since the controls port than it did before. The script
+    -- holds the creature's standard AI DISABLED while a ride is live. Its own
+    -- onLoad re-enables AI and clears the controls, so a creature is never
+    -- left frozen either way -- but a stranded script would keep an onUpdate
+    -- alive on a creature nobody is riding.
+    local saved   = data and data.mount
+    local resuming = (data and data.riding)
+                     and data.player and data.player:isValid()
+                     and saved and saved:isValid()
+
+    if not resuming then
+        if saved and saved:isValid() then detachMountScript(saved) end
+        return
+    end
 
     session = newSession(data.player, data.mount, data.mountType, data.freeRide)
-    session.yaw = data.yaw or data.mount.rotation:getYaw()
+    session.allowInteriors = data.allowInteriors == true
+    session.lastCell = data.mount.cell
 
     -- Re-announce so the player script and animation controller re-enter their
-    -- mounted state; neither persists it across a load by design.
-    attachMountScript(data.mount, data.freeRide)
-    lastRiderState = nil
+    -- mounted state; neither persists it across a load by design. The mount
+    -- script's MountStart is deferred to the first onUpdate as usual, which
+    -- also re-disables the creature's AI after its own onLoad re-enabled it.
+    attachMountScript(data.mount, data.freeRide, data.player, session.profile)
 
     data.player:sendEvent(EV.MOUNTED, {
         mount = data.mount, mountType = data.mountType, freeRide = data.freeRide,
@@ -664,7 +667,6 @@ return {
         [EV.REQUEST_MOUNT]    = onRequestMount,
         [EV.REQUEST_DISMOUNT] = onRequestDismount,
         [EV.CONTROL]          = onControl,
-        [EV.PERSPECTIVE]      = onPerspective,
     },
     engineHandlers = {
         onUpdate = onUpdate,

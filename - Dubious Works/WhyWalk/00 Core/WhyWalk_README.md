@@ -35,8 +35,9 @@ though one unlocks the preferred rider-placement backend (see
 
 - **Mounts creatures.** Look at a rideable creature, press Activate, and you're
   on it. Targeting uses SharedRay, so no extra raycast is issued.
-- **Steers them.** WASD with a gallop modifier and a jump arc, integrated
-  against real frame time rather than fixed frame steps.
+- **Steers them.** WASD with a gallop modifier and a jump. Steering is
+  translated into the creature's own movement `controls`, so the engine moves
+  it -- with its own gait animation, collision, gravity and step handling.
 - **Animates the rider.** Lower-body and torso blended poses per mount type,
   with optional random variation. The lower body carries the seated pose; the
   torso stays at weapon priority so weapons and spells keep working.
@@ -48,16 +49,27 @@ though one unlocks the preferred rider-placement backend (see
 - **Falls back gracefully.** Creatures with no packaged animation set get a
   generic rider pose rather than nothing.
 - **Free ride.** Mount any creature at all, with no script added to it.
+- **Rides unknown creatures sensibly.** A creature no profile covers gets its
+  saddle height measured from its own bounding box, rather than inheriting a
+  guar's.
 - **Survives saves.** Control locks and levitation are recorded and undone on
   load rather than left dangling.
 
 What it deliberately does *not* do:
 
-- **It does not animate the mount's gait.** The engine's own character
-  controller already picks and speed-scales gait animations from movement.
-  Scripted loops on top of that fight it, visibly, worst at low speed.
-- **It does not attach a script to the creature.** See
-  [Performance](#performance).
+- **It does not animate the mount's gait, and it does not move the mount
+  itself.** Both are the engine's, reached by writing the creature's
+  `controls`. This was not always true: WhyWalk used to teleport the mount to a
+  computed position every frame, which meant the character controller was never
+  asked to move it, never chose a locomotion group, and the creature rendered
+  at bind pose -- the T-pose. Driving the controls is both less code and the
+  only way to get the real gait.
+- **It does not implement collision, gravity or ground-finding.** It used to
+  attempt the third with a heightmap query and skip the first two entirely.
+  All three now come from the engine, which is why mounts no longer walk
+  through walls or sink on bridges.
+- **It does not let you ride indoors by default.** Riding indoors works, but
+  Morrowind's interiors are built for a walking player. There is a setting.
 
 ---
 
@@ -105,8 +117,15 @@ changes* — a handful of events per journey. The global script integrates
 movement from the last known intent. The player script therefore has no
 per-frame handler at all.
 
-**No mount-side script.** An unridden creature carries no WhyWalk code
-whatsoever, not even a dormant handler.
+**One script on the creature, only while it is ridden.** `whywalk_mount.lua`
+is registered `CUSTOM` and attached with `addScript` on mount, removed on
+dismount, so an unridden creature carries no WhyWalk code whatsoever. While
+ridden it runs one `onUpdate` that performs five field writes and no
+allocation, no queries and no raycasts -- restating the controls, which is how
+the engine consumes them, and that is the floor for a driven actor.
+
+It replaces, per frame: two teleports, a heightmap query and a hand-integrated
+gravity step. Devilish Guar Riding's equivalent does nine raycasts.
 
 **What is genuinely irreducible:** there is no API in OpenMW Lua to parent one
 object's transform to another. No attach, no `setParent`, and `Actor.setVelocity`
@@ -114,8 +133,17 @@ is not part of the documented API. Something has to place the rider every frame.
 That is the one `onUpdate`, and everything else — input, targeting, animation,
 mounting, dismounting — is event-driven.
 
-Ground clamping uses `core.land.getHeightAt`, a direct heightmap query, rather
-than a downward raycast per frame.
+**No ground probing at all any more.** `core.land.getHeightAt` is gone with
+the movement simulation. It was a cheap heightmap read, which was its appeal,
+but a heightmap knows nothing about bridges, floors or anything placed, and
+returns nothing at all for interiors -- which is where the unbounded interior
+fall came from.
+
+**One-frame rider lag, by construction.** The mount is moved by the engine and
+the rider is placed from the mount's actual position, so the rider can be one
+frame behind. Handler order within a frame is not specified, so this is not
+removable; it is also not visible, because the offset is constant rather than
+varying. Devilish Guar Riding has the same split.
 
 ---
 
@@ -346,8 +374,10 @@ Camera offsets are in the in-game settings menu (see
 levitation on/off and spell ID, rider backend choice, MWScript global names,
 dismount clearance, drift resync threshold.
 
-**`PROFILE`** — per mount type: saddle offset (forward/right/up), top speed,
-walk and reverse multipliers, turn rate, flying flag, jump arc. Missing fields
+**`PROFILE`** — per mount type: saddle offset (forward/right/up), turn rate,
+flying flag. Top speed, walk/reverse multipliers and the jump arc used to live
+here and are gone: the engine owns movement, so a creature's speed is its own
+Speed stat and its jump is the engine's jump. Missing fields
 fall back to a shared default, so a new mount only needs the numbers that differ.
 
 **`RIDE_ANIM` / `FALLBACK_ANIM`** — the animation tables described above.
@@ -365,13 +395,14 @@ classification.
 WhyWalk.omwscripts
 scripts/
   SharedRay/SharedRay_v2.lua        shared camera-ray service (bundled)
-  AnimRefresh/AnimRefresh_v1.lua    perspective-change service (bundled)
+  AnimRefresh/AnimRefresh_v5.lua    perspective-change service (bundled)
   WhyWalk/
     whywalk_shared.lua              data + pure helpers    (context: none)
     whywalk_global.lua              orchestration, pin     (context: global)
     whywalk_player.lua              input, targeting       (context: player)
+    whywalk_mount.lua               mount controls         (context: local)
     ridingAnim.lua                  rider animation        (context: player)
-    whywalk_siltstrider.lua         catalogue, NOT loaded  (context: none)
+    (silt strider)                  notes only, see SILTSTRIDER_NOTES.md
 ```
 
 `whywalk_shared.lua` has no `openmw.*` requires at all, so global, player and
@@ -406,6 +437,15 @@ recognised, so those creatures work as WhyWalk mounts if their ESPs are loaded.
   placeholder name.
 - **The MWScript bridge needs an ESP** that doesn't ship here. Without it the
   mod silently uses the teleport backend.
+- **AI suppression on the mount is unverified in game.** The port assumes
+  `self:enableAI(false)` disables only the AI decision layer, leaving the
+  character controller free to act on scripted `controls`. If a mount refuses
+  to move, set `TUNING.suppressMountAI = false` -- steering will work and the
+  creature's AI will fight it, which identifies the cause immediately.
+- **Saddle height for unknown creatures is derived, not measured.** The
+  bounding-box fallback reads only yaw-invariant parts of the box, and its one
+  tuned constant was fitted to the guar. It prints the number it derived; put
+  that in `PROFILE` to stop guessing.
 - **No camera-follow steering.** Steering is A/D only; the mount does not turn
   to follow where you look in first person. Sturdy Steed does this, and notes it
   needs angular hysteresis (engage ~6 degrees, release ~1.5) or the engine
@@ -425,8 +465,12 @@ recognised, so those creatures work as WhyWalk mounts if their ESPs are loaded.
 
 ## Silt striders
 
-`whywalk_siltstrider.lua` is a **catalogue, not an implementation**. It is not
-registered in the `.omwscripts` and costs nothing.
+`SILTSTRIDER_NOTES.md` is a **catalogue, not an implementation**. No script is
+registered for striders, so the path costs nothing.
+
+It used to be `whywalk_siltstrider.lua` -- a file that was 99% block comment
+around an empty `return {}`, loaded by nothing. Same content, no longer
+pretending to be code.
 
 It records measured mount data (slot positions, offsets, sounds, node names),
 sway constants, route network comparisons across two source mods, and an

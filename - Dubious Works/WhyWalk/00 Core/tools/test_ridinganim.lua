@@ -181,5 +181,42 @@ check('ended handlers not leaked per jump (' .. before .. ' -> ' .. #endedHandle
 local tkCount = #(textKeyHandlers['rideh5'] or {})
 check('text key handlers not leaked per jump (' .. tkCount .. ')', tkCount <= 1, tostring(tkCount))
 
+-- === TEST 5: the dismount flicker report actually fires =====================
+-- Regression. reissueTotal/rideStartedAt were declared BELOW the two functions
+-- that use them, so onAnimMounted and onAnimDismounted touched globals of the
+-- same name while the ended-handler incremented the local. The report read a
+-- global that mount had just zeroed, so the condition was always 0 > 0 and the
+-- diagnostic could never print. Nothing in the toolchain catches declaration
+-- order, so it is pinned here instead.
+reset()
+local printed = {}
+local realprint = print
+print = function(...)                      -- luacheck: ignore
+    local parts = {}
+    for i = 1, select('#', ...) do parts[#parts+1] = tostring((select(i, ...))) end
+    printed[#printed+1] = table.concat(parts, ' ')
+end
+
+ev.WhyWalk_AnimMounted({ mountType = 'horse' })
+fireTimers()
+ev.WhyWalk_AnimState({ state = 'gallop' })
+-- Four interruptions: under the burst limit of 5, so recovery stays enabled
+-- and nothing else prints. simulation time advances via os.clock in the mock,
+-- so the rate works out well above 1/s.
+for _ = 1, 4 do
+    for _, fn in ipairs(endedHandlers) do fn(playing) end
+end
+ev.WhyWalk_AnimDismounted()
+print = realprint                          -- luacheck: ignore
+
+local report = nil
+for _, line in ipairs(printed) do
+    if line:find('re%-issued') then report = line end
+end
+check('dismount reports the pose re-issue rate', report ~= nil,
+      report or ('printed: ' .. tostring(#printed) .. ' line(s)'))
+check('the report counts all 4 re-issues',
+      report ~= nil and report:find('4 times') ~= nil, report or 'no report')
+
 print(failures == 0 and '\nALL PASS' or ('\n' .. failures .. ' FAILURE(S)'))
 os.exit(failures == 0 and 0 or 1)
