@@ -1,0 +1,39 @@
+# WhyWalk Boats -- English strings. Keys, not source text (see Core's en.yaml).
+# To translate, copy to <locale>.yaml beside this file and translate the values.
+
+boats_group_name: "Boats"
+boats_group_description: |-
+  Pilot rowboats, gondolas and other small craft yourself. Activate a boat on
+  the water to take the helm.
+
+steering_name: "Steering"
+steering_description: |-
+  Rudder: A and D turn the boat and you look around freely.
+  Follow view: the boat turns toward where you look, as in Your Own Gondola.
+rudder: "Rudder"
+view: "Follow view"
+
+turn_view_name: "Turn view with the boat"
+turn_view_description: "Your view turns as the boat turns, as when riding. Rudder steering only."
+
+motion_name: "Boat motion"
+motion_description: "Gentle sway, rocking and lean in turns. Purely cosmetic."
+
+claim_name: "Use boats in the world"
+claim_description: |-
+  Rowboats, gondolas and longboats already on the water can be taken. The
+  scenery boat is hidden and a working copy put in its place.
+
+help_name: "Show controls when boarding"
+help_description: "A one-line reminder of the controls each time you take the helm."
+
+mute_name: "Quiet the water"
+mute_description: "Stops the splashing footstep sounds that walking on water would make."
+
+msg_help: "Forward / Back: row.  Left / Right: steer.  X or activate the boat: go ashore."
+msg_into_water: "Nowhere to step ashore here; you go over the side."
+msg_beached: "This boat is beached."
+msg_nowater: "There is no water here to float it."
+msg_far: "You are too far from the boat."
+msg_mounted: "Dismount first."
+msg_foreign: "Another mod is sailing this boat."

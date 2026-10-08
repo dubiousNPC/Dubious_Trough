@@ -1,0 +1,8 @@
+# WhyWalk Boats -- pilot small craft yourself
+#
+# A WhyWalk module: load it AFTER "00 Core". Its settings sit on Core's
+# WhyWalk page, and it reads Core's SharedRay and AnimRefresh services when
+# they are present.
+GLOBAL: scripts/WhyWalk/Boats/boats_global.lua
+PLAYER: scripts/WhyWalk/Boats/boats_player.lua
+PLAYER: scripts/WhyWalk/Boats/boats_pose.lua
