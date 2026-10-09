@@ -39,7 +39,9 @@ local PI = math.pi
 --               object's bounding box when the boat is first boarded
 -- motion        cosmetic roll (sway) and pitch (rocking)
 -- sound         looped on the boat while it is crewed
--- pose          'stand' or 'sit', resolved through POSES
+-- pose          a stance in Core's whywalk_shared.VESSEL_STANCE: 'gondola'
+--               (gondola1, turning on gondolar/gondolal), 'stand', 'sit'.
+--               Rowboats move to 'rowing' when that stance ships.
 
 M.VESSELS = {
     rowboat = {
@@ -65,7 +67,7 @@ M.VESSELS = {
         motion = { roll = 0.014, rollFreq = 0.12, heelMax = 0.042, heelRate = 0.0084,
                    pitch = 0.03491, pitchPeriod = 4 },
         sound = 'Boat Creak',
-        pose = 'stand',
+        pose = 'gondola',
     },
 
     gondola_ornate = {
@@ -78,7 +80,7 @@ M.VESSELS = {
         motion = { roll = 0.014, rollFreq = 0.12, heelMax = 0.042, heelRate = 0.0084,
                    pitch = 0.03491, pitchPeriod = 4 },
         sound = 'Boat Creak',
-        pose = 'stand',
+        pose = 'gondola',
     },
 
     longboat = {
@@ -268,17 +270,6 @@ M.RECORDS = {
 }
 
 -- ---------------------------------------------------------------------------
--- POSES -- first group the pilot's skeleton actually has wins
--- ---------------------------------------------------------------------------
--- 'idle' is vanilla and always present. 'vasittingfloor' is the floor-sitting
--- group Rideable Silt Striders plays; it is not vanilla, so it is only used
--- when an installed animation pack provides it.
-M.POSES = {
-    stand = { 'idle' },
-    sit   = { 'vasittingfloor', 'idle' },
-}
-
--- ---------------------------------------------------------------------------
 -- TUNING
 -- ---------------------------------------------------------------------------
 M.TUNING = {
@@ -298,6 +289,7 @@ M.TUNING = {
     gainMax          = 2.5,
     gainRate         = 0.5,    -- 1/s
     soundVolume      = 0.6,
+    animDeadzone     = 0.2,    -- rudder/throttle below this poses as centred
 }
 
 -- ---------------------------------------------------------------------------

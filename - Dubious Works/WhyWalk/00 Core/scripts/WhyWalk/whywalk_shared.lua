@@ -479,4 +479,156 @@ function M.allJumpGroups()
     return out
 end
 
+-- ---------------------------------------------------------------------------
+-- VESSEL STANCES (WhyWalk Boats)
+-- ---------------------------------------------------------------------------
+-- The pilot's pose aboard a boat. Played by ridingAnim.lua on
+-- WhyWalk_AnimVesselStart / _AnimVesselHelm / _AnimVesselStop, which the
+-- Boats module sends. Same shape as Take a Seat's and ErnGlider's _shared
+-- tables: group names, key candidates, a validated stance table, and a layer
+-- profile built from the injected animation module.
+
+-- xGondola1.kf (all six skeleton folders). Each group is start, loop start,
+-- loop stop, stop. The loop keys were authored as "godola1" and renamed by
+-- tools/fix_textkeys.py; tools/check_anims.py now rejects a split group.
+M.VESSEL_GROUP = {
+    GONDOLA       = "gondola1",   -- poling, straight ahead
+    GONDOLA_RIGHT = "gondolar",   -- poling, turning to starboard
+    GONDOLA_LEFT  = "gondolal",   -- poling, turning to port
+}
+local VG = M.VESSEL_GROUP
+
+-- Tried in order per group; the first pair the clip actually has is used
+-- (animation.getTextKeyTime). "loop start" first, so the pose starts inside
+-- its loop rather than replaying the lead-in on every turn change.
+M.VESSEL_KEY_CANDIDATES = {
+    { start = "loop start", stop = "loop stop" },
+    { start = "start",      stop = "stop" },
+}
+
+-- base   - straight ahead, or stopped. A LIST means the first group the
+--          skeleton has (animation.hasGroup), for packs that may be absent.
+-- left   - rudder to port. Optional: absent means base.
+-- right  - rudder to starboard. Optional: absent means base.
+-- stroke - throttle ahead. Optional; reserved for rowing, see below.
+-- back   - throttle astern. Optional; reserved for rowing, see below.
+-- Lower case throughout: OpenMW stores group names lower-cased.
+local VESSEL_STANCE_BY_NAME = {
+    gondola = {
+        base  = VG.GONDOLA,
+        left  = VG.GONDOLA_LEFT,
+        right = VG.GONDOLA_RIGHT,
+    },
+
+    -- Vanilla; always present. Any vessel without a stance of its own.
+    stand = {
+        base = { "idle" },
+    },
+
+    -- Floor sitting where an animation pack provides it, else standing.
+    -- "vasittingfloor" is not vanilla (Rideable Silt Striders plays it).
+    sit = {
+        base = { "vasittingfloor", "idle" },
+    },
+
+    -- -----------------------------------------------------------------------
+    -- FUTURE: ROWING
+    -- -----------------------------------------------------------------------
+    -- Reserved for an oared pose set (rowboat; longboat oarsmen). Not
+    -- registered: no .kf in this package defines these groups, and a stance
+    -- naming a missing group would play nothing. Rowboats use `sit` until it
+    -- ships. Expected shape, so the controller needs no change when it does:
+    --
+    -- rowing = {
+    --     base   = "rowidle",    -- oars shipped, drifting
+    --     stroke = "rowstroke",  -- throttle ahead
+    --     back   = "rowback",    -- throttle astern (backing water)
+    --     left   = "rowl",       -- port oar only
+    --     right  = "rowr",       -- starboard oar only
+    --     paced  = true,         -- STUB: stroke rate follows boat speed;
+    --                            -- ridingAnim ignores it for now
+    -- },
+    --
+    -- Then set boats_db.VESSELS.rowboat.pose = 'rowing'. The helm event
+    -- already carries `throttle`, and ridingAnim already prefers
+    -- stroke/back over base when a stance has them.
+}
+
+local VESSEL_FIELDS = { "base", "left", "right", "stroke", "back" }
+
+local function validateVesselStances(byName)
+    for name, s in pairs(byName) do
+        if type(s) ~= "table" then
+            error(("[WhyWalk] vessel stance '%s' is %s, expected table"):format(name, type(s)))
+        end
+        if s.base == nil then
+            error(("[WhyWalk] vessel stance '%s' has no 'base' group"):format(name))
+        end
+        for _, field in ipairs(VESSEL_FIELDS) do
+            local v = s[field]
+            if v ~= nil then
+                local list = type(v) == "table" and v or { v }
+                if #list == 0 then
+                    error(("[WhyWalk] vessel stance '%s'.%s is an empty list"):format(name, field))
+                end
+                for _, g in ipairs(list) do
+                    if type(g) ~= "string" or g ~= g:lower() then
+                        error(("[WhyWalk] vessel stance '%s'.%s '%s' must be a lower-case group name")
+                            :format(name, field, tostring(g)))
+                    end
+                end
+            end
+        end
+    end
+    if not byName.stand then
+        error("[WhyWalk] a 'stand' vessel stance is required (the fallback)")
+    end
+    return byName
+end
+
+M.VESSEL_STANCE = validateVesselStances(VESSEL_STANCE_BY_NAME)
+
+M.VESSEL_TUNING = {
+    -- Minimum seconds a pose is held before switching to another, so a
+    -- tapped rudder does not flicker between loops (ErnGlider's minPoseTime).
+    minPoseTime = 0.3,
+}
+
+---Vessel layer: whole body at PRIORITY.Hit -- above Movement, so the legs
+---hold the pose while the engine walks the pilot across the water; below
+---Weapon, Block, Knockdown and Torch, so fighting and casting still work.
+---Not Scripted, which pauses every other animation (RESEARCH 3.2).
+---@param anim any the openmw.animation module, injected so this file requires nothing
+function M.buildVesselLayer(anim)
+    return { priority = anim.PRIORITY.Hit, blendMask = anim.BLEND_MASK.All }
+end
+
+---Which stance field a helm state selects: turning wins, then stroke/back,
+---then base. Fields a stance lacks fall through to base.
+---@param stance table an entry of M.VESSEL_STANCE
+---@param turn number -1 port, 0, 1 starboard
+---@param throttle number -1 astern, 0, 1 ahead
+function M.vesselField(stance, turn, throttle)
+    if turn < 0 and stance.left then return "left" end
+    if turn > 0 and stance.right then return "right" end
+    if throttle > 0 and stance.stroke then return "stroke" end
+    if throttle < 0 and stance.back then return "back" end
+    return "base"
+end
+
+---Resolve a stance field to a concrete group, honouring lists. `hasGroup` is
+---injected (animation.hasGroup bound to the actor) to keep this file pure.
+---Returns nil only when not even the fallback stance resolves.
+function M.resolveVesselGroup(stanceName, field, hasGroup)
+    local stance = M.VESSEL_STANCE[stanceName] or M.VESSEL_STANCE.stand
+    local value = stance[field] or stance.base
+    for _, g in ipairs(type(value) == "table" and value or { value }) do
+        if hasGroup(g) then return g end
+    end
+    if stance ~= M.VESSEL_STANCE.stand then
+        return M.resolveVesselGroup("stand", "base", hasGroup)
+    end
+    return nil
+end
+
 return M

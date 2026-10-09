@@ -44,8 +44,13 @@ local EV = {
     LEFT          = 'WWBoats_Left',
     REFUSED       = 'WWBoats_Refused',
     ASK_LEAVE     = 'WWBoats_AskLeave',
-    POSE_START    = 'WWBoats_PoseStart',
-    POSE_STOP     = 'WWBoats_PoseStop',
+}
+
+-- The pilot's pose is Core's: ridingAnim.lua plays whywalk_shared.VESSEL_STANCE.
+local ANIM = {
+    START = 'WhyWalk_AnimVesselStart',
+    HELM  = 'WhyWalk_AnimVesselHelm',
+    STOP  = 'WhyWalk_AnimVesselStop',
 }
 
 local DEBUG = false
@@ -104,6 +109,7 @@ local lastPos, lastAsked, lastDirX, lastDirY, settle = nil, 0, 0, 0, 0
 local lastRunning = false
 local bumpTime = 0
 local lastSentHeading, lastSentTurn = nil, nil
+local animTurn, animThrottle = 0, 0
 
 local held = { forward = 0, back = 0, left = 0, right = 0 }
 
@@ -340,7 +346,8 @@ local function onBoarded(data)
     seedHeld()
     lockControls()
     addWaterWalking()
-    self.object:sendEvent(EV.POSE_START, { pose = vessel.pose })
+    animTurn, animThrottle = 0, 0
+    self.object:sendEvent(ANIM.START, { stance = vessel.pose })
 
     if settings:get('SHOW_HELP') ~= false then
         ui.showMessage(l10n('msg_help'))
@@ -380,7 +387,7 @@ local function onLeft(data)
     end
     handingOff = false
     removeWaterWalking()
-    self.object:sendEvent(EV.POSE_STOP, {})
+    self.object:sendEvent(ANIM.STOP, {})
 end
 
 local REFUSAL_MESSAGES = {
@@ -427,6 +434,16 @@ local function onUpdate(dt)
         rudder, viewEngaged = phys.viewRudder(heading, pilotYaw, viewEngaged, T)
     else
         rudder = phys.clamp(held.right - held.left, -1, 1)
+    end
+
+    -- The pose follows the pilot's hands -- the rudder and throttle they are
+    -- giving -- not the hull's response, and only on a change of sign.
+    local dz = T.animDeadzone
+    local turnSign = (rudder > dz and 1) or (rudder < -dz and -1) or 0
+    local throttleSign = (throttle > dz and 1) or (throttle < -dz and -1) or 0
+    if turnSign ~= animTurn or throttleSign ~= animThrottle then
+        animTurn, animThrottle = turnSign, throttleSign
+        self.object:sendEvent(ANIM.HELM, { turn = turnSign, throttle = throttleSign })
     end
 
     probeTimer = probeTimer - dt
@@ -494,10 +511,10 @@ local function onUpdate(dt)
     lastPos, lastAsked, lastRunning = pos, asked, running
     if norm > 1e-3 then lastDirX, lastDirY = vx / norm, vy / norm end
 
-    local turnSign = (yawRate > 0.01 and 1) or (yawRate < -0.01 and -1) or 0
-    if turnSign ~= lastSentTurn or math.abs(phys.angleDiff(lastSentHeading, heading)) > T.helmEpsilon then
-        lastSentHeading, lastSentTurn = heading, turnSign
-        core.sendGlobalEvent(EV.HELM, { player = self.object, heading = heading, turn = turnSign })
+    local heelSign = (yawRate > 0.01 and 1) or (yawRate < -0.01 and -1) or 0
+    if heelSign ~= lastSentTurn or math.abs(phys.angleDiff(lastSentHeading, heading)) > T.helmEpsilon then
+        lastSentHeading, lastSentTurn = heading, heelSign
+        core.sendGlobalEvent(EV.HELM, { player = self.object, heading = heading, turn = heelSign })
     end
 
     -- Walking on water splashes; Your Own Gondola stops these sounds every

@@ -48,14 +48,33 @@ def kf_strings(path):
     return out
 
 
+INCOMPLETE = []
+
+
 def kf_groups(path):
-    """Group names declared by text keys in this .kf."""
-    groups = set()
+    """Group names declared by text keys in this .kf -- COMPLETE groups only.
+
+    A group needs both `start` and `stop`, and its `loop start`/`loop stop`
+    must come as a pair. A misspelt prefix splits one group into two broken
+    ones: xGondola1.kf shipped as `godola1: start / loop start / loop stop`
+    plus `gondola1: stop`, and the old "any key declares the group" rule
+    passed `gondola1` while neither name could play. Incomplete groups are
+    reported and not counted as declared.
+    """
+    keys = {}
     for s in kf_strings(path):
         for line in s.splitlines():
             m = TEXTKEY.match(line.strip())
             if m:
-                groups.add(m.group(1).strip().lower())
+                keys.setdefault(m.group(1).strip().lower(), set()).add(m.group(2).lower())
+    groups = set()
+    for g, k in keys.items():
+        missing = [x for x in ('start', 'stop') if x not in k]
+        unpaired = ('loop start' in k) != ('loop stop' in k)
+        if missing or unpaired:
+            INCOMPLETE.append((os.path.relpath(path), g, sorted(k)))
+        else:
+            groups.add(g)
     return groups
 
 
@@ -141,6 +160,12 @@ def main(argv):
                 problems += 1
                 print('  MISSING   %-24s absent from: %s  (%s)'
                       % (g, ', '.join(missing_in), loc))
+
+    if INCOMPLETE:
+        print('\nINCOMPLETE groups (not playable; check the text-key spelling):')
+        for path, g, k in INCOMPLETE:
+            print('  %-14s keys %-40s %s' % (g, ', '.join(k), path))
+        problems += len(INCOMPLETE)
 
     print('\n%d group(s) unplayable on at least one skeleton' % problems)
     return 1 if problems else 0

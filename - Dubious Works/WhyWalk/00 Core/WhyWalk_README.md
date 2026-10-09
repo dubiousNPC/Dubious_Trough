@@ -182,6 +182,16 @@ leave an exotic state to the fallback without shipping a bespoke clip.
 Variants resolve once on state entry, never mid-state. Re-rolling while a state
 runs would restart the animation and produce a visible hitch.
 
+### Vessel stances (WhyWalk Boats)
+
+The same controller poses a boat pilot, from `VESSEL_STANCE` in
+`whywalk_shared.lua`: **gondola** poles on `gondola1` and turns on
+`gondolar` / `gondolal` (xGondola1.kf, looping between its loop keys),
+**stand** uses `idle`, **sit** a floor-sitting group if a pack provides one.
+A **rowing** stance is reserved and documented in the file. Driven by
+`WhyWalk_AnimVesselStart` / `_AnimVesselHelm` / `_AnimVesselStop`; see
+FIXES_2026-10-09.md.
+
 ### Bone groups and priority
 
 The rider pose is applied to the **lower body and torso**, not the torso alone:

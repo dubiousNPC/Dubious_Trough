@@ -19,4 +19,4 @@ local function encode(v)
 end
 
 print(encode({ VESSELS = db.VESSELS, PROVENANCE = db.PROVENANCE, MODELS = db.MODELS,
-               RECORDS = db.RECORDS, POSES = db.POSES, TUNING = db.TUNING }))
+               RECORDS = db.RECORDS, TUNING = db.TUNING }))

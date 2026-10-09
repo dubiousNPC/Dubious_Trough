@@ -328,6 +328,12 @@ P.eventHandlers.WWBoats_Boarded({ boat = log.copy, vesselId = 'rowboat', heading
                                   anchor = { x = 0, y = 0, z = 0 }, waterLevel = 0, waterOffset = 2,
                                   hull = { bow = 200, stern = 200, halfBeam = 60, draft = 30 } })
 check('boarding locks movement', overrides[#overrides] == true)
+local function lastPlayerEvent(name)
+    for i = #log.playerEvents, 1, -1 do
+        if log.playerEvents[i].name == name then return log.playerEvents[i].data end
+    end
+end
+check('boarding asks Core for the vessel pose', (lastPlayerEvent('WhyWalk_AnimVesselStart') or {}).stance == 'sit')
 check('boarding adds water walking once', log.effect == 1 and log.effectId == 'waterwalking')
 
 -- full ahead: the heading stays 0, so no helm traffic while going straight
@@ -351,6 +357,7 @@ check('top speed 144 is walked: factor 144 / (2 * 150)', near(P_self.controls.mo
 check('pilot covered the accel ramp plus cruise', near(pos.y, 144, 6), pos.y)
 
 -- a rudder turn streams heading changes, gated by epsilon
+log.playerEvents = {}
 actionHandlers.MoveRight(1)
 log.globalEvents = {}
 for _ = 1, 60 do P_self.controls.yawChange = 0; P.engineHandlers.onUpdate(1 / 60) end
@@ -359,6 +366,9 @@ for _, e in ipairs(log.globalEvents) do if e.name == 'WWBoats_Helm' then helmCou
 check('turning sends helm updates', helmCount > 10)
 check('but not more than one per frame', helmCount <= 60)
 check('view turns with the boat', P_self.controls.yawChange > 0)
+local helmAnims = 0
+for _, e in ipairs(log.playerEvents) do if e.name == 'WhyWalk_AnimVesselHelm' then helmAnims = helmAnims + 1 end end
+check('rudder pose sent once, on the change', helmAnims == 1 and lastPlayerEvent('WhyWalk_AnimVesselHelm').turn == 1, helmAnims)
 actionHandlers.MoveRight(0)
 
 -- the engine stops the pilot dead: the boat's way comes off
@@ -399,6 +409,7 @@ local nOverrides = #overrides
 P.eventHandlers.WWBoats_Left({ reason = 'player' })
 check('leaving releases movement', overrides[#overrides] == false and #overrides == nOverrides + 1)
 check('leaving removes water walking', log.effect == 0)
+check('leaving stops the vessel pose', lastPlayerEvent('WhyWalk_AnimVesselStop') ~= nil)
 
 -- Core hand-off: mounting from the boat must not release Core's lock
 P.eventHandlers.WWBoats_Boarded({ boat = log.copy, vesselId = 'gondola', heading = 0,

@@ -4,6 +4,8 @@ package.path = './?.lua;' .. package.path
 
 local phys = require('scripts.WhyWalk.Boats.boats_physics')
 local db   = require('scripts.WhyWalk.Boats.boats_db')
+-- Poses live in Core; the repo layout puts it beside this module.
+local core = dofile('../00 Core/scripts/WhyWalk/whywalk_shared.lua')
 
 local passed, failed = 0, 0
 local function check(name, cond, detail)
@@ -210,7 +212,7 @@ do
         end
         check(id .. '.pivot in [0,1]', v.pivot >= 0 and v.pivot <= 1)
         check(id .. '.anchor', type(v.anchor) == 'table' and v.anchor.x and v.anchor.y and v.anchor.z)
-        check(id .. '.pose', db.POSES[v.pose] ~= nil)
+        check(id .. '.pose is a Core vessel stance', core.VESSEL_STANCE[v.pose] ~= nil, tostring(v.pose))
         for _, k in ipairs({ 'roll', 'rollFreq', 'heelMax', 'heelRate', 'pitch', 'pitchPeriod' }) do
             check(id .. '.motion.' .. k, type(v.motion[k]) == 'number')
         end

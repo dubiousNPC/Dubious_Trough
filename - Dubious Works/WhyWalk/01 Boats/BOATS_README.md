@@ -127,6 +127,18 @@ for riders.
 - **Motion** (cosmetic): a sway roll that leans into turns (Immersive Travel's
   constants) plus a slow triangle-wave pitch (Your Own Gondola's 2° rocking).
 
+### The pilot's pose
+
+Core's `ridingAnim.lua` plays it, from `whywalk_shared.VESSEL_STANCE`; the
+Boats module only says which stance and what the helm is doing. Gondolas pole
+on **gondola1**, swapping to **gondolar** / **gondolal** while the rudder is
+over, each looping between its `loop start` / `loop stop` keys. Longboats,
+the catboat and the fishing boat stand (`idle`); the rowboat sits where a
+floor-sitting pack exists and stands otherwise, until the reserved
+**rowing** stance ships. The pose follows the rudder and throttle the pilot
+is giving, sent on change only; a change within 0.3 s of the last switch is
+deferred, not dropped, so a tapped rudder does not flicker.
+
 ### Speed delivery and the gain loop
 
 The mapping assumed, from OpenMW's character controller: the player moves at
@@ -163,7 +175,6 @@ scripts/WhyWalk/Boats/
   boats_physics.lua   equations of motion, pure and unit-tested                    (none)
   boats_global.lua    boarding, takeover copies, boat placement, leaving           (global)
   boats_player.lua    helm input, integration, bumper, leaving, settings           (player)
-  boats_pose.lua      the pilot's stance, AnimRefresh-aware                        (player)
 l10n/WhyWalkBoats/en.yaml
 data/boats_sources.json   every source number, extracted (generated)
 BOATS_DATABASE.md         the database as tables, with provenance (generated)

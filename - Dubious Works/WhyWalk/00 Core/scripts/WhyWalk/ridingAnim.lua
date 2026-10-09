@@ -8,6 +8,8 @@
       * one-shot completion, via the clip's own ended handler OR a timeout
       * addAnimationEndedHandler, for recovery from engine interruption
       * I.AnimRefresh, for perspective changes
+      * WhyWalk_AnimVesselStart / _AnimVesselHelm / _AnimVesselStop from the
+        Boats module: the pilot's pose aboard (see VESSEL POSE)
 
     Animates the RIDER only. The MOUNT's gait belongs to the engine's character
     controller on purpose.
@@ -91,6 +93,10 @@ local RIDE_PRIORITY = {
 }
 local RIDE_BLEND_MASK = anim.BLEND_MASK.LowerBody + anim.BLEND_MASK.Torso
 
+-- playBlended's `loops` is "a number >= 0" (Cod3x); -1 is out of range, not
+-- infinite (controls-port note). Devilish Guar Riding's value for "forever".
+local LOOPS = 999999
+
 -- ---------------------------------------------------------------------------
 -- STATE
 -- ---------------------------------------------------------------------------
@@ -142,7 +148,7 @@ local function playLoop(state)
     I.AnimationController.playBlendedAnimation(group, {
         startKey = "start", stopKey = "stop",
         priority = RIDE_PRIORITY, blendMask = RIDE_BLEND_MASK,
-        loops = -1, forceLoop = true, autoDisable = false,
+        loops = LOOPS, forceLoop = true, autoDisable = false,
     })
     currentState, currentGroup = state, group
 end
@@ -236,6 +242,90 @@ local function resumeLocomotion()
     oneShotActive = false
     currentState = nil
     playLoop(lastLocomotion)
+end
+
+-- ---------------------------------------------------------------------------
+-- VESSEL POSE
+-- ---------------------------------------------------------------------------
+-- The pilot's pose aboard a WhyWalk Boats vessel, from
+-- whywalk_shared.VESSEL_STANCE: gondola poling (gondola1, turning on
+-- gondolar / gondolal), standing, sitting, and a reserved rowing set.
+--
+-- Separate from the riding state above -- a pilot is never mounted -- and it
+-- leaves the camera alone: the pilot stands at water level, not in a saddle.
+-- The helm arrives as an event on CHANGE only (turn and throttle signs), so
+-- this costs nothing per frame; a change inside minPoseTime of the last
+-- switch is deferred by a one-shot timer rather than dropped, so the pose
+-- always ends on the latest helm state.
+
+local VESSEL_LAYER = shared.buildVesselLayer(anim)
+local VESSEL_TUNING = shared.VESSEL_TUNING
+
+local aboard = nil              -- stance name while piloting
+local vesselGroup = nil         -- the group actually playing
+local helmTurn, helmThrottle = 0, 0
+local vesselSwitchedAt = 0
+local vesselGeneration = 0      -- invalidates a pending deferred switch
+local vesselReported = {}
+
+local function hasGroup(group) return anim.hasGroup(self, group) end
+
+-- First key pair the clip really has. Text keys are stored lower-case.
+local function vesselKeys(group)
+    local candidates = shared.VESSEL_KEY_CANDIDATES
+    for _, c in ipairs(candidates) do
+        if anim.getTextKeyTime(self, group .. ": " .. c.start)
+            and anim.getTextKeyTime(self, group .. ": " .. c.stop) then
+            return c
+        end
+    end
+    return candidates[#candidates]
+end
+
+local function playVessel(force)
+    if not aboard then return end
+    local stance = shared.VESSEL_STANCE[aboard] or shared.VESSEL_STANCE.stand
+    local field = shared.vesselField(stance, helmTurn, helmThrottle)
+    local group = shared.resolveVesselGroup(aboard, field, hasGroup)
+    if not group then
+        if not vesselReported[aboard] then
+            vesselReported[aboard] = true
+            print("[WhyWalk] vessel stance '" .. tostring(aboard) .. "' resolves to no group on this"
+                  .. " skeleton, not even 'idle'. The pilot will walk on the spot.")
+        end
+        return
+    end
+    if group == vesselGroup and not force then return end
+
+    -- Bookkeeping, play, then release the outgoing loop (RESEARCH Part 5 #13).
+    local previous = vesselGroup
+    local keys = vesselKeys(group)
+    vesselGroup, vesselSwitchedAt = group, core.getSimulationTime()
+    I.AnimationController.playBlendedAnimation(group, {
+        startKey = keys.start, stopKey = keys.stop,
+        priority = VESSEL_LAYER.priority, blendMask = VESSEL_LAYER.blendMask,
+        loops = LOOPS, forceLoop = true, autoDisable = false,
+    })
+    if previous and previous ~= group then anim.cancel(self, previous) end
+    if DEBUG then print("[WhyWalk] vessel pose " .. group .. " (" .. field .. ")") end
+end
+
+local function requestVesselSwitch()
+    local wait = VESSEL_TUNING.minPoseTime - (core.getSimulationTime() - vesselSwitchedAt)
+    if wait <= 0 or not vesselGroup then return playVessel(false) end
+    vesselGeneration = vesselGeneration + 1
+    local mine = vesselGeneration
+    async:newUnsavableSimulationTimer(wait, function()
+        if mine ~= vesselGeneration or not aboard then return end
+        playVessel(false)
+    end)
+end
+
+local function stopVessel()
+    vesselGeneration = vesselGeneration + 1
+    if vesselGroup then anim.cancel(self, vesselGroup) end
+    aboard, vesselGroup = nil, nil
+    helmTurn, helmThrottle = 0, 0
 end
 
 -- ---------------------------------------------------------------------------
@@ -395,6 +485,11 @@ local function onPerspectiveChanged()
     -- Runs even when unmounted so a lingering offset is released if the ride
     -- ended while the notification was still settling.
     applyCameraOffset()
+    if aboard then
+        playVessel(true)
+        if vesselGroup and not anim.isPlaying(self, vesselGroup) then return false end
+        return
+    end
     if not mounted then return end
 
     -- A one-shot cannot be resumed part-way through, so a perspective change
@@ -434,6 +529,9 @@ end
 -- ---------------------------------------------------------------------------
 
 local function onAnimMounted(data)
+    -- Boats hands off to Core when the pilot mounts from the boat; the
+    -- vessel stop may land after this, so clear the pose here first.
+    if aboard then stopVessel() end
     mounted        = true
     mountType      = data and data.mountType or nil
     cancelOneShot()
@@ -479,7 +577,7 @@ local function onAnimDismounted()
     cancelOneShot()
     -- Unsubscribing is what keeps AnimRefresh free when nobody is riding: with
     -- no subscribers its onUpdate is a single count check.
-    unsubscribeRefresh()
+    if not aboard then unsubscribeRefresh() end
     clearCameraOffset()
     stopAnim()
 end
@@ -509,6 +607,44 @@ local function onAnimState(data)
 end
 
 -- ---------------------------------------------------------------------------
+-- VESSEL EVENTS (sent by WhyWalk Boats' boats_player.lua)
+-- ---------------------------------------------------------------------------
+
+local function sign(x)
+    x = tonumber(x) or 0
+    if x > 0 then return 1 elseif x < 0 then return -1 end
+    return 0
+end
+
+local function onAnimVesselStart(data)
+    if mounted then return end
+    stopVessel()
+    aboard = data and data.stance or "stand"
+    replayDisabled = false
+    subscribeRefresh()
+    -- Boarding teleports the pilot; pose after it lands (MOUNT_SETTLE).
+    local mine = vesselGeneration
+    async:newUnsavableSimulationTimer(MOUNT_SETTLE, function()
+        if mine ~= vesselGeneration or not aboard then return end
+        playVessel(true)
+    end)
+end
+
+local function onAnimVesselHelm(data)
+    if not aboard then return end
+    local turn, throttle = sign(data and data.turn), sign(data and data.throttle)
+    if turn == helmTurn and throttle == helmThrottle then return end
+    helmTurn, helmThrottle = turn, throttle
+    requestVesselSwitch()
+end
+
+local function onAnimVesselStop()
+    if not aboard then return end
+    stopVessel()
+    if not mounted then unsubscribeRefresh() end
+end
+
+-- ---------------------------------------------------------------------------
 -- RECOVERY
 -- ---------------------------------------------------------------------------
 -- A pinned/levitating rider counts as airborne, so the engine's falling
@@ -522,7 +658,24 @@ local REPLAY_BURST_LIMIT  = 5
 local REPLAY_BURST_WINDOW = 1.0
 local replayCount, replayWindowStart = 0, 0
 
+local function burstAllows(group)
+    local now = core.getSimulationTime()
+    if now - replayWindowStart > REPLAY_BURST_WINDOW then
+        replayWindowStart, replayCount = now, 0
+    end
+    replayCount = replayCount + 1
+    if replayCount <= REPLAY_BURST_LIMIT then return true end
+    print("[WhyWalk] '" .. tostring(group) .. "' keeps ending immediately; check the group name and its"
+          .. " text keys. Pose disabled until the next mount or boarding.")
+    replayDisabled = true
+    return false
+end
+
 I.AnimationController.addAnimationEndedHandler(function(groupname)
+    if aboard and not replayDisabled and groupname == vesselGroup then
+        if burstAllows(groupname) then playVessel(true) end
+        return
+    end
     if not mounted or oneShotActive or replayDisabled then return end
     if groupname ~= currentGroup then return end
 
@@ -552,7 +705,18 @@ end)
 -- SAVE / LOAD
 -- ---------------------------------------------------------------------------
 
-local function onLoad()
+-- Looping poses survive a save/load while this script's memory of them does
+-- not (build review section 3), so their names are saved and cancelled on
+-- load. Core and Boats re-send their start events if the save was mid-ride.
+local function onSave()
+    return { group = currentGroup, vessel = vesselGroup }
+end
+
+local function onLoad(data)
+    if data and data.group then anim.cancel(self, data.group) end
+    if data and data.vessel then anim.cancel(self, data.vessel) end
+    aboard, vesselGroup, helmTurn, helmThrottle = nil, nil, 0, 0
+    vesselGeneration = vesselGeneration + 1
     mounted, mountType = false, nil
     cancelOneShot()
     replayDisabled = false
@@ -569,8 +733,12 @@ return {
         WhyWalk_AnimMounted    = onAnimMounted,
         WhyWalk_AnimDismounted = onAnimDismounted,
         WhyWalk_AnimState      = onAnimState,
+        WhyWalk_AnimVesselStart = onAnimVesselStart,
+        WhyWalk_AnimVesselHelm  = onAnimVesselHelm,
+        WhyWalk_AnimVesselStop  = onAnimVesselStop,
     },
     engineHandlers = {
+        onSave = onSave,
         onLoad = onLoad,
     },
 }
