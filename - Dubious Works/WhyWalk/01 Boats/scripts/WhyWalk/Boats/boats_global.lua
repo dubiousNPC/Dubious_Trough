@@ -270,7 +270,13 @@ local function board(player, target, motionOn)
     if not cell.hasWater then return refuse(player, 'nowater') end
     local waterLevel = cell.waterLevel or 0
 
+    -- Nil-guarded, like hullFromBox below. getBoundingBox returns nothing for
+    -- an object with no renderable geometry, and indexing `box.halfSize` then
+    -- throws from inside an activation handler. hullFromBox already checked
+    -- for it; this call did not, which made the guard a matter of which line
+    -- the object reached first.
     local box = target:getBoundingBox()
+    if not box or not box.halfSize or not box.center then return end
     local reach = T.claimRange + math.max(box.halfSize.x, box.halfSize.y)
     local dx, dy = player.position.x - box.center.x, player.position.y - box.center.y
     if dx * dx + dy * dy > reach * reach then return refuse(player, 'far') end
@@ -384,10 +390,20 @@ local function onUpdate(dt)
     local s = session
     if not s then return end
 
+    -- Routed through endSession rather than clearing the session here.
+    --
+    -- [BUGFIX] This used to set `session = nil` and send LEFT by hand, which
+    -- skipped stopSound. When the BOAT goes invalid that is harmless -- its
+    -- attached sound goes with it -- but this guard also fires when the PLAYER
+    -- goes invalid while the boat is still there, and then a looping hull
+    -- creak played on `{ loop = true }` was left running on an abandoned boat
+    -- with nothing holding its name. Same shape as the looping animation that
+    -- survived a save in Core's build review.
+    --
+    -- endSession guards every step on isValid individually, so it is safe for
+    -- either object being gone, and it also re-places the boat properly.
     if not s.boat:isValid() or not s.player:isValid() then
-        session = nil
-        if s.player:isValid() then s.player:sendEvent(EV.LEFT, { reason = 'invalid' }) end
-        return
+        return endSession('invalid')
     end
     local health = types.Actor.stats.dynamic.health(s.player)
     if health.current <= 0 then return endSession('died') end

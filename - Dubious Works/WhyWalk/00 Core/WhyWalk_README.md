@@ -188,9 +188,21 @@ The same controller poses a boat pilot, from `VESSEL_STANCE` in
 `whywalk_shared.lua`: **gondola** poles on `gondola1` and turns on
 `gondolar` / `gondolal` (xGondola1.kf, looping between its loop keys),
 **stand** uses `idle`, **sit** a floor-sitting group if a pack provides one.
-A **rowing** stance is reserved and documented in the file. Driven by
-`WhyWalk_AnimVesselStart` / `_AnimVesselHelm` / `_AnimVesselStop`; see
-FIXES_2026-10-09.md.
+
+**rowing** is the oared set, from xRowing1.kf (xBeastRowing1.kf on the beast
+skeleton): `rowingidle` with the oars shipped, `rowing1` pulling ahead at
+speed, `rowslow` pulling gently, and `rowingl` / `rowingr` for one oar when
+turning. Turning outranks throttle, because pulling one oar is how an oared
+boat turns. There is deliberately no backing stroke: the clip has none, and a
+forward stroke played while the hull slides astern is the same mismatch as a
+creature walking forward while moving backwards.
+
+The gentle stroke is chosen by a speed BAND the helm event carries, with two
+thresholds so the stroke does not swap back and forth around one. A Boats
+build that sends no band drives rather than easing off.
+
+Driven by `WhyWalk_AnimVesselStart` / `_AnimVesselHelm` / `_AnimVesselStop`;
+see FIXES_2026-10-09.md and FIXES_2026-10-10.md.
 
 ### Bone groups and priority
 

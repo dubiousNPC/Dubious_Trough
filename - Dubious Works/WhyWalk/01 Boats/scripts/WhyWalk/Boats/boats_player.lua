@@ -110,6 +110,10 @@ local lastRunning = false
 local bumpTime = 0
 local lastSentHeading, lastSentTurn = nil, nil
 local animTurn, animThrottle = 0, 0
+-- Speed band for the pose: true at or above hull speed. Hysteresis, because
+-- this crosses its threshold every time the boat accelerates and a single
+-- threshold would swap the stroke back and forth around it.
+local animFast = false
 
 local held = { forward = 0, back = 0, left = 0, right = 0 }
 
@@ -346,7 +350,7 @@ local function onBoarded(data)
     seedHeld()
     lockControls()
     addWaterWalking()
-    animTurn, animThrottle = 0, 0
+    animTurn, animThrottle, animFast = 0, 0, false
     self.object:sendEvent(ANIM.START, { stance = vessel.pose })
 
     if settings:get('SHOW_HELP') ~= false then
@@ -438,12 +442,27 @@ local function onUpdate(dt)
 
     -- The pose follows the pilot's hands -- the rudder and throttle they are
     -- giving -- not the hull's response, and only on a change of sign.
+    --
+    -- The one thing taken from the hull is the SPEED BAND, which an oared
+    -- stance uses to pick a gentle stroke over a driving one. That is the
+    -- hull's business rather than the pilot's hands: the oars are what made
+    -- the boat fast, so the stroke should match the way it is actually
+    -- moving, not the key being held.
     local dz = T.animDeadzone
     local turnSign = (rudder > dz and 1) or (rudder < -dz and -1) or 0
     local throttleSign = (throttle > dz and 1) or (throttle < -dz and -1) or 0
-    if turnSign ~= animTurn or throttleSign ~= animThrottle then
-        animTurn, animThrottle = turnSign, throttleSign
-        self.object:sendEvent(ANIM.HELM, { turn = turnSign, throttle = throttleSign })
+    local fast = animFast
+    local way = vessel.maxSpeed > 0 and math.abs(speed) / vessel.maxSpeed or 0
+    if fast and way < T.poseSlowBelow then
+        fast = false
+    elseif not fast and way > T.poseFastAbove then
+        fast = true
+    end
+    if turnSign ~= animTurn or throttleSign ~= animThrottle or fast ~= animFast then
+        animTurn, animThrottle, animFast = turnSign, throttleSign, fast
+        self.object:sendEvent(ANIM.HELM, {
+            turn = turnSign, throttle = throttleSign, fast = fast,
+        })
     end
 
     probeTimer = probeTimer - dt

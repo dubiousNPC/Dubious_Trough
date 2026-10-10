@@ -495,6 +495,28 @@ M.VESSEL_GROUP = {
     GONDOLA       = "gondola1",   -- poling, straight ahead
     GONDOLA_RIGHT = "gondolar",   -- poling, turning to starboard
     GONDOLA_LEFT  = "gondolal",   -- poling, turning to port
+
+    -- xRowing1.kf (and xBeastRowing1.kf for the beast skeleton), all six
+    -- skeleton folders. Five segments laid end to end in one clip:
+    --
+    --     0.000- 2.833  rowingidle   oars shipped          (no loop keys)
+    --     3.667-10.533  rowing1      pulling ahead         loop 4.167- 9.833
+    --    10.833-13.700  rowingr      starboard oar         loop 11.700-13.000
+    --    13.733-16.333  rowingl      port oar              loop 14.500-15.833
+    --    16.667-19.300  rowslow      pulling ahead, gently loop 17.467-18.800
+    --
+    -- rowingl shipped MISNAMED: both turn segments were called `rowingr`, so
+    -- the group had two start keys, only one segment was reachable, and the
+    -- port stroke had no name at all. Renamed in place with
+    -- tools/fix_textkeys.py rowingr rowingl --from 13.72 --to 16.40, and
+    -- tools/check_anims.py now reports a group declared twice -- it used to
+    -- collect keys into a set, which hid this exactly as the set hid nothing
+    -- about the godola1 split. Fix the .blend export too.
+    ROW_IDLE      = "rowingidle",
+    ROW_STROKE    = "rowing1",
+    ROW_SLOW      = "rowslow",
+    ROW_RIGHT     = "rowingr",
+    ROW_LEFT      = "rowingl",
 }
 local VG = M.VESSEL_GROUP
 
@@ -510,8 +532,9 @@ M.VESSEL_KEY_CANDIDATES = {
 --          skeleton has (animation.hasGroup), for packs that may be absent.
 -- left   - rudder to port. Optional: absent means base.
 -- right  - rudder to starboard. Optional: absent means base.
--- stroke - throttle ahead. Optional; reserved for rowing, see below.
--- back   - throttle astern. Optional; reserved for rowing, see below.
+-- stroke - throttle ahead, at speed. Optional: absent means base.
+-- slow   - throttle ahead, below hull speed. Optional: absent means stroke.
+-- back   - throttle astern. Optional: absent means base.
 -- Lower case throughout: OpenMW stores group names lower-cased.
 local VESSEL_STANCE_BY_NAME = {
     gondola = {
@@ -532,29 +555,37 @@ local VESSEL_STANCE_BY_NAME = {
     },
 
     -- -----------------------------------------------------------------------
-    -- FUTURE: ROWING
+    -- ROWING
     -- -----------------------------------------------------------------------
-    -- Reserved for an oared pose set (rowboat; longboat oarsmen). Not
-    -- registered: no .kf in this package defines these groups, and a stance
-    -- naming a missing group would play nothing. Rowboats use `sit` until it
-    -- ships. Expected shape, so the controller needs no change when it does:
+    -- Oared craft: the pilot pulls on the oars rather than poling or steering.
+    -- Group names are the ones xRowing1.kf actually declares, which are NOT
+    -- the names this block reserved while it was a stub (rowidle / rowstroke /
+    -- rowl / rowr) -- the clip calls them rowingidle / rowing1 / rowingl /
+    -- rowingr, plus a fifth the stub did not anticipate.
     --
-    -- rowing = {
-    --     base   = "rowidle",    -- oars shipped, drifting
-    --     stroke = "rowstroke",  -- throttle ahead
-    --     back   = "rowback",    -- throttle astern (backing water)
-    --     left   = "rowl",       -- port oar only
-    --     right  = "rowr",       -- starboard oar only
-    --     paced  = true,         -- STUB: stroke rate follows boat speed;
-    --                            -- ridingAnim ignores it for now
-    -- },
+    -- NO `back`. The clip has no backing-water stroke, and the nearest thing
+    -- to one would be playing a forward stroke while the boat slides astern --
+    -- the same mismatch as a creature playing walkforward while moving
+    -- backwards, which this project has twice treated as a bug. Backing
+    -- therefore falls through to base: oars shipped, drifting astern, which is
+    -- how a rowboat usually goes backwards anyway.
     --
-    -- Then set boats_db.VESSELS.rowboat.pose = 'rowing'. The helm event
-    -- already carries `throttle`, and ridingAnim already prefers
-    -- stroke/back over base when a stance has them.
+    -- `slow` is what became of the stub's `paced = true`. The idea was that
+    -- stroke rate should follow boat speed; the clip supplies that as a second,
+    -- gentler stroke rather than as a playback-rate change, so it is a stance
+    -- field and the helm event carries a speed band. Two groups is coarser
+    -- than scaling `speed`, but it is the animator's own timing in both, which
+    -- scaling is not.
+    rowing = {
+        base   = VG.ROW_IDLE,
+        stroke = VG.ROW_STROKE,
+        slow   = VG.ROW_SLOW,
+        left   = VG.ROW_LEFT,
+        right  = VG.ROW_RIGHT,
+    },
 }
 
-local VESSEL_FIELDS = { "base", "left", "right", "stroke", "back" }
+local VESSEL_FIELDS = { "base", "left", "right", "stroke", "slow", "back" }
 
 local function validateVesselStances(byName)
     for name, s in pairs(byName) do
@@ -603,15 +634,26 @@ function M.buildVesselLayer(anim)
     return { priority = anim.PRIORITY.Hit, blendMask = anim.BLEND_MASK.All }
 end
 
----Which stance field a helm state selects: turning wins, then stroke/back,
----then base. Fields a stance lacks fall through to base.
+---Which stance field a helm state selects: turning wins, then the ahead
+---strokes, then astern, then base. Fields a stance lacks fall through.
+---
+---Turning deliberately outranks throttle. On an oared boat that is not a
+---compromise but the actual technique: you turn by pulling one oar, so
+---`rowingr` while holding ahead-and-starboard is what a rower does.
 ---@param stance table an entry of M.VESSEL_STANCE
 ---@param turn number -1 port, 0, 1 starboard
 ---@param throttle number -1 astern, 0, 1 ahead
-function M.vesselField(stance, turn, throttle)
+---@param fast boolean|nil at or above hull speed. nil means yes, which keeps
+---       every caller that predates the speed band selecting `stroke`.
+function M.vesselField(stance, turn, throttle, fast)
     if turn < 0 and stance.left then return "left" end
     if turn > 0 and stance.right then return "right" end
-    if throttle > 0 and stance.stroke then return "stroke" end
+    if throttle > 0 then
+        if fast == false and stance.slow then return "slow" end
+        if stance.stroke then return "stroke" end
+        -- A stance with `slow` but no `stroke` uses it at any speed.
+        if stance.slow then return "slow" end
+    end
     if throttle < 0 and stance.back then return "back" end
     return "base"
 end

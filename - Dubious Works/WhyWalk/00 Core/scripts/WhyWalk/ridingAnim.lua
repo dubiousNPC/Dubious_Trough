@@ -264,6 +264,10 @@ local VESSEL_TUNING = shared.VESSEL_TUNING
 local aboard = nil              -- stance name while piloting
 local vesselGroup = nil         -- the group actually playing
 local helmTurn, helmThrottle = 0, 0
+-- Speed band from the helm event: false means below hull speed, which picks a
+-- stance's `slow` stroke where it has one. Defaults to true so a Boats build
+-- that predates the band behaves exactly as before.
+local helmFast = true
 local vesselSwitchedAt = 0
 local vesselGeneration = 0      -- invalidates a pending deferred switch
 local vesselReported = {}
@@ -285,7 +289,7 @@ end
 local function playVessel(force)
     if not aboard then return end
     local stance = shared.VESSEL_STANCE[aboard] or shared.VESSEL_STANCE.stand
-    local field = shared.vesselField(stance, helmTurn, helmThrottle)
+    local field = shared.vesselField(stance, helmTurn, helmThrottle, helmFast)
     local group = shared.resolveVesselGroup(aboard, field, hasGroup)
     if not group then
         if not vesselReported[aboard] then
@@ -326,6 +330,7 @@ local function stopVessel()
     if vesselGroup then anim.cancel(self, vesselGroup) end
     aboard, vesselGroup = nil, nil
     helmTurn, helmThrottle = 0, 0
+    helmFast = true
 end
 
 -- ---------------------------------------------------------------------------
@@ -633,8 +638,11 @@ end
 local function onAnimVesselHelm(data)
     if not aboard then return end
     local turn, throttle = sign(data and data.turn), sign(data and data.throttle)
-    if turn == helmTurn and throttle == helmThrottle then return end
-    helmTurn, helmThrottle = turn, throttle
+    -- `fast` absent means fast, so a Boats build that does not send the speed
+    -- band keeps selecting `stroke` rather than silently dropping to `slow`.
+    local fast = not (data and data.fast == false)
+    if turn == helmTurn and throttle == helmThrottle and fast == helmFast then return end
+    helmTurn, helmThrottle, helmFast = turn, throttle, fast
     requestVesselSwitch()
 end
 

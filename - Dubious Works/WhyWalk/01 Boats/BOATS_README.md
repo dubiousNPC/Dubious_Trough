@@ -133,11 +133,25 @@ Core's `ridingAnim.lua` plays it, from `whywalk_shared.VESSEL_STANCE`; the
 Boats module only says which stance and what the helm is doing. Gondolas pole
 on **gondola1**, swapping to **gondolar** / **gondolal** while the rudder is
 over, each looping between its `loop start` / `loop stop` keys. Longboats,
-the catboat and the fishing boat stand (`idle`); the rowboat sits where a
-floor-sitting pack exists and stands otherwise, until the reserved
-**rowing** stance ships. The pose follows the rudder and throttle the pilot
-is giving, sent on change only; a change within 0.3 s of the last switch is
-deferred, not dropped, so a tapped rudder does not flicker.
+the catboat and the fishing boat stand (`idle`) -- a longboat's pilot stands at
+the guide slot, which is the helmsman's station, so its oarsmen are not the
+player.
+
+The rowboat **rows**: `rowingidle` with the oars shipped, `rowing1` pulling
+ahead, `rowslow` pulling gently, and `rowingl` / `rowingr` for one oar while
+turning. Astern ships the oars, because the clip has no backing stroke and
+rowing forwards while sliding backwards would look worse than drifting.
+
+The pose follows the rudder and throttle the pilot is giving, sent on change
+only; a change within 0.3 s of the last switch is deferred, not dropped, so a
+tapped rudder does not flicker.
+
+The one thing taken from the hull rather than the pilot's hands is the speed
+**band** -- whether the boat is making way or barely moving -- which picks
+`rowslow` over `rowing1`. The oars are what made the boat fast, so the stroke
+should match how it is actually moving. Two thresholds
+(`poseFastAbove` 0.55, `poseSlowBelow` 0.35 of `maxSpeed`), because the band is
+crossed on every departure and every stop and one threshold would flicker.
 
 ### Speed delivery and the gain loop
 

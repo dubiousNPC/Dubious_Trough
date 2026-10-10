@@ -40,8 +40,13 @@ local PI = math.pi
 -- motion        cosmetic roll (sway) and pitch (rocking)
 -- sound         looped on the boat while it is crewed
 -- pose          a stance in Core's whywalk_shared.VESSEL_STANCE: 'gondola'
---               (gondola1, turning on gondolar/gondolal), 'stand', 'sit'.
---               Rowboats move to 'rowing' when that stance ships.
+--               (gondola1, turning on gondolar/gondolal), 'rowing'
+--               (rowingidle / rowing1 / rowslow, one oar on rowingl and
+--               rowingr), 'stand', 'sit'.
+--               The rowboat is the only oared hull here. The longboat's pilot
+--               stands at the guide slot -- the helmsman's station, per
+--               Immersive Travel's mount data -- so it stays 'stand'; its
+--               oarsmen are not the player.
 
 M.VESSELS = {
     rowboat = {
@@ -54,7 +59,7 @@ M.VESSELS = {
         motion = { roll = 0.028, rollFreq = 0.12, heelMax = 0.084, heelRate = 0.0168,
                    pitch = 0.03491, pitchPeriod = 4 },
         sound = 'Boat Creak',
-        pose = 'sit',
+        pose = 'rowing',
     },
 
     gondola = {
@@ -290,6 +295,14 @@ M.TUNING = {
     gainRate         = 0.5,    -- 1/s
     soundVolume      = 0.6,
     animDeadzone     = 0.2,    -- rudder/throttle below this poses as centred
+    -- Speed band for an oared pose, as a fraction of the vessel's maxSpeed.
+    -- Two thresholds, not one: the band is crossed on every departure and
+    -- every stop, and a single threshold would swap the stroke back and forth
+    -- while the hull sat near it. Gap is deliberately wide -- the cost of
+    -- being in the "wrong" stroke for a moment is nothing, the cost of
+    -- flicker is visible.
+    poseFastAbove    = 0.55,   -- below the band, rise above this to drive
+    poseSlowBelow    = 0.35,   -- above the band, fall below this to ease off
 }
 
 -- ---------------------------------------------------------------------------

@@ -49,6 +49,7 @@ def kf_strings(path):
 
 
 INCOMPLETE = []
+DUPLICATED = []
 
 
 def kf_groups(path):
@@ -60,21 +61,42 @@ def kf_groups(path):
     plus `gondola1: stop`, and the old "any key declares the group" rule
     passed `gondola1` while neither name could play. Incomplete groups are
     reported and not counted as declared.
+
+    DUPLICATES are reported too, and that check exists because this tool
+    missed one. It collected keys into a SET, so a group declared twice --
+    two complete start/stop cycles under one name -- collapsed to a single
+    entry and passed as healthy. xRowing1.kf shipped exactly that: five
+    sequential segments, of which two were both called `rowingr`, and the
+    left-turn stroke had no name of its own. A group cannot have two start
+    keys and play both, so one segment is unreachable and the author's intent
+    is silently lost -- the same failure as the godola1 typo wearing a
+    different hat.
+
+    Counting keys instead of setting them is the whole fix.
     """
     keys = {}
     for s in kf_strings(path):
         for line in s.splitlines():
             m = TEXTKEY.match(line.strip())
             if m:
-                keys.setdefault(m.group(1).strip().lower(), set()).add(m.group(2).lower())
+                g = m.group(1).strip().lower()
+                keys.setdefault(g, {})
+                k = m.group(2).lower()
+                keys[g][k] = keys[g].get(k, 0) + 1
     groups = set()
-    for g, k in keys.items():
-        missing = [x for x in ('start', 'stop') if x not in k]
-        unpaired = ('loop start' in k) != ('loop stop' in k)
+    for g, counts in keys.items():
+        missing = [x for x in ('start', 'stop') if x not in counts]
+        unpaired = ('loop start' in counts) != ('loop stop' in counts)
         if missing or unpaired:
-            INCOMPLETE.append((os.path.relpath(path), g, sorted(k)))
-        else:
-            groups.add(g)
+            INCOMPLETE.append((os.path.relpath(path), g, sorted(counts)))
+            continue
+        groups.add(g)
+        # More than one start/stop cycle under one name.
+        cycles = min(counts.get('start', 0), counts.get('stop', 0))
+        if cycles > 1:
+            DUPLICATED.append((os.path.relpath(path), g, cycles,
+                               ', '.join('%s x%d' % (k, n)
+                                         for k, n in sorted(counts.items()))))
     return groups
 
 
@@ -166,6 +188,13 @@ def main(argv):
         for path, g, k in INCOMPLETE:
             print('  %-14s keys %-40s %s' % (g, ', '.join(k), path))
         problems += len(INCOMPLETE)
+
+    if DUPLICATED:
+        print('\nDUPLICATED groups (two or more segments share one name, so'
+              ' only one is reachable):')
+        for path, g, cycles, counts in DUPLICATED:
+            print('  %-14s %d cycles  [%s]  %s' % (g, cycles, counts, path))
+        problems += len(DUPLICATED)
 
     print('\n%d group(s) unplayable on at least one skeleton' % problems)
     return 1 if problems else 0

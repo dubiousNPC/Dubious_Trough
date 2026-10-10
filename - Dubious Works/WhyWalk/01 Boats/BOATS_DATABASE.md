@@ -16,7 +16,7 @@ Vessel frame: x to starboard, y toward the bow, z up.
 | **Gondola** `gondola` | 120 u/s | 60 u/s | 48 u/s² | 72 u/s² | 0.603 /s | 0.24 rad/s (13.8°/s) | 0.4 | 2 /s | 40 u | gondola | Boat Creak |
 | **Ornate Gondola** `gondola_ornate` | 120 u/s | 60 u/s | 48 u/s² | 72 u/s² | 0.603 /s | 0.24 rad/s (13.8°/s) | 0.4 | 2 /s | 40 u | gondola | Boat Creak |
 | **Longboat** `longboat` | 240 u/s | 120 u/s | 96 u/s² | 144 u/s² | 0.603 /s | 0.144 rad/s (8.3°/s) | 0.2 | 1.5 /s | 74 u | stand | Boat Hull |
-| **Rowboat** `rowboat` | 144 u/s | 72 u/s | 72 u/s² | 108 u/s² | 0.603 /s | 0.4363 rad/s (25°/s) | 0.5 | 4 /s | 2 u | sit | Boat Creak |
+| **Rowboat** `rowboat` | 144 u/s | 72 u/s | 72 u/s² | 108 u/s² | 0.603 /s | 0.4363 rad/s (25°/s) | 0.5 | 4 /s | 2 u | rowing | Boat Creak |
 
 Time to top speed is `maxSpeed / accel`; coasting halves speed every `ln 2 / drag` (1.15 s at the shared 0.603). The pilot's own run speed caps the top speed actually reached.
 
