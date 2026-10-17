@@ -625,13 +625,35 @@ M.VESSEL_TUNING = {
     minPoseTime = 0.3,
 }
 
----Vessel layer: whole body at PRIORITY.Hit -- above Movement, so the legs
----hold the pose while the engine walks the pilot across the water; below
----Weapon, Block, Knockdown and Torch, so fighting and casting still work.
----Not Scripted, which pauses every other animation (RESEARCH 3.2).
+---Vessel layer: the legs hold the pose while the engine walks the pilot across
+---the water; the upper body stays below Weapon, Block, Knockdown and Torch, so
+---fighting, casting and a raised torch still read.
+---
+---This was uniform PRIORITY.Hit, which is exactly the tuple the engine plays a
+---hit reaction with (character.cpp:448, :453). A uniform priority is DELETED by
+---any animation sharing it, not merely outranked (animation.cpp:905-911), so
+---taking a hit on a boat removed the vessel pose outright.
+---
+---Splitting the legs to Weapon fixes that and is arbitration-neutral except
+---against a hit: nothing else competes at Weapon on LowerBody, and the legs
+---holding through a hit is what "above Movement" was already aiming at. The
+---upper body stays at Hit, so Animation::upperBodyReady() is unchanged.
+---
+---Not Scripted -- but note the old note's reason was wrong: Scripted does not
+---pause other animations. That comes from mPlayScriptedOnly, which the engine
+---sets only from the MWScript anim queue (character.cpp:1951).
 ---@param anim any the openmw.animation module, injected so this file requires nothing
 function M.buildVesselLayer(anim)
-    return { priority = anim.PRIORITY.Hit, blendMask = anim.BLEND_MASK.All }
+    local BG, P = anim.BONE_GROUP, anim.PRIORITY
+    return {
+        priority = {
+            [BG.LowerBody] = P.Weapon,
+            [BG.Torso]     = P.Hit,
+            [BG.LeftArm]   = P.Hit,
+            [BG.RightArm]  = P.Hit,
+        },
+        blendMask = anim.BLEND_MASK.All,
+    }
 end
 
 ---Which stance field a helm state selects: turning wins, then the ahead

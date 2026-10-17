@@ -1,5 +1,7 @@
 # WhyWalk
 
+**REQUIRES AnimRefresh_V6**
+
 An all-in-one animated creature riding engine for OpenMW 0.51+.
 
 Mount a creature, steer it, and see your character actually sitting on it. One

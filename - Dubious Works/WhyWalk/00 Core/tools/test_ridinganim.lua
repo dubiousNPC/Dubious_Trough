@@ -50,12 +50,19 @@ local textKeys = {         -- "group: key" -> time, as in xGondola1.kf (fixed)
     ['rowslow: loop stop'] = 18.8, ['rowslow: stop'] = 19.3,
 }
 local lastOpts = nil
+local BG, P   -- bound after the openmw.animation mock exists
 
 package.loaded['openmw.self'] = { object = {} }
 package.loaded['openmw.animation'] = {
-    BONE_GROUP = { LowerBody = 1, Torso = 2, LeftArm = 3, RightArm = 4 },
+    -- Engine values, not invented ones: BONE_GROUP is 0-based (LowerBody 0 ..
+    -- RightArm 3) and PRIORITY is the full ordered enum, so a test can compare
+    -- against Torch and Block the way the engine does.
+    BONE_GROUP = { LowerBody = 0, Torso = 1, LeftArm = 2, RightArm = 3 },
     BLEND_MASK = { LowerBody = 1, Torso = 2, LeftArm = 4, RightArm = 8, All = 15 },
-    PRIORITY   = { Default = 0, Movement = 5, Hit = 6, Weapon = 7, Scripted = 13 },
+    PRIORITY   = { Default = 0, WeaponLowerBody = 1, SneakIdleLowerBody = 2,
+                   SwimIdle = 3, Jump = 4, Movement = 5, Hit = 6, Weapon = 7,
+                   Block = 8, Knockdown = 9, Torch = 10, Storm = 11, Death = 12,
+                   Scripted = 13 },
     hasGroup = function(_, g) return skeletonGroups[g] == true end,
     getTextKeyTime = function(_, text) return textKeys[text] end,
     cancel = function(_, g)
@@ -64,6 +71,8 @@ package.loaded['openmw.animation'] = {
     end,
     isPlaying = function(_, g) return playing == g end,
 }
+BG = package.loaded['openmw.animation'].BONE_GROUP
+P  = package.loaded['openmw.animation'].PRIORITY
 package.loaded['openmw.core'] = { getSimulationTime = function() return clock end }
 package.loaded['openmw.camera'] = {
     MODE = { FirstPerson = 0, ThirdPerson = 1 },
@@ -286,7 +295,16 @@ fireTimers()
 check('gondola stance poles on gondola1', playing == 'gondola1', tostring(playing))
 check('gondola1 loops between its loop keys',
       lastOpts and lastOpts.startKey == 'loop start' and lastOpts.stopKey == 'loop stop')
-check('vessel layer: whole body at Hit priority', lastOpts and lastOpts.priority == 6 and lastOpts.blendMask == 15)
+-- Per-bone-group table now, not a scalar: a uniform priority is deleted by any
+-- animation sharing it, and uniform Hit is what the engine plays a hit with.
+check('vessel layer: legs above Movement, upper body below Torch',
+      lastOpts and type(lastOpts.priority) == 'table'
+      and lastOpts.priority[BG.LowerBody] > P.Movement
+      and lastOpts.priority[BG.Torso] < P.Torch
+      and lastOpts.priority[BG.LeftArm] < P.Torch
+      and lastOpts.blendMask == 15)
+check('vessel layer is not a uniform tuple the engine also builds',
+      lastOpts and lastOpts.priority[BG.LowerBody] ~= lastOpts.priority[BG.Torso])
 check('loops is a valid count, not -1', lastOpts and lastOpts.loops and lastOpts.loops > 0)
 
 clock = clock + 1
