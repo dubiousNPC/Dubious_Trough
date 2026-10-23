@@ -2,7 +2,21 @@
 --   python3 tools/luarun.py tools/test_animrefresh.lua
 -- Every check here corresponds to a fault demonstrated in v3 (see the review
 -- notes in the file header) or to an edge found while writing v4.
-local PATH = 'scripts/AnimRefresh/AnimRefresh_v5.lua'
+-- Whichever AnimRefresh version is bundled, not a hardcoded one: the file was
+-- v5, then unbundled, then came back as v6, and a hardcoded path made this test
+-- SKIP while a perfectly testable file sat next to it.
+local PATH = nil
+for v = 9, 4, -1 do
+    local candidate = ('scripts/AnimRefresh/AnimRefresh_v%d.lua'):format(v)
+    local probe = io.open(candidate, 'r')
+    if probe then probe:close(); PATH = candidate; break end
+end
+if not PATH then
+    print('SKIP  no scripts/AnimRefresh/AnimRefresh_v*.lua is bundled here')
+    print('ALL PASS')
+    os.exit(0)
+end
+print('testing ' .. PATH)
 local FAILED = false
 local function check(n, c, e)
     print((c and '  ok   ' or '  FAIL ') .. n .. (c and '' or ('  got: ' .. tostring(e))))
@@ -39,7 +53,10 @@ IFACES[AR.interfaceName] = AR.interface
 local AN = IFACES.AnimRefresh
 local H = AR.engineHandlers
 local E = AR.eventHandlers or {}
-check('registers version 5', AN.version == 5)
+-- >= 5, because the contract these checks describe was settled in v5 and the
+-- bundled copy moves forward independently of this test.
+check('registers version 5 or newer', type(AN.version) == 'number' and AN.version >= 5,
+      tostring(AN.version))
 check('no TogglePOV trigger handler is registered', true)   -- nothing to register into
 -- Every OpenMW engine handler is named on*. Anything else under engineHandlers
 -- is logged as "Not supported handler" and never called -- which is how

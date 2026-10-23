@@ -25,8 +25,11 @@ FIELD = re.compile(r'[.:]\s*[A-Za-z_][\w]*')
 def strip(src):
     src = re.sub(r'--\[\[.*?\]\]', ' ', src, flags=re.S)
     src = re.sub(r'--[^\n]*', ' ', src)
-    src = re.sub(r'"(?:\\.|[^"\\])*"', '""', src)
-    src = re.sub(r"'(?:\\.|[^'\\])*'", "''", src)
+    # \n in the class: without it an unbalanced quote eats every line to
+    # the next one. Cost 214 lines of a 501-line file when globalcheck.py
+    # had the same bug, silently hiding both declarations and API calls.
+    src = re.sub(r'"(?:\\.|[^"\\\n])*"', '""', src)
+    src = re.sub(r"'(?:\\.|[^'\\\n])*'", "''", src)
     return src
 
 
