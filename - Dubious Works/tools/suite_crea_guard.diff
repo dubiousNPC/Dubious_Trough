@@ -1,0 +1,104 @@
+--- a/ops.py
++++ b/ops.py
+@@ -1807,6 +1807,32 @@
+         origin = np.eye(4)
+         if o is not None and o in context.selected_objects:
+             origin[:3, 3] = [float(v) for v in o.matrix_world.translation]
++        # A creature meant to animate needs a skeleton and skinned meshes;
++        # makeobj writes a static model (root NiNode + Tri<name> shapes, no
++        # bones). Pairing one with a .kf from Clips gives OpenMW 51 targets it
++        # cannot find ("can't find bone 'bip01'") and nothing animates, with no
++        # warning from either side. Refuse instead of writing that pair.
++        if tag == "CREA":
++            from . import creature_guard
++            arm = creature_guard.armature_for(objs)
++            if creature_guard.creature_needs_skeleton(objs):
++                if w.oc_animated:
++                    raise RuntimeError(
++                        "These meshes are weighted to the armature %r, so this is an animated "
++                        "creature. This exporter writes a static model with no bones, so its .kf "
++                        "would have nothing to bind to: OpenMW logs \"can't find bone\" once per "
++                        "target and the creature stands still.\n\n"
++                        "Export the model with io_scene_mw instead, then export the animation "
++                        "from the Clips panel as x<id>.kf beside it. Untick 'Animated' if the "
++                        "model really is static and you want the old behaviour."
++                        % (arm.name if arm else "?"))
++                s.log("creature: %r is weighted to %r but 'Animated' is off - writing a static "
++                      "model. It will not animate; no .kf can bind to it."
++                      % (w.oc_id.strip(), arm.name if arm else "?"))
++            elif w.oc_animated:
++                s.log("creature: no mesh is weighted to an armature, so there is nothing to "
++                      "animate - writing a static model.")
++
+         rig = active_rig(context) if tag in ("WEAP", "ARMO", "CLOT", "BODY", "LIGH") else None
+         joints = makeobj.rig_joints(rig) if (rig is not None and (w.oc_fit or w.oc_split)) else {}
+         if (w.oc_fit or w.oc_split) and tag in ("WEAP", "ARMO", "CLOT", "BODY") and not joints:
+--- a/props.py
++++ b/props.py
+@@ -612,6 +612,13 @@
+         ("CREA", "Creature", "An actor (the model as it is, no animation)"),
+     ]
+
++    oc_animated: bpy.props.BoolProperty(
++        name="Animated",
++        description="This creature is meant to animate. Its meshes must be weighted to an "
++                    "armature, and the model must come from io_scene_mw - the creature path "
++                    "here writes a static model with no bones. Leave this on so an animated "
++                    "creature is refused rather than silently exported as a model no .kf can "
++                    "bind to",
++        default=True,
++    )
++
+--- /dev/null
++++ b/creature_guard.py
+@@ -0,0 +1,38 @@
++"""Is this an animated creature or a static prop?
++
++Two questions the CREA export path needs answered before it writes anything.
++Deliberately small: it only detects, it does not export. The Suite has no
++skinned-creature writer, and a half-working one is worse than an honest refusal
++- see SUITE-FINDINGS.md section 2.
++"""
++
++
++def armature_for(objects):
++    """The armature these meshes are weighted to, if there is exactly one."""
++    found = []
++    for obj in objects:
++        if obj.type == 'ARMATURE':
++            found.append(obj)
++        elif obj.type == 'MESH':
++            for modifier in obj.modifiers:
++                if modifier.type == 'ARMATURE' and modifier.object is not None:
++                    found.append(modifier.object)
++            if obj.parent is not None and obj.parent.type == 'ARMATURE':
++                found.append(obj.parent)
++    unique = []
++    for armature in found:
++        if armature not in unique:
++            unique.append(armature)
++    return unique[0] if len(unique) == 1 else (unique[0] if unique else None)
++
++
++def creature_needs_skeleton(objects):
++    """True when a mesh here carries weight in a group named after a bone.
++
++    Vertex groups alone are not enough - a static prop can have them - so this
++    asks for a group whose name matches a bone of the armature the mesh is bound
++    to, and which actually holds weight.
++    """
++    armature = armature_for(objects)
++    if armature is None or armature.type != 'ARMATURE':
++        return False
++    bones = {bone.name for bone in armature.data.bones}
++    for obj in objects:
++        if obj.type != 'MESH':
++            continue
++        indices = {i for i, group in enumerate(obj.vertex_groups)
++                   if group.name in bones}
++        if not indices:
++            continue
++        for vertex in obj.data.vertices:
++            if any(g.group in indices and g.weight > 1e-6 for g in vertex.groups):
++                return True
++    return False

@@ -23,6 +23,7 @@ Run inside Blender:
 import argparse
 import os
 import sys
+import shutil
 
 import bpy
 from mathutils import Vector
@@ -133,6 +134,43 @@ def normalize_weights(target):
             group.weight = group.weight / total
 
 
+def freeze_pose_as_rest(armature):
+    """Make the armature's current pose its rest pose.
+
+    THIS IS THE STEP WHOSE ABSENCE BROKE THE FIRST ATTEMPT.  io_scene_mw sets a
+    creature's armature rest to the pose its NiSkinData was bound in - the
+    modelling pose - and then *poses* it to the transforms the x.nif holds, so
+    what the modeller sees on screen is the animated pose.  A replacement mesh
+    is modelled against what is on screen, which means its vertices are in the
+    posed pose while the armature's rest is a different one.  Export that and
+    the skin's bind pose and the model's geometry describe two different
+    moments; every vertex is dragged by the difference, and the creature comes
+    out roughly three times its own width - "bones pushed out of shape to
+    extreme degrees".
+
+    Run this after the weights are on, never before: the transfer has to happen
+    with the donor posed, because that is the shape the new mesh matches.
+    Freezing first moves the donor out from under the new mesh and the nearest-
+    surface mapping collapses (48 bones became 13 when tried that way).
+
+    Nothing is baked.  Applying the pose as rest leaves each bound mesh showing
+    its own base geometry, which for the replacement mesh is exactly the shape
+    it was modelled in.  The donor's own meshes do snap back to their modelling
+    pose, which is harmless: they are only the weight source and are discarded.
+    """
+    if not armature.pose or not any(
+            pb.matrix_basis != pb.matrix_basis.Identity(4)
+            for pb in armature.pose.bones):
+        print("armature is already at rest; nothing to freeze")
+        return
+    select_only([armature], active=armature)
+    bpy.ops.object.mode_set(mode='POSE')
+    bpy.ops.pose.select_all(action='SELECT')
+    bpy.ops.pose.armature_apply()
+    bpy.ops.object.mode_set(mode='OBJECT')
+    print("froze the armature's visible pose as its rest pose")
+
+
 def unweighted_vertices(target):
     return [v.index for v in target.data.vertices
             if sum(g.weight for g in v.groups) <= 1e-9]
@@ -221,19 +259,34 @@ def main():
         for obj in donor_meshes:
             bpy.data.objects.remove(obj, do_unlink=True)
 
+
+    # The weight transfer had to run with the donor posed, because that is the
+    # shape the replacement mesh was modelled against. Now that the weights are
+    # on, align the rest pose with it so the exporter cannot write a bind pose
+    # that disagrees with the geometry.
+    freeze_pose_as_rest(armature)
+
     if args.save_blend:
         bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(args.save_blend))
 
     # --- export ------------------------------------------------------------
-    # Everything under the armature, selected, exported as one creature. The
-    # x.nif / x.kf pair comes from extract_keyframe_data.
+    # Everything under the armature, selected, exported as one creature.
+    #
+    # Animation export is off on purpose. The donor's action is keyed against
+    # the donor's old rest pose, which freeze_pose_as_rest has just replaced, so
+    # anything written from it now would be wrong - and the creature's real
+    # animation is the .kf that already exists, bit-exact vanilla. x<name>.nif
+    # is therefore a copy of the model: with no controllers in it, that is
+    # exactly what the convention asks for.
     targets = [o for o in bpy.data.objects if o.type in ('MESH', 'ARMATURE', 'EMPTY')]
     select_only(targets, active=armature)
     full = os.path.join(os.path.abspath(args.out), f"{args.name}.nif")
     bpy.ops.export_scene.mw(filepath=full, use_selection=True,
-                            export_animations=True, extract_keyframe_data=True)
+                            export_animations=False)
+    shutil.copyfile(full, os.path.join(os.path.abspath(args.out),
+                                       f"x{args.name}.nif"))
     print(f"\nwrote {full}")
-    for name in (f"{args.name}.nif", f"x{args.name}.nif", f"x{args.name}.kf"):
+    for name in (f"{args.name}.nif", f"x{args.name}.nif"):
         path = os.path.join(args.out, name)
         print(f"  {'OK ' if os.path.exists(path) else 'MISSING'} {name}"
               + (f"  {os.path.getsize(path)} bytes" if os.path.exists(path) else ""))
