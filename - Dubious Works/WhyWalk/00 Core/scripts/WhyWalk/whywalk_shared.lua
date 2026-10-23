@@ -51,6 +51,15 @@ local S = M.STATE
 -- Value is a group name, a LIST (pick one at random on state entry), or
 -- `false` meaning "this mount has no such state, do NOT fall back to the
 -- generic clip". `nil` means unspecified and DOES fall back.
+-- The horse set, declared on its own because it is also the FALLBACK. These
+-- five groups are the only straddling rider clips this package actually ships
+-- (xHorseDBSRide2.kf, all six skeleton folders), which is what makes them the
+-- only honest thing to fall back TO.
+local HORSE_ANIM = {
+    [S.IDLE] = "rideh1", [S.WALK] = "rideh2", [S.GALLOP] = "rideh3",
+    [S.REVERSE] = "rideh4", [S.JUMP] = "rideh5",
+}
+
 M.RIDE_ANIM = {
     -- HORSE and GUAR are verified against the shipped .kf text keys, not just
     -- against the mods that supply them:
@@ -61,10 +70,7 @@ M.RIDE_ANIM = {
     -- placeholder: the group names are structurally correct but no .kf in this
     -- package defines them, so playBlended will find nothing and the fallback
     -- set is what actually plays.
-    [T.HORSE] = {   -- VERIFIED: Devilish Horse Riding
-        [S.IDLE] = "rideh1", [S.WALK] = "rideh2", [S.GALLOP] = "rideh3",
-        [S.REVERSE] = "rideh4", [S.JUMP] = "rideh5",
-    },
+    [T.HORSE] = HORSE_ANIM,   -- VERIFIED: Devilish Horse Riding
     [T.GUAR] = {    -- VERIFIED: Devilish Guar Riding
         [S.IDLE] = "rideg1", [S.WALK] = "rideg2", [S.GALLOP] = "rideg3",
         [S.REVERSE] = "rideg4", [S.JUMP] = "rideg5",
@@ -103,15 +109,29 @@ M.RIDE_ANIM = {
     },
 }
 
--- Ships with the mod, so an unresourced or free-ridden creature always has
--- something to play. Callers may disable it (see TUNING.useFallbackAnim).
-M.FALLBACK_ANIM = {
-    [S.IDLE]    = "ride_generic_idle",
-    [S.WALK]    = "ride_generic_walk",
-    [S.GALLOP]  = "ride_generic_gallop",
-    [S.REVERSE] = "ride_generic_reverse",
-    [S.JUMP]    = "ride_generic_jump",
-}
+-- THE FALLBACK IS THE HORSE SET, and it used to be five group names that did
+-- not exist.
+--
+-- It was ride_generic_idle / _walk / _gallop / _reverse / _jump -- structurally
+-- correct placeholders that no .kf in this package, or any other, defines.
+-- playBlended on a group the skeleton does not have is a SILENT no-op
+-- (RESEARCH 3.2; it is the first thing tools/check_anims.py's own header
+-- warns about): no error, no clip, and the actor keeps whatever pose it had.
+--
+-- So every creature the type table does not recognise got a fallback that
+-- resolved to a name, passed the `if not group then return end` check, was
+-- handed to playBlendedAnimation, and played nothing. That is the reported
+-- "no animation on unusual creatures", and it was silent by construction.
+--
+-- The horse set is the only straddling rider clip this package ships, so it
+-- is the only thing a fallback can honestly point at. ALIASED rather than
+-- copied, deliberately: two tables of the same five names would drift, and
+-- adding a variant list to the horse set should reach the fallback too.
+--
+-- READ ONLY. Nothing may mutate RIDE_ANIM or FALLBACK_ANIM -- they are the
+-- same table, and profileFor already taught this codebase what handing out a
+-- shared module table does when somebody writes to it.
+M.FALLBACK_ANIM = HORSE_ANIM
 
 -- ---------------------------------------------------------------------------
 -- CREATURE -> MOUNT TYPE
@@ -149,6 +169,15 @@ M.MOUNT_TYPE_PATTERNS = {
 }
 
 -- Never mountable, even under free ride.
+-- The CODE-level exclusion list: creatures this mod will never make
+-- rideable, whatever the player's settings say. Lower case, matched against
+-- recordId.
+--
+-- Deliberately almost empty. The entry below is a placeholder and names
+-- nothing real -- there is no vanilla creature that must be excluded, and
+-- guessing at other mods' quest creatures would be worse than useless. The
+-- list players actually need is BLACKLIST_IDS in the settings menu, which
+-- isBlacklisted consults alongside this one.
 M.BLACKLIST = {
     ["placeholder_questcreature_01"] = true,
 }
@@ -311,8 +340,24 @@ function M.getMountType(recordId)
     return result or nil
 end
 
-function M.isBlacklisted(recordId)
-    return recordId ~= nil and M.BLACKLIST[recordId:lower()] == true
+---Is this creature excluded from being ridden?
+---
+---Two lists, both consulted. M.BLACKLIST below is the CODE-level one, for a
+---mod author shipping an exclusion with the mod. `extra` is the PLAYER's own,
+---from the BLACKLIST_IDS setting -- a set of lower-cased record ids, which is
+---the shape the textSet renderer stores, so it is passed straight in with no
+---conversion.
+---
+---`extra` is a parameter rather than something this file reads, because a
+---setting lives in player storage and this file requires no openmw module at
+---all -- the global script could not read it even if it wanted to.
+---@param recordId string|nil
+---@param extra table|nil set of lower-cased ids, e.g. { ["guar"] = true }
+function M.isBlacklisted(recordId, extra)
+    if recordId == nil then return false end
+    local id = recordId:lower()
+    if M.BLACKLIST[id] == true then return true end
+    return extra ~= nil and extra[id] == true
 end
 
 -- ALWAYS returns a FRESH table, including on the fallback path.
@@ -440,31 +485,76 @@ function M.saddleFromBoundingBox(mount)
     return saddle
 end
 
--- Resolve one state to a concrete group name, or nil when the mount has none.
--- rng is injected (math.random by default) to keep this file pure.
-function M.resolveAnim(mountType, state, rng)
+-- Resolve one state to a concrete group name the skeleton can actually play,
+-- or nil when the mount genuinely has no clip for it.
+--
+-- `hasGroup` IS THE POINT OF THIS FUNCTION'S SECOND FIX.
+--
+-- Repointing FALLBACK_ANIM at the horse set only helps a creature the type
+-- table does not recognise. Six types it DOES recognise -- boar, nix,
+-- strident, kagouti, skyrender, netch -- carry placeholder group names of
+-- their own (rideb1, riden1, rides1, ridek1, ridefly1, ridenetch1), and
+-- because a set WAS found for them, the old per-state fallback never fired:
+-- it only triggered on a missing table KEY, never on a group the skeleton
+-- does not define. Those six played nothing for the same silent reason, and
+-- repointing the fallback alone would not have fixed one of them.
+--
+-- Testing each candidate against the skeleton is the only thing that can tell
+-- "this mount has no clip" from "this name is a placeholder". The pattern is
+-- already in this file -- resolveVesselGroup takes an injected hasGroup for
+-- exactly this reason -- so this is that pattern applied to the rider.
+--
+-- Injected, not required: this file pulls in no openmw module, which is what
+-- lets global, player and local scripts all share it.
+--
+-- `rng` is injected for the same purity reason (math.random by default).
+--
+---@param mountType string|nil
+---@param state string
+---@param rng function|nil
+---@param hasGroup function|nil `animation.hasGroup` bound to the actor. Without
+---       it every candidate is assumed present, which is the old behaviour and
+---       is what the pure data tests want.
+function M.resolveAnim(mountType, state, rng, hasGroup)
     local set = mountType and M.RIDE_ANIM[mountType]
-    if not set and M.TUNING.useFallbackAnim then set = M.FALLBACK_ANIM end
-    if not set then return nil end
 
-    local value = set[state]
-    if value == false then return nil end          -- explicit "no such state"
-    if value == nil and M.TUNING.useFallbackAnim and set ~= M.FALLBACK_ANIM then
-        value = M.FALLBACK_ANIM[state]
+    -- An explicit `false` means THIS MOUNT HAS NO SUCH STATE, and it outranks
+    -- every fallback: a netch has no reverse and no jump, and handing it the
+    -- horse's would be worse than handing it nothing.
+    if set and set[state] == false then return nil end
+
+    -- One state's value -> a playable group. Accepts a single name or a
+    -- variant list, and with hasGroup keeps only the names that exist before
+    -- choosing between them, so a half-resourced variant list still works.
+    local function pick(value)
+        if value == nil or value == false then return nil end
+        local list = type(value) == "table" and value or { value }
+
+        local usable
+        if hasGroup then
+            usable = {}
+            for _, g in ipairs(list) do
+                if hasGroup(g) then usable[#usable + 1] = g end
+            end
+        else
+            usable = list
+        end
+
+        local n = #usable
+        if n == 0 then return nil end
+        if n == 1 then return usable[1] end
+        return usable[(rng or math.random)(n)]
     end
-    if value == nil or value == false then return nil end
-    if type(value) ~= "table" then return value end
 
-    local n = #value
-    if n == 0 then return nil end
-    if n == 1 then return value[1] end
-    return value[(rng or math.random)(n)]
+    local group = set and pick(set[state])
+    if group then return group end
+
+    if not M.TUNING.useFallbackAnim then return nil end
+    -- FALLBACK_ANIM is HORSE_ANIM, so this is a no-op for a horse and the
+    -- reason a boar now straddles like one instead of standing in bind pose.
+    return pick(M.FALLBACK_ANIM[state])
 end
 
--- Every jump group name across every type, flattened. Text key handlers must
--- bind to a fixed name at load time, so the animation controller registers one
--- per entry up front; lazy per-play registration cannot work because the
--- handler has to exist before the clip's stop key fires.
 function M.allJumpGroups()
     local seen, out = {}, {}
     local function collect(set)

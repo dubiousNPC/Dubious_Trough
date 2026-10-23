@@ -1,0 +1,14 @@
+# WhyWalk Caravans -- animated silt strider travel
+#
+# A WhyWalk module: load it AFTER "00 Core". Its settings sit on Core's
+# WhyWalk page, and Core's ridingAnim.lua already resolves a sitting pose for
+# the SILT_STRIDER mount type, so the rider animation needs no change here --
+# which is what SILTSTRIDER_NOTES.md's IMPLEMENTATION NOTE predicted.
+#
+# REQUIRES UI Toolkit (https://www.nexusmods.com/morrowind/mods/60303) for the
+# destination menu. Without it the module stands down and vanilla travel is
+# untouched; it is an optional dependency, not a hard one.
+
+GLOBAL: scripts/WhyWalk/Caravans/caravans_global.lua
+PLAYER: scripts/WhyWalk/Caravans/caravans_player.lua
+CUSTOM: scripts/WhyWalk/Caravans/caravans_vehicle.lua

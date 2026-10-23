@@ -82,3 +82,23 @@ riding_interiors_description: |-
 
 # --- Messages ------------------------------------------------------------
 msg_interior_refused: "You cannot ride indoors. Enable it in WhyWalk's settings if you want to."
+
+riding_blacklist_name: "Never ride these creatures"
+riding_blacklist_description: |-
+  Record IDs, one per entry. Type an ID and press the add button; select an
+  entry and press remove to take it off again. Case does not matter.
+
+  A creature on this list cannot be mounted at all -- not steered, and not
+  free-ridden. Looking at one and pressing Activate says so rather than doing
+  nothing.
+
+  These are record IDs, not the names shown in game. The console command
+  targeting a creature shows its ID, and it is usually recognisable:
+  "guar", "guar_withpack", "nix_hound". Entries that match nothing are
+  harmless, so a guess costs nothing.
+
+  Use this for pack animals you want to keep walking beside you, for a
+  follower you would rather not sit on, or for anything another mod adds that
+  does not make sense as a mount.
+
+msg_blacklisted: "You have set this creature as one you never ride. Change that in WhyWalk's settings."

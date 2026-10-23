@@ -438,6 +438,14 @@ local function onRequestMount(data)
     if not player or not player:isValid() then return end
     if not mount or not mount:isValid() then return end
     if not types.Creature.objectIsInstance(mount) then return end
+    -- The CODE-level list only. The player's own BLACKLIST_IDS lives in
+    -- player storage, which a global script cannot read, and whywalk_player
+    -- already refuses before sending the request -- with a message, which is
+    -- the part that needs to happen player-side anyway.
+    --
+    -- Not duplicated by shipping the set along with every request: that would
+    -- put the same policy in two places and leave them to drift. This call is
+    -- the author's backstop, that one is the player's choice.
     if shared.isBlacklisted(mount.recordId) then return end
 
     local mountType = data.mountType or shared.getMountType(mount.recordId)

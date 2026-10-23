@@ -87,6 +87,23 @@ I.Settings.registerGroup {
             renderer    = "checkbox",
             default     = false,
         },
+        {
+            -- The renderer is vendored at scripts/WhyWalk/renderers/textSet.lua
+            -- and registered MENU, which the manifest loads before this group,
+            -- so it is always present. See that file's header for why the key
+            -- is WhyWalk-scoped rather than upstream's `textSet_V1`.
+            --
+            -- `lower = true` normalises what the player types, because record
+            -- ids are matched lower-cased (shared.isBlacklisted). Default is
+            -- empty: shipping a guess at other mods' creature ids would be
+            -- worse than useless.
+            key         = "BLACKLIST_IDS",
+            name        = "riding_blacklist_name",
+            description = "riding_blacklist_description",
+            renderer    = "whywalk_textSet_V1",
+            default     = {},
+            argument    = { lower = true },
+        },
     },
 }
 
@@ -98,6 +115,18 @@ local ridingSettings = storage.playerSection(SETTINGS_GROUP)
 -- subscription, no per-frame read.
 local function allowInteriors()
     return ridingSettings:get("ALLOW_INTERIORS") == true
+end
+
+-- The player's own exclusion list, as the textSet renderer stores it: a set
+-- keyed by lower-cased record id. Read at target time, which is a key press,
+-- so there is no subscription and nothing per frame.
+--
+-- Always a table. A setting that has never been touched can come back nil,
+-- and isBlacklisted would then silently stop consulting it.
+local function blacklistedIds()
+    local set = ridingSettings:get("BLACKLIST_IDS")
+    if type(set) ~= "table" then return {} end
+    return set
 end
 
 -- ---------------------------------------------------------------------------
@@ -250,7 +279,15 @@ local function findMountTarget()
     if not obj or not obj:isValid() then return nil end
     if result.distance and result.distance > TUNING.freeRideRange then return nil end
     if not types.Creature.objectIsInstance(obj) then return nil end
-    if shared.isBlacklisted(obj.recordId) then return nil end
+
+    -- Returns a REASON for the blacklist, where everything above just returns
+    -- nil. The difference matters: looking at a wall and getting nothing is
+    -- self-explanatory, but looking at a creature the player blacklisted
+    -- themselves and getting nothing reads as a broken mod. The caller turns
+    -- this into a message naming the setting.
+    if shared.isBlacklisted(obj.recordId, blacklistedIds()) then
+        return nil, "blacklisted"
+    end
 
     local mt = shared.getMountType(obj.recordId)
     if mt then return obj, mt, false end
@@ -327,7 +364,15 @@ local function requestMount()
     end
 
     local target, mt, free = findMountTarget()
-    if not target then return end
+    if not target then
+        -- `mt` carries the reason when there is no target. Only the blacklist
+        -- produces one, because it is the only refusal the player configured
+        -- and so the only one worth explaining.
+        if mt == "blacklisted" then
+            ui.showMessage(core.l10n(L10N_CONTEXT)("msg_blacklisted"))
+        end
+        return
+    end
 
     core.sendGlobalEvent(EV.REQUEST_MOUNT, {
         player = self.object, mount = target, mountType = mt, freeRide = free,

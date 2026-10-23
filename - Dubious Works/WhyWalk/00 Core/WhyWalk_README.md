@@ -1,7 +1,5 @@
 # WhyWalk
 
-**REQUIRES AnimRefresh_V6**
-
 An all-in-one animated creature riding engine for OpenMW 0.51+.
 
 Mount a creature, steer it, and see your character actually sitting on it. One
@@ -49,7 +47,8 @@ though one unlocks the preferred rider-placement backend (see
 - **Classifies mounts automatically.** Eleven known record IDs read out of the
   shipped riding mods, plus ordered pattern matching for anything else.
 - **Falls back gracefully.** Creatures with no packaged animation set get a
-  generic rider pose rather than nothing.
+  horse rider pose rather than nothing -- tested against the skeleton, so a
+  placeholder group name falls through instead of playing silence.
 - **Free ride.** Mount any creature at all, with no script added to it.
 - **Rides unknown creatures sensibly.** A creature no profile covers gets its
   saddle height measured from its own bounding box, rather than inheriting a
@@ -240,8 +239,30 @@ hardcoded, read directly out of the shipped riding mods' ESP and config files:
 Anything unlisted falls through nine ordered pattern groups. Order matters
 where substrings nest — `siltstrider` is tested before `strider`.
 
-A blacklist blocks specific records from ever being mountable, even under free
-ride.
+### The blacklist
+
+Two lists, both consulted, and a creature on either is unmountable — not
+steered, and not free-ridden.
+
+**Yours**, in the settings menu under Riding: *"Never ride these creatures"*.
+Add record IDs one at a time; case does not matter. Looking at a creature you
+listed and pressing Activate says so, rather than doing nothing — silence
+there reads as a broken mod. Default is empty.
+
+These are record IDs, not the names shown in game, and the console command
+targeting a creature shows the ID. Entries that match nothing are harmless, so
+a guess costs nothing.
+
+**The author's**, `BLACKLIST` in `whywalk_shared.lua`, for a mod shipping an
+exclusion of its own. Deliberately almost empty: no vanilla creature needs
+excluding, and guessing at other mods' quest creatures would be worse than
+useless.
+
+The split is on purpose. Settings live in player storage, which a global
+script cannot read, so the player's list is enforced in `whywalk_player.lua`
+where the message belongs anyway, and the global keeps the code-level list as
+the author's backstop. Shipping the whole set along with every mount request
+would put one policy in two places and leave them to drift.
 
 ### Placeholders
 
@@ -250,6 +271,22 @@ Group names outside horse and guar are **placeholders**. So are the three
 correct and clearly marked; replace them with real names from your `.kf` before
 shipping. Every group also needs matching start/stop text keys, or
 `playBlended` silently does nothing.
+
+**A placeholder no longer means no animation.** It used to: the fallback set
+itself named five groups (`ride_generic_*`) that exist nowhere, and because a
+recognised mount type always resolved to its own placeholder, the per-state
+fallback never fired for it either. Every creature outside horse and guar
+therefore rode in bind pose, silently.
+
+`resolveAnim` now tests each candidate against the skeleton with
+`animation.hasGroup` and falls through to the **horse set** — the only
+straddling rider clip this package actually ships — so a placeholder is a
+documented stand-in rather than a dead end. An explicit `false` in a mount's
+set still wins, so a netch has no jump and does not borrow the horse's.
+
+`tools/check_anims.py` reports unresolved group names now, which is how this
+would have been caught before shipping. It lists them as a warning, because
+the fallback covers them; `--strict` makes them a failure.
 
 ---
 
@@ -376,8 +413,15 @@ restriction: you can no longer look at the animation you installed the mod for.
 
 The bug being avoided is real — switching perspective rebuilds the player's
 animation object and drops scripted animations with it. WhyWalk handles it with
-`AnimRefresh`, a small bundled service that notices the change and re-issues the
-pose after the skeleton has settled.
+`AnimRefresh`, a small service that notices the change and re-issues the pose
+after the skeleton has settled.
+
+**AnimRefresh is no longer bundled here.** `ridingAnim.lua` guards both its
+`subscribe` and `unsubscribe` calls on `I.AnimRefresh` existing, so WhyWalk
+loads and rides perfectly well without it — but with no copy installed by any
+mod, *this refresh does not happen*, and switching perspective while mounted
+drops the rider pose until the next state change. Any mod in the suite that
+ships AnimRefresh restores it; nothing needs configuring.
 
 Detection is event-first: a `TogglePOV` trigger handler catches deliberate
 presses instantly, and a once-per-second poll in `onUpdate` backstops changes
@@ -419,22 +463,30 @@ classification.
 WhyWalk.omwscripts
 scripts/
   SharedRay/SharedRay_v2.lua        shared camera-ray service (bundled)
-  AnimRefresh/AnimRefresh_v5.lua    perspective-change service (bundled)
   WhyWalk/
     whywalk_shared.lua              data + pure helpers    (context: none)
     whywalk_global.lua              orchestration, pin     (context: global)
     whywalk_player.lua              input, targeting       (context: player)
     whywalk_mount.lua               mount controls         (context: local)
     ridingAnim.lua                  rider animation        (context: player)
+    renderers/textSet.lua           settings widget        (context: menu)
     (silt strider)                  notes only, see SILTSTRIDER_NOTES.md
+    (AnimRefresh)                   no longer bundled; optional, see above
 ```
 
 `whywalk_shared.lua` has no `openmw.*` requires at all, so global, player and
 any future script can all require it.
 
-SharedRay and AnimRefresh are **bundled, not dependencies**. Both version-guard
-themselves, so if another mod in the suite ships a newer copy, only that one
-runs. Ship them; don't worry about duplication.
+SharedRay is **bundled, not a dependency**. It version-guards itself, so if
+another mod in the suite ships a newer copy, only that one runs. Ship it; don't
+worry about duplication. AnimRefresh used to be bundled the same way and no
+longer ships here — see the note above for what is lost without it.
+
+`renderers/textSet.lua` is vendored from Bor's Drop-in Utils, which is a
+collection of files to copy rather than a mod to depend on. It registers under
+a WhyWalk-scoped key rather than upstream's, because a renderer has no
+interface to version-guard with the way AnimRefresh does; its header explains
+the reasoning.
 
 ---
 

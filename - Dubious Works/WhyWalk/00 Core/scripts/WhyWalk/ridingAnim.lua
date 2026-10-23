@@ -59,6 +59,15 @@ local I       = require('openmw.interfaces')
 
 local shared = require('scripts.WhyWalk.whywalk_shared')
 
+-- Declared HERE, above every use, because both the rider pose and the vessel
+-- pose need it and the rider comes first in this file. It used to sit in the
+-- vessel section, 130 lines below the rider's playLoop -- which is fine for a
+-- function (Lua resolves the local at call time, and playLoop is only ever
+-- CALLED later) but is exactly the shape check_declorder.py exists to flag,
+-- and it would have become a silent global read the moment anything at file
+-- scope touched it.
+local function hasGroup(group) return anim.hasGroup(self, group) end
+
 local STATE = shared.STATE
 
 -- Tracing only. Anything that indicates a FAULT prints regardless of this.
@@ -142,7 +151,9 @@ local function playLoop(state)
     -- restart the clip on every refresh.
     if currentState == state then return end
 
-    local group = shared.resolveAnim(mountType, state)
+    -- hasGroup passed: without it a placeholder group name resolves fine,
+    -- plays nothing, and leaves the rider in bind pose with no error anywhere.
+    local group = shared.resolveAnim(mountType, state, nil, hasGroup)
     if not group then return end   -- mount has no clip for this state
 
     I.AnimationController.playBlendedAnimation(group, {
@@ -197,7 +208,7 @@ end)
 ---Without the timeout a typo in a group name is indistinguishable from a
 ---permanently stuck rider.
 local function playOneShot(state, done)
-    local group = shared.resolveAnim(mountType, state)
+    local group = shared.resolveAnim(mountType, state, nil, hasGroup)
     if not group then return done() end   -- no clip for this state: proceed
 
     pendingOneShot = { group = group, done = done }
@@ -272,7 +283,7 @@ local vesselSwitchedAt = 0
 local vesselGeneration = 0      -- invalidates a pending deferred switch
 local vesselReported = {}
 
-local function hasGroup(group) return anim.hasGroup(self, group) end
+-- hasGroup moved up; see its declaration above the rider pose section.
 
 -- First key pair the clip really has. Text keys are stored lower-case.
 local function vesselKeys(group)

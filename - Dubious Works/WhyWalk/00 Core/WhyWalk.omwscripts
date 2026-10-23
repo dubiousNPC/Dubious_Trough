@@ -2,6 +2,10 @@
 #
 # Shared services first. Both are bundled in every mod of the suite and
 # version-guard themselves, so only the newest loaded copy runs.
+# MENU: a settings-menu renderer, so it must load before the group that uses
+# it. Vendored from Bor's Drop-in Utils; see the file header.
+MENU: scripts/WhyWalk/renderers/textSet.lua
+
 PLAYER: scripts/SharedRay/SharedRay_v2.lua
 
 GLOBAL: scripts/WhyWalk/whywalk_global.lua

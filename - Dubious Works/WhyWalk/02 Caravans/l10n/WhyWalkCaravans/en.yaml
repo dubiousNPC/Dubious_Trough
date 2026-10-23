@@ -1,0 +1,50 @@
+# WhyWalk Caravans -- English strings.
+#
+# Keys, not source strings: OpenMW returns the KEY when no localisation is
+# found, so literal English here would look like it worked while foreclosing
+# translation. Same convention as Core's l10n/WhyWalk/en.yaml.
+
+# --- Settings ------------------------------------------------------------
+caravans_group_name: "Caravans"
+caravans_group_description: |-
+  Animated silt strider travel. Talking to a caravaner offers the same
+  destinations as usual, but the journey is ridden rather than skipped.
+
+caravans_enabled_name: "Animated caravan travel"
+caravans_enabled_description: |-
+  On by default.
+
+  Turn this off to get the ordinary travel menu back. Destinations with no
+  route in the caravan database always fall back to ordinary travel anyway,
+  so nothing becomes unreachable either way.
+
+caravans_speed_name: "Strider speed"
+caravans_speed_description: |-
+  World units per second along the route. Default 1400.
+
+  The imported routes average about 99,000 units and the longest, Vivec to
+  Seyda Neen, is 204,000 -- so 1400 is roughly a 70-second journey and two
+  and a half minutes at worst. Lower it for a slower, more scenic ride;
+  raise it if you would rather not wait.
+
+caravans_clock_name: "Advance the clock to match"
+caravans_clock_description: |-
+  On by default.
+
+  Ordinary travel advances the clock by the distance travelled. An animated
+  journey passes real time instead, which is far less -- so with this on, the
+  remainder is added when you arrive, and travelling by strider costs the
+  same hours it always did.
+
+  Turn it off if you would rather the journey cost only the time it took.
+
+# --- Messages ------------------------------------------------------------
+menu_title: "Caravan Destinations"
+menu_cancel: "Cancel"
+
+msg_departing: "The strider sets off for %s. Press X to get down."
+msg_arrived: "The strider arrives at %s."
+msg_cannot_afford: "You cannot afford that fare."
+msg_no_route_fallback: "No caravan route runs that way."
+msg_no_vehicle: "There is no strider here to carry you."
+msg_journey_interrupted: "Your journey ends here."
