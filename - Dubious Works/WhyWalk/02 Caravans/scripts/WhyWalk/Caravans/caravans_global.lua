@@ -44,6 +44,15 @@ local I     = require('openmw.interfaces')
 local db     = require('scripts.WhyWalk.Caravans.caravans_db')
 local path   = require('scripts.WhyWalk.Caravans.caravans_path')
 local routes = require('scripts.WhyWalk.Caravans.caravans_routes')
+local stops  = require('scripts.WhyWalk.Caravans.caravans_stops')
+
+-- Centres first, from every file, so one bad file cannot move a stop; then
+-- the files whose ends are not at their stops are dropped (caravans_stops.lua
+-- says why). Printed every load: a dropped route is a data fault worth seeing.
+local STOP_CENTRES = stops.centres(routes.routes)
+for _, d in ipairs(stops.validate(routes.routes, STOP_CENTRES)) do
+    print('[WhyWalk Caravans] route dropped, reverse used instead: ' .. d)
+end
 
 local EV = {
     REQUEST_TRAVEL = 'WWCaravans_RequestTravel',
@@ -118,21 +127,6 @@ local function findRoute(fromKey, toKey)
     return nil, false
 end
 
----Every destination reachable from `fromKey`, as a set of lower-cased keys.
----Used by the player script to decide which of the guide's own travel
----destinations this module can animate.
-local function destinationsFrom(fromKey)
-    local out = {}
-    local fwd = routes.routes[fromKey]
-    if fwd then
-        for to in pairs(fwd) do out[to] = true end
-    end
-    for from, dests in pairs(routes.routes) do
-        if dests[fromKey] then out[from] = true end
-    end
-    return out
-end
-
 -- ---------------------------------------------------------------------------
 -- THE VEHICLE OBJECT
 -- ---------------------------------------------------------------------------
@@ -202,17 +196,152 @@ end
 -- PLACEMENT
 -- ---------------------------------------------------------------------------
 
+---The vehicle's ORIGIN for a route point: bodyOffset BELOW it.
+---
+---The route is authored through the rider's body, not the strider's feet, so
+---the vehicle origin sits `bodyOffset` lower and every slot height is measured
+---up from there (slot z 1223 against bodyOffset 1220 puts a rider 3 units
+---above the route point, which is why the route can be walked directly).
+---
+---ONE function because the first version did not have one. `placeVehicle` was
+---handed the route point and the occupants were handed `z - bodyOffset`
+---separately, so the strider stood a full 1220 units too high with its feet at
+---the rider's waist and everything aboard hovering. Two call sites deriving
+---the same origin independently is how they came to disagree.
+local function bodyOrigin(s, z)
+    return z - (s.vehicleDef.bodyOffset or 0)
+end
+
 local function placeVehicle(s, x, y, z, yaw, roll)
     local rot = util.transform.rotateZ(YAW_SIGN * yaw)
     if roll and roll ~= 0 then rot = rot * util.transform.rotateY(roll) end
     s.vehicle:teleport(s.cell, util.vector3(x, y, z), rot)
 end
 
----Put an occupant in a vehicle-local slot.
+---Put an occupant in a vehicle-local slot, facing the way the vehicle faces.
+---
+---For the GUIDE only. The player gets `placeRider` below, because teleporting
+---an absolute rotation onto the player every frame is what locks their camera.
 local function placeOccupant(obj, cell, x, y, z, yaw, slot)
     local sx, sy, sz = db.slotWorld(x, y, z, yaw, slot)
     obj:teleport(cell, util.vector3(sx, sy, sz),
                  util.transform.rotateZ(YAW_SIGN * yaw))
+end
+
+-- ---------------------------------------------------------------------------
+-- THE PLAYER'S YAW IS A DELTA, NOT A HEADING
+-- ---------------------------------------------------------------------------
+-- A passenger teleported with `rotateZ(heading)` every frame cannot look
+-- around: in third person the body yaw and the camera yaw are the same number,
+-- so rewriting the body every frame overwrites whatever the mouse just did.
+-- The camera ends up welded to the strider's nose, which is the reported bug.
+--
+-- Core solved this for the rider pin and the fix carries over unchanged
+-- (whywalk_global.lua, placeRiderTeleport):
+--
+--     playerYaw = playerYaw + (heading - headingLastFrame)
+--
+-- The body still turns with the strider, so the passenger does not end up
+-- sitting sideways through a corner, and the mouse offset survives because it
+-- is already in playerYaw when the delta lands on top of it.
+--
+-- Zero is a safe "do nothing" here, unlike an absolute angle: a delta of zero
+-- means the heading genuinely did not change, so skipping the write is right
+-- rather than a lost update. Omitting the rotation argument entirely keeps the
+-- current rotation (TeleportOptions.rotation: "if missing, then the current
+-- rotation is used"), which is exactly what a zero delta should do.
+local YAW_EPSILON = 1e-4
+
+-- ---------------------------------------------------------------------------
+-- AND IT GOES THROUGH CORE'S PIN, NOT THROUGH TELEPORT
+-- ---------------------------------------------------------------------------
+-- A teleport fires `onTeleported` on EVERY player script in the load order.
+-- Pinning the player with one each frame therefore delivers sixty a second to
+-- every other mod, and the 2026-10-29 log shows three of them breaking under
+-- it: VvardenfellDirector logged "teleport; normal camera restored" 4116
+-- times -- once per frame for the whole of every journey, which is the
+-- reported first-person lock -- DetailDevil's `onTeleported` handler raised
+-- three times, all three inside a journey, and queued VFX cleanup errored.
+--
+-- Core already solved this. Its MWScript bridge moves the player with
+-- `SetPos`, which is not a teleport and fires no handler; the comment at
+-- placeRiderMWScript records Devilish's warning about the per-frame Lua
+-- teleport loop, which is the same hazard found from the other end.
+--
+-- So the pin is Core's, published as the WhyWalkRiderPin interface. Its
+-- stale-ESP probe, its liveness check and its automatic fall-through to a
+-- teleport all come with it, which matters: if the bridge is not live in a
+-- given install, this is exactly the old behaviour and nothing is lost.
+--
+-- Core absent, or the pin held by a mount: fall back to the teleport here.
+-- Being carried is better than being left behind.
+local PIN_OWNER = {}
+
+local function teleportRider(obj, cell, pos, yawDelta)
+    if yawDelta and math.abs(yawDelta) > YAW_EPSILON then
+        obj:teleport(cell, pos,
+                     util.transform.rotateZ(obj.rotation:getYaw() + yawDelta))
+    else
+        obj:teleport(cell, pos)
+    end
+end
+
+-- WHICH PATH IS IN USE IS LOGGED, ONCE PER SESSION.
+--
+-- Because the claim that SetPos avoids the onTeleported storm is reasoning,
+-- not something confirmed in a running game, and the last time this module
+-- shipped on reasoning alone it was wrong. The line below plus a grep for
+-- another mod's per-frame teleport chatter settles it in one trip.
+--
+-- It also catches the likelier disappointment: Core's MWScript pin needs a
+-- WhyWalk.omwaddon whose WhyWalkRiderPin script has actually been COMPILED,
+-- and the shipped one carries the script as source text with no bytecode.
+-- Where that has not been fixed the pin falls through to a teleport inside
+-- Core, this still says "teleport", and nothing about the storm changes.
+-- NOT on the first frame. Core proves the bridge by watching whether the
+-- player actually tracks the target, and it allows 20 frames of misses before
+-- declaring it dead, so `isBridged()` answers "unproven, assume yes" until
+-- then. Reporting immediately would print the optimistic answer and then
+-- quietly fall back, which is worse than not reporting at all.
+local PIN_REPORT_AFTER = 60      -- ~1s at 60fps; Core decides within 20
+local pinFrames = 0
+local pinPathReported = false
+
+local function reportPinPath(usingPin)
+    if pinPathReported then return end
+    pinFrames = pinFrames + 1
+    -- A straight fall-through is decided at once: there is no bridge to prove.
+    if usingPin and pinFrames < PIN_REPORT_AFTER then return end
+    pinPathReported = true
+    if not usingPin then
+        print('[WhyWalk Caravans] rider carried by TELEPORT. Every frame of a'
+              .. ' journey fires onTeleported on every player script in the'
+              .. ' load order, which some mods react to; if your camera locks'
+              .. ' during a ride, that is why. The WhyWalk MWScript pin avoids'
+              .. ' it, and needs WhyWalk.omwaddon with the WhyWalkRiderPin'
+              .. ' script compiled (open and save it in OpenMW-CS).')
+    elseif DEBUG then
+        print('[WhyWalk Caravans] rider carried by the WhyWalk MWScript pin')
+    end
+end
+
+local function placeRider(obj, cell, x, y, z, yaw, slot, yawDelta)
+    local sx, sy, sz = db.slotWorld(x, y, z, yaw, slot)
+    local pos = util.vector3(sx, sy, sz)
+    local pin = I.WhyWalkRiderPin
+    if pin and pin.place(PIN_OWNER, obj, pos, yawDelta) then
+        -- `place` succeeds either way: Core uses the bridge when it is live
+        -- and teleports when it is not, so ask which it actually did.
+        reportPinPath(pin.isBridged ~= nil and pin.isBridged())
+        return
+    end
+    reportPinPath(false)
+    teleportRider(obj, cell, pos, yawDelta)
+end
+
+local function releaseRider()
+    local pin = I.WhyWalkRiderPin
+    if pin then pin.release(PIN_OWNER) end
 end
 
 -- ---------------------------------------------------------------------------
@@ -229,10 +358,57 @@ local function detachVehicleScript(vehicle)
     vehicle:removeScript(VEHICLE_SCRIPT)
 end
 
----End the journey, wherever it is. `arrived` distinguishes a completed
----journey from an abort, because only the first should charge time.
+-- ---------------------------------------------------------------------------
+-- ENDING A JOURNEY TAKES A FRAME OF ITS OWN
+-- ---------------------------------------------------------------------------
+-- An object can be teleported ONCE per frame. A second call on an object whose
+-- first teleport has not landed yet raises
+--
+--     Object is either removed or already in the process of teleporting
+--
+-- and that is a hard error, not a warning: it aborts the whole handler.
+--
+-- Teardown used to run inline at the end of onUpdate, in the same frame that
+-- had just placed all three bodies, so the first thing it did -- parking the
+-- vehicle -- threw every single time:
+--
+--     [C]: in function 'teleport'
+--     caravans_global.lua:290: in function 'endJourney'
+--     caravans_global.lua:567: in function <...:498>
+--
+-- `session = nil` runs first, so onUpdate went quiet afterwards and the error
+-- appeared once per journey rather than once per frame. Everything after the
+-- throw never ran, which is the whole of the reported fault from one line:
+-- the vehicle was never parked (a second strider standing at the stop), the
+-- guide was never released, the player was never put on the ground, and no
+-- ARRIVED event ever reached the player script -- so no dismount, no message,
+-- and the seated pose stayed on. Stuck aboard, exactly as described.
+--
+-- It is not enough to skip the placement on the last frame, because the abort
+-- path (pressing X) arrives as an event, which the engine may deliver in a
+-- frame where onUpdate has already placed everything.
+--
+-- So ending is a REQUEST. `endJourney` records why and returns; `finishJourney`
+-- does the work from the top of the next onUpdate, before anything has moved.
+-- One frame of latency, and no call site can get the ordering wrong.
+
+---Ask for the journey to end. Safe to call from anywhere, including from
+---inside onUpdate after the bodies have been placed.
 local function endJourney(s, reason, arrived)
+    if not s or s.ending then return end
+    s.ending = { reason = reason, arrived = arrived }
+end
+
+---Do the teardown. Called only from the top of onUpdate, where nothing has
+---been teleported yet this frame.
+local function finishJourney(s)
+    local reason  = s.ending.reason
+    local arrived = s.ending.arrived
     session = nil
+
+    -- Before the dismount teleport: the pin would otherwise keep writing the
+    -- player back to the saddle every frame after the journey had ended.
+    releaseRider()
 
     detachVehicleScript(s.vehicle)
 
@@ -256,7 +432,7 @@ local function endJourney(s, reason, arrived)
         local px, py, pz = s.lastX, s.lastY, s.lastZ
         if px then
             s.player:teleport(s.cell,
-                util.vector3(px, py, pz - (s.vehicleDef.bodyOffset or 0)),
+                util.vector3(px, py, bodyOrigin(s, pz)),
                 { onGround = true })
         end
 
@@ -379,26 +555,49 @@ end
 -- Answers the player script's question "which of this guide's destinations
 -- can you animate, and how far is each?" The player script owns the menu and
 -- the price; this owns the route data.
+--
+-- Places are resolved by POSITION (caravans_stops.lua): the guide's own for
+-- the origin, each record destination's for the target. byDest is indexed
+-- like the record's travelDestinations, so the player script pairs them by
+-- index and never compares names or cell ids.
+local warnedGuide = {}
 local function onRequestQuote(data)
     local player = data and data.player
+    local guide = data and data.guide
     if not player or not player:isValid() then return end
-    local fromKey = data.from and data.from:lower()
-    if not fromKey then return end
+    if not guide or not guide:isValid() then return end
 
-    local reachable = destinationsFrom(fromKey)
-    local out = {}
-    for toKey in pairs(reachable) do
-        local points, reversed = findRoute(fromKey, toKey)
+    local fromKey = guide.cell.isExterior
+        and stops.at(STOP_CENTRES, guide.position.x, guide.position.y) or nil
+    local byDest = {}
+    local dests = fromKey and types.NPC.record(guide).travelDestinations or {}
+    for i, dest in ipairs(dests) do
+        local p = dest.position
+        local toKey = stops.at(STOP_CENTRES, p.x, p.y)
+        local points, reversed
+        if toKey and toKey ~= fromKey then
+            points, reversed = findRoute(fromKey, toKey)
+        end
         if points then
-            local prep = path.prepare(points, reversed)
-            out[toKey] = {
+            byDest[i] = {
                 key = toKey,
                 displayName = routes.names[toKey] or toKey,
-                length = prep.total,
+                length = path.prepare(points, reversed).total,
             }
         end
     end
-    player:sendEvent(EV.QUOTE, { from = fromKey, routes = out })
+
+    -- Once per guide, so a guide this module cannot animate is explained in
+    -- the log instead of silently getting the vanilla window.
+    if not next(byDest) and not warnedGuide[guide.id] then
+        warnedGuide[guide.id] = true
+        print(string.format(
+            '[WhyWalk Caravans] %s: no animated route (%s); vanilla travel used',
+            guide.recordId,
+            fromKey and ('origin ' .. fromKey .. ', no destination has a route')
+                or 'not at a known stop'))
+    end
+    player:sendEvent(EV.QUOTE, { guide = guide, from = fromKey, byDest = byDest })
 end
 
 -- ---------------------------------------------------------------------------
@@ -427,6 +626,14 @@ end)
 local function onUpdate(dt)
     local s = session
     if not s then return end
+
+    -- FIRST, before anything is placed. See the note above endJourney: the
+    -- teardown teleports all three bodies and cannot share a frame with the
+    -- placement that also teleports them.
+    --
+    -- Ahead of the pause check too. A journey asked to end while the world is
+    -- paused should still end; nothing here depends on time passing.
+    if s.ending then return finishJourney(s) end
 
     if not s.player:isValid() or not s.vehicle:isValid() then
         return endJourney(s, 'invalid', false)
@@ -465,17 +672,26 @@ local function onUpdate(dt)
     local roll = path.sway(s.swayT, s.swayAmp, s.vehicleDef.sway) * -turning
 
     s.lastX, s.lastY, s.lastZ = x, y, z
-    placeVehicle(s, x, y, z, s.heading or yaw or 0, roll)
 
     local bodyYaw = s.heading or yaw or 0
+    -- ONE origin for the vehicle and everything riding on it. See bodyOrigin.
+    local bz = bodyOrigin(s, z)
+    placeVehicle(s, x, y, bz, bodyYaw, roll)
+
+    -- The player's share of the turn, as a change rather than a heading, so
+    -- mouse-look survives. nil on the first frame: there is no previous
+    -- heading to difference against, and the boarding teleport already seated
+    -- them square.
+    local riderDelta = s.riderYawApplied
+        and path.angleDiff(s.riderYawApplied, bodyYaw) or nil
+    s.riderYawApplied = bodyYaw
+
     local slots = s.vehicleDef.slots
     if slots and slots[1] then
-        placeOccupant(s.player, s.cell, x, y, z - s.vehicleDef.bodyOffset,
-                      bodyYaw, slots[1])
+        placeRider(s.player, s.cell, x, y, bz, bodyYaw, slots[1], riderDelta)
     end
     if s.guide and s.guide:isValid() and s.vehicleDef.guideSlot then
-        placeOccupant(s.guide, s.cell, x, y, z - s.vehicleDef.bodyOffset,
-                      bodyYaw, s.vehicleDef.guideSlot)
+        placeOccupant(s.guide, s.cell, x, y, bz, bodyYaw, s.vehicleDef.guideSlot)
     end
 
     if done then
@@ -529,8 +745,12 @@ local function onLoad(data)
     local s = session
     session = nil
     if s then
-        -- The save was written mid-journey. Release the vehicle so it is not
-        -- left with its AI off and its gait looping forever.
+        -- The save was written mid-journey. Release the pin first, or the
+        -- MWScript bridge keeps pinning the player to a route this side of
+        -- the load does not resume.
+        releaseRider()
+        -- Release the vehicle so it is not left with its AI off and its gait
+        -- looping forever.
         detachVehicleScript(s.vehicle)
         if s.vehicle and s.vehicle:isValid() then
             s.vehicle:teleport(s.cell, util.vector3(0, 0, -30000))

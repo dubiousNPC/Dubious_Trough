@@ -346,6 +346,43 @@ check('sit without a floor-sitting pack stands on idle', playing == 'idle', tost
 check('idle has no loop keys: falls back to start/stop', lastOpts.startKey == 'start' and lastOpts.stopKey == 'stop')
 ev.WhyWalk_AnimVesselStop()
 
+-- -----------------------------------------------------------------------
+-- THE PASSENGER STANCE
+-- -----------------------------------------------------------------------
+-- A silt strider passenger (WhyWalk Caravans). rasit2 comes from the xRAsit1
+-- pack, which is NOT a dependency, so the stance is a three-name chain and
+-- the skeleton decides. Both ends of that chain are asserted, because the
+-- interesting case is the one where the pack is absent: playBlended on a
+-- group the skeleton lacks is a silent no-op, so an unfiltered name would
+-- leave the player standing with no animation and no error anywhere.
+reset(); clock = clock + 1
+ev.WhyWalk_AnimVesselStart({ stance = 'passenger' })
+fireTimers()
+check('passenger without the xRAsit1 pack falls through to idle',
+      playing == 'idle', tostring(playing))
+ev.WhyWalk_AnimVesselStop()
+
+reset(); clock = clock + 1
+skeletonGroups.rasit2 = true
+textKeys['rasit2: start'] = 0
+textKeys['rasit2: stop'] = 3.2
+ev.WhyWalk_AnimVesselStart({ stance = 'passenger' })
+fireTimers()
+check('with the pack installed the passenger plays rasit2',
+      playing == 'rasit2', tostring(playing))
+check('rasit2 has no loop keys, so start/stop are used',
+      lastOpts.startKey == 'start' and lastOpts.stopKey == 'stop',
+      tostring(lastOpts.startKey))
+check('it loops rather than playing once',
+      lastOpts.loops and lastOpts.loops > 1 and lastOpts.forceLoop == true,
+      tostring(lastOpts.loops))
+check('and it holds the legs above a hit, like every vessel pose',
+      lastOpts.priority ~= nil and lastOpts.blendMask ~= nil)
+ev.WhyWalk_AnimVesselStop()
+check('stop releases it', playing == nil, tostring(playing))
+skeletonGroups.rasit2 = nil
+textKeys['rasit2: start'], textKeys['rasit2: stop'] = nil, nil
+
 -- This used to assert that 'rowing' was an UNREGISTERED stance falling back
 -- to stand. It ships now, so the fallback is tested with a name that really
 -- is unknown -- which is what the assertion was always about.

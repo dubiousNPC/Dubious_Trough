@@ -261,8 +261,22 @@ check('a boat-grade sway multiplier leans more than a strider',
 local v = db.vehicle('siltstrider')
 check('the strider vehicle is defined', v ~= nil)
 check('it has three passenger slots', #v.slots == 3, #v.slots)
-check('the front slot is the measured one (0, 80, 1223)',
-      v.slots[1].x == 0 and v.slots[1].y == 80 and v.slots[1].z == 1223)
+-- Y IS FORWARD, so the larger y is the seat further up the strider. The
+-- driver has to be in front of the passenger: [R]'s data has it the other way
+-- round and caravans_db deliberately swaps the two y values, so this asserts
+-- the ORDER rather than the imported numbers. Swapping them back fails here.
+check('the player sits on the centreline at the measured height',
+      v.slots[1].x == 0 and v.slots[1].z == 1223,
+      ('x=%s z=%s'):format(v.slots[1].x, v.slots[1].z))
+check('the guide sits on the centreline at the same height',
+      v.guideSlot.x == 0 and v.guideSlot.z == v.slots[1].z,
+      ('x=%s z=%s'):format(v.guideSlot.x, v.guideSlot.z))
+check('the DRIVER is in front of the player, not behind them',
+      v.guideSlot.y > v.slots[1].y,
+      ('guide y=%s player y=%s'):format(v.guideSlot.y, v.slots[1].y))
+check('the two spare passenger seats are behind the driver',
+      v.slots[2].y < v.guideSlot.y and v.slots[3].y < v.guideSlot.y,
+      ('%s %s vs %s'):format(v.slots[2].y, v.slots[3].y, v.guideSlot.y))
 check('the guide slot carries its animation group',
       v.guideSlot.anim == 'idle5', v.guideSlot.anim)
 check('the body offset is the measured 1220', v.bodyOffset == 1220, v.bodyOffset)

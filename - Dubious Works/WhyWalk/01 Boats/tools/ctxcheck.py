@@ -80,7 +80,27 @@ def check_file(path, availability, members, valid):
     code = strip_lua(src)
     issues = []
 
-    m = re.match(r'---@omw-context (\S+)', src)
+    # Searched in the LEADING COMMENT BLOCK, not pinned to byte 0.
+    #
+    # This was re.match, which anchors at the very start of the file and so
+    # demanded the annotation be literally line 1. A file whose first line is
+    # `---@diagnostic disable: ...` -- the LuaLS convention, and what every
+    # vendored file from an annotated project carries -- was reported as
+    # having no annotation at all while its annotation sat on line 2.
+    # check_handlers.py already searched the head, so this was the outlier.
+    #
+    # Still strict about WHERE: only the run of comment lines at the top of
+    # the file counts, so an annotation buried in the body is still missing.
+    head = []
+    for line in src.split('\n'):
+        stripped = line.strip()
+        if stripped == '' or stripped.startswith('--'):
+            head.append(line)
+            if stripped.startswith('--[[') or stripped.startswith('--[==['):
+                break          # a block comment: stop before its contents
+        else:
+            break
+    m = re.search(r'---@omw-context (\S+)', '\n'.join(head))
     if not m:
         return [('NO-ANNOTATION', 'add one; `none` if API-agnostic')]
     raw = m.group(1)

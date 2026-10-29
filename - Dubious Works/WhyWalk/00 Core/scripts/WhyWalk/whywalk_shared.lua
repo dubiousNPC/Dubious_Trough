@@ -645,6 +645,25 @@ local VESSEL_STANCE_BY_NAME = {
     },
 
     -- -----------------------------------------------------------------------
+    -- RIDING AS A PASSENGER
+    -- -----------------------------------------------------------------------
+    -- Carried on something somebody else is driving: a silt strider's bench.
+    -- Nothing to steer, so `base` is the whole stance.
+    --
+    -- rasit2 comes from the xRAsit1 animation pack, which declares rasit1-8,
+    -- rasitup1 and rasitf/f1/f2 in xdbsRAsitting1.kf across all six skeleton
+    -- folders. That pack is NOT a dependency, so the list falls through to
+    -- the floor sit and then to vanilla idle; `resolveVesselGroup` filters on
+    -- animation.hasGroup before choosing, which matters because playBlended
+    -- on a group the skeleton lacks is a silent no-op rather than an error.
+    --
+    -- A LIST and not a bare name for the same reason `sit` is one: the group
+    -- that reads best is the one from a pack that may not be installed.
+    passenger = {
+        base = { "rasit2", "vasittingfloor", "idle" },
+    },
+
+    -- -----------------------------------------------------------------------
     -- ROWING
     -- -----------------------------------------------------------------------
     -- Oared craft: the pilot pulls on the oars rather than poling or steering.

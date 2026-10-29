@@ -69,6 +69,12 @@ local DEBUG = false
 
 local session = nil
 
+-- Who currently holds the rider pin, so two modules cannot drive the player
+-- at once. Core's own mount claims it as MOUNT_PIN; Caravans and anything
+-- else go through the WhyWalkRiderPin interface at the bottom of this file.
+local MOUNT_PIN = {}
+local riderPinOwner = nil
+
 local function newSession(player, mount, mountType, freeRide)
     return {
         player    = player,
@@ -405,6 +411,7 @@ local function doDismount(reason)
     if not session then return end
     local s = session
 
+    if riderPinOwner == MOUNT_PIN then riderPinOwner = nil end
     clearRiderMWScript()
 
     -- Step the rider off to the side. The ground clamp that used to be here is
@@ -606,6 +613,9 @@ local function onUpdate(dt)
     -- one part of this file the port did not touch.
     local d = s.riderYawApplied and yawDeltaBetween(s.riderYawApplied, mountYaw) or 0
     s.riderYawApplied = mountYaw
+    -- Claimed, so a Caravans journey started while mounted is refused the
+    -- pin rather than fighting this one for the player's position.
+    riderPinOwner = MOUNT_PIN
     placeRider(s.player, riderPos, d)
 end
 
@@ -670,7 +680,67 @@ local function onLoad(data)
     })
 end
 
+-- ---------------------------------------------------------------------------
+-- THE RIDER PIN, OFFERED TO THE REST OF THE SUITE
+-- ---------------------------------------------------------------------------
+-- Caravans carries the player along a route and was doing it with its own
+-- per-frame `player:teleport`. That works, but a teleport fires `onTeleported`
+-- on EVERY player script in the load order, so a journey delivers one to each
+-- of them sixty times a second. Three mods visibly broke under that in one
+-- session's log (2026-10-29): one restored the camera on every teleport and so
+-- locked the view to first person for the whole journey, one's `onTeleported`
+-- handler raised outright, and a third's queued VFX cleanup errored.
+--
+-- The pin above already exists because of this exact hazard -- MWScript
+-- `SetPos` moves the player without a teleport, and the comment at
+-- placeRiderMWScript records Devilish's warning about the per-frame Lua
+-- teleport loop. There is no reason for a second module to repeat the
+-- mistake, so the pin is published rather than duplicated.
+--
+-- Everything that makes it safe comes with it: the stale-ESP probe, the
+-- liveness check that catches an .omwaddon shipping the script as source text
+-- with no bytecode, and the automatic fall-through to the teleport pin when
+-- the bridge is dead. A caller gets the MWScript path where it works and the
+-- old behaviour where it does not, without knowing which.
+--
+-- NOT a replacement for teleport in general: this moves an actor that is
+-- already in the cell. Boarding, dismounting and parking are still teleports.
+local RiderPin = {
+    ---Is the quiet path actually available? For logging, not for control
+    ---flow -- `place` works either way.
+    ---@return boolean
+    isBridged = function()
+        return bridgeReady() ~= false and bridgeLive ~= false
+    end,
+
+    ---Pin the player at `pos`, turning them by `yawDelta` radians.
+    ---
+    ---`owner` is any value identifying the caller, so two modules cannot pin
+    ---the same player at once: the first to claim it keeps it until it
+    ---releases. Returns false if somebody else holds the pin.
+    ---@param owner any
+    ---@param player any
+    ---@param pos any openmw.util.Vector3
+    ---@param yawDelta number|nil radians; nil or ~0 leaves the facing alone
+    ---@return boolean claimed
+    place = function(owner, player, pos, yawDelta)
+        if riderPinOwner ~= nil and riderPinOwner ~= owner then return false end
+        riderPinOwner = owner
+        placeRider(player, pos, yawDelta)
+        return true
+    end,
+
+    ---Give the pin up. Safe to call when not holding it.
+    release = function(owner)
+        if riderPinOwner ~= owner then return end
+        riderPinOwner = nil
+        clearRiderMWScript()
+    end,
+}
+
 return {
+    interfaceName = 'WhyWalkRiderPin',
+    interface = RiderPin,
     eventHandlers = {
         [EV.REQUEST_MOUNT]    = onRequestMount,
         [EV.REQUEST_DISMOUNT] = onRequestDismount,

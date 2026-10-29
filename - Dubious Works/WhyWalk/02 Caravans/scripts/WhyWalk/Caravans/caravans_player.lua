@@ -66,8 +66,6 @@ local EV = {
 local L10N = 'WhyWalkCaravans'
 local l10n = core.l10n(L10N)
 
-local DEBUG = false
-
 -- ---------------------------------------------------------------------------
 -- SETTINGS
 -- ---------------------------------------------------------------------------
@@ -117,9 +115,35 @@ end
 -- ---------------------------------------------------------------------------
 
 local latchedGuide = nil     -- the NPC whose dialogue we are in, if any
-local quote = nil            -- route lengths from the global, keyed by destination
+local quote = nil            -- { guide, from, byDest[i] } from the global; see onQuote
 local travelling = false
 local closeMenu = nil        -- the close function Popups.show returns
+
+-- ---------------------------------------------------------------------------
+-- THE PASSENGER'S POSE
+-- ---------------------------------------------------------------------------
+-- Core's vessel-pose layer, reused rather than reimplemented. ridingAnim.lua
+-- is already attached to the player, already owns the blend layer and the
+-- group fallback chain, and already re-asserts the pose when the engine
+-- interrupts it -- which it does here constantly, because a passenger
+-- teleported along a route counts as AIRBORNE and the engine's falling
+-- animation outranks a pose that is not re-played.
+--
+-- Nothing is required from Core to send these: they are plain events, so
+-- Caravans still works with Core absent (no pose, no error).
+--
+-- The stance is 'passenger' (whywalk_shared.VESSEL_STANCE): rasit2 from the
+-- xRAsit1 pack, falling through to a floor sit and then vanilla idle when
+-- that pack is not installed.
+--
+-- No HELM event. The passenger is not steering, so the stance has one field
+-- and there is nothing to switch between -- which also means this costs
+-- exactly two events per journey rather than anything per frame.
+local POSE = {
+    START = 'WhyWalk_AnimVesselStart',
+    STOP  = 'WhyWalk_AnimVesselStop',
+}
+local POSE_STANCE = 'passenger'
 
 -- ---------------------------------------------------------------------------
 -- THE GUIDE
@@ -167,30 +191,6 @@ local function currentGuide()
         end
     end
     return best
-end
-
--- ---------------------------------------------------------------------------
--- PLACE NAMES
--- ---------------------------------------------------------------------------
-
----The route key for a cell name: lower-cased, which is how the route table is
----keyed. Cell names carry region suffixes the route files do not -- a
----destination cell may be "Molag Mar" where the file says "molag mar" -- so
----this is a straight fold rather than a parse.
-local function routeKey(name)
-    return name and name:lower() or nil
-end
-
----Which place the player is standing in, as a route key.
----
----Taken from the GUIDE's cell rather than the player's: they are the same
----cell in practice, and the guide is the thing the route starts from.
-local function originKey(guide)
-    local cell = guide and guide:isValid() and guide.cell or self.cell
-    if not cell then return nil end
-    -- An exterior cell's `name` is the region-ish name the route files use;
-    -- interiors carry the building name, so fall back to the display name.
-    return routeKey(cell.name ~= '' and cell.name or cell.displayName)
 end
 
 -- ---------------------------------------------------------------------------
@@ -280,22 +280,22 @@ end
 
 ---Rows for the destination list: every destination the guide offers that this
 ---module also has a route for.
+---
+---Paired with the quote BY INDEX. The global resolved each destination's
+---position to a route stop (caravans_stops.lua); an earlier version folded
+---dest.cellId to lower case and looked it up by name, but an exterior
+---destination's cellId is an engine id, not "Balmora", so nothing matched.
 ---@return table rows, number offered, number animatable
-local function buildRows(guide, fromKey)
+local function buildRows(guide, byDest)
     local dests = travelDestinationsOf(guide) or {}
     local gold = playerGold()
     local rows, offered, animatable = {}, 0, 0
 
-    for _, dest in ipairs(dests) do
+    for i, dest in ipairs(dests) do
         offered = offered + 1
-        -- The destination's name comes from the TravelDestination's cellId.
-        -- A player script cannot resolve a cell by id -- world.getCellById is
-        -- global-only -- so the id is folded directly, which works because
-        -- for an exterior travel destination the cell id IS the place name,
-        -- and that is what the route files are keyed on.
-        local key = routeKey(dest.cellId)
-        local info = quote and quote[key]
+        local info = byDest[i]
         if info then
+            local key = info.key
             animatable = animatable + 1
             local distance = (dest.position - self.position):length()
             local price = db.price(priceInputs(guide, distance, 0))
@@ -336,6 +336,17 @@ local function beginJourney(guide, fromKey, row)
     })
 end
 
+-- Why the vanilla window was left up, printed once per distinct reason. The
+-- first report of this module was "no indication of travel ui functioning",
+-- and a module that stands down in silence cannot be told apart from one that
+-- is not installed.
+local stoodDown = {}
+local function standDown(reason)
+    if stoodDown[reason] then return end
+    stoodDown[reason] = true
+    print('[WhyWalk Caravans] vanilla travel window kept: ' .. reason)
+end
+
 ---Can this module handle the travel menu right now? Returns everything
 ---`presentMenu` needs, or nil to leave the vanilla window alone.
 ---
@@ -346,24 +357,34 @@ end
 ---not closing it at all.
 local function prepareMenu()
     local T = toolkit()
-    if not T then return nil end
+    if not T then
+        standDown('UI Toolkit is not installed')
+        return nil
+    end
 
     local guide = currentGuide()
-    if not guide then return nil end
+    if not guide then
+        standDown('no travel guide nearby')
+        return nil
+    end
 
-    local fromKey = originKey(guide)
-    if not fromKey then return nil end
+    -- The quote is requested at activation and answered a couple of frames
+    -- later. A quote for a different guide is stale, and none at all means the
+    -- reply has not landed; either way the vanilla window is the safe answer.
+    if not quote or quote.guide ~= guide or not quote.from then
+        standDown(quote and quote.guide == guide and 'guide is not at a known stop'
+            or 'no route quote for this guide yet')
+        return nil
+    end
+    local fromKey = quote.from
 
-    local rows, offered, animatable = buildRows(guide, fromKey)
+    local rows, offered, animatable = buildRows(guide, quote.byDest or {})
     if animatable == 0 then
         -- The guide sells travel but none of their destinations has a route in
         -- the imported set. Leaving the vanilla window up is the only useful
         -- thing to do; suppressing it would strand the player.
-        if DEBUG then
-            print(string.format('[WhyWalk Caravans] %s offers %d destinations,'
-                .. ' none with a route from %s', tostring(guide.recordId),
-                offered, fromKey))
-        end
+        standDown(string.format('%s offers %d destinations, none with a route from %s',
+            tostring(guide.recordId), offered, fromKey))
         return nil
     end
 
@@ -401,29 +422,21 @@ end
 -- ---------------------------------------------------------------------------
 -- INTERCEPTION
 -- ---------------------------------------------------------------------------
--- VIA THE UI MODE, because the window override does not exist for travel.
+-- VIA THE UI MODE: notice the mode change, decide whether this module can
+-- take over, close the engine's travel window, and show ours.
 --
--- The first version of this used I.UI.registerWindow, on the documented
--- promise that it "overrides" a built-in window. The log said otherwise:
---
---     [WhyWalk Caravans] this OpenMW build exposes no Travel window name
---     through I.UI.WINDOW, so the travel menu cannot be intercepted.
---
--- I.UI.WINDOW has no Travel entry in OpenMW 0.51. `registerWindow` can only
--- override windows the engine exposes by name, and the travel window is not
--- one of them. That was the inference flagged as unverified when it shipped,
--- and it was the one that was wrong.
---
--- What IS known rather than inferred:
 --   * UiModeChanged is an EVENT carrying { oldMode, newMode }. AnimRefresh v5
 --     reads exactly those two fields in production.
 --   * I.UI.MODE.Travel exists -- Ben's Rideable Silt Striders keys its whole
 --     mod off `I.UI.getMode() == I.UI.MODE.Travel` and works.
 --   * I.UI.removeMode(mode) drops a mode from the stack.
 --
--- So: notice the mode change, decide whether this module can take over, close
--- the engine's travel window, and show ours. Still event-driven -- Ben polls
--- every frame to catch the same moment.
+-- I.UI.MODE IS NOT A TABLE. It is a read-only userdata proxy: index it, never
+-- type()-check or pairs() it. The 2026-10-23 build gated on
+-- `type(I.UI.MODE) ~= 'table'`, which is always true in the engine, so the
+-- interception stood down on every travel menu and logged "(not a table)".
+-- The registerWindow version before it was abandoned on the same misreading
+-- of I.UI.WINDOW. See FIX_2026-10-28.md.
 --
 -- ORDER MATTERS. The window is closed only AFTER prepareMenu succeeds,
 -- because once it is gone the player cannot be handed back to it. And the
@@ -432,31 +445,9 @@ end
 -- under Travel mode and then pull Travel out from under it -- a visible but
 -- unclickable menu, which is that library's documented trap.
 
----The travel mode's name, resolved rather than hard-coded.
-local function travelMode()
-    local M = I.UI and I.UI.MODE
-    if type(M) ~= 'table' then return nil end
-    return M.Travel
-end
-
--- One-time dump of what this build actually exposes, so the next log answers
--- the question instead of another guess. Printed once, on the first travel
--- mode change, and only when something is missing or DEBUG is on.
-local dumped = false
-local function dumpUiNames(why)
-    if dumped then return end
-    dumped = true
-    local function keysOf(t)
-        if type(t) ~= 'table' then return '(not a table)' end
-        local out = {}
-        for k in pairs(t) do out[#out + 1] = tostring(k) end
-        table.sort(out)
-        return #out > 0 and table.concat(out, ', ') or '(empty)'
-    end
-    print('[WhyWalk Caravans] ' .. why)
-    print('[WhyWalk Caravans]   I.UI.MODE   = ' .. keysOf(I.UI and I.UI.MODE))
-    print('[WhyWalk Caravans]   I.UI.WINDOW = ' .. keysOf(I.UI and I.UI.WINDOW))
-end
+-- Indexed directly, at load. A build without it errors here, loudly, rather
+-- than standing down in silence the way the type() check did.
+local TRAVEL_MODE = I.UI.MODE.Travel
 
 -- Guards re-entry: removeMode causes another UiModeChanged, and handling that
 -- one would ask the same question again with the window already gone.
@@ -466,14 +457,7 @@ local function onUiModeChanged(data)
     local newMode = data and data.newMode
     if not newMode then return end
 
-    local travel = travelMode()
-    if not travel then
-        dumpUiNames('I.UI.MODE has no Travel entry, so the travel menu cannot'
-            .. ' be intercepted. Caravans is inactive; vanilla travel is'
-            .. ' unaffected. The name lists below say what this build does'
-            .. ' expose; please include them in a report.')
-        return
-    end
+    local travel = TRAVEL_MODE
     if newMode ~= travel then return end
 
     if intercepting then return end
@@ -482,8 +466,7 @@ local function onUiModeChanged(data)
     local plan = prepareMenu()
     if not plan then
         -- Nothing this module can carry. The vanilla window stays up and the
-        -- player travels normally.
-        if DEBUG then dumpUiNames('travel opened; no caravan route from here') end
+        -- player travels normally; prepareMenu has said why.
         return
     end
 
@@ -503,17 +486,18 @@ local function onGuideLatched(data)
         latchedGuide = actor
         -- Ask the global for the routes available from here, so the menu has
         -- them ready the moment the travel topic is clicked. One event per
-        -- conversation with a caravaner, not per frame.
-        local fromKey = originKey(actor)
-        if fromKey then
-            core.sendGlobalEvent(EV.REQUEST_QUOTE,
-                { player = self.object, from = fromKey })
-        end
+        -- conversation with a caravaner, not per frame. The global works out
+        -- where "here" is from the guide's position.
+        quote = nil
+        core.sendGlobalEvent(EV.REQUEST_QUOTE,
+            { player = self.object, guide = actor })
     end
 end
 
 local function onQuote(data)
-    quote = data and data.routes or nil
+    -- Kept whole: prepareMenu checks quote.guide against the guide in front
+    -- of the player, so a late reply for an earlier guide is never used.
+    quote = data
 end
 
 local function onStarted(data)
@@ -529,10 +513,14 @@ local function onStarted(data)
     I.UI.setMode()
     ui.showMessage(string.format(l10n('msg_departing'),
         tostring(data and data.displayName or '')))
+    -- Seat the player. ridingAnim defers the first play by MOUNT_SETTLE so the
+    -- pose lands after the boarding teleport rather than under it.
+    self.object:sendEvent(POSE.START, { stance = POSE_STANCE })
 end
 
 local function onArrived(data)
     travelling = false
+    self.object:sendEvent(POSE.STOP, {})
     ui.showMessage(string.format(l10n('msg_arrived'),
         tostring(data and data.displayName or '')))
 end
@@ -546,6 +534,10 @@ local REASONS = {
 
 local function onAborted(data)
     travelling = false
+    -- Unconditional, and before the message: an abort for ANY reason has to
+    -- clear the pose, or a journey cut short leaves the player sitting
+    -- cross-legged in mid-stride for the rest of the save.
+    self.object:sendEvent(POSE.STOP, {})
     local key = data and REASONS[data.reason]
     if key then ui.showMessage(l10n(key)) end
 end
@@ -567,6 +559,10 @@ local function onLoad()
     travelling = false
     latchedGuide, quote, closeMenu = nil, nil, nil
     intercepting = false
+    -- A save taken mid-journey reloads with the player on the ground (the
+    -- global releases them in its own onLoad), so the pose must not survive
+    -- into the reloaded game. ridingAnim ignores a STOP it has no pose for.
+    self.object:sendEvent(POSE.STOP, {})
 end
 
 return {

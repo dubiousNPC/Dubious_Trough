@@ -65,15 +65,25 @@ M.VEHICLE = {
 
         -- src: slots[]. Three passenger positions spread +/-81 on X, which is
         -- the multi-slot problem SILTSTRIDER_NOTES says PROFILE cannot
-        -- express. The front seat (0, 80, 1223) is the player's.
+        -- express. slots[1] is the player's.
+        --
+        -- THE FRONT AND CENTRE Y VALUES ARE SWAPPED FROM [R]. Its data puts
+        -- the player at y=80 and the caravaner at y=10, so the passenger sits
+        -- in front and the driver rides behind them -- you spend the whole
+        -- journey with the guide at your back. Driving from the front is both
+        -- what it looks like from outside and what the player expects, so the
+        -- two y values trade places: guide 80, player 10.
+        --
+        -- ONLY y changes. x and z are [R]'s, and the two spare passenger
+        -- slots are untouched, so the seating still reads as one bench.
         slots = {
-            { x = 0,   y = 80, z = 1223 },
+            { x = 0,   y = 10, z = 1223 },   -- src y 80, swapped with the guide
             { x = -81, y = 30, z = 1230 },
             { x = 81,  y = 40, z = 1230 },
         },
 
-        -- src: guideSlot, animationGroup "idle5"
-        guideSlot = { x = 0, y = 10, z = 1223, anim = "idle5" },
+        -- src: guideSlot, animationGroup "idle5"; src y 10, see the note above
+        guideSlot = { x = 0, y = 80, z = 1223, anim = "idle5" },
 
         -- src: hiddenSlot -- where to park an actor that should exist but not
         -- be seen. Unused so far; recorded because the schema gap note calls

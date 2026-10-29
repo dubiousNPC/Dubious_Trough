@@ -74,10 +74,12 @@ When the mode becomes `I.UI.MODE.Travel`, the module decides whether it can
 take over; if it can, it closes the engine's travel window with
 `I.UI.removeMode` and shows its own menu.
 
-The first version used `I.UI.registerWindow` instead, and **it did not work**:
-`I.UI.WINDOW` has no `Travel` entry in OpenMW 0.51. `registerWindow` can only
-override windows the engine publishes by name, and the travel window is not
-one of them. See `FIX_2026-10-23.md`.
+**`I.UI.MODE` is not a table.** It is a read-only userdata proxy: index it
+(`I.UI.MODE.Travel`), never `type()`-check or `pairs()` it. The 2026-10-23
+build gated on `type(I.UI.MODE) ~= 'table'`, which is always true in the
+engine, so it stood down on every travel menu — that was the "no indication of
+travel ui functioning" report. See `FIX_2026-10-28.md`, which also corrects the
+conclusion `FIX_2026-10-23.md` drew about `I.UI.WINDOW`.
 
 Everything the current mechanism rests on comes from working code rather than
 from a reading of the docs: `UiModeChanged`'s `{ oldMode, newMode }` payload
@@ -96,18 +98,85 @@ the menu under Travel mode and then pull Travel out from under it, giving a
 visible but unclickable window. Both are asserted in
 `tools/test_intercept.lua`.
 
-**If it cannot help, the vanilla menu is left alone.** No UI Toolkit, no guide,
-or no imported route from here, and the engine's own travel window stays up and
-works. The module never leaves the player unable to travel.
+**If it cannot help, the vanilla menu is left alone — and the log says why.**
+No UI Toolkit, no guide, a guide at no known stop, or no imported route from
+here, and the engine's own travel window stays up and works. Each reason is
+printed once per session as `[WhyWalk Caravans] vanilla travel window kept: …`,
+so a stand-down is never silent. The module never leaves the player unable to
+travel.
 
 **The guide is latched at activation.** `UiModeChanged` carries no target, so
 the mode change cannot say *who* you are talking to. The global script watches
 NPC activation instead, which is sound because activating an NPC is the only
 way to reach their travel topic. Nearest-travel-selling-actor is the fallback.
 
-**If `MODE.Travel` is ever missing too**, the module prints the actual contents
-of `I.UI.MODE` and `I.UI.WINDOW`, once per session, so the next log settles the
-question instead of starting another round of inference.
+**If `MODE.Travel` is ever missing**, the player script errors at load,
+loudly, rather than standing down in silence.
+
+---
+
+## Where everything sits, and which way it faces
+
+One origin. `bodyOrigin(s, z)` is `z - bodyOffset`, and the vehicle, the
+player, the guide and the dismount all measure from it. They did not, once:
+`placeVehicle` took the route point while the occupants took the offset
+origin, and the strider stood 1220 units high with its feet at the rider's
+waist (`FIX_2026-10-29.md`).
+
+The **driver sits in front**. Immersive Travel's slot data has it the other
+way round; `caravans_db.lua` swaps the two y values and says so.
+
+The **player's yaw is a delta, the guide's is a heading.** Teleporting an
+absolute rotation onto the player every frame welds the camera to the
+strider's nose, because in third person the body yaw and the camera yaw are
+the same number. The change in heading is applied instead, so the body turns
+with the strider and mouse-look survives -- the same fix as Core's rider pin.
+The guide has no camera, so they just face forward.
+
+The **player is posed through Core**, with `WhyWalk_AnimVesselStart`
+`{ stance = 'passenger' }` on departure and `WhyWalk_AnimVesselStop` on
+arrival, abort and load. The stance resolves `rasit2` (xRAsit1 pack), then a
+floor sit, then vanilla idle -- `animation.hasGroup` decides, because
+`playBlended` on a missing group is a silent no-op. Core's layer also
+re-asserts the pose when the engine interrupts it, which happens constantly
+here: a passenger teleported along a route counts as airborne.
+
+Two events per journey. Nothing per frame.
+
+---
+
+## Ending a journey takes a frame of its own
+
+An object can be teleported once per frame. The teardown teleports all three
+bodies and `onUpdate` has already teleported all three, so running it inline
+raised `Object is either removed or already in the process of teleporting` at
+its first statement and aborted the handler halfway through -- vehicle not
+parked, guide not released, player not put down, no ARRIVED event
+(`FIX_2026-10-29b.md`).
+
+So `endJourney` only records a request; `finishJourney` runs from the top of
+the next `onUpdate`, before anything has moved. That also covers the abort
+path, which arrives as an event in a frame where the bodies are already
+placed.
+
+## The player is pinned, not teleported
+
+Through Core's `WhyWalkRiderPin` interface, which moves the player with
+MWScript `SetPos`.
+
+A teleport fires `onTeleported` on every player script in the load order, so
+carrying the player by teleport delivers sixty of those a second to every
+other mod. Three broke under it in one session: one restored the camera on
+every teleport and locked the view to first person for whole journeys, one's
+`onTeleported` handler raised, one's queued VFX cleanup errored.
+
+Core's pin exists for this hazard already and comes with its stale-ESP probe,
+its liveness check and its automatic fall-through to a teleport, so an install
+without a compiled `WhyWalkRiderPin` behaves exactly as before. Which path is
+in use is logged once per session; grep for `carried by`.
+
+Only the player is pinned. The vehicle, the guide, boarding, dismounting and
+parking are still teleports.
 
 ---
 
@@ -121,6 +190,15 @@ destinations added by mods this module has never heard of.
 What the route database supplies is the thing the engine does not have: the
 **shape of the path** between two places. 47 routes, 2150 points, imported from
 Immersive Travel's Caravaner set.
+
+**Places are matched by position, not by name.** An exterior destination's
+`cellId` is an engine id, not "Balmora", so the global script resolves the
+guide's position (origin) and each destination's position to the nearest route
+stop, within 15000 units (`caravans_stops.lua`). Stop centres are the median of
+every route endpoint naming that stop. At load, any route whose ends are not at
+its named stops is dropped and the reverse direction is used instead; on the
+shipped data that is `suran -> balmora`, which ends ~47500 units from Balmora,
+and the log reports it every load.
 
 Fares use **OpenMW's own travel price formula**, reimplemented from the engine
 source Immersive Travel cites (`mwgui/travelwindow.cpp`,
@@ -174,7 +252,8 @@ scripts/WhyWalk/Caravans/
 tools/
   import_routes.py       regenerates caravans_routes.lua
   test_caravans.lua      78 assertions against the real data
-  test_intercept.lua     29 assertions on the menu interception
+  test_intercept.lua     74 assertions: the menu, and a real journey
+                         driven through the real global script
 ```
 
 Three of the six files have no `openmw` requires at all, so the route walker
