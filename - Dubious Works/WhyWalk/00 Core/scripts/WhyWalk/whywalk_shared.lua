@@ -16,7 +16,15 @@
     ###########################################################################
 ]]
 
+-- The compiled creature profile: ride height and rideability for 917 CREA
+-- records across Morrowind, Tribunal, Bloodmoon, Tamriel Data and OAAB.
+-- Generated, and pure data like this file, so requiring it keeps the
+-- no-openmw-modules contract that lets every context share this module.
+local creatures = require('scripts.WhyWalk.whywalk_creatures')
+
 local M = {}
+
+M.CREATURES = creatures
 
 -- ---------------------------------------------------------------------------
 -- MOUNT TYPES
@@ -357,7 +365,60 @@ function M.isBlacklisted(recordId, extra)
     if recordId == nil then return false end
     local id = recordId:lower()
     if M.BLACKLIST[id] == true then return true end
-    return extra ~= nil and extra[id] == true
+    if extra ~= nil and extra[id] == true then return true end
+    -- The compiled profile's verdict, for the 917 records it covers. A live
+    -- record check (below) covers everything else, including creatures added
+    -- by mods this profile has never seen.
+    local known = creatures.get(id)
+    return known ~= nil and known.ride == false
+end
+
+-- ---------------------------------------------------------------------------
+-- BIPEDS AND WEAPON CARRIERS ARE NOT MOUNTS
+-- ---------------------------------------------------------------------------
+-- A biped takes its animation from the NPC rig: it has no mount cycle, and
+-- seating a rider on one produces a person standing inside another person. A
+-- weapon carrier has a `Weapon Bone` and is built to fight, not to be sat on.
+-- Both are flags on the CREA record, so this is the record's own verdict
+-- rather than a judgement about the model.
+--
+-- 161 of the 917 compiled records are barred this way: 112 bipeds and 160
+-- weapon carriers, overlapping in 111.
+--
+-- TWO SOURCES, DELIBERATELY. The compiled table answers instantly for
+-- everything shipped by Morrowind, Tribunal, Bloodmoon, Tamriel Data and
+-- OAAB. For anything else -- and a riding mod's own mount record is always
+-- "anything else" -- the live record carries `isBiped` and `canUseWeapons`,
+-- so a mod-added biped is barred just as firmly without being in the table.
+--
+---@param recordId string|nil
+---@param record table|nil the live CreatureRecord, when the caller has one
+---@return boolean barred, string|nil why
+function M.barredFromRiding(recordId, record)
+    if record ~= nil then
+        if record.isBiped == true then return true, 'biped' end
+        if record.canUseWeapons == true then return true, 'carries weapons' end
+    end
+    local known = recordId and creatures.get(recordId)
+    if known and known.ride == false then
+        return true, 'biped or weapon carrier'
+    end
+    return false, nil
+end
+
+---Where the rider sits on a creature the compiled profile knows, or nil.
+---
+---PROFILE WINS OVER THIS. Its entries were measured from the riding mods'
+---own configs; this is derived from the collision box the engine builds, and
+---the generator's header shows it landing within 12% of each measured value.
+---Good enough for a creature nobody has tuned, not good enough to overrule
+---one somebody has.
+---@param recordId string|nil
+---@return table|nil saddle `{forward, right, up}`
+function M.saddleFromProfile(recordId)
+    local known = recordId and creatures.get(recordId)
+    if not known or not known.up then return nil end
+    return { forward = 0, right = 0, up = known.up }
 end
 
 -- ALWAYS returns a FRESH table, including on the fallback path.

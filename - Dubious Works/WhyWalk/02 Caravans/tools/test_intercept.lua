@@ -226,12 +226,14 @@ package.loaded['openmw.util'] = {
     vector3 = vec3,
 }
 package.loaded['openmw.nearby'] = { actors = { guide } }
+-- Settings the module reads. PASSENGER_POSE is a live table rather than a
+-- literal so a test can turn it on without reloading the module -- which it
+-- could not do anyway, since the section is read once at load.
+local SETTINGS = { ANIMATED_TRAVEL = true, SPEED = 1400, ADVANCE_CLOCK = true,
+                   PASSENGER_POSE = false }
 package.loaded['openmw.storage'] = {
     playerSection = function()
-        return { get = function(_, k)
-            local v = { ANIMATED_TRAVEL = true, SPEED = 1400, ADVANCE_CLOCK = true }
-            return v[k]
-        end }
+        return { get = function(_, k) return SETTINGS[k] end }
     end,
 }
 local activationHandlers = {}
@@ -443,6 +445,32 @@ check('departing clears every UI mode, dialogue included',
       sequence():find('setMode:nil') ~= nil, sequence())
 
 -- ---------------------------------------------------------------------------
+-- NO TRAVEL WHILE TRAVELLING
+-- ---------------------------------------------------------------------------
+-- The caravaner rides with you and is still a travel-service NPC. Without
+-- this, activating them mid-journey opens the vanilla list and a second fare
+-- teleports you past the ride -- a paid skip over the whole point of the
+-- module, leaving a journey running underneath with a vehicle and a guide
+-- still pinned to a route.
+log = {}
+modeStack, uiMode = { 'Dialogue', 'Travel' }, 'Travel'
+ev.UiModeChanged({ oldMode = 'Dialogue', newMode = 'Travel' })
+check('the travel menu is closed outright while a journey is running',
+      sequence():find('removeMode:Travel') ~= nil, sequence())
+check('and no caravan menu is offered either; the answer is no',
+      sequence():find('popup:show') == nil, sequence())
+check('the player is told why rather than left with a window that blinks',
+      sequence():find('msg_already_travelling', 1, true) ~= nil, sequence())
+
+-- End that journey, or every later stand-down test runs as though aboard.
+ev.WWCaravans_Arrived({ displayName = 'Ald-ruhn' })
+log = {}
+modeStack, uiMode = { 'Dialogue', 'Travel' }, 'Travel'
+ev.UiModeChanged({ oldMode = 'Dialogue', newMode = 'Travel' })
+check('once the journey has ended the menu works normally again',
+      sequence():find('msg_already_travelling', 1, true) == nil, sequence())
+
+-- ---------------------------------------------------------------------------
 -- RE-ENTRY
 -- ---------------------------------------------------------------------------
 -- removeMode causes another UiModeChanged. Handling that one would ask the
@@ -628,16 +656,59 @@ package.loaded['openmw.world'].createObject = function(recordId)
     recordTeleport(vehicleObj)
     return vehicleObj
 end
-package.loaded['openmw.world'].createRecord = function(d) return { id = 'ww_test_strider' } end
+local createdDraft, createdDraftKind, creatureDrafts = nil, nil, 0
+package.loaded['openmw.world'].createRecord = function(d)
+    return { id = 'ww_test_strider' }
+end
 package.loaded['openmw.world'].advanceTime = function() end
 package.loaded['openmw.core'].isWorldPaused = function() return false end
 package.loaded['openmw.types'].Actor.stats.dynamic.health =
     function() return { current = 100, base = 100 } end
-package.loaded['openmw.types'].Creature.createRecordDraft = function(d) return d end
--- A load order that HAS a strider creature, so the vehicle is a creature and
--- its gait can play. The activator fallback is a different path.
-package.loaded['openmw.types'].Creature.records = {
-    c_siltstrider = { id = 'c_siltstrider', model = 'r\\Siltstrider.nif' },
+package.loaded['openmw.types'].Creature.createRecordDraft = function(d)
+    creatureDrafts = creatureDrafts + 1
+    createdDraft, createdDraftKind = d, 'creature'
+    return d
+end
+
+-- THE RECORD LIST IS NOT A TABLE.
+--
+-- `RecordList` is annotated `table<integer|string, T|nil>` in Cod3x, and the
+-- module's first version trusted that: it looked for a strider by sweeping
+-- `pairs(types.Creature.records)`. In game it found nothing and raised
+-- nothing, in an install that certainly has strider creatures in it, and the
+-- vehicle fell back to an activator that cannot animate. Same family as
+-- `I.UI.MODE`, which `type()` calls a non-table and `pairs()` cannot list.
+--
+-- So the mock yields NOTHING from a sweep while answering a direct index,
+-- which is precisely what the log shows: no error, no match. The raising
+-- variant is covered separately below, because another build may do that
+-- instead and it must cost the sweep rather than the journey.
+local creatureRecords = {
+    siltstrider = { id = 'siltstrider', model = 'meshes/r/siltstrider.nif' },
+    rat         = { id = 'rat',         model = 'meshes/r/rat.nif' },
+}
+local recordsIterRaises = false
+package.loaded['openmw.types'].Creature.records = setmetatable({}, {
+    __index = function(_, k) return creatureRecords[k] end,
+    __pairs = function(t)
+        if recordsIterRaises then error('records is not iterable', 0) end
+        -- Iterates, finds nothing. The observed behaviour.
+        return function() return nil end, t, nil
+    end,
+})
+package.loaded['openmw.types'].Creature.record = function(idOrObj)
+    if type(idOrObj) ~= 'string' then return nil end
+    return creatureRecords[idOrObj]
+end
+-- The activator fall-back has to exist in the harness, or a regression that
+-- reaches it crashes the run instead of failing its assertions. A crash says
+-- "something broke"; a failing assertion says which promise was broken.
+package.loaded['openmw.types'].Activator = {
+    createRecordDraft = function(d)
+        createdDraft, createdDraftKind = d, 'activator'
+        return d
+    end,
+    objectIsInstance = function() return false end,
 }
 package.loaded['openmw.types'].Actor.inventory = function()
     return { countOf = function() return 100000 end,
@@ -668,19 +739,74 @@ local function frame(dt)
 end
 
 log = {}
-G.eventHandlers.WWCaravans_RequestTravel({
-    player = playerObj, guide = guide, from = 'balmora', to = 'ald-ruhn',
-})
+local startSaid = {}
+do
+    local realPrint1 = print
+    print = function(...) startSaid[#startSaid + 1] = table.concat({ ... }, ' ') end
+    G.eventHandlers.WWCaravans_RequestTravel({
+        player = playerObj, guide = guide, from = 'balmora', to = 'ald-ruhn',
+    })
+    print = realPrint1
+end
+local startMsg = table.concat(startSaid, '\n')
 
 check('a journey starts', vehicleObj ~= nil)
 
+-- ---------------------------------------------------------------------------
+-- THE VEHICLE MUST NOT BE AN ACTOR
+-- ---------------------------------------------------------------------------
+-- This is the assertion that would have stopped the 2026-10-30 regression.
+--
+-- Spawning a CREATURE instead of an activator works -- Tamriel Data's strider
+-- clones fine and its legs move -- and it broke the ride completely: rider
+-- inside the mesh, jumpy movement, guide floating, camera locked with no
+-- pull-back, and the player dead in transit. All of it follows from a
+-- creature being an ACTOR, with actor collision that a rider is teleported
+-- into sixty times a second.
+--
+-- The animation never needed one. Immersive Travel ships
+-- Meshes/r/xsiltstrider.nif and .kf with RunForward, WalkForward and
+-- Idle..Idle7, so the activator animates from the mesh.
+check('the vehicle is spawned as an ACTIVATOR',
+      createdDraftKind == 'activator', tostring(createdDraftKind))
+check('and no creature record is ever drafted',
+      creatureDrafts == 0, creatureDrafts)
+check('the vehicle carries the mesh, not a cloned record',
+      (createdDraft or {}).model ~= nil, (createdDraft or {}).model)
+check('which is the strider mesh Immersive Travel replaces',
+      tostring((createdDraft or {}).model):lower():find('siltstrider', 1, true) ~= nil,
+      (createdDraft or {}).model)
+check('the journey reports no creature clone',
+      startMsg:find('creature cloned', 1, true) == nil, startMsg)
+
 -- ------------------------------------------------------------------ the pose
-check('departing sends the vessel pose START',
-      poseLog[1] and poseLog[1].name == 'WhyWalk_AnimVesselStart',
-      poseLog[1] and poseLog[1].name)
-check("the stance is 'passenger', which resolves rasit2",
-      poseLog[1] and poseLog[1].stance == 'passenger',
-      poseLog[1] and poseLog[1].stance)
+-- THE SEATED POSE IS OPT-IN, and this harness leaves PASSENGER_POSE unset.
+-- Riding it, the standing idle reads better against the strider's own gait,
+-- so the default went back to what the 2026-10-29 build did.
+check('no pose is sent with the setting off',
+      poseLog[1] == nil, poseLog[1] and poseLog[1].name)
+
+-- With it on, the pose still works: this is a default, not a retraction.
+do
+    SETTINGS.PASSENGER_POSE = true
+    poseLog = {}
+    ev.WWCaravans_Started({ displayName = 'Ald-ruhn' })
+    check('turning it on seats the passenger',
+          poseLog[1] and poseLog[1].name == 'WhyWalk_AnimVesselStart',
+          poseLog[1] and poseLog[1].name)
+    check("with the 'passenger' stance, which resolves rasit2",
+          poseLog[1] and poseLog[1].stance == 'passenger',
+          poseLog[1] and poseLog[1].stance)
+    -- Read per journey, so a change between rides takes effect on the next
+    -- one rather than on a reload.
+    SETTINGS.PASSENGER_POSE = false
+    poseLog = {}
+    ev.WWCaravans_Started({ displayName = 'Ald-ruhn' })
+    check('and turning it off again takes effect on the next journey',
+          poseLog[1] == nil, poseLog[1] and poseLog[1].name)
+    ev.WWCaravans_Arrived({ displayName = 'Ald-ruhn' })
+    poseLog = {}
+end
 
 -- ------------------------------------------------------- placement, frame 1
 -- A teleport fall-through needs no proving, so it is reported at once: the
@@ -911,6 +1037,71 @@ check('aborting clears the pose as well as arriving',
       lastPose() == 'WhyWalk_AnimVesselStop', tostring(lastPose()))
 check('and parks the vehicle', placed.vehicle.z < -20000,
       ('%.0f'):format(placed.vehicle.z))
+
+-- ---------------------------------------------------------------------------
+-- WHAT onSave PUTS IN THE SAVE
+-- ---------------------------------------------------------------------------
+-- A Cell is not a serialisable value and the engine rejects the WHOLE table
+-- when one appears in it:
+--
+--     Global[.../caravans_global.lua] onSave failed: Value is not serializable.
+--
+-- So a save taken mid-journey stored nothing from this module at all,
+-- vehicleRecordId included, and the next journey minted another record while
+-- the guide stayed off their post. One bad field cost the entire block.
+--
+-- The cell is stored as its NAME now. These assertions are about the saved
+-- table's TYPES, because that is what the engine actually rejects, and about
+-- the round trip, because a name that cannot be teleported back to is no
+-- better than a Cell that cannot be written down.
+
+G.eventHandlers.WWCaravans_RequestTravel({
+    player = playerObj, guide = guide, from = 'balmora', to = 'ald-ruhn',
+})
+frame(0.016)
+
+local saved = G.engineHandlers.onSave()
+check('onSave returns something mid-journey', type(saved) == 'table', type(saved))
+check('the cell is stored as a NAME, not as a Cell',
+      saved.guideHomeCell == nil and type(saved.guideHomeCellName) == 'string',
+      ('cell %s, name %s'):format(type(saved.guideHomeCell),
+                                  type(saved.guideHomeCellName)))
+check('the guide itself is saved; a GameObject is serialisable',
+      saved.guide == guide)
+check('and the record id survives, which is what the lost block cost',
+      type(saved.vehicleRecordId) == 'string', type(saved.vehicleRecordId))
+
+-- Every other value must be a type the engine can write. Strings, numbers and
+-- booleans always; a GameObject and a util.Vector3 are serialisable too, and
+-- both appear here, so they are allowed by name and by metatable. Anything
+-- else is the next Cell waiting to happen.
+do
+    local bad = {}
+    for k, v in pairs(saved) do
+        local t = type(v)
+        local plain = t == 'string' or t == 'number' or t == 'boolean'
+        local vector = t == 'table' and getmetatable(v) == V
+        if not (plain or vector or k == 'guide') then
+            bad[#bad + 1] = ('%s is %s'):format(k, t)
+        end
+    end
+    check('nothing else in the save is an engine value the save cannot hold',
+          #bad == 0, table.concat(bad, ', '))
+end
+
+-- The round trip: a load must put the guide back where they started.
+--
+-- The frame counter is bumped first because a save load is a discrete event
+-- between frames, not part of an update: whatever the last frame teleported
+-- has landed by the time onLoad runs.
+placed.guide = nil
+frameNo = frameNo + 1
+G.engineHandlers.onLoad(saved)
+check('loading puts the guide back on their post',
+      placed.guide ~= nil
+      and math.abs(placed.guide.x - guideHome.x) < 1e-6
+      and math.abs(placed.guide.y - guideHome.y) < 1e-6,
+      placed.guide and ('%.0f,%.0f'):format(placed.guide.x, placed.guide.y))
 
 -- And a load, because the global puts the player on the ground in its own
 -- onLoad and a surviving pose would outlive the journey.

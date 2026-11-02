@@ -105,7 +105,26 @@ package.loaded['openmw.async'] = {
 package.loaded['openmw.interfaces'] = {
     Settings = { registerPage = function() end, registerGroup = function() end },
     Camera = {},
-    AnimRefresh = nil,
+    -- Recording mock, NOT nil.
+    --
+    -- This was `AnimRefresh = nil`, and that one line is why the whole suite
+    -- passed while the feature did not exist. ridingAnim guards its
+    -- subscription with `if I.AnimRefresh and I.AnimRefresh.subscribe`, Core's
+    -- manifest had no line registering AnimRefresh_v6.lua, and this mock
+    -- agreed with both -- three things consistent with each other and all
+    -- three wrong about what the shipped mod should do. A guard plus a mock
+    -- that matches the guard keeps a missing provider invisible forever.
+    AnimRefresh = {
+        version = 6,
+        subscribed = {},
+        subscribe = function(key, fn, opts)
+            package.loaded['openmw.interfaces'].AnimRefresh.subscribed[key] =
+                { fn = fn, opts = opts }
+        end,
+        unsubscribe = function(key)
+            package.loaded['openmw.interfaces'].AnimRefresh.subscribed[key] = nil
+        end,
+    },
     AnimationController = {
         playBlendedAnimation = function(group, opts)
             assert(type(group) == 'string' and group ~= '',
@@ -505,6 +524,64 @@ check('stand ignores every helm input',
 local slowOnly = { base = 'idle', slow = 'rowslow' }
 check('slow without stroke applies at any speed',
       vf(slowOnly, 0, 1, true) == 'slow' and vf(slowOnly, 0, 1, false) == 'slow')
+
+-- ---------------------------------------------------------------------------
+-- PERSPECTIVE CHANGE (AnimRefresh)
+-- ---------------------------------------------------------------------------
+-- Switching perspective rebuilds the player's animation object and drops
+-- scripted animations with it, so the rider pose has to be re-applied. That is
+-- the entire reason ridingAnim subscribes to AnimRefresh, and nothing tested it.
+
+local AR = package.loaded['openmw.interfaces'].AnimRefresh
+
+-- The release is conditional on BOTH, and that is deliberate: a pilot who
+-- mounts from the boat is mounted and aboard at once, so dismounting must not
+-- take the subscription away while the vessel pose still needs it. Asserting
+-- the dismount alone releases it is wrong -- the first version of this test
+-- did, and the code was right.
+ev.WhyWalk_AnimDismounted()
+settle()
+check('aboard a vessel, a dismount keeps the subscription',
+      AR.subscribed['WhyWalk'] ~= nil)
+
+ev.WhyWalk_AnimVesselStop()
+settle()
+check('neither mounted nor aboard: the subscription is released',
+      AR.subscribed['WhyWalk'] == nil)
+
+ev.WhyWalk_AnimMounted({ mountType = 'horse' })
+settle()
+local sub = AR.subscribed['WhyWalk']
+check('mounting subscribes to AnimRefresh', sub ~= nil and type(sub.fn) == 'function',
+      sub == nil and 'no subscription' or type(sub.fn))
+
+-- verify = true is the opt-in to the confirmation pass, and it is separate from
+-- the retry a false return gets. The note above onPerspectiveChanged wants both.
+check('the subscription asks for the confirmation pass',
+      sub ~= nil and sub.opts ~= nil and sub.opts.verify == true,
+      sub and tostring(sub.opts and sub.opts.verify) or 'no opts')
+
+ev.WhyWalk_AnimState({ state = 'gallop' })
+settle()
+local before = playing
+check('galloping before the perspective change', before == 'rideh3' or before ~= nil,
+      tostring(before))
+
+-- The engine has rebuilt the model: nothing is playing any more. This is the
+-- state a perspective change actually leaves behind.
+playing = nil
+local result = sub.fn(nil, nil, { reason = 'boundary', attempt = 0 })
+settle()
+check('a perspective change re-applies a pose', playing ~= nil, tostring(playing))
+
+-- And when the pose did not take, the callback must ask for redelivery --
+-- returning false is what buys the retry.
+playing = nil
+local reapplied = sub.fn(nil, nil, { reason = 'boundary', attempt = 0 })
+local tookEffect = playing ~= nil
+check('the callback reports readiness honestly',
+      tookEffect or reapplied == false,
+      'played=' .. tostring(playing) .. ' returned=' .. tostring(reapplied))
 
 print(failures == 0 and '\nALL PASS' or ('\n' .. failures .. ' FAILURE(S)'))
 os.exit(failures == 0 and 0 or 1)

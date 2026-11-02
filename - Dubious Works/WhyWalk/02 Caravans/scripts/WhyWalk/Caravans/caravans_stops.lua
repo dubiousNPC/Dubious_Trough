@@ -35,6 +35,37 @@ local M = {}
 
 M.RADIUS = 15000
 
+-- A STRAY POINT IN THE MIDDLE OF A ROUTE
+--
+-- The endpoint checks above only look at where a route starts and ends.
+-- `vivec -> seyda neen` passes both and is still unusable: at point 29 of 37
+-- it turns 178 degrees, runs 73,468 units out and comes straight back. Of its
+-- 204,146-unit "length", 145,392 is that one out-and-back spike -- it is not
+-- the longest route in the data, it is a broken one. In game the strider
+-- turned round halfway and trudged away for the best part of two minutes,
+-- which reads exactly like being stuck.
+--
+-- The test is a segment grossly out of scale with the rest of its own route,
+-- which is what a pair of stray points looks like. Measured over all 47
+-- shipped routes, longest segment divided by median segment:
+--
+--     vivec -> seyda neen   50.5     <- corrupt
+--     suran -> balmora      27.0     <- corrupt (the endpoint check already
+--                                       catches this one, from the other end)
+--     seyda neen -> vivec    6.7     <- worst well-formed route
+--     bosmora -> sailen      4.7
+--     ...
+--     molag ruhn region      1.5
+--
+-- 10 sits in the gap: 1.5x above the worst good route and 2.7x below the
+-- better of the two bad ones. A ratio, not an absolute length, because
+-- segment scale varies legitimately between routes (median 1329 to 2364).
+--
+-- Tortuosity (total length over straight-line distance) separates these two
+-- as well, 4.84 against 1.50, but it would also condemn a genuinely winding
+-- mountain road. The outlier test names what is actually wrong.
+M.MAX_SEGMENT_RATIO = 10
+
 local function median(list)
     table.sort(list)
     local n = #list
@@ -73,7 +104,39 @@ local function dist(c, x, y)
     return math.sqrt(dx * dx + dy * dy)
 end
 
----Remove, in place, every route whose ends are not at its named stops.
+---The longest segment of a flat {x,y,z,...} route over its median segment,
+---plus the length and index of that segment. 0 for a route too short to have
+---two segments to compare.
+---
+---Used by validate; exported because the importer wants the same number.
+---@return number ratio, number longest, number index 1-based segment index
+function M.segmentOutlier(p)
+    local n = math.floor(#p / 3)
+    if n < 3 then return 0, 0, 0 end
+    local lens = {}
+    for i = 2, n do
+        local a, b = (i - 2) * 3, (i - 1) * 3
+        local dx = p[b + 1] - p[a + 1]
+        local dy = p[b + 2] - p[a + 2]
+        local dz = p[b + 3] - p[a + 3]
+        lens[i - 1] = math.sqrt(dx * dx + dy * dy + dz * dz)
+    end
+
+    local longest, at = 0, 0
+    for i, L in ipairs(lens) do
+        if L > longest then longest, at = L, i end
+    end
+
+    -- Sorted copy: `lens` is still needed in its own order to report WHERE.
+    local sorted = {}
+    for i, L in ipairs(lens) do sorted[i] = L end
+    local med = median(sorted)
+    if med <= 0 then return 0, longest, at end
+    return longest / med, longest, at
+end
+
+---Remove, in place, every route whose ends are not at its named stops, or
+---which contains a segment grossly out of scale with the rest of itself.
 ---Returns a list of "from -> to (reason)" strings for the caller to report.
 function M.validate(routes, centres)
     local dropped = {}
@@ -88,6 +151,14 @@ function M.validate(routes, centres)
             elseif dist(centres[to], p[#p - 2], p[#p - 1]) > M.RADIUS then
                 why = string.format('ends %.0f from %s',
                     dist(centres[to], p[#p - 2], p[#p - 1]), to)
+            else
+                local ratio, longest, at = M.segmentOutlier(p)
+                if ratio > M.MAX_SEGMENT_RATIO then
+                    why = string.format(
+                        'stray point: segment %d of %d jumps %.0f, %.0fx the'
+                        .. ' median for this route',
+                        at, math.floor(#p / 3) - 1, longest, ratio)
+                end
             end
             if why then
                 dests[to] = nil

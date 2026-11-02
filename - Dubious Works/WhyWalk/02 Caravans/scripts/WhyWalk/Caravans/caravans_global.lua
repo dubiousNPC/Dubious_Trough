@@ -141,54 +141,64 @@ local spawnedIsCreature = false
 ---Matched on the model path rather than the record id, deliberately: the ids
 ---differ between load orders (`c_siltstrider` comes from Immersive Travel)
 ---while the mesh is the mesh.
-local function findCreatureTemplate(meshNeedle)
-    local needle = meshNeedle:lower():gsub('\\', '/')
-    for _, record in pairs(types.Creature.records) do
-        local model = record.model
-        if model and model:lower():gsub('\\', '/'):find(needle, 1, true) then
-            return record
-        end
-    end
-    return nil
-end
+-- ---------------------------------------------------------------------------
+-- THE VEHICLE IS AN ACTIVATOR, AND THAT IS THE RIGHT ANSWER
+-- ---------------------------------------------------------------------------
+-- Two sessions went into spawning a CREATURE instead, on the belief that only
+-- a creature can animate. It can be done -- Tamriel Data's
+-- `T_Mw_Fau_Slstrid_01` clones fine and its legs move -- and it was a
+-- thorough regression:
+--
+--     rider placed inside the strider mesh
+--     jumpy, broken movement
+--     driver floating above the mesh
+--     camera locked completely, no pull-back at all
+--     player died in transit
+--
+-- All of which follow from what a creature IS. It is an ACTOR: it has actor
+-- collision, so a rider teleported onto its back every frame is teleported
+-- into something solid and shoved back out, which is the jumpiness and very
+-- likely the death; the camera's backward trace starts inside that collision
+-- and collapses to the head, which is the lock; and it is a different model
+-- from a different plugin, so slot offsets measured against the vanilla mesh
+-- put the rider inside it and the guide above it. An activator is scenery
+-- that moves, which is what a vehicle should be.
+--
+-- AND THE PREMISE WAS FALSE. The strider animates as an activator, because
+-- Immersive Travel ships the animation with the mesh:
+--
+--     Meshes/r/siltstrider.nif     replaces the vanilla static
+--     Meshes/r/xsiltstrider.nif    the animated variant
+--     Meshes/r/xsiltstrider.kf     RunForward, WalkForward, Idle .. Idle7
+--
+-- `RunForward` is the gait caravans_db asks for and `idle5` is the group the
+-- guide slot wants; both are in that file. The 2026-10-29 build rode an
+-- activator with this mesh and the strider's legs moved.
+--
+-- So: no creature lookup, no cloned record, no actor. Without Immersive
+-- Travel the activator still carries the player, with the vanilla static's
+-- mesh and no leg movement -- which is Ben's Rideable Silt Striders exactly,
+-- and a reasonable floor.
 
 ---Create (once) and return the record id to spawn the vehicle from.
+---
+---Always an activator. `isCreature` stays in the signature because the save
+---format and the vehicle script both read it, and because the day an engine
+---animates only actors it is the flag that would come back rather than a new
+---one.
 ---@return string|nil recordId, boolean isCreature
 local function vehicleRecord(v)
     if vehicleRecordId then return vehicleRecordId, spawnedIsCreature end
 
-    local template = findCreatureTemplate(v.mesh)
-    if template then
-        -- A creature, so the gait can actually play. Cloned from a real
-        -- record so every stat and flag it needs is already right; only the
-        -- name is blanked, because this object is scenery the player rides,
-        -- not something to target.
-        local draft = types.Creature.createRecordDraft({
-            template = template,
-            name = v.name,
-        })
-        local record = world.createRecord(draft)
-        vehicleRecordId, spawnedIsCreature = record.id, true
-        if DEBUG then
-            print('[WhyWalk Caravans] vehicle record from creature template '
-                  .. tostring(template.id))
-        end
-        return vehicleRecordId, true
-    end
-
-    -- No strider creature in this load order. An activator still moves and
-    -- still carries the player; it simply cannot animate, so the journey
-    -- looks like Ben's rather than like this module's intent.
     local draft = types.Activator.createRecordDraft({
         name = v.name,
         model = 'meshes/' .. v.mesh:gsub('\\', '/'),
     })
     local record = world.createRecord(draft)
     vehicleRecordId, spawnedIsCreature = record.id, false
-    print('[WhyWalk Caravans] no silt strider CREATURE record found in this'
-          .. ' load order; falling back to an activator. The vehicle will'
-          .. ' move but its legs will not animate. Installing a mod that adds'
-          .. ' a rideable strider creature restores the animation.')
+    if DEBUG then
+        print('[WhyWalk Caravans] vehicle activator from ' .. tostring(v.mesh))
+    end
     return vehicleRecordId, false
 end
 
@@ -511,7 +521,14 @@ local function onRequestTravel(data)
         fromKey = fromKey,
         toKey = toKey,
         travelled = 0,
-        heading = nil,
+        -- THE VEHICLE'S OWN STATE, because it steers rather than being
+        -- placed: its position is integrated along its facing and is not a
+        -- function of `travelled` alone. Seeded on the route's first point and
+        -- pointed along the route, so the first frame is already correct.
+        body = nil,
+        -- The eased vertical. nil means "start on the path", so the first
+        -- frame places the strider exactly rather than easing up from zero.
+        smoothZ = nil,
         swayAmp = 0,
         swayT = 0,
         -- Vanilla would have advanced the clock by this much for this
@@ -527,6 +544,19 @@ local function onRequestTravel(data)
         -- something that still looks like travel.
         speed = math.max(100, tonumber(data.speed) or v.speed),
     }
+
+    -- Seed the steered body on the route's first point, facing along it.
+    -- Done here rather than lazily in onUpdate so the very first frame places
+    -- the strider correctly instead of at the origin.
+    do
+        local sx, sy = path.at(points, prep, 0)
+        local ax, ay = path.at(points, prep,
+            math.min(path.STEERING.AHEAD, prep.total))
+        session.body = {
+            x = sx, y = sy,
+            heading = path.headingToward(sx, sy, ax, ay) or 0,
+        }
+    end
 
     -- addScript lands next frame, so the start event is deferred to the first
     -- onUpdate that sees the script attached. Sending it now would drop it,
@@ -567,10 +597,34 @@ local function onRequestQuote(data)
     if not player or not player:isValid() then return end
     if not guide or not guide:isValid() then return end
 
-    local fromKey = guide.cell.isExterior
+    -- [BUGFIX] Two unguarded reads, one of which could raise.
+    --
+    -- `cell` is nilable on an object, and this file already guards the same
+    -- pattern elsewhere; a nil cell here took the handler down with it.
+    --
+    -- The record read was `types.NPC.record(guide).travelDestinations`, which
+    -- is nil-dereferenced for any guide that is not an NPC. The player script
+    -- resolves this generically -- travelDestinationsOf() tries NPC then
+    -- Creature, over a comment saying servicesOffered and travelDestinations
+    -- are RECORD fields -- and this side hardcoded NPC, so the two halves of
+    -- one feature disagreed. The player script pairs byDest with the record's
+    -- travelDestinations BY INDEX (see the note above), so the two must read
+    -- the same record or the pairing is meaningless.
+    --
+    -- Raising here is not a crash: the engine logs it and carries on. It is
+    -- worse than that -- the quote never arrives, so the destination menu is
+    -- empty with one line in the log to say why.
+    local gcell = guide.cell
+    local fromKey = gcell and gcell.isExterior
         and stops.at(STOP_CENTRES, guide.position.x, guide.position.y) or nil
     local byDest = {}
-    local dests = fromKey and types.NPC.record(guide).travelDestinations or {}
+    local grec = nil
+    if types.NPC.objectIsInstance(guide) then
+        grec = types.NPC.record(guide)
+    elseif types.Creature.objectIsInstance(guide) then
+        grec = types.Creature.record(guide)
+    end
+    local dests = (fromKey and grec and grec.travelDestinations) or {}
     for i, dest in ipairs(dests) do
         local p = dest.position
         local toKey = stops.at(STOP_CENTRES, p.x, p.y)
@@ -640,8 +694,11 @@ local function onUpdate(dt)
     end
     if core.isWorldPaused() or dt <= 0 then return end
 
+    -- Bare, as in Core and Boats. dynamic.health returns nil only for a
+    -- non-actor, and this is the player, who passed isValid above. A guard here
+    -- would be swallowing a fault that should reach the log.
     local health = types.Actor.stats.dynamic.health(s.player)
-    if health and health.current <= 0 then
+    if health.current <= 0 then
         return endJourney(s, 'died', false)
     end
 
@@ -653,27 +710,55 @@ local function onUpdate(dt)
     s.travelled = s.travelled + s.speed * dt
     local done = s.travelled >= s.prep.total
 
-    local x, y, z, yaw = path.at(s.points, s.prep, s.travelled)
+    -- Where the route says we should be, and the point further along we are
+    -- steering at. Two path.at calls, each a binary search over a few dozen
+    -- points.
+    local px, py, pz = path.at(s.points, s.prep, s.travelled)
+    local cx, cy = path.at(s.points, s.prep,
+        math.min(s.travelled + path.STEERING.AHEAD, s.prep.total))
 
-    -- Ease the body toward the route heading. The polyline turns in steps, so
-    -- applying the heading raw would snap the whole strider at every waypoint.
-    s.heading = path.easeHeading(s.heading, yaw, s.vehicleDef.turnRate, dt)
+    -- THE STRIDER STEERS. It is not placed at px,py and rotated separately --
+    -- that is the model that had it travelling up to 88% sideways at corners,
+    -- round after round. It turns toward the point ahead and moves along its
+    -- own facing, so velocity and facing are the same vector; the correction
+    -- back toward px,py is the only sideways component left, and it is gentle
+    -- enough to measure at 1% of travel on average. caravans_path.M.steer has
+    -- the full comparison.
+    path.steer(s.body, cx, cy, px, py, s.speed, s.vehicleDef.turnRate,
+               path.STEERING.CORRECT_TAU, dt)
+    local x, y = s.body.x, s.body.y
 
     -- Sway: lean into the turn, eased rather than snapped. For a strider the
     -- multiplier is 1, which is deliberately almost imperceptible.
+    --
+    -- Measured against the STEERING TARGET now rather than the segment
+    -- heading, because that is what the body is actually turning toward.
     s.swayT = s.swayT + dt
     local turning = 0
-    if yaw and s.heading then
-        local diff = path.angleDiff(s.heading, yaw)
+    local aim = path.headingToward(x, y, cx, cy)
+    if aim and s.body.heading then
+        local diff = path.angleDiff(s.body.heading, aim)
         turning = diff > 0.02 and 1 or (diff < -0.02 and -1 or 0)
     end
     s.swayAmp = path.stepSway(s.swayAmp, turning ~= 0 and 1 or 0,
                               path.SWAY.AMPL_CHANGE * 60, dt)
     local roll = path.sway(s.swayT, s.swayAmp, s.vehicleDef.sway) * -turning
 
-    s.lastX, s.lastY, s.lastZ = x, y, z
+    -- Vertical from the ROUTE, eased. Only x and y are steered: the ground is
+    -- where the route says it is, and integrating height along a facing would
+    -- have the strider climb into the air. The route's z is piecewise linear,
+    -- so its vertical SPEED jumps at every waypoint -- a jolt about once a
+    -- second at this speed, which path.easeVertical rounds off.
+    s.smoothZ = path.easeVertical(s.smoothZ, pz, dt)
+    local z = s.smoothZ
 
-    local bodyYaw = s.heading or yaw or 0
+    -- The dismount uses the ROUTE's final point, not the steered position:
+    -- the strider can finish a few hundred units short of the stop after
+    -- swinging wide of the last corner, and the player paid to arrive AT the
+    -- stop.
+    s.lastX, s.lastY, s.lastZ = (done and px or x), (done and py or y), z
+
+    local bodyYaw = s.body.heading or 0
     -- ONE origin for the vehicle and everything riding on it. See bodyOrigin.
     local bz = bodyOrigin(s, z)
     placeVehicle(s, x, y, bz, bodyYaw, roll)
@@ -733,7 +818,25 @@ local function onSave()
     if s and s.guide and s.guide:isValid() and s.guideHome then
         saved.guide = s.guide
         saved.guideHome = s.guideHome
-        saved.guideHomeCell = s.guideHomeCell
+        -- THE CELL'S NAME, NOT THE CELL.
+        --
+        -- A Cell is not a serialisable value, and the engine rejects the
+        -- WHOLE table when one appears in it:
+        --
+        --     Global[.../caravans_global.lua] onSave failed:
+        --     Value is not serializable.
+        --
+        -- So a save taken mid-journey stored nothing at all from this module,
+        -- vehicleRecordId included -- which means the next journey minted
+        -- another record, and the guide was never put back on their post.
+        -- One bad field cost the entire block, not just itself.
+        --
+        -- A name round-trips: teleport takes a cell name, and an empty string
+        -- means the default exterior worldspace. An exterior cell's `name` is
+        -- usually empty, which is exactly the value that means "exterior", so
+        -- the same field serves both kinds without a flag.
+        saved.guideHomeCellName =
+            (s.guideHomeCell and s.guideHomeCell.name) or ''
     end
     return saved
 end
@@ -763,7 +866,11 @@ local function onLoad(data)
     local guide = data and data.guide
     local home = data and data.guideHome
     if guide and guide:isValid() and home then
-        guide:teleport(data.guideHomeCell or guide.cell, home)
+        -- A name, or '' for the default exterior worldspace. Saves written by
+        -- an older build carry `guideHomeCell`, which never made it into the
+        -- file because the whole block was rejected, so there is nothing to
+        -- read back from them.
+        guide:teleport(data.guideHomeCellName or '', home)
         guide:sendEvent('WWCaravans_GuideReleased', {})
     end
 end

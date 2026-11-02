@@ -207,6 +207,95 @@ if guarType then
           shared.profileFor(guarType).saddle.up)
 end
 
+-- ---------------------------------------------------------------------------
+-- THE COMPILED CREATURE PROFILE
+-- ---------------------------------------------------------------------------
+-- 917 CREA records from Morrowind, Tribunal, Bloodmoon, Tamriel Data and
+-- OAAB, baked into whywalk_creatures.lua by tools/gen_creatures.py. Two jobs:
+-- where a rider sits, and whether the creature may be ridden at all.
+--
+-- These assertions are against the SHIPPED table, not a mock. The point of
+-- generating it is that the numbers are real; a mock would test the
+-- arithmetic and nothing about the data.
+
+local creatures = require('scripts.WhyWalk.whywalk_creatures')
+
+check('the table covers the whole compiled profile',
+      creatures.COUNT > 900, creatures.COUNT)
+check('and shares shapes rather than repeating them',
+      #creatures.SHAPES < creatures.COUNT / 5,
+      ('%d shapes for %d creatures'):format(#creatures.SHAPES, creatures.COUNT))
+
+check('get is case-insensitive, since record ids arrive lower-cased',
+      creatures.get('Guar') ~= nil and creatures.get('guar') ~= nil)
+check('and returns nil for a creature nobody compiled',
+      creatures.get('detd_guarride1') == nil)
+check('and does not fall over on a nil id', creatures.get(nil) == nil)
+
+-- ------------------------------------------------------------- rideability
+check('a guar may be ridden', creatures.get('guar').ride == true)
+check('a dremora may not: biped and armed',
+      creatures.get('dremora').ride == false)
+check('nor a golden saint', creatures.get('golden saint').ride == false)
+check('a scamp may be: not a biped by the record',
+      creatures.get('scamp').ride == true)
+
+check('barredFromRiding agrees with the table',
+      shared.barredFromRiding('dremora') == true
+      and shared.barredFromRiding('guar') == false)
+check('and says why', select(2, shared.barredFromRiding('dremora')) ~= nil)
+
+-- THE LIVE RECORD IS THE AUTHORITY for anything the profile never saw, which
+-- is every mount a riding mod adds. Without this a mod-added biped would be
+-- rideable purely because nobody compiled it.
+check('a live biped record is barred even when the table has never seen it',
+      shared.barredFromRiding('some_mod_biped', { isBiped = true }) == true)
+check('so is a live weapon carrier',
+      shared.barredFromRiding('some_mod_brute', { canUseWeapons = true }) == true)
+check('a live record that is neither is allowed',
+      shared.barredFromRiding('some_mod_beast',
+          { isBiped = false, canUseWeapons = false }) == false)
+check('the live record WINS over a table entry that allows it',
+      shared.barredFromRiding('guar', { isBiped = true }) == true)
+
+check('isBlacklisted refuses a biped too, so one gate covers both',
+      shared.isBlacklisted('dremora') == true)
+check('and still lets an ordinary creature through',
+      shared.isBlacklisted('guar') == false)
+
+-- ------------------------------------------------------------- ride height
+local guar = shared.saddleFromProfile('guar')
+check('a known creature gets a saddle from the compiled box',
+      guar ~= nil and guar.up > 100 and guar.up < 180, guar and guar.up)
+check('with forward left at zero, as the box-derived one is',
+      guar.forward == 0 and guar.right == 0)
+check('an unknown creature gets nil, so the box read still happens',
+      shared.saddleFromProfile('detd_guarride1') == nil)
+
+-- A FLIER IS MEASURED FROM THE BOTTOM OF ITS BOX. A netch's box starts 348
+-- units above its origin and the rider hangs under the bell; the walker rule
+-- would seat them 660 units up, inside the sky.
+local netch = creatures.get('netch_bull')
+check('a netch is flagged as flying', netch.fly == true)
+check('and its ride height is the bottom of its box, not a fraction of the top',
+      netch.up > 300 and netch.up < 400, netch.up)
+
+-- A flier whose box starts at ground level is a flier in name only.
+local racer = creatures.get('cliff racer')
+check('a cliff racer, whose box starts at zero, uses the walker rule',
+      racer.fly == true and racer.up > 100, racer and racer.up)
+
+-- THE PROFILE STILL WINS. Its values came from the riding mods' own configs;
+-- the compiled figure is derived from a bounding box and lands near them, not
+-- on them.
+local T = shared.MOUNT_TYPE
+check('PROFILE keeps its measured guar saddle',
+      shared.profileFor(T.GUAR).saddle.up == 130,
+      shared.profileFor(T.GUAR).saddle.up)
+check('and the compiled figure is close to it without replacing it',
+      math.abs(creatures.get('guar').up - 130) < 20,
+      creatures.get('guar').up)
+
 print(('\n%d passed, %d failed'):format(pass, fail))
 if fail > 0 then os.exit(1) end
 print('ALL PASS')

@@ -180,6 +180,45 @@ parking are still teleports.
 
 ---
 
+## The vehicle is a creature, found by record id
+
+Only a creature animates; an activator moves and carries the player with its
+legs still. The strider creature is found by indexing
+`types.Creature.record(id)` for known ids, and only then by sweeping
+`types.Creature.records` as a capability probe.
+
+The sweep was the only path once, and it found nothing in an install that
+certainly had strider creatures in it, raising nothing either -- the signature
+of iterating an engine value that is not a Lua table, however Cod3x annotates
+it. The same family of mistake has cost this module three separate bugs
+(`FIX_2026-10-29c.md`), which is what `tools/check_enums.py` now guards.
+
+Which lookup worked is logged every session.
+
+## Routes are validated for stray points, not just for their ends
+
+A route whose start or end is not at its named stop is dropped. So is one
+containing a segment grossly out of scale with the rest of itself: that is
+what a stray point looks like, and `vivec -> seyda neen` has one that runs
+73,468 units out and comes straight back, 71% of the route's apparent length.
+Its ends are both fine, so the endpoint checks passed it and the strider
+turned round halfway.
+
+`stops.MAX_SEGMENT_RATIO` is 10, which sits in a measured gap: the two corrupt
+routes are at 50.5 and 27.0, the worst well-formed route at 6.7. A dropped
+route falls through to its reverse direction, and both corrupt routes have an
+intact opposite.
+
+## Nothing that is not serialisable goes in the save
+
+A Cell is not a serialisable value and the engine rejects the WHOLE save table
+when one appears in it, so one bad field loses every other field with it. The
+guide's home cell is stored as its NAME; `teleport` takes a cell name, and an
+empty string means the default exterior worldspace, which is what an exterior
+cell's `name` already is.
+
+---
+
 ## Destinations and fares come from the game, not a table
 
 `types.NPC.record(guide).travelDestinations` gives the real destination list —
@@ -252,7 +291,7 @@ scripts/WhyWalk/Caravans/
 tools/
   import_routes.py       regenerates caravans_routes.lua
   test_caravans.lua      78 assertions against the real data
-  test_intercept.lua     74 assertions: the menu, and a real journey
+  test_intercept.lua     83 assertions: the menu, and a real journey
                          driven through the real global script
 ```
 

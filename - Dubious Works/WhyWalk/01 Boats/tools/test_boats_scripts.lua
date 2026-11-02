@@ -105,14 +105,31 @@ local types = {
 }
 types.Static.record = function(o) return records[o.recordId] end
 types.Activator.record = function(o) return records[o.recordId] or created[o.recordId] end
-types.Activator.createRecordDraft = function(t) return t end
+-- THE ENGINE REJECTS A MODEL PATH WITHOUT THE PREFIX. It does not quietly
+-- add one, which is what this harness used to pretend:
+--
+--     Lua error: Path should start with 'meshes\'
+--       [C]: in function 'createRecordDraft'
+--
+-- Boarding threw on that, nine times in one session's log, and no test caught
+-- it because the mock implemented the belief rather than the engine. Raising
+-- here is the whole point of the change.
+types.Activator.createRecordDraft = function(t)
+    local m = tostring(t.model or ''):lower():gsub('\\', '/')
+    if m:sub(1, 7) ~= 'meshes/' then
+        error("Path should start with 'meshes\\'", 0)
+    end
+    return t
+end
 
 local world = {
     players = { player },
     createRecord = function(draft)
         local id = 'generated:' .. (#log.teleports + 1000)
-        -- what the engine is documented to do: prefix meshes\ onto the given path
-        created[id] = { id = id, name = draft.name, model = 'meshes\\' .. draft.model:gsub('/', '\\') }
+        -- Stored AS GIVEN, in the engine's own separator. It does not add the
+        -- prefix; createRecordDraft above refuses a path that lacks one.
+        created[id] = { id = id, name = draft.name,
+                        model = draft.model:gsub('/', '\\') }
         log.createdModel = draft.model
         return created[id]
     end,
@@ -161,7 +178,20 @@ local boarded
 for _, e in ipairs(log.playerEvents) do if e.name == 'WWBoats_Boarded' then boarded = e.data end end
 check('boarding announces to the pilot', boarded ~= nil)
 check('static is hidden', staticBoat.enabled == false)
-check('copy created from the plugin-relative model', log.createdModel == 'x/ex_de_rowboat.nif', log.createdModel)
+-- THE DRAFT CARRIES THE PREFIX, the lookup key does not. This asserted the
+-- bare key, which is what shipped and what threw -- the engine wants
+-- `meshes/...` and db.MODELS is keyed without it, so the two differ by design
+-- and the draft is where the prefix goes on.
+check('the draft carries the meshes/ prefix the engine requires',
+      log.createdModel == 'meshes/x/ex_de_rowboat.nif', log.createdModel)
+check('and the copy is the vessel the static was, not some other hull',
+      tostring(log.createdModel):find('ex_de_rowboat.nif', 1, true) ~= nil,
+      log.createdModel)
+check('and the stored model round-trips to the db key',
+      package.loaded['scripts.WhyWalk.Boats.boats_db']
+          .normalizeModel(types.Activator.record(log.copy).model)
+          == 'x/ex_de_rowboat.nif',
+      types.Activator.record(log.copy).model)
 check('copy stands where the static stood', log.copy and log.copy.position.x == 200 and log.copy.rotation.yaw == 1.0)
 check('heading = object yaw - yawOffset (rowboat bow at -Y)', near(boarded.heading, (1.0 - math.pi) % (2 * math.pi)))
 check('placed height kept (z 2 within 40 of the database)', near(boarded.waterOffset, 2))

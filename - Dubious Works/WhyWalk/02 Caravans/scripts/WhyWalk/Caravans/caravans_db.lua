@@ -105,7 +105,30 @@ M.VEHICLE = {
         -- minutes at worst, which is long enough to feel like travel and
         -- short enough that nobody reaches for the skip.
         speed    = 1400,
-        turnRate = 0.9,
+
+        -- TURN RATE, for the steering model in caravans_path.
+        --
+        -- The body no longer chases the route's heading: it steers at a point
+        -- 700 units further along and moves along its own facing (see
+        -- path.M.steer for why, and what the old model measured). So this is
+        -- how fast the strider can turn, not how fast a filter converges.
+        --
+        -- Measured over eight real routes at 60fps:
+        --
+        --     turn  mean dev  worst dev  direction changes
+        --      0.7      98 u     1550 u      ~0.9 /s
+        --      1.0      41 u      906 u      ~1.0 /s   <- chosen
+        --      1.4      25 u      756 u      ~1.5 /s
+        --      2.0      13 u      593 u      ~3.1 /s
+        --
+        -- 1.0 rad/s is 57 degrees a second. The faster rates track the
+        -- polyline more tightly and turn three times as often to do it, which
+        -- is the opposite of the long gradual turns this is meant to look
+        -- like; the deviation they buy is invisible on segments 1500 units
+        -- long. The lookahead that used to live here is now
+        -- path.STEERING.AHEAD, because it belongs to the steering rather than
+        -- to the animal.
+        turnRate = 1.0,
     },
 }
 

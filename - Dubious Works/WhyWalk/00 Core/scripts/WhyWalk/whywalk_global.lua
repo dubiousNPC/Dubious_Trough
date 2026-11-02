@@ -455,6 +455,28 @@ local function onRequestMount(data)
     -- the author's backstop, that one is the player's choice.
     if shared.isBlacklisted(mount.recordId) then return end
 
+    -- BIPEDS AND WEAPON CARRIERS ARE REFUSED, whatever the blacklist says.
+    --
+    -- A biped animates off the NPC rig and has no mount cycle at all, so
+    -- riding one seats a person inside another person; a weapon carrier is
+    -- built to fight. Both are flags on the record, read live here so a
+    -- creature from a mod the compiled profile has never seen is judged the
+    -- same way as one it has.
+    --
+    -- Refused WITH a reason rather than silently, because from the player's
+    -- side "nothing happened" is indistinguishable from a broken keybind.
+    local record = types.Creature.objectIsInstance(mount)
+        and types.Creature.record(mount) or nil
+    local barred, why = shared.barredFromRiding(mount.recordId, record)
+    if barred then
+        player:sendEvent(EV.MOUNT_REFUSED, { reason = 'notamount', detail = why })
+        if DEBUG then
+            print(string.format("[WhyWalk] %s refused as a mount: %s",
+                                tostring(mount.recordId), tostring(why)))
+        end
+        return
+    end
+
     local mountType = data.mountType or shared.getMountType(mount.recordId)
     local freeRide  = data.freeRide == true or mountType == nil
     if freeRide and not TUNING.freeRideEnabled then return end
@@ -485,8 +507,22 @@ local function onRequestMount(data)
     -- us anything, and it scales: see M.saddleFromBoundingBox for exactly which
     -- parts of it are safe to read. A nil result means the box was unusable, so
     -- the default stands.
+    -- Three sources, best first:
+    --   1. PROFILE, when mountType is known. Measured from the riding mods'
+    --      own configs, so nothing here should overrule it.
+    --   2. The compiled creature profile, for any of the 917 CREA records
+    --      across Morrowind, Tribunal, Bloodmoon, Tamriel Data and OAAB. A
+    --      lookup, with no box read and no log line.
+    --   3. The bounding box, read live. The only thing left for a creature
+    --      from a mod nobody has measured.
+    --
+    -- 2 before 3 because the compiled figure comes from the same box the
+    -- engine builds, measured offline from the mesh, and a table lookup beats
+    -- a per-mount geometry read -- and because it is a place a corrected
+    -- value can be put, which a formula is not.
     if not mountType then
-        local derived = shared.saddleFromBoundingBox(mount)
+        local derived = shared.saddleFromProfile(mount.recordId)
+                     or shared.saddleFromBoundingBox(mount)
         if derived then session.profile.saddle = derived end
     end
 
@@ -549,7 +585,7 @@ local function onUpdate(dt)
     -- as a creature at mount time. A mount that has stopped having health
     -- stats is a genuine bug, and swallowing it every frame would hide it.
     local health = types.Actor.stats.dynamic.health(s.mount)
-    if health and health.current <= 0 then
+    if health.current <= 0 then
         doDismount('mount died')
         return
     end

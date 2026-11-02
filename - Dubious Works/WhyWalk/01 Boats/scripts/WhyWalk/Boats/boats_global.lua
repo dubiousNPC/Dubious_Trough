@@ -119,15 +119,28 @@ end
 -- THE COPY
 -- ---------------------------------------------------------------------------
 
--- createRecord prefixes `model` with meshes\ (api-findings), so the draft gets
--- the plugin-relative path, never record.model round-tripped. The result is
--- checked: if the engine stored something else, the copy would be invisible,
--- and this line is the only place that would say why.
+-- THE DRAFT NEEDS THE `meshes/` PREFIX. This passed `modelKey` bare, on a note
+-- in api-findings saying createRecord adds the prefix itself. It does not, on
+-- this build, and the call does not merely store the wrong thing -- it throws:
+--
+--     Global[.../boats_global.lua] eventHandler[WWBoats_RequestBoard] failed.
+--     Lua error: Path should start with 'meshes\'
+--       [C]: in function 'createRecordDraft'
+--       boats_global.lua:130: in function 'copyRecordFor'
+--
+-- so boarding failed outright, nine times in one session's log. The check
+-- below could never have caught it, because nothing after the throw ran.
+--
+-- Forward slashes are fine despite the message naming a backslash: Caravans
+-- has been spawning its vehicle from 'meshes/' .. mesh since 2026-10-22 and
+-- the activator renders. `modelKey` is deliberately kept prefix-free, since
+-- it is also the key for db.MODELS lookups.
 local function copyRecordFor(modelKey, displayName)
     local existing = copyRecordByModel[modelKey]
     if existing then return existing end
 
-    local draft = types.Activator.createRecordDraft({ name = displayName, model = modelKey })
+    local draft = types.Activator.createRecordDraft({
+        name = displayName, model = 'meshes/' .. modelKey })
     local record = world.createRecord(draft)
     local stored = db.normalizeModel(record.model)
     if stored ~= modelKey then
@@ -405,6 +418,7 @@ local function onUpdate(dt)
     if not s.boat:isValid() or not s.player:isValid() then
         return endSession('invalid')
     end
+    -- Bare, as in Core and Caravans; see the note at Core's onUpdate.
     local health = types.Actor.stats.dynamic.health(s.player)
     if health.current <= 0 then return endSession('died') end
     if core.isWorldPaused() or dt <= 0 then return end

@@ -29,6 +29,17 @@ caravans_speed_description: |-
 
 caravans_clock_name: "Advance the clock to match"
 caravans_clock_description: |-
+
+caravans_pose_name: "Seat the passenger"
+caravans_pose_description: |-
+  Play a seated animation on you while the caravan travels, instead of the
+  ordinary standing idle.
+
+  Off by default. The seated pose needs an animation pack that provides one
+  (xRAsit1's rasit2, or a floor sit); without one it falls back to the idle
+  anyway. In play the standing idle reads better against the strider's own
+  walk, which is why this is opt-in.
+
   On by default.
 
   Ordinary travel advances the clock by the distance travelled. An animated
@@ -44,6 +55,12 @@ menu_cancel: "Cancel"
 
 msg_departing: "The strider sets off for %s. Press X to get down."
 msg_arrived: "The strider arrives at %s."
+
+# Shown when the travel topic is opened DURING a journey. The caravaner rides
+# with you and is still a travel-service NPC, so without this the vanilla list
+# would open and a second fare would teleport you past the ride.
+msg_already_travelling: "You are already aboard. Wait until the caravan arrives."
+
 msg_cannot_afford: "You cannot afford that fare."
 msg_no_route_fallback: "No caravan route runs that way."
 msg_no_vehicle: "There is no strider here to carry you."

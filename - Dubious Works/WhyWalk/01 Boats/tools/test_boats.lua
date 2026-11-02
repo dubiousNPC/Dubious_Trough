@@ -1,6 +1,11 @@
 -- test_boats.lua -- unit tests for boats_physics and boats_db.
 -- Run from the module root:  python3 tools/luarun.py tools/test_boats.lua
-package.path = './?.lua;' .. package.path
+-- Core's root is on the path as well as this module's, because
+-- whywalk_shared now requires whywalk_creatures -- the compiled creature
+-- profile, which lives beside it in 00 Core. In game both are in the VFS
+-- under scripts/WhyWalk/ and the require resolves; only a test that reaches
+-- across module folders with dofile has to say so.
+package.path = './?.lua;../00 Core/?.lua;' .. package.path
 
 local phys = require('scripts.WhyWalk.Boats.boats_physics')
 local db   = require('scripts.WhyWalk.Boats.boats_db')

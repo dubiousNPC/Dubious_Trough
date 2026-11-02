@@ -96,9 +96,30 @@ local MOUNT_SETTLE = 0.05
 --
 -- Arms are deliberately left out of the mask entirely, so weapon and spell arm
 -- animations play untouched.
+-- THERE IS NO `Arms` BONE GROUP. The members are LowerBody, Torso, LeftArm
+-- and RightArm, exactly as the table above this comment lists them, and
+-- BONE_GROUP is an engine enum that RAISES on a name it does not have rather
+-- than returning nil:
+--
+--     Can't start L@0x1[scripts/whywalk/ridinganim.lua]; Lua error:
+--     [string "scripts/whywalk/ridinganim.lua"]:102: Key not found: Arms
+--
+-- That is a load failure, not a warning: the whole controller never started,
+-- so nothing animated at all -- no rider pose, no vessel pose, no caravan
+-- passenger. One bad key cost every animation in the suite.
+--
+-- The two arm entries below are INERT as written, and deliberately so. A
+-- priority is only consulted for a bone group the blend mask includes, and
+-- the mask is LowerBody + Torso. To make them take effect the mask needs
+-- `+ anim.BLEND_MASK.LeftArm + anim.BLEND_MASK.RightArm` as well -- but that
+-- is the thing this file is built not to do. It would put the riding clip in
+-- charge of the arms, and free hands for weapons and spells while mounted is
+-- the requirement this controller started from.
 local RIDE_PRIORITY = {
     [anim.BONE_GROUP.LowerBody] = anim.PRIORITY.Scripted,
     [anim.BONE_GROUP.Torso]     = anim.PRIORITY.Weapon,
+    [anim.BONE_GROUP.LeftArm]   = anim.PRIORITY.Weapon,
+    [anim.BONE_GROUP.RightArm]  = anim.PRIORITY.Weapon,
 }
 local RIDE_BLEND_MASK = anim.BLEND_MASK.LowerBody + anim.BLEND_MASK.Torso
 
@@ -530,7 +551,14 @@ end
 
 local function subscribeRefresh()
     if I.AnimRefresh and I.AnimRefresh.subscribe then
-        I.AnimRefresh.subscribe("WhyWalk", onPerspectiveChanged)
+        -- `verify` is the opt-in to the CONFIRMATION pass, and it is separate
+        -- from the retry. Returning false from the callback gets the retry on
+        -- its own -- dispatchOne re-dispatches on a false return whatever the
+        -- options say -- but the confirmation pass that catches a pose which
+        -- took at the time and was then rebuilt out from under us only runs
+        -- for subscribers registered with verify = true. The note above
+        -- onPerspectiveChanged values both, and this asked for only one.
+        I.AnimRefresh.subscribe("WhyWalk", onPerspectiveChanged, { verify = true })
     end
 end
 

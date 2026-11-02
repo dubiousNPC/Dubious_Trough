@@ -1,12 +1,21 @@
 # WhyWalk -- all-in-one animated creature riding
 #
-# Shared services first. Both are bundled in every mod of the suite and
+# Shared services first. All three are bundled in every mod of the suite and
 # version-guard themselves, so only the newest loaded copy runs.
 # MENU: a settings-menu renderer, so it must load before the group that uses
 # it. Vendored from Bor's Drop-in Utils; see the file header.
 MENU: scripts/WhyWalk/renderers/textSet.lua
 
 PLAYER: scripts/SharedRay/SharedRay_v2.lua
+
+# [BUGFIX] This line was missing. AnimRefresh_v6.lua was shipped under
+# scripts/AnimRefresh/ exactly as SharedRay is shipped under scripts/SharedRay/,
+# but nothing registered it, so the AnimRefresh interface did not exist on a
+# WhyWalk-only install. ridingAnim.lua guards its subscription with
+# `if I.AnimRefresh and I.AnimRefresh.subscribe`, so it failed silently: a
+# perspective change while riding rebuilt the player's animation object, dropped
+# the rider pose, and nothing ever asked for it back.
+PLAYER: scripts/AnimRefresh/AnimRefresh_v6.lua
 
 GLOBAL: scripts/WhyWalk/whywalk_global.lua
 PLAYER: scripts/WhyWalk/whywalk_player.lua

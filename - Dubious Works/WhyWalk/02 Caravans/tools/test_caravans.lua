@@ -194,10 +194,54 @@ local crossing = 0.05
 for _ = 1, 20 do
     crossing = path.easeHeading(crossing, 2 * math.pi - 0.05, 0.9, 1 / 60)
 end
-check('continuing to ease wraps across north rather than going the long way',
-      crossing > math.pi, crossing)
-check('and it converges on the target, not past it',
-      near(crossing, 2 * math.pi - 0.05, 1e-6), crossing)
+-- THE RESULT IS AN ANGLE, NOT A NUMBER IN A RANGE.
+--
+-- This pair used to read `crossing > math.pi` and
+-- `near(crossing, 2*pi - 0.05)`, which asserted the NORMALISED value -- and
+-- so made the normalisation a requirement. That normalisation is what
+-- performed a 20-degree turn as a 340-degree turn the other way, because the
+-- value handed to the engine jumped a full turn as it crossed north. The test
+-- helped the bug survive by insisting on the thing that caused it.
+--
+-- Compared as an angle now, which is all that was ever meant.
+check('continuing to ease arrives at the target heading',
+      math.abs(path.angleDiff(crossing, 2 * math.pi - 0.05)) < 1e-6,
+      crossing)
+check('having gone the SHORT way, backwards through north',
+      crossing < 0.05, crossing)
+
+-- AND THE VALUE MUST BE CONTINUOUS, which is the property the engine needs.
+-- No step may jump by anything like a full turn, however many times the
+-- heading crosses north.
+---Turn continuously one way for `steps` frames and report the worst single
+---raw step and where the heading ended up.
+local function spin(sign, steps)
+    local h, worst = 0.0, 0
+    for _ = 1, steps do
+        -- A target always a radian ahead in the chosen direction, so the ease
+        -- is saturated and the heading turns at the full rate throughout.
+        local next_ = path.easeHeading(h, h + sign * 1.0, 2.0, 1 / 60)
+        local jump = math.abs(next_ - h)
+        if jump > worst then worst = jump end
+        h = next_
+    end
+    return worst, h
+end
+
+for _, sign in ipairs({ 1, -1 }) do
+    -- 700 frames at 2 rad/s is about 23 radians: north is crossed three or
+    -- four times, which is where the old normalisation did its damage.
+    local worst, ended = spin(sign, 700)
+    check(('turning %s, no single step jumps anything like a full turn')
+              :format(sign > 0 and 'one way' or 'the other'),
+          worst < 0.1, ('worst raw step %.4f rad'):format(worst))
+    check(('turning %s, the heading accumulates past a full turn')
+              :format(sign > 0 and 'one way' or 'the other'),
+          math.abs(ended) > 2 * math.pi, ('ended at %.2f rad'):format(ended))
+    check(('turning %s, it ends on the side it was turning toward')
+              :format(sign > 0 and 'one way' or 'the other'),
+          (sign > 0) == (ended > 0), ended)
+end
 check('a nil current heading snaps to the target',
       path.easeHeading(nil, 1.23, 0.9, 1 / 60) == 1.23)
 check('a nil target holds the current heading',
@@ -429,6 +473,324 @@ check('the mean journey is between 30 seconds and 3 minutes',
       meanSeconds > 30 and meanSeconds < 180, meanSeconds)
 check('the longest journey is under 4 minutes',
       worstSeconds < 240, worstSeconds)
+
+-- ---------------------------------------------------------------------------
+-- A STRAY POINT IN THE MIDDLE OF A ROUTE
+-- ---------------------------------------------------------------------------
+-- `vivec -> seyda neen` passes both endpoint checks and is still unusable: at
+-- point 29 of 37 it turns 178 degrees, runs 73,468 units out and comes
+-- straight back. In game the strider changed direction halfway and trudged
+-- away for the best part of two minutes, which reads as being stuck.
+--
+-- This section is against the REAL shipped data, which is the only place the
+-- fault exists -- a synthetic spike would prove the arithmetic and nothing
+-- about whether the threshold is in the right place.
+
+local stops = dofile('scripts/WhyWalk/Caravans/caravans_stops.lua')
+
+-- Arithmetic first, on a shape chosen by hand so the expected answer is
+-- obvious: five 100-unit steps and one 1000-unit jump.
+do
+    local p = {}
+    local function push(x, y, z) p[#p + 1] = x; p[#p + 1] = y; p[#p + 1] = z end
+    for i = 0, 5 do push(i * 100, 0, 0) end
+    push(1500, 0, 0)                       -- the stray point: a 1000 jump
+    local ratio, longest, at = stops.segmentOutlier(p)
+    check('segmentOutlier finds the longest segment', near(longest, 1000, 1e-6), longest)
+    check('and reports which segment it is', at == 6, at)
+    check('and the ratio against the median', ratio > 9 and ratio < 11, ratio)
+end
+
+check('a route too short to compare returns 0 rather than dividing by nothing',
+      select(1, stops.segmentOutlier({ 0, 0, 0, 1, 0, 0 })) == 0)
+
+-- The real data. A fresh copy, because validate() removes in place and the
+-- rest of this file reads the routes table.
+do
+    local fresh = dofile('scripts/WhyWalk/Caravans/caravans_routes.lua')
+    local centres = stops.centres(fresh.routes)
+
+    local ratios = {}
+    for from, dests in pairs(fresh.routes) do
+        for to, p in pairs(dests) do
+            ratios[#ratios + 1] = { stops.segmentOutlier(p), from .. ' -> ' .. to }
+        end
+    end
+    table.sort(ratios, function(a, b) return a[1] > b[1] end)
+
+    check('the two worst routes in the data are the two known-corrupt ones',
+          ratios[1][2] == 'vivec -> seyda neen'
+          and ratios[2][2] == 'suran -> balmora',
+          ratios[1][2] .. ' / ' .. ratios[2][2])
+    -- THE THRESHOLD HAS TO SIT IN A GAP, or it is tuned to this data by luck.
+    check('and the threshold sits in the gap below them',
+          ratios[2][1] > stops.MAX_SEGMENT_RATIO
+          and ratios[3][1] < stops.MAX_SEGMENT_RATIO,
+          ('bad %.1f, next good %.1f, threshold %d')
+              :format(ratios[2][1], ratios[3][1], stops.MAX_SEGMENT_RATIO))
+    check('with real margin on both sides, not a hair',
+          ratios[2][1] > stops.MAX_SEGMENT_RATIO * 2
+          and ratios[3][1] < stops.MAX_SEGMENT_RATIO * 0.7,
+          ('%.1f / %.1f'):format(ratios[2][1], ratios[3][1]))
+
+    local before = 0
+    for _, dests in pairs(fresh.routes) do
+        for _ in pairs(dests) do before = before + 1 end
+    end
+
+    local dropped = stops.validate(fresh.routes, centres)
+    local joined = table.concat(dropped, ' | ')
+
+    check('validate drops exactly two routes', #dropped == 2, joined)
+    check('and names the stray point in vivec -> seyda neen',
+          joined:find('vivec %-> seyda neen %(stray point') ~= nil, joined)
+    check('and still catches suran -> balmora by its endpoint',
+          joined:find('suran %-> balmora %(ends') ~= nil, joined)
+    check('the dropped reason says WHERE the stray point is',
+          joined:find('segment 29 of 36') ~= nil, joined)
+
+    local after = 0
+    for _, dests in pairs(fresh.routes) do
+        for _ in pairs(dests) do after = after + 1 end
+    end
+    check('the other 45 routes survive', after == before - 2,
+          ('%d -> %d'):format(before, after))
+
+    -- A drop is only acceptable because the other direction is intact; this
+    -- is what makes findRoute's reverse fallback the actual fix.
+    check('the reverse of vivec -> seyda neen survived',
+          fresh.routes['seyda neen'] and fresh.routes['seyda neen']['vivec'] ~= nil)
+    check('the reverse of suran -> balmora survived',
+          fresh.routes['balmora'] and fresh.routes['balmora']['suran'] ~= nil)
+    check('so both places are still reachable in both directions',
+          fresh.routes['vivec']['seyda neen'] == nil
+          and fresh.routes['seyda neen']['vivec'] ~= nil)
+
+    -- And the surviving route is actually a sane ride.
+    local rev = fresh.routes['seyda neen']['vivec']
+    local ratio = stops.segmentOutlier(rev)
+    check('and the surviving Vivec/Seyda Neen route has no stray point',
+          ratio < stops.MAX_SEGMENT_RATIO, ratio)
+    local prep = path.prepare(rev, true)
+    check('reversed, it is a plausible length rather than 204,000 units',
+          prep.total > 40000 and prep.total < 80000, prep.total)
+end
+
+-- ---------------------------------------------------------------------------
+-- STEERING: THE BODY MOVES WHERE IT POINTS
+-- ---------------------------------------------------------------------------
+-- The fault this model exists to remove, reported every round for a week:
+-- "the body is moving sideways at times", "directional facing wrong /
+-- unresponsive". Placing the strider on the polyline and rotating it
+-- separately lets facing and velocity disagree, and at a sharp corner they
+-- disagree almost completely.
+--
+-- SIDEWAYS FRACTION is the measurement: the part of each frame's travel that
+-- is perpendicular to where the body points, over the whole of it. Simulated
+-- at 60fps over six real routes against the SHIPPED constants, so changing
+-- any of them has to keep clearing these bars.
+
+local stops2 = dofile('scripts/WhyWalk/Caravans/caravans_stops.lua')
+
+do
+    local v, dt = db.VEHICLE.siltstrider, 1 / 60
+    local PAIRS = {
+        { 'balmora', 'ald-ruhn' }, { 'seyda neen', 'vivec' },
+        { 'vivec', 'molag mar' }, { 'balmora', 'seyda neen' },
+        { 'suran', 'vivec' }, { 'khuul', 'gnisis' },
+    }
+
+    ---Ride every route and report how the body behaved.
+    ---@param mode string 'steer' or 'place' (the old model, for comparison)
+    ---@param tau number|nil correction constant; nil uses the shipped one
+    local function ride(mode, tau)
+        local sumSide, worstSide, nS = 0, 0, 0
+        local sumDev, worstDev, nD = 0, 0, 0
+        local worstEnd, arrived, routes_ = 0, 0, 0
+        for _, pr in ipairs(PAIRS) do
+            local p = R.routes[pr[1]] and R.routes[pr[1]][pr[2]]
+            if p then
+                routes_ = routes_ + 1
+                local n = path.count(p)
+                local prep = path.prepare(p, false)
+                local sx, sy = path.at(p, prep, 0)
+                local ax, ay = path.at(p, prep,
+                    math.min(path.STEERING.AHEAD, prep.total))
+                local body = { x = sx, y = sy,
+                               heading = path.headingToward(sx, sy, ax, ay) or 0 }
+                local travelled, lastX, lastY = 0, sx, sy
+                local guard = 0
+                while travelled < prep.total and guard < 200000 do
+                    guard = guard + 1
+                    travelled = travelled + v.speed * dt
+                    local px, py = path.at(p, prep, travelled)
+                    local cx, cy = path.at(p, prep,
+                        math.min(travelled + path.STEERING.AHEAD, prep.total))
+                    if mode == 'steer' then
+                        path.steer(body, cx, cy, px, py, v.speed, v.turnRate,
+                                   tau or path.STEERING.CORRECT_TAU, dt)
+                    else
+                        -- the old model: sampled position, independent heading
+                        local _, _, _, yaw = path.at(p, prep, travelled)
+                        local _, _, _, aim = path.at(p, prep,
+                            math.min(travelled + 350, prep.total))
+                        body.heading = path.easeHeading(body.heading, aim or yaw,
+                                                        1.4, dt)
+                        body.x, body.y = px, py
+                    end
+                    local vx, vy = body.x - lastX, body.y - lastY
+                    local sp = math.sqrt(vx * vx + vy * vy)
+                    if sp > 1e-9 then
+                        local side = math.abs(vx * math.cos(body.heading)
+                                            - vy * math.sin(body.heading)) / sp
+                        sumSide, nS = sumSide + side, nS + 1
+                        if side > worstSide then worstSide = side end
+                    end
+                    lastX, lastY = body.x, body.y
+                    local d = math.sqrt((body.x - px) ^ 2 + (body.y - py) ^ 2)
+                    sumDev, nD = sumDev + d, nD + 1
+                    if d > worstDev then worstDev = d end
+                end
+                if travelled >= prep.total then arrived = arrived + 1 end
+                local ex, ey = path.pointAt(p, n, n, false)
+                local de = math.sqrt((body.x - ex) ^ 2 + (body.y - ey) ^ 2)
+                if de > worstEnd then worstEnd = de end
+            end
+        end
+        return {
+            meanSide = 100 * sumSide / nS, worstSide = 100 * worstSide,
+            meanDev = sumDev / nD, worstDev = worstDev,
+            worstEnd = worstEnd, arrived = arrived, routes = routes_,
+        }
+    end
+
+    local steer = ride('steer')
+    local place = ride('place')
+
+    -- THE HEADLINE. The old model's worst case was a strider travelling
+    -- almost entirely crabwise; this must be several times better.
+    check('the old model really did travel mostly sideways at its worst',
+          place.worstSide > 60, ('%.1f%%'):format(place.worstSide))
+    check('steering cuts the worst sideways motion at least threefold',
+          steer.worstSide * 3 < place.worstSide,
+          ('%.1f%% -> %.1f%%'):format(place.worstSide, steer.worstSide))
+    check('and the typical sideways motion stays under 2% of travel',
+          steer.meanSide < 2.0, ('%.2f%%'):format(steer.meanSide))
+
+    -- AND THE ROUTE IS STILL FOLLOWED. Steering is only acceptable if the
+    -- strider still goes where the caravan is supposed to go.
+    check('every route is completed', steer.arrived == steer.routes,
+          ('%d/%d'):format(steer.arrived, steer.routes))
+    check('mean deviation stays well under one route segment',
+          steer.meanDev < 150, ('%.0f units'):format(steer.meanDev))
+    check('and the worst swing wide is bounded',
+          steer.worstDev < 700, ('%.0f units'):format(steer.worstDev))
+    check('the strider finishes near the stop, not orbiting it',
+          steer.worstEnd < 500, ('%.0f units'):format(steer.worstEnd))
+
+    -- THE CORRECTION IS WHAT MAKES IT ARRIVE, and it is also the only
+    -- sideways motion left. Both halves of that have to be true, or the
+    -- constant is doing nothing and could be removed.
+    local nopull = ride('steer', 0)
+    check('without the correction the sideways motion vanishes entirely',
+          nopull.worstSide < 0.01, ('%.4f%%'):format(nopull.worstSide))
+    check('but the strider then ends far from the stop',
+          nopull.worstEnd > steer.worstEnd * 2,
+          ('%.0f vs %.0f units'):format(nopull.worstEnd, steer.worstEnd))
+    check('and wanders much further from the route',
+          nopull.meanDev > steer.meanDev * 3,
+          ('%.0f vs %.0f units'):format(nopull.meanDev, steer.meanDev))
+
+    -- A faster pull tracks better and puts the fault back; the shipped value
+    -- has to be on the gentle side of that trade.
+    local hard = ride('steer', 0.25)
+    check('a harder pull measurably increases sideways motion',
+          hard.worstSide > steer.worstSide,
+          ('%.1f%% vs %.1f%%'):format(hard.worstSide, steer.worstSide))
+end
+
+-- ---------------------------------------------------------------------------
+-- VERTICAL SMOOTHING
+-- ---------------------------------------------------------------------------
+-- The route's z is piecewise linear, so vertical POSITION is continuous and
+-- vertical SPEED is not: it changes abruptly at every waypoint, about once a
+-- second at 1400 units a second. Worst measured step 13.4 units of vertical
+-- speed per frame, which is the reported bumpiness.
+
+do
+    local v, dt = db.VEHICLE.siltstrider, 1 / 60
+    local PAIRS = {
+        { 'balmora', 'ald-ruhn' }, { 'seyda neen', 'vivec' },
+        { 'vivec', 'molag mar' }, { 'balmora', 'seyda neen' },
+        { 'suran', 'vivec' }, { 'khuul', 'gnisis' },
+    }
+
+    ---Worst vertical-speed step and worst deviation from the path, with the
+    ---smoothing on or off.
+    local function ride(smooth)
+        local worstJump, worstDev = 0, 0
+        for _, pr in ipairs(PAIRS) do
+            local p = R.routes[pr[1]] and R.routes[pr[1]][pr[2]]
+            if p then
+                local prep = path.prepare(p, false)
+                local travelled, z, lastZ, lastDz = 0, nil, nil, nil
+                while travelled < prep.total do
+                    travelled = travelled + v.speed * dt
+                    local _, _, pz = path.at(p, prep, travelled)
+                    z = smooth and path.easeVertical(z, pz, dt) or pz
+                    local dev = math.abs(z - pz)
+                    if dev > worstDev then worstDev = dev end
+                    if lastZ then
+                        local dz = z - lastZ
+                        if lastDz then
+                            local j = math.abs(dz - lastDz)
+                            if j > worstJump then worstJump = j end
+                        end
+                        lastDz = dz
+                    end
+                    lastZ = z
+                end
+            end
+        end
+        return worstJump, worstDev
+    end
+
+    local rawJump = ride(false)
+    local smoothJump, smoothDev = ride(true)
+
+    check('the raw route really does jolt, so there is something to fix',
+          rawJump > 10, ('%.2f u/frame'):format(rawJump))
+    check('smoothing cuts the worst jolt by at least four times',
+          smoothJump * 4 < rawJump,
+          ('%.2f -> %.2f u/frame'):format(rawJump, smoothJump))
+
+    -- THE COST IS LAG, and it has to stay small against the animal. A silt
+    -- strider is 1284 units tall; anything past a tenth of that would be
+    -- visible as the strider floating over a slope.
+    check('and costs under a tenth of the strider height in vertical lag',
+          smoothDev < 128, ('%.1f units'):format(smoothDev))
+    check('well inside the clamp, so the clamp is a backstop not the mechanism',
+          smoothDev < path.VERTICAL.MAX_DRIFT, smoothDev)
+
+    -- The clamp itself: a cliff must not leave the strider hanging.
+    local far = path.easeVertical(0, 100000, dt)
+    check('a huge step is clamped rather than eased forever',
+          math.abs(far - 100000) <= path.VERTICAL.MAX_DRIFT + 1e-6, far)
+
+    check('the first frame places the strider exactly, not eased up from zero',
+          path.easeVertical(nil, 1234, dt) == 1234)
+    check('a zero dt holds the path value rather than dividing by it',
+          path.easeVertical(500, 1234, 0) == 1234)
+
+    -- HORIZONTAL IS UNTOUCHED. Smoothing x or y would cut corners, which is a
+    -- different and worse fault than a jolt.
+    local p = R.routes['balmora']['ald-ruhn']
+    local prep = path.prepare(p, false)
+    local x1, y1 = path.at(p, prep, 5000)
+    local x2, y2 = path.at(p, prep, 5000)
+    check('path.at is still exact and repeatable in x and y',
+          x1 == x2 and y1 == y2)
+end
 
 print(('\n%d passed, %d failed'):format(pass, fail))
 if fail > 0 then os.exit(1) end

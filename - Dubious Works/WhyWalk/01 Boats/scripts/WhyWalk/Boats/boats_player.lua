@@ -128,6 +128,11 @@ local WATER_STEPS = { 'FootWaterLeft', 'FootWaterRight' }
 -- Same handshake as Core's lock and levitation: one call each way, recorded
 -- in the save, undone on load.
 
+-- See the report in the helm update: one line, once, a second into the first
+-- voyage of a session.
+local movementReported = false
+local reportAt = 0
+
 local function lockControls()
     if controlsLocked then return end
     I.Controls.overrideMovementControls(true)
@@ -522,6 +527,31 @@ local function onUpdate(dt)
     controls.movement = mv
     controls.sideMovement = side
     controls.run = running
+
+    -- ONE REPORT, A SECOND INTO THE FIRST VOYAGE.
+    --
+    -- Boarding threw on an unprefixed model path until 2026-10-31, so this
+    -- function had never run in a game: "boats are finally registering, but no
+    -- movement was possible" is the first report from code nothing had
+    -- exercised. Rather than guess at which link is broken, it says what it
+    -- asked for and what it got.
+    --
+    -- The four things that can each produce no movement, and which this
+    -- separates: the throttle never reaching here (`held`/`throttle`), the
+    -- model returning nothing (`mv`), the override not being taken
+    -- (`locked`), or the engine refusing the controls (`speed` staying at
+    -- zero while `mv` is non-zero).
+    if not movementReported then
+        reportAt = (reportAt or 0) + dt
+        if reportAt > 1.0 then
+            movementReported = true
+            print(string.format(
+                '[WhyWalk Boats] helm after 1s: throttle=%.2f mv=%.2f side=%.2f'
+                .. ' run=%s speed=%.1f locked=%s gain=%.2f',
+                throttle or 0, mv or 0, side or 0, tostring(running),
+                speed or 0, tostring(controlsLocked), gains[running] or 0))
+        end
+    end
     if turnView and steering ~= 'view' and turned ~= 0 then
         controls.yawChange = controls.yawChange + turned
     end

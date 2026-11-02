@@ -83,6 +83,12 @@ riding_interiors_description: |-
 # --- Messages ------------------------------------------------------------
 msg_interior_refused: "You cannot ride indoors. Enable it in WhyWalk's settings if you want to."
 
+# A creature with the biped flag or the weapon/shield flag. Deliberately does
+# not name the flags: from the player's side the useful fact is that this
+# animal is not a mount, not which checkbox on its record says so.
+msg_not_a_mount: "That creature cannot be ridden."
+
+
 riding_blacklist_name: "Never ride these creatures"
 riding_blacklist_description: |-
   Record IDs, one per entry. Type an ID and press the add button; select an

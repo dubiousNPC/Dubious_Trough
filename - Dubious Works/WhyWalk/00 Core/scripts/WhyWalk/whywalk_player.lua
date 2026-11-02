@@ -342,6 +342,8 @@ local function onMountRefused(data)
     local reason = data and data.reason
     if reason == 'interior' then
         ui.showMessage(core.l10n(L10N_CONTEXT)('msg_interior_refused'))
+    elseif reason == 'notamount' then
+        ui.showMessage(core.l10n(L10N_CONTEXT)('msg_not_a_mount'))
     end
 end
 

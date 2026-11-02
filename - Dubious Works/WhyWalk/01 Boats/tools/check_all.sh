@@ -8,8 +8,11 @@ S=scripts/WhyWalk/Boats
 python3 -I tools/check_load.py     $S/*.lua
 python3 -I tools/check_handlers.py $S/*.lua
 python3 -I tools/globalcheck.py    $S/*.lua
+python3 -I tools/check_declorder.py $S/*.lua
 python3 -I tools/check_manifest.py WhyWalk_Boats.omwscripts
 if [ -n "$1" ]; then python3 -I tools/ctxcheck.py "$1" $S/*.lua; fi
+# check_enums needs the Cod3x annotations to know what a member list is.
+if [ -n "$1" ]; then python3 -I tools/check_enums.py "$1" $S/*.lua; fi
 python3 -I tools/luarun.py tools/test_boats.lua
 python3 -I tools/luarun.py tools/test_boats_scripts.lua
 python3 -I tools/check_db_sources.py

@@ -93,8 +93,51 @@ local function resolveGait(preferred)
     return nil
 end
 
+-- WHY THIS REPORTS, UNCONDITIONALLY, ONCE PER SESSION.
+--
+-- "No silt strider animation" has been reported on every build for a week and
+-- answered with inference every time -- first that no creature record
+-- existed, then that one did and cloning it would fix it (it animated and
+-- broke the whole ride), then that Immersive Travel's mesh carries the
+-- animation so an activator would do. Each of those was a guess about
+-- something the engine knows and will say if asked.
+--
+-- resolveGait returning nil is SILENT by design: playBlended on a missing
+-- group is a no-op, so the vehicle renders static and the journey still
+-- works. That is the right behaviour and the wrong diagnostic, and it is why
+-- the question survived three rounds.
+--
+-- `animation.hasAnimation` separates the two possibilities that matter:
+--
+--   false -- the object has no animation object AT ALL. Nothing can play on
+--            it, no group name will help, and the answer is not a better
+--            fallback chain. OpenMW builds animation for actors; whether an
+--            activator gets one from a mesh with a paired .kf is exactly the
+--            thing nobody here has established.
+--   true  -- it can animate and the group names are simply wrong, which the
+--            group list below then settles.
+local reported = false
+
+local function reportAnimation(preferred, chosen)
+    if reported then return end
+    reported = true
+    local has = animation.hasAnimation and animation.hasAnimation(self) or nil
+    local found = {}
+    for _, g in ipairs(FALLBACK) do
+        found[#found + 1] = g .. '=' .. tostring(animation.hasGroup(self, g))
+    end
+    if preferred then
+        found[#found + 1] = preferred .. '=' ..
+            tostring(animation.hasGroup(self, preferred))
+    end
+    print('[WhyWalk Caravans] vehicle animation: hasAnimation='
+          .. tostring(has) .. ', groups ' .. table.concat(found, ' ')
+          .. ', playing ' .. tostring(chosen))
+end
+
 local function playGait(preferred)
     local group = resolveGait(preferred)
+    reportAnimation(preferred, group)
     if not group then return end
     if group == gaitGroup then return end
 

@@ -98,6 +98,17 @@ I.Settings.registerGroup {
             description = 'caravans_clock_description',
             renderer = 'checkbox', default = true,
         },
+        {
+            -- OFF BY DEFAULT, on the strength of riding it. The seated pose
+            -- was added because standing on a moving strider looked like an
+            -- oversight; in play the standing idle reads better against the
+            -- strider's own gait, and it is what the 2026-10-29 build did.
+            -- The pose still works and the groups are still there, so this
+            -- is a preference rather than a retraction.
+            key = 'PASSENGER_POSE', name = 'caravans_pose_name',
+            description = 'caravans_pose_description',
+            renderer = 'checkbox', default = false,
+        },
     },
 }
 
@@ -105,6 +116,7 @@ local settings = storage.playerSection(GROUP)
 
 local function animatedTravel() return settings:get('ANIMATED_TRAVEL') ~= false end
 local function advanceClock()   return settings:get('ADVANCE_CLOCK') ~= false end
+local function passengerPose()  return settings:get('PASSENGER_POSE') == true end
 local function travelSpeed()
     local v = tonumber(settings:get('SPEED'))
     return (v and v > 0) and v or 1400
@@ -205,12 +217,21 @@ local function priceInputs(guide, distance, followers)
     local stat, npcStat = types.Actor.stats, types.NPC.stats
 
     -- Mercantile is read through an existence check rather than assumed.
-    -- Cod3x declares SkillStats as an empty class with no documented members,
-    -- so `skills.mercantile` is evidence from Immersive Travel's working code
-    -- rather than from the API surface -- and it does not exist at all for a
-    -- CREATURE, which Morrowind has no travel-selling example of but a mod
-    -- may. A guide with no mercantile skill prices as if it were 0, which is
-    -- the engine's own behaviour for an actor without the skill.
+    --
+    -- The note here used to say Cod3x declares SkillStats as an empty class
+    -- with no documented members. It does not: `---@class SkillStats` is an
+    -- empty block, but `SkillStats.mercantile(actor)` is declared about a
+    -- thousand lines further down the same file, returning `SkillStat|nil`.
+    -- Reading the class block and stopping there is an easy mistake to make
+    -- with this annotation set -- the same one that had core.weather's
+    -- accessors written off as missing.
+    --
+    -- The code below is unchanged, because it was right for better reasons
+    -- than the ones given: the accessor's documented return is nilable, it
+    -- does not exist at all for a CREATURE (which Morrowind has no
+    -- travel-selling example of, but a mod may), and a guide with no
+    -- mercantile skill prices as if it were 0 -- the engine's own behaviour
+    -- for an actor without the skill.
     local function mercantileOf(actor)
         if not types.NPC.objectIsInstance(actor) then return 0 end
         local skills = npcStat and npcStat.skills
@@ -461,6 +482,27 @@ local function onUiModeChanged(data)
     if newMode ~= travel then return end
 
     if intercepting then return end
+
+    -- NO TRAVEL WHILE TRAVELLING.
+    --
+    -- Mid-journey the caravaner is sitting on the strider beside you, and
+    -- they are still a travel-service NPC: activating them opened the vanilla
+    -- list, and buying a ticket from it teleported you to the destination.
+    -- That is a free skip past the thing the module exists to show, bought
+    -- with a second fare, and it leaves a journey running underneath with a
+    -- vehicle and a guide still pinned to a route.
+    --
+    -- Closed rather than intercepted. Offering the caravan menu again would
+    -- be the same hole with better manners, and the honest answer to "can I
+    -- book passage" while already aboard is no.
+    if travelling then
+        intercepting = true
+        I.UI.removeMode(travel)
+        intercepting = false
+        ui.showMessage(l10n('msg_already_travelling'))
+        return
+    end
+
     if not animatedTravel() then return end
 
     local plan = prepareMenu()
@@ -513,9 +555,15 @@ local function onStarted(data)
     I.UI.setMode()
     ui.showMessage(string.format(l10n('msg_departing'),
         tostring(data and data.displayName or '')))
-    -- Seat the player. ridingAnim defers the first play by MOUNT_SETTLE so the
-    -- pose lands after the boarding teleport rather than under it.
-    self.object:sendEvent(POSE.START, { stance = POSE_STANCE })
+    -- Seat the player, if they want to be seated. ridingAnim defers the first
+    -- play by MOUNT_SETTLE so the pose lands after the boarding teleport
+    -- rather than under it.
+    --
+    -- Read per journey, not cached: the setting is a preference someone may
+    -- change between rides, and a journey is the only moment it is read.
+    if passengerPose() then
+        self.object:sendEvent(POSE.START, { stance = POSE_STANCE })
+    end
 end
 
 local function onArrived(data)

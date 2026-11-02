@@ -1,7 +1,9 @@
 ---@omw-context player
 -- AnimRefresh v6: tells subscribers when the player model is rebuilt
 -- (first-person boundary, Rest/Travel/Training/Jail/ChargenRace, load).
--- See docs/animrefresh.md.
+-- The contract is this header plus the notes at each handler; WhyWalk ships no
+-- docs/ directory, so the standalone animrefresh.md this used to point at is not
+-- here to read.
 --   I.AnimRefresh.subscribe(key, fn(mode, previousMode, meta) [-> false to retry],
 --                           { verify = true })
 --   I.AnimRefresh.unsubscribe(key)
@@ -853,7 +855,9 @@ PUBLISHED = {
 return {
     interfaceName = "AnimRefresh",
     interface = PUBLISHED,
-    -- An event, not an engine handler. See docs/animrefresh.md.
+    -- An event, not an engine handler -- the distinction that cost v4 a feature:
+    -- an unknown key under engineHandlers is logged as "Not supported handler"
+    -- and never called. See the UiModeChanged note above.
     eventHandlers = {
         UiModeChanged  = uiModeChanged,
     },

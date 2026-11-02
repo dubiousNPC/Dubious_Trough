@@ -3,7 +3,7 @@
     boats_physics.lua -- the boat's equations of motion, and nothing else
 
     Pure functions on numbers, so the whole model is testable outside the
-    engine (tools/test_boats_physics.lua). Yaw follows the engine convention
+    engine (tools/test_boats.lua). Yaw follows the engine convention
     used across WhyWalk: forward = (sin y, cos y), right = (cos y, -sin y),
     a right turn increases yaw.
 
