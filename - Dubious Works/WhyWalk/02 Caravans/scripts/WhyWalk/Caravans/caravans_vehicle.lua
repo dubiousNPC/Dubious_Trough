@@ -39,12 +39,14 @@ local db = require('scripts.WhyWalk.Caravans.caravans_db')
 
 local EV_START = 'WWCaravans_VehicleStart'
 local EV_STOP  = 'WWCaravans_VehicleStop'
+local EV_SPEED = 'WWCaravans_VehicleSpeed'
 
 -- See the header. 999999 loops at a few seconds each outlasts any journey by
 -- several orders of magnitude.
 local LOOPS = 999999
 
 local gaitGroup = nil      -- the group currently playing, nil when stopped
+local gaitDef = nil        -- the vehicle definition the gait was chosen from
 
 -- ---------------------------------------------------------------------------
 -- PRIORITY
@@ -135,7 +137,23 @@ local function reportAnimation(preferred, chosen)
           .. ', playing ' .. tostring(chosen))
 end
 
-local function playGait(preferred)
+-- ---------------------------------------------------------------------------
+-- KEEPING THE FEET ON THE GROUND (2026-11-03c)
+-- ---------------------------------------------------------------------------
+-- A gait has a natural speed: how far its root bone carries the body per
+-- second at playback speed 1. For xsiltstrider.kf that is 444 u/s for
+-- RunForward and 150 for WalkForward (caravans_db.gaitSpeed). The route is
+-- walked at whatever the player set -- 1400 by default -- so at speed 1 the
+-- legs cycle at a third of the pace the body covers ground and the feet
+-- skate. The gait is played at travel speed / natural speed instead, and
+-- re-timed as the corner profile slows the strider down and lets it go.
+local function playbackRate(group, travelSpeed)
+    local natural = gaitDef and gaitDef.gaitSpeed and gaitDef.gaitSpeed[group]
+    if not natural or not travelSpeed or travelSpeed <= 0 then return 1 end
+    return travelSpeed / natural
+end
+
+local function playGait(preferred, travelSpeed)
     local group = resolveGait(preferred)
     reportAnimation(preferred, group)
     if not group then return end
@@ -150,6 +168,7 @@ local function playGait(preferred)
         priority    = gaitPriority(),
         blendMask   = animation.BLEND_MASK.All,
         autoDisable = false,
+        speed       = playbackRate(group, travelSpeed),
     }
     -- The interface form where it exists, so animation mods that hook
     -- playBlendedAnimation see this too (the DGR pattern); the base module
@@ -168,6 +187,7 @@ local function stopGait()
         animation.cancel(self, gaitGroup)
         gaitGroup = nil
     end
+    gaitDef = nil
 end
 
 -- ---------------------------------------------------------------------------
@@ -181,9 +201,26 @@ local function onVehicleStart(data)
     -- play at all.
     self:enableAI(false)
 
-    local vehicleId = data and data.vehicle
-    local v = db.vehicle(vehicleId)
-    playGait(v and v.gait)
+    local v = db.vehicle(data and data.vehicle)
+    gaitDef = v
+    local speed = data and tonumber(data.speed)
+
+    -- WITHOUT THE IN-PLACE COPY, IDLE. Immersive Travel's own kf carries the
+    -- body 800 units forward per loop and snaps it back (caravans_global,
+    -- INPLACE), so its walk and run look worse than standing still on a
+    -- placed activator. The global logs which mesh is in use.
+    local preferred = 'idle'
+    if data and data.inPlace and v then
+        preferred = (speed and v.walkBelow and speed < v.walkBelow)
+            and 'walkforward' or (v.gait or 'runforward')
+    end
+    playGait(preferred, speed)
+end
+
+local function onVehicleSpeed(data)
+    local speed = data and tonumber(data.speed)
+    if not gaitGroup or not speed then return end
+    animation.setSpeed(self, gaitGroup, playbackRate(gaitGroup, speed))
 end
 
 local function onVehicleStop()
@@ -220,6 +257,7 @@ return {
     eventHandlers = {
         [EV_START] = onVehicleStart,
         [EV_STOP]  = onVehicleStop,
+        [EV_SPEED] = onVehicleSpeed,
     },
     engineHandlers = {
         onSave = onSave,

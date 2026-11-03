@@ -12,6 +12,7 @@ python3 -I tools/globalcheck.py     $S/*.lua
 python3 -I tools/check_declorder.py $S/*.lua
 python3 -I tools/check_names.py     $S/*.lua
 python3 -I tools/check_manifest.py  WhyWalk_Caravans.omwscripts
+python3 -I tools/check_luajit.py    $S/*.lua
 # ctxcheck and check_enums both read the Cod3x annotations.
 if [ -n "$1" ]; then python3 -I tools/ctxcheck.py    "$1" $S/*.lua; fi
 if [ -n "$1" ]; then python3 -I tools/check_enums.py "$1" $S/*.lua; fi

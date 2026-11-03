@@ -37,6 +37,19 @@
 --   * The vanilla menu is LEFT ALONE whenever this module cannot take over.
 --     Closing it and then failing would leave the player unable to travel.
 
+-- RUN UNDER LuaJIT's MATHS, NOT 5.4's (2026-11-03c).
+-- OpenMW is LuaJIT (Lua 5.1): math.atan takes ONE argument and ignores a
+-- second. These tests run on liblua5.4, where math.atan(y, x) is the
+-- two-argument form -- so caravans_path's `math.atan(dx, dy)` passed every
+-- test here while computing atan(dx) in the game, and the strider faced the
+-- wrong way through every build. Emulated before any module loads, so that
+-- spelling now fails here exactly as it misbehaves there.
+do
+    local atan54 = math.atan
+    math.atan = function(y) return atan54(y) end
+    math.atan2 = function(y, x) return atan54(y, x) end
+end
+
 package.path = './?.lua;' .. package.path
 
 local passed, failed = 0, 0
@@ -242,6 +255,16 @@ package.loaded['openmw.interfaces'] = {
     Activation = { addHandlerForType = function(t, fn) activationHandlers[#activationHandlers + 1] = fn end },
 }
 package.loaded['openmw.world'] = {}
+-- Which files the VFS has. The in-place strider (meshes/whywalk/caravans/) is
+-- installed by default; the fallback is exercised against a fresh module below.
+local vfsFiles = {
+    ['meshes/whywalk/caravans/siltstrider.nif'] = true,
+    ['meshes/whywalk/caravans/xsiltstrider.nif'] = true,
+    ['meshes/whywalk/caravans/xsiltstrider.kf'] = true,
+}
+package.loaded['openmw.vfs'] = {
+    fileExists = function(f) return vfsFiles[f:lower()] == true end,
+}
 -- A rotation stub that keeps the YAW recoverable through a roll multiply:
 -- placeVehicle composes rotateZ(yaw) * rotateY(roll) for the sway lean, and
 -- the tests need to read the yaw back out of the result.
@@ -625,7 +648,8 @@ local function recordTeleport(obj)
         self_.position = pos
         placed[tagOf(self_)] = { x = pos.x, y = pos.y, z = pos.z,
                                  yaw = yaw, hadRotation = had,
-                                 onGround = options and options.onGround or false }
+                                 onGround = options and options.onGround or false,
+                                 cell = cell }
         local h = history[tagOf(self_)]
         if h then h[#h + 1] = pos.z end
     end
@@ -643,6 +667,7 @@ playerObj.teleport = function(self_, cell, pos, options)
     if placed.player.hadRotation then playerYaw = placed.player.yaw end
 end
 
+local vehicleEvents = {}
 package.loaded['openmw.world'].createObject = function(recordId)
     vehicleObj = {
         recordId = recordId,
@@ -651,7 +676,9 @@ package.loaded['openmw.world'].createObject = function(recordId)
         hasScript = function() return true end,
         addScript = function() end,
         removeScript = function() end,
-        sendEvent = function() end,
+        sendEvent = function(_, name, data)
+            vehicleEvents[#vehicleEvents + 1] = { name = name, data = data }
+        end,
     }
     recordTeleport(vehicleObj)
     return vehicleObj
@@ -773,18 +800,51 @@ check('and no creature record is ever drafted',
       creatureDrafts == 0, creatureDrafts)
 check('the vehicle carries the mesh, not a cloned record',
       (createdDraft or {}).model ~= nil, (createdDraft or {}).model)
-check('which is the strider mesh Immersive Travel replaces',
-      tostring((createdDraft or {}).model):lower():find('siltstrider', 1, true) ~= nil,
+check('which is the IN-PLACE copy when it is installed',
+      tostring((createdDraft or {}).model):lower() == 'meshes/whywalk/caravans/siltstrider.nif',
       (createdDraft or {}).model)
+check('and the log says so',
+      startMsg:find('in-place gait', 1, true) ~= nil, startMsg)
+
+-- WITHOUT THE COPY: Immersive Travel's mesh, and the log says why the strider
+-- idles. A fresh module instance, so the first one's record id is not reused.
+do
+    local saved = {}
+    for k, v in pairs(vfsFiles) do saved[k] = v; vfsFiles[k] = nil end
+    local G2 = assert(loadfile('scripts/WhyWalk/Caravans/caravans_global.lua'))()
+    local said, realPrint2 = {}, print
+    print = function(...) said[#said + 1] = table.concat({ ... }, ' ') end
+    createdDraft = nil
+    G2.eventHandlers.WWCaravans_RequestTravel({
+        player = playerObj, guide = guide, from = 'balmora', to = 'ald-ruhn',
+    })
+    print = realPrint2
+    check('without the in-place copy, Immersive Travel\'s mesh is used',
+          tostring((createdDraft or {}).model):lower() == 'meshes/r/siltstrider.nif',
+          (createdDraft or {}).model)
+    check('and the log names the tool that builds the copy',
+          table.concat(said, '\n'):find('build_inplace_strider', 1, true) ~= nil,
+          table.concat(said, '\n'))
+    G2.eventHandlers.WWCaravans_RequestAbort({})
+    G2.engineHandlers.onUpdate(0.016)
+    for k, v in pairs(saved) do vfsFiles[k] = v end
+    createdDraft = nil
+end
 check('the journey reports no creature clone',
       startMsg:find('creature cloned', 1, true) == nil, startMsg)
 
 -- ------------------------------------------------------------------ the pose
--- THE SEATED POSE IS OPT-IN, and this harness leaves PASSENGER_POSE unset.
--- Riding it, the standing idle reads better against the strider's own gait,
--- so the default went back to what the 2026-10-29 build did.
-check('no pose is sent with the setting off',
-      poseLog[1] == nil, poseLog[1] and poseLog[1].name)
+-- A POSE IS ALWAYS SENT (2026-11-03c). With the seated pose off this used to
+-- send nothing and rely on the ordinary idle, which never plays: a rider
+-- placed every frame is never re-evaluated as standing (the engine skips a
+-- teleported actor's physics step), so the falling animation played for the
+-- whole ride. Off now means STANDING, held by Core's vessel layer.
+check('a pose is sent even with the seated pose off',
+      poseLog[1] and poseLog[1].name == 'WhyWalk_AnimVesselStart',
+      poseLog[1] and poseLog[1].name)
+check("and it is the 'stand' stance, vanilla idle held above the fall",
+      poseLog[1] and poseLog[1].stance == 'stand',
+      poseLog[1] and poseLog[1].stance)
 
 -- With it on, the pose still works: this is a default, not a retraction.
 do
@@ -802,8 +862,9 @@ do
     SETTINGS.PASSENGER_POSE = false
     poseLog = {}
     ev.WWCaravans_Started({ displayName = 'Ald-ruhn' })
-    check('and turning it off again takes effect on the next journey',
-          poseLog[1] == nil, poseLog[1] and poseLog[1].name)
+    check('and turning it off again stands them on the next journey',
+          poseLog[1] and poseLog[1].stance == 'stand',
+          poseLog[1] and poseLog[1].stance)
     ev.WWCaravans_Arrived({ displayName = 'Ald-ruhn' })
     poseLog = {}
 end
@@ -833,6 +894,21 @@ check('the vehicle is placed', placed.vehicle ~= nil)
 check('the player is placed', placed.player ~= nil)
 check('the guide is placed', placed.guide ~= nil)
 
+-- THE WORLDSPACE ARGUMENT, which is what blacked the screen out.
+--
+-- `s.cell` is captured when the player boards and never changes, and it was
+-- handed to every teleport for the whole journey: three objects, sixty times
+-- a second, named into a cell they had long since left. In an exterior the
+-- engine computes the destination cell from the POSITION, and an empty string
+-- means that worldspace, so naming a cell at all is wrong here and naming a
+-- stale one asks for a worldspace move every frame.
+for _, who in ipairs({ 'vehicle', 'player', 'guide' }) do
+    check(('the %s is teleported into the worldspace, not a frozen cell')
+              :format(who),
+          placed[who] ~= nil and placed[who].cell == '',
+          placed[who] and tostring(placed[who].cell))
+end
+
 -- THE HEIGHT FAULT. The strider's origin must sit bodyOffset BELOW the route,
 -- and the riders must be measured up from that same origin. Placing the
 -- vehicle at the route point instead is what put its feet at the rider's
@@ -854,11 +930,29 @@ local function along(p, yaw)
     return p.x * math.sin(yaw) + p.y * math.cos(yaw)
 end
 do
-    local yaw = placed.vehicle.yaw or 0
+    -- IN THE TRAVEL FRAME, not the mesh's. The vehicle's rendered yaw now
+    -- carries the mesh's own orientation (yawOffset), and the slots are laid
+    -- out along the direction of TRAVEL -- which is the guide's yaw, since
+    -- the guide is an ordinary actor whose mesh faces the standard way.
+    local travel = placed.guide.yaw or 0
     check('the driver sits FORWARD of the player on the strider',
-          along(placed.guide, yaw) > along(placed.player, yaw) + 1,
+          along(placed.guide, travel) > along(placed.player, travel) + 1,
           ('guide %.1f vs player %.1f')
-              :format(along(placed.guide, yaw), along(placed.player, yaw)))
+              :format(along(placed.guide, travel), along(placed.player, travel)))
+
+    -- AND THE MESH FACES THE WAY IT TRAVELS, WITH NO OFFSET (2026-11-03c).
+    -- The previous build added pi, believing the strider faced -Y as boat
+    -- hulls do. Measured: Head bone at y=+255, root motion along +Y, and in
+    -- OpenMW 0.52 rotateZ(pi/2) puts the head at +X. The offset turned every
+    -- journey around -- "constantly facing the wrong direction".
+    local offset = db.VEHICLE.siltstrider.yawOffset or 0
+    check('the strider mesh carries no yaw offset: its head is +Y',
+          offset == 0, offset)
+    local diff = math.abs(((placed.vehicle.yaw - travel) + math.pi)
+                          % (2 * math.pi) - math.pi)
+    check('so the rendered yaw IS the travel heading',
+          diff < 1e-6,
+          ('vehicle %.4f, travel %.4f'):format(placed.vehicle.yaw, travel))
 end
 
 -- -------------------------------------------------------------- the camera
@@ -869,6 +963,11 @@ check('the first frame does not rotate the player at all',
 -- Mouse-look: the player turns their head 1 radian. Nothing about the journey
 -- may undo that.
 playerYaw = 1.0
+-- MESH YAW, not travel heading: the vehicle's rendered rotation now carries
+-- the mesh's own -Y orientation. The turn the player shares is the same
+-- either way, since a constant offset cancels in a difference, but anything
+-- comparing an ACTOR's facing to this has to take the offset back off.
+local MESH_OFFSET = db.VEHICLE.siltstrider.yawOffset or 0
 local headingBefore = placed.vehicle.yaw
 for _ = 1, 400 do frame(0.016) end
 local headingAfter = placed.vehicle.yaw
@@ -891,10 +990,33 @@ check('the player still turned WITH the strider, not against it',
       math.abs((playerYaw - 1.0) - turned) < 1e-6,
       playerYaw - 1.0)
 
--- The guide has no camera, so an absolute heading is right for them.
-check('the guide faces the way the strider faces',
-      placed.guide.hadRotation and math.abs(placed.guide.yaw - headingAfter) < 1e-6,
-      placed.guide.yaw)
+-- The guide has no camera, so an absolute heading is right for them -- and it
+-- is the TRAVEL heading, with no mesh offset: an NPC's mesh faces the standard
+-- way and only the vehicle's needs turning.
+local travelAfter = headingAfter - MESH_OFFSET
+check('the guide faces along the direction of travel',
+      placed.guide.hadRotation
+      and math.abs(placed.guide.yaw - travelAfter) < 1e-6,
+      ('guide %.4f vs travel %.4f'):format(placed.guide.yaw, travelAfter))
+check('and the strider faces the same way as its driver',
+      math.abs(placed.vehicle.yaw - placed.guide.yaw) < 1e-6,
+      ('vehicle %.4f, guide %.4f'):format(placed.vehicle.yaw, placed.guide.yaw))
+
+-- --------------------------------------------------------- the gait events
+-- The vehicle is told the cruise speed and whether the in-place mesh is in
+-- use, so it can pick and time its gait; and told again when a corner slows
+-- the strider, so the legs keep pace.
+do
+    local start, speeds = nil, 0
+    for _, e in ipairs(vehicleEvents) do
+        if e.name == 'WWCaravans_VehicleStart' then start = e.data end
+        if e.name == 'WWCaravans_VehicleSpeed' then speeds = speeds + 1 end
+    end
+    check('the vehicle is started with the cruise speed',
+          start and start.speed and start.speed >= 100, start and start.speed)
+    check('and told the in-place mesh is in use',
+          start and start.inPlace == true, start and tostring(start.inPlace))
+end
 
 -- --------------------------------------------------------------- arriving
 --
@@ -911,6 +1033,21 @@ for _ = 1, 20000 do
     local ok, err = pcall(frame, 0.05)
     if not ok then arriveErr = err; break end
     if lastPose() == 'WhyWalk_AnimVesselStop' then break end
+end
+-- Over the whole route, the corner profile has to have slowed the strider at
+-- least once, and the vehicle has to have been told so its legs keep pace.
+do
+    local speeds, slowest = 0, math.huge
+    for _, e in ipairs(vehicleEvents) do
+        if e.name == 'WWCaravans_VehicleSpeed' then
+            speeds = speeds + 1
+            if e.data.speed < slowest then slowest = e.data.speed end
+        end
+    end
+    check('the vehicle is re-timed as corners slow it down',
+          speeds > 0, speeds)
+    check('and only on real changes, not every frame',
+          speeds < 400, speeds)
 end
 check('no frame of the journey, arrival included, raises',
       arriveErr == nil, tostring(arriveErr))

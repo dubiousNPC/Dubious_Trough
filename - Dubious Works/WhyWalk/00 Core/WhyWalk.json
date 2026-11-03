@@ -9,11 +9,19 @@
     "file_type": "Esp",
     "author": "",
     "description": "",
-    "num_objects": 6,
+    "num_objects": 7,
     "masters": [
       [
         "Morrowind.esm",
         79837557
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ],
+      [
+        "Tribunal.esm",
+        4565686
       ]
     ]
   },
@@ -77,12 +85,13 @@
     "header": {
       "num_shorts": 0,
       "num_longs": 0,
-      "num_floats": 0,
-      "bytecode_length": 0,
-      "variables_length": 0
+      "num_floats": 4,
+      "bytecode_length": 247,
+      "variables_length": 12
     },
-    "bytecode": "KLUv/QBYIQAAAAAAAA==",
-    "text": "Begin WhyWalkRiderPin\n\nfloat px\nfloat py\nfloat pz\nfloat pa\n\nif ( whywalk_active == 0 )\n    return\nendif\n\nset px to whywalk_x\nset py to whywalk_y\nset pz to whywalk_z\nplayer->SetPos X px\nplayer->SetPos Y py\nplayer->SetPos Z pz\n\nif ( whywalk_yawdelta != 0 )\n    set pa to ( player->GetAngle Z + whywalk_yawdelta )\n    player->SetAngle Z pa\n    ; Consume on use. Lua writes a fresh delta every frame it wants one, so\n    ; zeroing here means a dropped or repeated frame cannot re-apply a turn\n    ; the mount already made.\n    set whywalk_yawdelta to 0\nendif\n\nEnd WhyWalkRiderPin"
+    "variables": "KLUv/QBYgQAADAAAAHB4AHB5AHB6AHBhAA==",
+    "bytecode": "KLUv/QBYpQQAwgcdJaApHf//////QL/79Znr/wjtjUfo6ls4CJjFa3FZo63L3mTvlAL/HVR1Zi8LveYAPeZRgpc9gxoLKiNStJjkfI4O1pu9FlKL8Pd5AEg0pfRoZ0xZU+2ZJ87Rxt+zuxugxqiRpBFRyIRDktNkTAFHBX+zXQkLAFXwx1Rxn1LvCf3VQCRwjDO5BXcgYDYP3CCUHg==",
+    "text": "Begin WhyWalkRiderPin\r\n\r\nfloat px\r\nfloat py\r\nfloat pz\r\nfloat pa\r\n\r\nif ( whywalk_active == 0 )\r\n    return\r\nendif\r\n\r\nset px to whywalk_x\r\nset py to whywalk_y\r\nset pz to whywalk_z\r\nplayer->SetPos X px\r\nplayer->SetPos Y py\r\nplayer->SetPos Z pz\r\n\r\nif ( whywalk_yawdelta != 0 )\r\n    set pa to ( player->GetAngle Z + whywalk_yawdelta )\r\n    player->SetAngle Z pa\r\n    set whywalk_yawdelta to 0\r\nendif\r\n\r\nEnd WhyWalkRiderPin"
   },
   {
     "type": "StartScript",

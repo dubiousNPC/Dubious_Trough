@@ -49,6 +49,7 @@ caravans_pose_description: |-
 
   Turn it off if you would rather the journey cost only the time it took.
 
+
 # --- Messages ------------------------------------------------------------
 menu_title: "Caravan Destinations"
 menu_cancel: "Cancel"

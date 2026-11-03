@@ -40,6 +40,7 @@ local types = require('openmw.types')
 local util  = require('openmw.util')
 local core  = require('openmw.core')
 local I     = require('openmw.interfaces')
+local vfs   = require('openmw.vfs')
 
 local db     = require('scripts.WhyWalk.Caravans.caravans_db')
 local path   = require('scripts.WhyWalk.Caravans.caravans_path')
@@ -67,6 +68,7 @@ local EV = {
 local EV_VEHICLE = {
     START = 'WWCaravans_VehicleStart',
     STOP  = 'WWCaravans_VehicleStop',
+    SPEED = 'WWCaravans_VehicleSpeed',
 }
 
 local VEHICLE_SCRIPT = 'scripts/WhyWalk/Caravans/caravans_vehicle.lua'
@@ -187,12 +189,60 @@ local spawnedIsCreature = false
 ---animates only actors it is the flag that would come back rather than a new
 ---one.
 ---@return string|nil recordId, boolean isCreature
+-- ---------------------------------------------------------------------------
+-- WHICH MESH: THE IN-PLACE COPY WHEN IT IS INSTALLED (2026-11-03c)
+-- ---------------------------------------------------------------------------
+-- Immersive Travel's xsiltstrider.kf walks ON THE SPOT for an actor and does
+-- not for an activator. Its accumulation root ("Root Bone") travels +Y by
+-- 800 units per loop of RunForward (300 -> 1100 in 1.8 s; WalkForward the same
+-- 800 in 5.3 s), and the engine strips that translation only for actors,
+-- whose character controller turns it into movement. On an activator the
+-- body walks up to 1100 units ahead of its own origin and snaps back every
+-- loop. Filmed in OpenMW 0.52 with the object held still: the body's centre
+-- swept 125 pixels and jumped back, every 1.8 s.
+--
+-- That is "jumps forward and back out of place", and it is also the floating
+-- rider: the slots are measured from the object's origin, which is where the
+-- rider was put, while the body they belong to was up to 1100 units ahead.
+--
+-- Lua cannot fix it -- openmw.animation is local-only and has no root-motion
+-- switch -- so the fix is the asset: tools/build_inplace_strider.py derives
+-- a copy whose Root Bone keys have X and Y zeroed (Z, every rotation, every
+-- other bone and every text key byte-identical). Same film, same engine:
+-- 2 pixels.
+--
+-- The copy lives under its own path so it replaces nothing. Without it the
+-- Immersive Travel mesh is used and caravans_vehicle plays `idle` rather than
+-- lurch; the log says which, once.
+local INPLACE = {
+    model = 'meshes/whywalk/caravans/siltstrider.nif',
+    needs = { 'meshes/whywalk/caravans/xsiltstrider.nif',
+              'meshes/whywalk/caravans/xsiltstrider.kf' },
+}
+
+local function inPlaceInstalled()
+    if not vfs.fileExists(INPLACE.model) then return false end
+    for _, f in ipairs(INPLACE.needs) do
+        if not vfs.fileExists(f) then return false end
+    end
+    return true
+end
+
+local vehicleInPlace = false
+
 local function vehicleRecord(v)
     if vehicleRecordId then return vehicleRecordId, spawnedIsCreature end
 
+    vehicleInPlace = inPlaceInstalled()
+    local model = vehicleInPlace and INPLACE.model
+        or ('meshes/' .. v.mesh:gsub('\\', '/'))
+    print('[WhyWalk Caravans] vehicle mesh ' .. model .. (vehicleInPlace
+        and ' (in-place gait)'
+        or '; the in-place copy is not installed, so the strider idles'
+           .. ' instead of walking; see tools/build_inplace_strider.py'))
     local draft = types.Activator.createRecordDraft({
         name = v.name,
-        model = 'meshes/' .. v.mesh:gsub('\\', '/'),
+        model = model,
     })
     local record = world.createRecord(draft)
     vehicleRecordId, spawnedIsCreature = record.id, false
@@ -222,10 +272,45 @@ local function bodyOrigin(s, z)
     return z - (s.vehicleDef.bodyOffset or 0)
 end
 
+-- ---------------------------------------------------------------------------
+-- WHICH WORLDSPACE TO TELEPORT INTO
+-- ---------------------------------------------------------------------------
+-- AN EMPTY STRING, not the cell the journey started in.
+--
+-- `s.cell` is captured when the player boards and never changes, and it was
+-- being handed to every teleport for the whole journey -- three objects, sixty
+-- times a second, across a route that crosses dozens of exterior cells. So
+-- the engine was told to put each of them in a cell they had long since left,
+-- every frame.
+--
+-- Cod3x on the third argument: "If the worldspace has multiple cells (i.e. an
+-- exterior), the destination cell is calculated using `position`" -- and an
+-- empty string "means the default exterior worldspace". So naming a cell at
+-- all is wrong for an exterior journey: the position already determines it,
+-- and naming a stale one is asking for a worldspace move on every frame.
+-- "The screen blacks out constantly" and "cell transitions are more jarring"
+-- are what that looks like.
+--
+-- Core does this correctly already (`player.cell or ''`) and Boats passes the
+-- object's LIVE cell. Caravans was the only one freezing it.
+--
+-- An interior is still named, because an interior IS its own worldspace and
+-- the position cannot imply it. Journeys are exterior-only today -- the
+-- origin stop has to be in an exterior -- so this is for the day one is not.
+local function worldspaceOf(s)
+    local c = s.cell
+    if c and not c.isExterior then return c end
+    return ''
+end
+
+---Place the vehicle. `yaw` is the DIRECTION OF TRAVEL; the mesh's own
+---orientation is added here and nowhere else, because the occupants are
+---ordinary actors whose meshes face the standard way.
 local function placeVehicle(s, x, y, z, yaw, roll)
-    local rot = util.transform.rotateZ(YAW_SIGN * yaw)
+    local rot = util.transform.rotateZ(
+        YAW_SIGN * (yaw + (s.vehicleDef.yawOffset or 0)))
     if roll and roll ~= 0 then rot = rot * util.transform.rotateY(roll) end
-    s.vehicle:teleport(s.cell, util.vector3(x, y, z), rot)
+    s.vehicle:teleport(worldspaceOf(s), util.vector3(x, y, z), rot)
 end
 
 ---Put an occupant in a vehicle-local slot, facing the way the vehicle faces.
@@ -425,11 +510,13 @@ local function finishJourney(s)
     -- Park the vehicle far below the world rather than deleting it: the
     -- record is reused for the next journey and Ben's mod parks the same way.
     if s.vehicle and s.vehicle:isValid() then
-        s.vehicle:teleport(s.cell, util.vector3(0, 0, -30000))
+        s.vehicle:teleport(worldspaceOf(s), util.vector3(0, 0, -30000))
     end
 
     if s.guide and s.guide:isValid() and s.guideHome then
-        s.guide:teleport(s.guideHomeCell or s.cell, s.guideHome)
+        -- The guide's OWN home cell, which may be an interior they stand in;
+        -- falling back to the journey's worldspace rather than its stale cell.
+        s.guide:teleport(s.guideHomeCell or worldspaceOf(s), s.guideHome)
         s.guide:sendEvent('WWCaravans_GuideReleased', {})
     end
 
@@ -441,7 +528,7 @@ local function finishJourney(s)
         -- because a heightmap knows nothing about what is placed on it.
         local px, py, pz = s.lastX, s.lastY, s.lastZ
         if px then
-            s.player:teleport(s.cell,
+            s.player:teleport(worldspaceOf(s),
                 util.vector3(px, py, bodyOrigin(s, pz)),
                 { onGround = true })
         end
@@ -521,11 +608,12 @@ local function onRequestTravel(data)
         fromKey = fromKey,
         toKey = toKey,
         travelled = 0,
-        -- THE VEHICLE'S OWN STATE, because it steers rather than being
-        -- placed: its position is integrated along its facing and is not a
-        -- function of `travelled` alone. Seeded on the route's first point and
-        -- pointed along the route, so the first frame is already correct.
-        body = nil,
+        -- Last frame's facing, for the sway only: the facing itself is the
+        -- path's tangent at `travelled` and needs no state.
+        lastFacing = nil,
+        -- The gait speed last sent to the vehicle, so it is told only when
+        -- the corner profile changes it noticeably.
+        gaitSent = nil,
         -- The eased vertical. nil means "start on the path", so the first
         -- frame places the strider exactly rather than easing up from zero.
         smoothZ = nil,
@@ -544,19 +632,6 @@ local function onRequestTravel(data)
         -- something that still looks like travel.
         speed = math.max(100, tonumber(data.speed) or v.speed),
     }
-
-    -- Seed the steered body on the route's first point, facing along it.
-    -- Done here rather than lazily in onUpdate so the very first frame places
-    -- the strider correctly instead of at the origin.
-    do
-        local sx, sy = path.at(points, prep, 0)
-        local ax, ay = path.at(points, prep,
-            math.min(path.STEERING.AHEAD, prep.total))
-        session.body = {
-            x = sx, y = sy,
-            heading = path.headingToward(sx, sy, ax, ay) or 0,
-        }
-    end
 
     -- addScript lands next frame, so the start event is deferred to the first
     -- onUpdate that sees the script attached. Sending it now would drop it,
@@ -704,61 +779,59 @@ local function onUpdate(dt)
 
     if s.pendingStart and s.vehicle:hasScript(VEHICLE_SCRIPT) then
         s.pendingStart = nil
-        s.vehicle:sendEvent(EV_VEHICLE.START, { vehicle = 'siltstrider' })
+        s.vehicle:sendEvent(EV_VEHICLE.START, {
+            vehicle = 'siltstrider', speed = s.speed, inPlace = vehicleInPlace,
+        })
+        s.gaitSent = s.speed
     end
 
-    s.travelled = s.travelled + s.speed * dt
+    -- The cruise speed, lowered ahead of and through tight corners. A
+    -- function of where the strider is, not a controller: see path.SPEED.
+    local v = path.speedAt(s.prep, s.travelled, s.speed)
+    s.travelled = s.travelled + v * dt
     local done = s.travelled >= s.prep.total
 
-    -- Where the route says we should be, and the point further along we are
-    -- steering at. Two path.at calls, each a binary search over a few dozen
-    -- points.
-    local px, py, pz = path.at(s.points, s.prep, s.travelled)
-    local cx, cy = path.at(s.points, s.prep,
-        math.min(s.travelled + path.STEERING.AHEAD, s.prep.total))
+    -- Keep the legs in step with the ground. Told only on a 5% change, so a
+    -- straight leg sends nothing and a corner sends a handful of events.
+    if s.gaitSent and math.abs(v - s.gaitSent) > 0.05 * s.gaitSent then
+        s.gaitSent = v
+        s.vehicle:sendEvent(EV_VEHICLE.SPEED, { speed = v })
+    end
 
-    -- THE STRIDER STEERS. It is not placed at px,py and rotated separately --
-    -- that is the model that had it travelling up to 88% sideways at corners,
-    -- round after round. It turns toward the point ahead and moves along its
-    -- own facing, so velocity and facing are the same vector; the correction
-    -- back toward px,py is the only sideways component left, and it is gentle
-    -- enough to measure at 1% of travel on average. caravans_path.M.steer has
-    -- the full comparison.
-    path.steer(s.body, cx, cy, px, py, s.speed, s.vehicleDef.turnRate,
-               path.STEERING.CORRECT_TAU, dt)
-    local x, y = s.body.x, s.body.y
-
-    -- Sway: lean into the turn, eased rather than snapped. For a strider the
-    -- multiplier is 1, which is deliberately almost imperceptible.
+    -- THE ROUNDED ROUTE, AND ITS TANGENT.
     --
-    -- Measured against the STEERING TARGET now rather than the segment
-    -- heading, because that is what the body is actually turning toward.
+    -- Every corner of the authored polyline is replaced by a circular arc,
+    -- bounded to stay within path.TURN.MAX_DEV (120 units) of the line, and
+    -- the body faces exactly along the path. Nothing travels sideways, the
+    -- facing never jumps, and with the corner speed profile the body never
+    -- turns faster than 90 degrees a second -- measured over every route
+    -- against the 9123 deg/s and 178-degree sideways of the carrot model it
+    -- replaces. caravans_path has the table and the reasoning.
+    local x, y, z, facing = path.at(s.points, s.prep, s.travelled)
+    local bodyYaw = facing or s.lastFacing or 0
+
+    -- Sway: lean into the turn. The turn is now the CHANGE in facing between
+    -- frames, which is exactly what the body is doing, rather than a
+    -- comparison between two different quantities.
     s.swayT = s.swayT + dt
     local turning = 0
-    local aim = path.headingToward(x, y, cx, cy)
-    if aim and s.body.heading then
-        local diff = path.angleDiff(s.body.heading, aim)
-        turning = diff > 0.02 and 1 or (diff < -0.02 and -1 or 0)
+    if s.lastFacing and facing then
+        local d = path.angleDiff(s.lastFacing, facing)
+        turning = d > 1e-4 and 1 or (d < -1e-4 and -1 or 0)
     end
+    s.lastFacing = bodyYaw
     s.swayAmp = path.stepSway(s.swayAmp, turning ~= 0 and 1 or 0,
                               path.SWAY.AMPL_CHANGE * 60, dt)
     local roll = path.sway(s.swayT, s.swayAmp, s.vehicleDef.sway) * -turning
 
-    -- Vertical from the ROUTE, eased. Only x and y are steered: the ground is
-    -- where the route says it is, and integrating height along a facing would
-    -- have the strider climb into the air. The route's z is piecewise linear,
-    -- so its vertical SPEED jumps at every waypoint -- a jolt about once a
+    -- Vertical eased, horizontal exact. The route's z is piecewise linear, so
+    -- its vertical SPEED jumps at every waypoint -- a jolt about once a
     -- second at this speed, which path.easeVertical rounds off.
-    s.smoothZ = path.easeVertical(s.smoothZ, pz, dt)
-    local z = s.smoothZ
+    s.smoothZ = path.easeVertical(s.smoothZ, z, dt)
+    z = s.smoothZ
 
-    -- The dismount uses the ROUTE's final point, not the steered position:
-    -- the strider can finish a few hundred units short of the stop after
-    -- swinging wide of the last corner, and the player paid to arrive AT the
-    -- stop.
-    s.lastX, s.lastY, s.lastZ = (done and px or x), (done and py or y), z
+    s.lastX, s.lastY, s.lastZ = x, y, z
 
-    local bodyYaw = s.body.heading or 0
     -- ONE origin for the vehicle and everything riding on it. See bodyOrigin.
     local bz = bodyOrigin(s, z)
     placeVehicle(s, x, y, bz, bodyYaw, roll)
@@ -773,10 +846,12 @@ local function onUpdate(dt)
 
     local slots = s.vehicleDef.slots
     if slots and slots[1] then
-        placeRider(s.player, s.cell, x, y, bz, bodyYaw, slots[1], riderDelta)
+        placeRider(s.player, worldspaceOf(s), x, y, bz, bodyYaw,
+                   slots[1], riderDelta)
     end
     if s.guide and s.guide:isValid() and s.vehicleDef.guideSlot then
-        placeOccupant(s.guide, s.cell, x, y, bz, bodyYaw, s.vehicleDef.guideSlot)
+        placeOccupant(s.guide, worldspaceOf(s), x, y, bz, bodyYaw,
+                      s.vehicleDef.guideSlot)
     end
 
     if done then
@@ -813,6 +888,7 @@ local function onSave()
     local saved = {
         vehicleRecordId = vehicleRecordId,
         spawnedIsCreature = spawnedIsCreature,
+        vehicleInPlace = vehicleInPlace,
     }
     local s = session
     if s and s.guide and s.guide:isValid() and s.guideHome then
@@ -844,6 +920,12 @@ end
 local function onLoad(data)
     vehicleRecordId = data and data.vehicleRecordId or nil
     spawnedIsCreature = data and data.spawnedIsCreature == true
+    vehicleInPlace = data and data.vehicleInPlace == true
+    -- A record saved before the in-place copy existed points at the lurching
+    -- mesh. Mint a fresh one if the copy is installed now.
+    if vehicleRecordId and not vehicleInPlace and inPlaceInstalled() then
+        vehicleRecordId = nil
+    end
 
     local s = session
     session = nil
@@ -856,7 +938,7 @@ local function onLoad(data)
         -- looping forever.
         detachVehicleScript(s.vehicle)
         if s.vehicle and s.vehicle:isValid() then
-            s.vehicle:teleport(s.cell, util.vector3(0, 0, -30000))
+            s.vehicle:teleport(worldspaceOf(s), util.vector3(0, 0, -30000))
         end
     end
 

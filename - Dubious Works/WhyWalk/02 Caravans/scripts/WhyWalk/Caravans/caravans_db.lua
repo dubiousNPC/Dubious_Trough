@@ -59,7 +59,36 @@ M.VEHICLE = {
 
         -- src: mounts/a_siltstrider.json
         mesh       = "r\\Siltstrider.nif",
+
+        -- WHICH WAY THE MESH FACES. Object yaw = travel heading + yawOffset.
+        --
+        -- ZERO, MEASURED (2026-11-03c). The previous build set PI on the
+        -- strength of boats_db's note that vanilla-orientation hulls face -Y,
+        -- and that is true of hulls and false of this animal. Three
+        -- independent measurements of Immersive Travel's r/siltstrider.nif:
+        --
+        --   * the skeleton: Head bone at y = +255, mandibles out to y = +695,
+        --     the rear legs (Leg3) at y = -128;
+        --   * the animation: RunForward's root bone travels along +Y;
+        --   * the engine: in OpenMW 0.52, filmed from above, rotateZ(h) with
+        --     h = pi/2 (Morrowind heading "toward +X") put the head at +X.
+        --
+        -- So the head is the mesh's +Y, which is Morrowind's yaw-0 forward,
+        -- and the object yaw is simply the travel heading -- which is also
+        -- what Immersive Travel itself does (`mount.facing = atan2(d.x, d.y)`,
+        -- main.lua). PI turned every journey around: "constantly facing the
+        -- wrong direction".
+        yawOffset  = 0,
         gait       = "runforward",          -- src: forwardAnimation "runForward"
+
+        -- How fast each gait carries the body when played at speed 1, from
+        -- the root bone's travel in xsiltstrider.kf: 800 units per loop, in
+        -- 1.8 s (RunForward) and 5.33 s (WalkForward). The vehicle plays its
+        -- gait at travel speed / this, so the feet keep pace with the ground
+        -- instead of sliding (at the 1400 u/s default, RunForward at 3.15x).
+        gaitSpeed  = { runforward = 444.4, walkforward = 150.0 },
+        -- Below this travel speed the walk reads better than a slowed run.
+        walkBelow  = 260,
         sway       = 1,                     -- src: sway
         bodyOffset = 1220,                  -- src: offset -1220
 
@@ -76,14 +105,23 @@ M.VEHICLE = {
         --
         -- ONLY y changes. x and z are [R]'s, and the two spare passenger
         -- slots are untouched, so the seating still reads as one bench.
+        --
+        -- THE HEIGHTS ARE 1226, NOT [R]'s 1223 (2026-11-03c). The cabin floor
+        -- the rider stands on is at 1223.1 -- raycast in OpenMW 0.52 against
+        -- the spawned strider, which takes its collision from the RENDER mesh
+        -- because the file's RootCollisionNode sits under "Root Bone" rather
+        -- than under the root, where the engine looks. A rider pinned at 1223
+        -- starts every frame 0.1 units BELOW the floor, drops through it, and
+        -- comes to rest on the body at 991.8 -- inside the strider, never on
+        -- the ground. At 1226 they stand on the floor at 1224.1.
         slots = {
-            { x = 0,   y = 10, z = 1223 },   -- src y 80, swapped with the guide
+            { x = 0,   y = 10, z = 1226 },   -- src y 80, swapped with the guide
             { x = -81, y = 30, z = 1230 },
             { x = 81,  y = 40, z = 1230 },
         },
 
         -- src: guideSlot, animationGroup "idle5"; src y 10, see the note above
-        guideSlot = { x = 0, y = 80, z = 1223, anim = "idle5" },
+        guideSlot = { x = 0, y = 80, z = 1226, anim = "idle5" },
 
         -- src: hiddenSlot -- where to park an actor that should exist but not
         -- be seen. Unused so far; recorded because the schema gap note calls
@@ -106,29 +144,13 @@ M.VEHICLE = {
         -- short enough that nobody reaches for the skip.
         speed    = 1400,
 
-        -- TURN RATE, for the steering model in caravans_path.
-        --
-        -- The body no longer chases the route's heading: it steers at a point
-        -- 700 units further along and moves along its own facing (see
-        -- path.M.steer for why, and what the old model measured). So this is
-        -- how fast the strider can turn, not how fast a filter converges.
-        --
-        -- Measured over eight real routes at 60fps:
-        --
-        --     turn  mean dev  worst dev  direction changes
-        --      0.7      98 u     1550 u      ~0.9 /s
-        --      1.0      41 u      906 u      ~1.0 /s   <- chosen
-        --      1.4      25 u      756 u      ~1.5 /s
-        --      2.0      13 u      593 u      ~3.1 /s
-        --
-        -- 1.0 rad/s is 57 degrees a second. The faster rates track the
-        -- polyline more tightly and turn three times as often to do it, which
-        -- is the opposite of the long gradual turns this is meant to look
-        -- like; the deviation they buy is invisible on segments 1500 units
-        -- long. The lookahead that used to live here is now
-        -- path.STEERING.AHEAD, because it belongs to the steering rather than
-        -- to the animal.
-        turnRate = 1.0,
+        -- NO TURN RATE. The body's facing is a bearing to a point further
+        -- along the route, not a filter converging on one, so there is
+        -- nothing to rate-limit. How sharply it turns at a node is set by
+        -- path.FACING.AHEAD, which belongs to the route walker rather than to
+        -- the animal. The previous turnRate, lookahead and steering
+        -- correction are all gone with the models that needed them; see the
+        -- trilemma note in caravans_path.
     },
 }
 

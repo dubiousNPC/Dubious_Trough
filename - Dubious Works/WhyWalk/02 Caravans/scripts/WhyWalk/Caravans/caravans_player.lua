@@ -156,6 +156,8 @@ local POSE = {
     STOP  = 'WhyWalk_AnimVesselStop',
 }
 local POSE_STANCE = 'passenger'
+-- whywalk_shared.VESSEL_STANCE.stand: vanilla idle, always present.
+local POSE_STANCE_STANDING = 'stand'
 
 -- ---------------------------------------------------------------------------
 -- THE GUIDE
@@ -561,9 +563,25 @@ local function onStarted(data)
     --
     -- Read per journey, not cached: the setting is a preference someone may
     -- change between rides, and a journey is the only moment it is read.
-    if passengerPose() then
-        self.object:sendEvent(POSE.START, { stance = POSE_STANCE })
-    end
+    --
+    -- ALWAYS A POSE, even with the seated pose off (2026-11-03c). "Off" used
+    -- to mean "send nothing and let the ordinary idle play", and the ordinary
+    -- idle never plays on a strider: the rider is placed every frame, and a
+    -- placed actor is never re-evaluated as standing on anything -- the
+    -- engine marks a teleported actor to skip its physics step
+    -- (mwphysics/actor.cpp, updatePosition: mSkipSimulation = true,
+    -- mStandingOnPtr = nullptr). Measured in OpenMW 0.52 on a strider with a
+    -- real floor under the slot: on the ground 2% of frames while pinned,
+    -- 100% when placed once and left alone. So the engine plays the FALLING
+    -- animation for the whole ride, which is "the idle pose is not playing".
+    --
+    -- Core's 'stand' stance is vanilla idle on the vessel layer, which ranks
+    -- above the jump/fall groups and is re-asserted if they interrupt it.
+    -- The setting now chooses between sitting and standing, not between a
+    -- pose and no pose.
+    self.object:sendEvent(POSE.START, {
+        stance = passengerPose() and POSE_STANCE or POSE_STANCE_STANDING,
+    })
 end
 
 local function onArrived(data)

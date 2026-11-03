@@ -362,3 +362,22 @@ gaps including the two dropped files.
   (`createRecordDraft` → `createRecord` → `createObject`), and the demonstration
   that a spawned vehicle is the right unit of work.
 - **UI Toolkit** — the modal destination menu.
+
+---
+
+## The strider mesh: `meshes/whywalk/caravans/`
+
+Caravans spawns its strider from an **in-place** copy of Immersive Travel's
+animated mesh. IT's `xsiltstrider.kf` moves its root bone 800 units forward per
+gait loop, and OpenMW strips that only for actors, so on the activator Caravans
+spawns, the body would run ahead of its own origin and snap back every loop. The copy is identical
+except that the root bone's horizontal travel is zeroed (70 bytes of 2.3 MB).
+
+Rebuild it from any IT install:
+
+```sh
+python3 tools/build_inplace_strider.py "<Immersive Travel - Assets>/Meshes"
+```
+
+Without the copy, Caravans uses IT's mesh and the strider idles rather than
+lurching; the log says which on the first journey. See `FIX_2026-11-03c.md`.

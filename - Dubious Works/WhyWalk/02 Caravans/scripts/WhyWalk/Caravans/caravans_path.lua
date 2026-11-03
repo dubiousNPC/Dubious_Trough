@@ -41,7 +41,28 @@
 
 local M = {}
 
-local sqrt, floor, atan, pi = math.sqrt, math.floor, math.atan, math.pi
+local sqrt, floor, pi = math.sqrt, math.floor, math.pi
+
+-- TWO-ARGUMENT ARCTANGENT, AND WHY IT IS SPELLED atan2 (2026-11-03c).
+--
+-- OpenMW runs LuaJIT, which is Lua 5.1: `math.atan` takes ONE argument and
+-- silently ignores a second. Lua 5.3+ -- which is what tools/luarun.py runs
+-- the tests on -- made `math.atan(y, x)` the two-argument form. So
+-- `math.atan(dx, dy)` was a correct quadrant-aware heading in every test and
+-- `atan(dx)` in the game, folded into (-90, +90) degrees. Measured in OpenMW
+-- 0.52: math.atan(1, -1) = 0.7854, where 2.3562 was meant.
+--
+-- That was headingOf for the life of this module. Every facing model in the
+-- FIX notes -- lag filter, lookahead, unwrap, steering, carrot, mesh offset --
+-- was fed a heading that pointed the wrong way whenever the route ran south,
+-- and was simply wrong in magnitude everywhere else. "Constantly facing the
+-- wrong direction", through every one of them, and no test could see it.
+--
+-- math.atan2 exists in LuaJIT and in 5.3 under compatibility; math.atan is
+-- the two-argument form everywhere atan2 is missing. tests/test_caravans
+-- now runs with a LuaJIT-faithful math.atan, and tools/check_luajit.py
+-- rejects a two-argument math.atan anywhere in the module.
+local atan2 = math.atan2 or math.atan
 local sin, cos, exp = math.sin, math.cos, math.exp
 local TWO_PI = 2 * pi
 
@@ -65,51 +86,159 @@ function M.pointAt(points, n, i, reversed)
 end
 
 -- ---------------------------------------------------------------------------
--- MEASURING
+-- THE PATH IS THE POLYLINE WITH ITS CORNERS ROUNDED (2026-11-03c)
 -- ---------------------------------------------------------------------------
+-- Every model this module shipped before took the polyline as-is and then
+-- tried to choose a facing for it, and on a polyline no facing is right: the
+-- direction of travel is constant along a segment and jumps at every node.
+-- Facing exactly along the step snaps by the corner angle once a second;
+-- facing anywhere smoother points across the corner. The notes called that a
+-- trilemma, and for a body that has to move along the polyline exactly, it is.
+--
+-- The body does not have to. Round each corner into a circular arc tangent to
+-- both of its segments and the path has a tangent EVERYWHERE, continuous
+-- through every node. The facing is that tangent: exact, so nothing travels
+-- sideways, and continuous, so nothing snaps. What it costs is leaving the
+-- authored line inside each corner, and that is bounded by construction.
+--
+-- Measured over all 47 routes (2056 corners) at 60fps, 1400 u/s:
+--
+--                                   turn rate        sideways     off the line
+--                                   p99     max      mean   max    p99   max
+--   shipped: trace + carrot 350     213   9123      2.05  178.4      0     0
+--   arcs R 1000, <=120 off line     104    659      0.13    5.5     67   120
+--   + corner speed limit (below)     90     90      0.13    0.7     69   120
+--
+-- "Nauseatingly erratic" is the first row: a 9123 deg/s spin, and moments
+-- where the body faced 178 degrees away from where it was going.
+--
+-- TWO LIMITS PER CORNER, the smaller wins:
+--
+--   RADIUS     1000 u. Larger is gentler; past ~1000 it stops mattering,
+--              because the cap below or the segment lengths decide instead.
+--   MAX_DEV    120 u, how far inside the corner the arc may run. The deepest
+--              point of an arc of radius r through a turn of theta lies
+--              r * (1 - cos(theta/2)) from the segments, so r is capped at
+--              MAX_DEV / (1 - cos(theta/2)). The median corner (22 degrees)
+--              is untouched by this; only the sharp ones are tightened.
+--
+-- and the tangent length r * tan(theta/2) never exceeds half of either
+-- segment, so neighbouring arcs cannot overlap however short the legs are.
+--
+-- The previous steering build left the line by 494 units and put the strider
+-- through buildings; 120 is a quarter of that, at the worst corner of any
+-- route, and the typical corner is cut by under 30.
+M.TURN = {
+    RADIUS  = 1000,
+    MAX_DEV = 120,
+    -- A node turning by more than this is a reversal, not a corner; an arc
+    -- through it would be a point. It is left sharp and the speed limit
+    -- brings the strider nearly to a stop there.
+    MAX_ARC = math.rad(179),
+}
 
----Measure a route once. Returns a table the stepper reads:
----  n        point count
----  reversed direction flag
----  cum      cum[i] = distance from the start to point i (cum[1] = 0)
----  total    full route length
+local function hdist(ax, ay, bx, by)
+    local dx, dy = bx - ax, by - ay
+    return sqrt(dx * dx + dy * dy)
+end
+
+---Measure a route once. Returns the table every other query reads:
+---  n         point count
+---  reversed  direction flag
+---  pieces    lines and arcs in travel order (see below)
+---  cum       cum[k] = distance to the start of piece k; cum[#pieces+1] = total
+---  total     length of the rounded path
 ---
----Measured in 3D. The vertical component is real -- a strider climbing out of
----the Ascadian Isles toward Ald-ruhn gains thousands of units -- and ignoring
----it would make uphill legs finish early.
----@param points table
+---A piece is a flat table, built once:
+---  line  { kind = 1, ax, ay, az, bx, by, bz }
+---  arc   { kind = 2, cx, cy, r, a0, sweep, az, bz }   a0/sweep in math radians
+---
+---Measured in 3D, as before: the vertical component is real -- a strider
+---climbing toward Ald-ruhn gains thousands of units -- so an arc's length is
+---its horizontal sweep combined with its rise.
+---@param points table flat {x,y,z,...}
 ---@param reversed boolean|nil
-function M.prepare(points, reversed)
+---@param turn table|nil overrides for M.TURN (tests)
+function M.prepare(points, reversed, turn)
+    turn = turn or M.TURN
     local n = M.count(points)
-    local cum = { 0 }
-    local px, py, pz = M.pointAt(points, n, 1, reversed)
-    local run = 0
-    for i = 2, n do
+
+    -- Travel-order points with coincident neighbours dropped. The source has
+    -- duplicated consecutive points; a zero-length segment has no direction.
+    local P = {}
+    for i = 1, n do
         local x, y, z = M.pointAt(points, n, i, reversed)
-        local dx, dy, dz = x - px, y - py, z - pz
-        run = run + sqrt(dx * dx + dy * dy + dz * dz)
-        cum[i] = run
-        px, py, pz = x, y, z
+        local last = P[#P]
+        if not last or hdist(last[1], last[2], x, y) > 1e-3 then
+            P[#P + 1] = { x, y, z }
+        else
+            last[3] = z
+        end
     end
-    return { n = n, reversed = reversed == true, cum = cum, total = run }
+
+    local pieces = {}
+    local function line(a, b) pieces[#pieces + 1] = { kind = 1, a[1], a[2], a[3], b[1], b[2], b[3] } end
+
+    local cur = P[1]
+    for i = 2, #P - 1 do
+        local a, b, c = P[i - 1], P[i], P[i + 1]
+        local la, lb = hdist(a[1], a[2], b[1], b[2]), hdist(b[1], b[2], c[1], c[2])
+        local ux, uy = (b[1] - a[1]) / la, (b[2] - a[2]) / la
+        local vx, vy = (c[1] - b[1]) / lb, (c[2] - b[2]) / lb
+        local cross, dot = ux * vy - uy * vx, ux * vx + uy * vy
+        local theta = atan2(math.abs(cross), dot)
+        if theta < 1e-4 or theta > turn.MAX_ARC then
+            line(cur, b); cur = b
+        else
+            local half = math.tan(theta / 2)
+            local r = math.min(turn.RADIUS, turn.MAX_DEV / (1 - cos(theta / 2)))
+            local t = math.min(r * half, la / 2, lb / 2)
+            r = t / half
+            local tin = { b[1] - ux * t, b[2] - uy * t, b[3] + (a[3] - b[3]) * t / la }
+            local tout = { b[1] + vx * t, b[2] + vy * t, b[3] + (c[3] - b[3]) * t / lb }
+            line(cur, tin)
+            local s = cross > 0 and 1 or -1          -- +1 counter-clockwise (a left turn)
+            local cx, cy = tin[1] - uy * r * s, tin[2] + ux * r * s
+            pieces[#pieces + 1] = { kind = 2, cx, cy, r, atan2(tin[2] - cy, tin[1] - cx),
+                                    s * theta, tin[3], tout[3] }
+            cur = tout
+        end
+    end
+    if #P >= 2 then line(cur, P[#P]) end
+
+    -- Lengths, dropping anything degenerate.
+    local kept, cum = {}, { 0 }
+    for _, pc in ipairs(pieces) do
+        local len
+        if pc.kind == 1 then
+            local dx, dy, dz = pc[4] - pc[1], pc[5] - pc[2], pc[6] - pc[3]
+            len = sqrt(dx * dx + dy * dy + dz * dz)
+        else
+            local h, dz = pc[3] * math.abs(pc[5]), pc[7] - pc[6]
+            len = sqrt(h * h + dz * dz)
+        end
+        if len > 1e-9 then
+            kept[#kept + 1] = pc
+            cum[#cum + 1] = cum[#cum] + len
+        end
+    end
+
+    return {
+        n = n, reversed = reversed == true, P = P,
+        pieces = kept, cum = cum, total = cum[#cum],
+    }
 end
 
 -- ---------------------------------------------------------------------------
 -- STEPPING
 -- ---------------------------------------------------------------------------
 
----Segment index containing arc-length `d`, by binary search.
----
----Linear search from the last index would be faster per frame and is the
----obvious thing to write, but it makes the cost depend on how far along the
----route you are and it breaks the moment anything seeks (a save resumed
----mid-journey, a debug skip). A binary search over 72 points is ~7
----comparisons, every frame of every journey, which is not worth optimising.
----@return number index of the segment start point, 1..n-1
-local function segmentFor(prep, d)
-    local cum, lo, hi = prep.cum, 1, prep.n
+---Piece index containing arc-length `d`, by binary search: ~7 comparisons
+---for the longest route, every frame, and correct after any seek.
+local function pieceFor(prep, d)
+    local cum, lo, hi = prep.cum, 1, #prep.pieces + 1
     if d <= 0 then return 1 end
-    if d >= prep.total then return prep.n - 1 end
+    if d >= prep.total then return #prep.pieces end
     while lo < hi - 1 do
         local mid = floor((lo + hi) / 2)
         if cum[mid] <= d then lo = mid else hi = mid end
@@ -118,14 +247,19 @@ local function segmentFor(prep, d)
 end
 
 ---Heading of a vector in Morrowind's convention: 0 = +Y, increasing toward
----+X, i.e. forward = (sin yaw, cos yaw). Matches Core and Boats.
+---+X, i.e. forward = (sin yaw, cos yaw). Matches Core and Boats, and the
+---strider mesh: its head is at +Y (Head bone y=+255, root motion along +Y),
+---so object yaw IS this heading, with no offset (see caravans_db).
 local function headingOf(dx, dy)
     if dx == 0 and dy == 0 then return nil end
-    return atan(dx, dy) % TWO_PI
+    return atan2(dx, dy) % TWO_PI
 end
 M.headingOf = headingOf
 
 ---Position and heading at arc-length `d` along a prepared route.
+---
+---The heading is the path's own TANGENT: exact on a line, continuous round an
+---arc. There is nothing else to the facing -- no carrot, no filter, no state.
 ---
 ---`d` is clamped: before the start it returns the first point, past the end
 ---the last. Clamping rather than wrapping matters because the caller decides
@@ -133,34 +267,91 @@ M.headingOf = headingOf
 ---passenger in a loop.
 ---@return number x, number y, number z, number|nil yaw
 function M.at(points, prep, d)
-    local n, rev = prep.n, prep.reversed
-    if n == 1 then
-        local x, y, z = M.pointAt(points, n, 1, rev)
-        return x, y, z, nil
+    if #prep.pieces == 0 then
+        local p = prep.P[1]
+        return p[1], p[2], p[3], nil
     end
-    if d <= 0 then
-        local x, y, z = M.pointAt(points, n, 1, rev)
-        local nx, ny = M.pointAt(points, n, 2, rev)
-        return x, y, z, headingOf(nx - x, ny - y)
+    if d < 0 then d = 0 elseif d > prep.total then d = prep.total end
+    local k = pieceFor(prep, d)
+    local pc = prep.pieces[k]
+    local len = prep.cum[k + 1] - prep.cum[k]
+    local f = (d - prep.cum[k]) / len
+    if pc.kind == 1 then
+        return pc[1] + (pc[4] - pc[1]) * f,
+               pc[2] + (pc[5] - pc[2]) * f,
+               pc[3] + (pc[6] - pc[3]) * f,
+               headingOf(pc[4] - pc[1], pc[5] - pc[2])
     end
-    if d >= prep.total then
-        local x, y, z = M.pointAt(points, n, n, rev)
-        local px, py = M.pointAt(points, n, n - 1, rev)
-        return x, y, z, headingOf(x - px, y - py)
-    end
+    local cx, cy, r, a0, sweep = pc[1], pc[2], pc[3], pc[4], pc[5]
+    local ang = a0 + sweep * f
+    local c, s = cos(ang), sin(ang)
+    -- d/dang of (cos, sin) is (-sin, cos); a clockwise arc runs the other way.
+    local dir = sweep > 0 and 1 or -1
+    return cx + r * c, cy + r * s, pc[6] + (pc[7] - pc[6]) * f,
+           headingOf(-s * dir, c * dir)
+end
 
-    local i = segmentFor(prep, d)
-    local ax, ay, az = M.pointAt(points, n, i, rev)
-    local bx, by, bz = M.pointAt(points, n, i + 1, rev)
-    local segStart = prep.cum[i]
-    local segLen = prep.cum[i + 1] - segStart
-    -- A zero-length segment would divide by zero. The source has duplicated
-    -- consecutive points in places, so this is not hypothetical.
-    local t = segLen > 0 and (d - segStart) / segLen or 0
-    return ax + (bx - ax) * t,
-           ay + (by - ay) * t,
-           az + (bz - az) * t,
-           headingOf(bx - ax, by - ay)
+-- ---------------------------------------------------------------------------
+-- SLOWING FOR TIGHT CORNERS
+-- ---------------------------------------------------------------------------
+-- Rounding alone leaves a handful of corners turning too fast: five of the
+-- 2056 turn by more than 90 degrees, one by 178.5, and an arc that stays
+-- within 120 units of a hairpin is a tight one. At cruising speed the body
+-- would spin through it at 650 degrees a second.
+--
+-- So the strider slows for them, as a large animal would. Each arc allows at
+-- most MAX_TURN_RATE * r units a second while on it; ahead of it the speed
+-- falls at ACCEL, after it recovers at ACCEL. The result caps the turn rate
+-- everywhere and costs 1.2% of journey time at 1400 u/s, because almost every
+-- corner is gentle enough to take at speed.
+--
+-- A PROFILE, NOT A CONTROLLER. The allowed speed is a function of distance
+-- along the route alone -- the same speed at the same place on every ride --
+-- so it cannot oscillate, lag or carry error from one corner to the next.
+M.SPEED = {
+    MAX_TURN_RATE = math.rad(90),   -- radians per second, at any point
+    ACCEL         = 700,            -- u/s^2, both ways
+}
+
+---Speed allowed at `d` for a strider cruising at `cruise` u/s.
+---@param prep table from M.prepare
+---@param d number arc length travelled
+---@param cruise number u/s
+---@return number u/s, never above cruise and never zero
+function M.speedAt(prep, d, cruise)
+    local w, acc = M.SPEED.MAX_TURN_RATE, M.SPEED.ACCEL
+    -- Corners further than this cannot lower the speed here.
+    local reach = cruise * cruise / (2 * acc)
+    local v = cruise
+    local pieces, cum = prep.pieces, prep.cum
+    if #pieces == 0 then return cruise end
+    local k0 = pieceFor(prep, d)
+    -- Behind (recovery) and ahead (braking), within reach.
+    local k = k0
+    while k >= 1 and d - cum[k + 1] <= reach do
+        local pc = pieces[k]
+        if pc.kind == 2 then
+            local lim = w * pc[3]
+            if lim < v then
+                local gap = d - cum[k + 1]
+                if gap <= 0 then v = lim
+                else v = math.min(v, sqrt(lim * lim + 2 * acc * gap)) end
+            end
+        end
+        k = k - 1
+    end
+    k = k0 + 1
+    while k <= #pieces and cum[k] - d <= reach do
+        local pc = pieces[k]
+        if pc.kind == 2 then
+            local lim = w * pc[3]
+            if lim < v then v = math.min(v, sqrt(lim * lim + 2 * acc * (cum[k] - d))) end
+        end
+        k = k + 1
+    end
+    -- A reversal node is left as a corner with no arc; a strider must not
+    -- stand still on it forever.
+    return math.max(v, 30)
 end
 
 -- ---------------------------------------------------------------------------
@@ -255,116 +446,6 @@ function M.sway(t, amplitude, swayMult)
     return v
 end
 
--- ---------------------------------------------------------------------------
--- STEERING, RATHER THAN PLACING
--- ---------------------------------------------------------------------------
--- THE STRIDER MOVES WHERE IT POINTS. That is the whole of this section, and it
--- is a different movement model from the one above.
---
--- `M.at` answers "where is the arc-length point d along this polyline", and
--- the vehicle was placed there each frame while being rotated, separately,
--- toward the segment's heading. Those are two independent quantities, and any
--- disagreement between them IS the body moving sideways -- which is what was
--- reported, every round, for a week: "the body is moving sideways at times",
--- "directional facing wrong/unresponsive". Easing the heading faster, aiming
--- it further ahead and unwrapping it all made the disagreement smaller
--- without removing it, because the model allows it to exist.
---
--- Immersive Travel does not have the fault, and the reason is structural
--- rather than better-tuned (main.lua, the mount update):
---
---     local d = (nextPos - currentPos):normalized()   -- bearing to the POINT
---     local new_facing = math.atan2(d.x, d.y)
---     ... turn toward new_facing, clamped ...
---     mount.facing = facing
---     mount.position = currentPos + delta             -- delta along `forward`
---
--- Two things follow from that, and neither can be had by tuning:
---
---   1. The heading target is the BEARING TO THE NEXT WAYPOINT, not the
---      heading of the current segment. A segment heading is piecewise
---      constant and jumps at every node; a bearing to a point rotates
---      smoothly and continuously as you approach it. That is the "gentle
---      drift between each point, long gradual turns" the real thing does.
---
---   2. The position is INTEGRATED along the facing, not sampled from the
---      polyline. Velocity and facing are the same vector by construction, so
---      sideways motion is not merely small, it is impossible.
---
--- The cost is that the route is now followed rather than traced: the strider
--- has a turning radius (speed / turnRate) and will swing wide of a corner too
--- sharp for it, exactly as a real animal would. That is a feature of the model
--- and it is bounded -- tools/test_caravans.lua measures the worst deviation
--- from the polyline and holds it under a cap.
-
--- WHAT REPLACED IT, AND THE NUMBERS. Simulated at 60fps over eight real
--- routes, measuring the SIDEWAYS fraction of motion -- how much of each
--- frame's travel is perpendicular to where the body points, which is the
--- thing that was being seen:
---
---     model                      mean side  worst side  mean dev  end gap
---     place on path (what shipped)    3.8%       88.1%       0 u      0 u
---     steer only, no correction       0.0%        0.0%     323 u    906 u
---     steer + correction tau 2.0      1.0%       16.9%      64 u    315 u
---     steer + correction tau 0.5      2.9%       37.7%      25 u     86 u
---
--- 88% sideways at the sharpest corner is a strider travelling almost entirely
--- crabwise, and no amount of tuning the old model removes it, because nothing
--- in that model ties facing to velocity. Steering ties them by construction
--- and the measured worst case falls to 17%.
---
--- THE CORRECTION is the price of steering. Pure steering never rejoins the
--- route -- it swings wide of every corner, ends 906 units from the stop, and
--- on one route orbits the destination forever because its turning radius
--- (speed / turnRate = 1400 units) exceeds the distance it needs to close. So
--- the position is pulled gently back toward where the route says it should be,
--- which bounds the deviation, guarantees arrival, and is itself the only
--- sideways motion left. tau 2.0 keeps that pull slow enough to stay under a
--- fifth of the worst case of the old model.
---
--- THE ROUTE IS STILL FOLLOWED, within 64 units on average on segments 1500
--- units long. The strider walks a smoother line than the polyline, which is
--- what an animal would do.
-
----Bearing from one point to another, or nil if they coincide.
----@return number|nil radians, in [0, 2pi)
-function M.headingToward(x, y, tx, ty)
-    return headingOf(tx - x, ty - y)
-end
-
----One step of the steering model.
----
----`st` is the vehicle's own state: { x, y, heading }. It is advanced in place
----and also returned, so a caller can read it either way.
----@param st table { x, y, heading }
----@param carrotX number the point on the route to steer at
----@param carrotY number
----@param pathX number where the route says the vehicle should be
----@param pathY number
----@param speed number units per second
----@param turnRate number radians per second
----@param correctTau number seconds; 0 disables the correction
----@param dt number
----@return table st
-function M.steer(st, carrotX, carrotY, pathX, pathY, speed, turnRate, correctTau, dt)
-    local aim = M.headingToward(st.x, st.y, carrotX, carrotY)
-    st.heading = M.easeHeading(st.heading, aim, turnRate, dt)
-
-    -- Forward along the facing. This is the whole reason for the model: the
-    -- velocity IS the facing, so there is nothing sideways in it.
-    local step = speed * dt
-    st.x = st.x + sin(st.heading) * step
-    st.y = st.y + cos(st.heading) * step
-
-    -- Then back toward the route, gently. Without this the vehicle never
-    -- rejoins the path and can orbit its destination; see the note above.
-    if correctTau and correctTau > 0 and dt > 0 then
-        local k = 1 - exp(-dt / correctTau)
-        st.x = st.x + (pathX - st.x) * k
-        st.y = st.y + (pathY - st.y) * k
-    end
-    return st
-end
 
 -- ---------------------------------------------------------------------------
 -- VERTICAL SMOOTHING
@@ -398,18 +479,6 @@ end
 -- the strider hanging in the air for as long as the ease takes to catch up;
 -- past the clamp the vertical simply tracks the path and the jolt comes back,
 -- which is the right failure.
-M.STEERING = {
-    -- How far along the route to aim. Measured: 250 to 1200 all keep the mean
-    -- deviation near 23-36 units, and the longer the aim the fewer direction
-    -- changes per second (2.1/s at 250, 1.2/s at 1200). 700 is the gentlest
-    -- that still tracks tightly, which is what "long gradual turns" asks for.
-    AHEAD       = 700,
-    -- Seconds for the corrective pull. The trade is in the table above: a
-    -- faster pull tracks the route more closely and puts more sideways motion
-    -- back in, which is the fault being fixed.
-    CORRECT_TAU = 2.0,
-}
-
 M.VERTICAL = {
     TAU       = 0.10,   -- seconds
     MAX_DRIFT = 150,    -- units; beyond this, follow the path exactly

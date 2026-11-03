@@ -6,6 +6,19 @@
 -- got through because the previous suite's mock skeleton happened to contain
 -- every group it asked for, so these assertions read the shipped data file.
 
+-- RUN UNDER LuaJIT's MATHS, NOT 5.4's (2026-11-03c).
+-- OpenMW is LuaJIT (Lua 5.1): math.atan takes ONE argument and ignores a
+-- second. These tests run on liblua5.4, where math.atan(y, x) is the
+-- two-argument form -- so caravans_path's `math.atan(dx, dy)` passed every
+-- test here while computing atan(dx) in the game, and the strider faced the
+-- wrong way through every build. Emulated before any module loads, so that
+-- spelling now fails here exactly as it misbehaves there.
+do
+    local atan54 = math.atan
+    math.atan = function(y) return atan54(y) end
+    math.atan2 = function(y, x) return atan54(y, x) end
+end
+
 local path = dofile('scripts/WhyWalk/Caravans/caravans_path.lua')
 local db   = dofile('scripts/WhyWalk/Caravans/caravans_db.lua')
 local R    = dofile('scripts/WhyWalk/Caravans/caravans_routes.lua')
@@ -75,16 +88,41 @@ local rev = path.prepare(pts, true)
 check('point count is length/3', path.count(pts) == #pts / 3, path.count(pts))
 check('cum starts at zero', fwd.cum[1] == 0, fwd.cum[1])
 check('cum is monotonic', (function()
-    for i = 2, fwd.n do
-        if fwd.cum[i] < fwd.cum[i - 1] then return false end
+    for i = 2, #fwd.cum do
+        if fwd.cum[i] <= fwd.cum[i - 1] then return false end
     end
     return true
 end)())
 check('total equals the last cumulative length',
-      near(fwd.total, fwd.cum[fwd.n]), fwd.total)
+      near(fwd.total, fwd.cum[#fwd.cum]), fwd.total)
 -- Measured in 3D: this route climbs from z 1315 to z 2630, and a 2D
--- measurement would finish the uphill legs early.
-check('length is measured in 3D, not 2D', fwd.total > 137000, fwd.total)
+-- measurement would finish the uphill legs early. Compared against the same
+-- rounded path walked in the horizontal plane, because rounding the corners
+-- shortens the route a little and an absolute threshold would test that
+-- instead.
+do
+    local flat, lx, ly = 0, nil, nil
+    for d = 0, fwd.total, 50 do
+        local x, y = path.at(pts, fwd, d)
+        if lx then flat = flat + math.sqrt((x - lx) ^ 2 + (y - ly) ^ 2) end
+        lx, ly = x, y
+    end
+    check('length is measured in 3D, not 2D', fwd.total > flat + 500,
+          ('%.0f 3D vs %.0f flat'):format(fwd.total, flat))
+end
+-- Rounding cuts each corner, so the path is shorter than the polyline -- by
+-- well under a percent, which is what keeps the journey times and prices.
+do
+    local n, poly = path.count(pts), 0
+    for i = 2, n do
+        local ax, ay, az = path.pointAt(pts, n, i - 1)
+        local bx, by, bz = path.pointAt(pts, n, i)
+        poly = poly + math.sqrt((bx - ax) ^ 2 + (by - ay) ^ 2 + (bz - az) ^ 2)
+    end
+    check('rounding shortens the route by under 1%',
+          fwd.total < poly and fwd.total > 0.99 * poly,
+          ('%.0f rounded vs %.0f polyline'):format(fwd.total, poly))
+end
 check('reversing does not change the length', near(fwd.total, rev.total),
       rev.total)
 
@@ -309,8 +347,10 @@ check('it has three passenger slots', #v.slots == 3, #v.slots)
 -- driver has to be in front of the passenger: [R]'s data has it the other way
 -- round and caravans_db deliberately swaps the two y values, so this asserts
 -- the ORDER rather than the imported numbers. Swapping them back fails here.
-check('the player sits on the centreline at the measured height',
-      v.slots[1].x == 0 and v.slots[1].z == 1223,
+-- 1226, not [R]'s 1223: the cabin floor is at 1223.1 (raycast in OpenMW
+-- 0.52), and a rider pinned 0.1 units below it falls through every frame.
+check('the player sits on the centreline just above the cabin floor',
+      v.slots[1].x == 0 and v.slots[1].z > 1223.1 and v.slots[1].z < 1240,
       ('x=%s z=%s'):format(v.slots[1].x, v.slots[1].z))
 check('the guide sits on the centreline at the same height',
       v.guideSlot.x == 0 and v.guideSlot.z == v.slots[1].z,
@@ -577,136 +617,142 @@ do
 end
 
 -- ---------------------------------------------------------------------------
--- STEERING: THE BODY MOVES WHERE IT POINTS
+-- WHICH WAY THE BODY POINTS, AND HOW FAST IT TURNS
 -- ---------------------------------------------------------------------------
--- The fault this model exists to remove, reported every round for a week:
--- "the body is moving sideways at times", "directional facing wrong /
--- unresponsive". Placing the strider on the polyline and rotating it
--- separately lets facing and velocity disagree, and at a sharp corner they
--- disagree almost completely.
+-- The rounded route (caravans_path, 2026-11-03c), held to numbers over EVERY
+-- route at 60fps and the shipped speed, with the corner speed profile on --
+-- which is exactly what caravans_global does per frame.
 --
--- SIDEWAYS FRACTION is the measurement: the part of each frame's travel that
--- is perpendicular to where the body points, over the whole of it. Simulated
--- at 60fps over six real routes against the SHIPPED constants, so changing
--- any of them has to keep clearing these bars.
-
-local stops2 = dofile('scripts/WhyWalk/Caravans/caravans_stops.lua')
+-- The model it replaces measured, on the same data: turn rate up to 9123 deg/s,
+-- sideways travel up to 178 degrees (driving backwards), mean 2.05 degrees.
+-- Each bound below is one that model fails by an order of magnitude.
 
 do
     local v, dt = db.VEHICLE.siltstrider, 1 / 60
-    local PAIRS = {
-        { 'balmora', 'ald-ruhn' }, { 'seyda neen', 'vivec' },
-        { 'vivec', 'molag mar' }, { 'balmora', 'seyda neen' },
-        { 'suran', 'vivec' }, { 'khuul', 'gnisis' },
-    }
 
-    ---Ride every route and report how the body behaved.
-    ---@param mode string 'steer' or 'place' (the old model, for comparison)
-    ---@param tau number|nil correction constant; nil uses the shipped one
-    local function ride(mode, tau)
-        local sumSide, worstSide, nS = 0, 0, 0
-        local sumDev, worstDev, nD = 0, 0, 0
-        local worstEnd, arrived, routes_ = 0, 0, 0
-        for _, pr in ipairs(PAIRS) do
-            local p = R.routes[pr[1]] and R.routes[pr[1]][pr[2]]
-            if p then
-                routes_ = routes_ + 1
-                local n = path.count(p)
-                local prep = path.prepare(p, false)
-                local sx, sy = path.at(p, prep, 0)
-                local ax, ay = path.at(p, prep,
-                    math.min(path.STEERING.AHEAD, prep.total))
-                local body = { x = sx, y = sy,
-                               heading = path.headingToward(sx, sy, ax, ay) or 0 }
-                local travelled, lastX, lastY = 0, sx, sy
-                local guard = 0
-                while travelled < prep.total and guard < 200000 do
-                    guard = guard + 1
-                    travelled = travelled + v.speed * dt
-                    local px, py = path.at(p, prep, travelled)
-                    local cx, cy = path.at(p, prep,
-                        math.min(travelled + path.STEERING.AHEAD, prep.total))
-                    if mode == 'steer' then
-                        path.steer(body, cx, cy, px, py, v.speed, v.turnRate,
-                                   tau or path.STEERING.CORRECT_TAU, dt)
-                    else
-                        -- the old model: sampled position, independent heading
-                        local _, _, _, yaw = path.at(p, prep, travelled)
-                        local _, _, _, aim = path.at(p, prep,
-                            math.min(travelled + 350, prep.total))
-                        body.heading = path.easeHeading(body.heading, aim or yaw,
-                                                        1.4, dt)
-                        body.x, body.y = px, py
-                    end
-                    local vx, vy = body.x - lastX, body.y - lastY
-                    local sp = math.sqrt(vx * vx + vy * vy)
-                    if sp > 1e-9 then
-                        local side = math.abs(vx * math.cos(body.heading)
-                                            - vy * math.sin(body.heading)) / sp
-                        sumSide, nS = sumSide + side, nS + 1
-                        if side > worstSide then worstSide = side end
-                    end
-                    lastX, lastY = body.x, body.y
-                    local d = math.sqrt((body.x - px) ^ 2 + (body.y - py) ^ 2)
-                    sumDev, nD = sumDev + d, nD + 1
-                    if d > worstDev then worstDev = d end
-                end
-                if travelled >= prep.total then arrived = arrived + 1 end
-                local ex, ey = path.pointAt(p, n, n, false)
-                local de = math.sqrt((body.x - ex) ^ 2 + (body.y - ey) ^ 2)
-                if de > worstEnd then worstEnd = de end
-            end
+    ---Distance from (x, y) to the authored polyline, in the horizontal plane.
+    local function offLine(p, x, y)
+        local n, best = path.count(p), math.huge
+        for i = 2, n do
+            local ax, ay = path.pointAt(p, n, i - 1)
+            local bx, by = path.pointAt(p, n, i)
+            local vx, vy = bx - ax, by - ay
+            local l2 = vx * vx + vy * vy
+            local t = l2 > 0 and math.max(0, math.min(1, ((x - ax) * vx + (y - ay) * vy) / l2)) or 0
+            local d = math.sqrt((ax + vx * t - x) ^ 2 + (ay + vy * t - y) ^ 2)
+            if d < best then best = d end
         end
-        return {
-            meanSide = 100 * sumSide / nS, worstSide = 100 * worstSide,
-            meanDev = sumDev / nD, worstDev = worstDev,
-            worstEnd = worstEnd, arrived = arrived, routes = routes_,
-        }
+        return best
     end
 
-    local steer = ride('steer')
-    local place = ride('place')
+    local worstTurn, worstSide, sumSide, nSide, worstDev = 0, 0, 0, 0, 0
+    local riddenTime, cruiseTime, routesRidden = 0, 0, 0
+    for _, dests in pairs(R.routes) do
+        for _, p in pairs(dests) do
+            local prep = path.prepare(p, false)
+            routesRidden = routesRidden + 1
+            local d, frames = 0, 0
+            local px, py, _, ph = path.at(p, prep, 0)
+            while d < prep.total do
+                d = d + path.speedAt(prep, d, v.speed) * dt
+                frames = frames + 1
+                local x, y, _, h = path.at(p, prep, d)
+                local turn = math.deg(math.abs(path.angleDiff(ph, h))) / dt
+                if turn > worstTurn then worstTurn = turn end
+                local mx, my = x - px, y - py
+                if mx * mx + my * my > 1e-6 then
+                    local side = math.deg(math.abs(path.angleDiff(path.headingOf(mx, my), h)))
+                    sumSide, nSide = sumSide + side, nSide + 1
+                    if side > worstSide then worstSide = side end
+                end
+                if frames % 10 == 0 then
+                    local off = offLine(p, x, y)
+                    if off > worstDev then worstDev = off end
+                end
+                px, py, ph = x, y, h
+            end
+            riddenTime = riddenTime + frames * dt
+            cruiseTime = cruiseTime + prep.total / v.speed
+        end
+    end
 
-    -- THE HEADLINE. The old model's worst case was a strider travelling
-    -- almost entirely crabwise; this must be several times better.
-    check('the old model really did travel mostly sideways at its worst',
-          place.worstSide > 60, ('%.1f%%'):format(place.worstSide))
-    check('steering cuts the worst sideways motion at least threefold',
-          steer.worstSide * 3 < place.worstSide,
-          ('%.1f%% -> %.1f%%'):format(place.worstSide, steer.worstSide))
-    check('and the typical sideways motion stays under 2% of travel',
-          steer.meanSide < 2.0, ('%.2f%%'):format(steer.meanSide))
+    check('every route was ridden', routesRidden >= 45, routesRidden)
+    -- The bound is the speed profile's own, plus a sliver for the 60fps
+    -- sampling of an arc's tangent.
+    check('the body never turns faster than 90 degrees a second',
+          worstTurn <= math.deg(path.SPEED.MAX_TURN_RATE) * 1.02,
+          ('%.1f deg/s'):format(worstTurn))
+    -- On a line the heading is the step; on an arc the step is a chord and
+    -- the tangent leads it by half the frame's turn. Nothing else.
+    check('it points where it is going: sideways under 2 degrees, ever',
+          worstSide < 2, ('%.2f deg'):format(worstSide))
+    check('and a fraction of a degree on average',
+          sumSide / nSide < 0.5, ('%.3f deg'):format(sumSide / nSide))
+    -- THE BOUND THE STEERING BUILD BROKE. It left the line by 494 units and put
+    -- the strider through buildings; the rounding is capped at MAX_DEV.
+    check('it never leaves the authored line by more than MAX_DEV',
+          worstDev <= path.TURN.MAX_DEV + 1, ('%.0f units'):format(worstDev))
+    check('slowing for the tight corners costs under 5% of journey time',
+          riddenTime < cruiseTime * 1.05,
+          ('+%.1f%%'):format(100 * (riddenTime / cruiseTime - 1)))
 
-    -- AND THE ROUTE IS STILL FOLLOWED. Steering is only acceptable if the
-    -- strider still goes where the caravan is supposed to go.
-    check('every route is completed', steer.arrived == steer.routes,
-          ('%d/%d'):format(steer.arrived, steer.routes))
-    check('mean deviation stays well under one route segment',
-          steer.meanDev < 150, ('%.0f units'):format(steer.meanDev))
-    check('and the worst swing wide is bounded',
-          steer.worstDev < 700, ('%.0f units'):format(steer.worstDev))
-    check('the strider finishes near the stop, not orbiting it',
-          steer.worstEnd < 500, ('%.0f units'):format(steer.worstEnd))
+    -- STATELESS. The facing is the path's tangent at a distance; nothing
+    -- remembers anything. Every facing bug in this module's history -- lag,
+    -- accumulation, the 2pi wrap, the 340-degree turn -- needed state.
+    local p = R.routes['balmora']['ald-ruhn']
+    local prep = path.prepare(p, false)
+    local _, _, _, a1 = path.at(p, prep, 12345)
+    for _ = 1, 50 do path.at(p, prep, math.random() * prep.total) end
+    local _, _, _, a2 = path.at(p, prep, 12345)
+    check('the facing is a pure function of distance along the route',
+          a1 == a2, ('%s vs %s'):format(tostring(a1), tostring(a2)))
+    check('and is defined at the very end of a route, not nil',
+          select(4, path.at(p, prep, prep.total)) ~= nil)
+    check('and at the very start', select(4, path.at(p, prep, 0)) ~= nil)
+    check('the speed profile is pure as well',
+          path.speedAt(prep, 12345, 1400) == path.speedAt(prep, 12345, 1400))
+end
 
-    -- THE CORRECTION IS WHAT MAKES IT ARRIVE, and it is also the only
-    -- sideways motion left. Both halves of that have to be true, or the
-    -- constant is doing nothing and could be removed.
-    local nopull = ride('steer', 0)
-    check('without the correction the sideways motion vanishes entirely',
-          nopull.worstSide < 0.01, ('%.4f%%'):format(nopull.worstSide))
-    check('but the strider then ends far from the stop',
-          nopull.worstEnd > steer.worstEnd * 2,
-          ('%.0f vs %.0f units'):format(nopull.worstEnd, steer.worstEnd))
-    check('and wanders much further from the route',
-          nopull.meanDev > steer.meanDev * 3,
-          ('%.0f vs %.0f units'):format(nopull.meanDev, steer.meanDev))
-
-    -- A faster pull tracks better and puts the fault back; the shipped value
-    -- has to be on the gentle side of that trade.
-    local hard = ride('steer', 0.25)
-    check('a harder pull measurably increases sideways motion',
-          hard.worstSide > steer.worstSide,
-          ('%.1f%% vs %.1f%%'):format(hard.worstSide, steer.worstSide))
+-- A right angle, built by hand, so the geometry is checkable by eye.
+do
+    -- north 5000, then east 5000: a 90-degree right turn at (0, 5000)
+    local p = { 0, 0, 0, 0, 5000, 0, 5000, 5000, 0 }
+    local prep = path.prepare(p, false)
+    local _, _, _, h0 = path.at(p, prep, 100)
+    local _, _, _, h1 = path.at(p, prep, prep.total - 100)
+    check('a right angle starts heading north', near(h0, 0, 1e-9), h0)
+    check('and ends heading east', near(h1, math.pi / 2, 1e-9), h1)
+    -- The heading changes continuously through the corner: no step between
+    -- samples 10 units apart is more than the arc can turn in 10 units.
+    local arcs = 0
+    for _, pc in ipairs(prep.pieces) do if pc.kind == 2 then arcs = arcs + 1 end end
+    check('the corner became one arc', arcs == 1, arcs)
+    local worstStep, prev = 0, nil
+    for d = 0, prep.total, 10 do
+        local _, _, _, h = path.at(p, prep, d)
+        if prev then
+            local step = math.abs(path.angleDiff(prev, h))
+            if step > worstStep then worstStep = step end
+        end
+        prev = h
+    end
+    local r = prep.pieces[2][3]
+    check('the heading never jumps through the corner',
+          worstStep <= 10 / r * 1.001, ('%.4f rad vs %.4f'):format(worstStep, 10 / r))
+    -- Deepest point of the arc, against the corner's own two segments.
+    local mx, my = path.at(p, prep, (prep.cum[2] + prep.cum[3]) / 2)
+    local inside = math.min(math.abs(mx), math.abs(5000 - my))
+    check('the corner is cut by exactly MAX_DEV at its deepest',
+          near(inside, path.TURN.MAX_DEV, 0.5), ('%.2f units'):format(inside))
+    -- And the strider slows for it: a 90-degree corner capped at MAX_DEV has a
+    -- radius of 410, which at 90 deg/s allows 644 u/s.
+    local onArc = path.speedAt(prep, (prep.cum[2] + prep.cum[3]) / 2, 1400)
+    check('the strider slows through a right angle',
+          near(onArc, path.SPEED.MAX_TURN_RATE * r, 1), ('%.0f u/s'):format(onArc))
+    check('and is back at cruise well clear of it',
+          path.speedAt(prep, 100, 1400) == 1400 and path.speedAt(prep, prep.total - 100, 1400) == 1400)
+    check('a straight route is never slowed',
+          path.speedAt(path.prepare({ 0, 0, 0, 0, 9000, 0 }, false), 4500, 1400) == 1400)
 end
 
 -- ---------------------------------------------------------------------------
