@@ -170,14 +170,17 @@ end
 -- own probe comment warns about one function up: the probe tested something
 -- adjacent to the thing that actually has to work.
 --
--- A .omwaddon can declare `whywalk_x` and friends and carry the pin script's
--- SOURCE TEXT while containing no compiled bytecode for it. That is exactly
--- what shipped: the SCPT record's SCTX held the script, but SCHD reported
--- scriptDataSize = 0 and numFloats = 0, and OpenMW executes the compiled SCDT,
--- not the text. So the globals resolved, bridgeReady() said yes,
--- placeRiderMWScript wrote four numbers into variables nothing read, returned
--- true -- and placeRider returned before ever reaching the teleport fallback.
--- The rider was silently not pinned at all.
+-- CORRECTED 2026-11-05. This note used to blame a .omwaddon carrying the pin
+-- script as source text without compiled bytecode, on the belief that OpenMW
+-- runs the compiled SCDT. It does not: ScriptManager::compile reads
+-- mScriptText and nothing in the engine reads mScriptData
+-- (apps/openmw/mwscript/scriptmanagerimp.cpp), so a source-only script runs.
+-- And the shipped WhyWalk.esp does carry bytecode (247 bytes) anyway.
+--
+-- What the check below had actually been catching is described at
+-- BRIDGE_TRUST_DISTANCE: a non-levitating rider falls between pins, and the
+-- old full-3D distance read that fall as the pin not running. Verifying the
+-- EFFECT is still the right idea; it has to measure the part SetPos controls.
 --
 -- The fix is to verify the EFFECT rather than the capability. We already know
 -- where the rider should be, and next frame we can see where it is. If the pin
@@ -185,6 +188,15 @@ end
 -- player never moves toward it. A short run of misses is a real failure, not
 -- noise, because nothing else is placing the rider in the meantime.
 local BRIDGE_TRUST_DISTANCE = 96     -- world units; generous, this is one frame of lag
+
+-- HORIZONTAL ONLY (2026-11-05). SetPos does not clear the player's falling
+-- speed, so a rider who is not levitating (a caravan passenger) falls between
+-- pins, faster each frame. Measured in OpenMW 0.52 with the pin RUNNING and a
+-- target moving at 1400 u/s: horizontal error 0.0 on every frame, vertical up
+-- to 146 units -- enough for 20 consecutive "misses" and a verdict that the
+-- pin was dead. It was never dead; this check was measuring the fall. Whether
+-- the script consumed the globals shows in x and y, which SetPos lands
+-- exactly; z is left to collision and Levitate.
 local BRIDGE_FAIL_FRAMES    = 20     -- ~0.3s at 60fps before declaring it dead
 
 local bridgeLive      = nil          -- nil = unproven, true/false = decided
@@ -197,7 +209,9 @@ local function bridgeStillLive(player)
     if bridgeLive == false then return false end
     if bridgeLastTarget == nil then return true end   -- nothing to judge yet
 
-    if (player.position - bridgeLastTarget):length() <= BRIDGE_TRUST_DISTANCE then
+    local dx = player.position.x - bridgeLastTarget.x
+    local dy = player.position.y - bridgeLastTarget.y
+    if dx * dx + dy * dy <= BRIDGE_TRUST_DISTANCE * BRIDGE_TRUST_DISTANCE then
         bridgeLive, bridgeMisses = true, 0
         return true
     end
@@ -209,12 +223,15 @@ local function bridgeStillLive(player)
     -- Unconditional, not behind DEBUG: this is a broken install, the symptom
     -- is "the mod does nothing", and this line is the only thing that names
     -- the cause.
-    print("[WhyWalk] The MWScript rider pin is not running; its globals exist"
-          .. " but nothing consumes them. The shipped WhyWalk.omwaddon contains"
-          .. " the pin script as SOURCE TEXT ONLY, with no compiled bytecode;"
-          .. " recompile WhyWalkRiderPin in the OpenMW-CS script editor (open"
-          .. " it and save) to fix this properly. Falling back to the Lua"
-          .. " teleport pin for now.")
+    -- OpenMW compiles MWScript from source at load, so "recompile it" is not
+    -- the remedy; the usual causes are the plugin not being enabled, or
+    -- another mod's script also driving the player's position.
+    print("[WhyWalk] The MWScript rider pin is not moving the player: for "
+          .. BRIDGE_FAIL_FRAMES .. " frames running the player was more than "
+          .. BRIDGE_TRUST_DISTANCE .. " units (horizontally) from the target."
+          .. " Check that WhyWalk.esp is enabled in the load order and that no"
+          .. " other mod is setting the player's position. Falling back to the"
+          .. " Lua teleport pin.")
     return false
 end
 

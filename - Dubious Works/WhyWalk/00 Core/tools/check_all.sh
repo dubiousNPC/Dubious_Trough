@@ -11,7 +11,9 @@ python3 -I tools/globalcheck.py     $S/*.lua
 python3 -I tools/check_declorder.py $S/*.lua
 python3 -I tools/check_names.py     $S/*.lua
 python3 -I tools/check_manifest.py  WhyWalk.omwscripts
-python3 -I tools/check_anims.py     $S/*.lua
+# The module root, not the scripts: the tool reads animations/ under its
+# first argument, and given a .lua path it found no folders and passed on zero.
+python3 -I tools/check_anims.py     .
 # ctxcheck and check_enums both read the Cod3x annotations.
 if [ -n "$1" ]; then python3 -I tools/ctxcheck.py    "$1" $S/*.lua; fi
 if [ -n "$1" ]; then python3 -I tools/check_enums.py "$1" $S/*.lua; fi
@@ -19,5 +21,6 @@ python3 -I tools/luarun.py tools/test_resolveanim.lua
 python3 -I tools/luarun.py tools/test_ridinganim.lua
 python3 -I tools/luarun.py tools/test_saddlebox.lua
 python3 -I tools/luarun.py tools/test_mountcontrols.lua
+python3 -I tools/luarun.py tools/test_riderflow.lua
 # Regenerating whywalk_creatures.lua needs the compiled profile; see CREATURES.md
 python3 -I tools/gen_creatures.py tools/creatures_all.csv > /dev/null

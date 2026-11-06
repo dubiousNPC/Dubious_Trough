@@ -180,6 +180,15 @@ parking are still teleports.
 
 ---
 
+## Parkourwind FLOW is stood down for the journey
+
+A pinned passenger is never grounded, and FLOW reads not grounded as a jump.
+Before this, a passenger who pressed Jump at the howdah wall went into FLOW's
+LedgeHang. That levitates the player and snaps them to the lip while
+`caravans_global` pins them to the slot. `caravans_player` yields FLOW on
+`WWCaravans_Started` and resumes it on arrival, on abort and on load. Without
+FLOW installed nothing changes.
+
 ## The vehicle is a creature, found by record id
 
 Only a creature animates; an activator moves and carries the player with its

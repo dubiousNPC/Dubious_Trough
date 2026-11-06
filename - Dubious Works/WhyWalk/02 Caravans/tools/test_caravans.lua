@@ -13,10 +13,15 @@
 -- test here while computing atan(dx) in the game, and the strider faced the
 -- wrong way through every build. Emulated before any module loads, so that
 -- spelling now fails here exactly as it misbehaves there.
+-- On real LuaJIT both are native already: atan2 exists and atan is
+-- one-argument. Only a 5.3+ host lacks atan2, and only there is atan
+-- two-argument, so only there is anything replaced.
 do
-    local atan54 = math.atan
-    math.atan = function(y) return atan54(y) end
-    math.atan2 = function(y, x) return atan54(y, x) end
+    local hostAtan, hostAtan2 = math.atan, math.atan2
+    if not hostAtan2 then
+        math.atan2 = function(y, x) return hostAtan(y, x) end
+        math.atan = function(y) return hostAtan(y) end
+    end
 end
 
 local path = dofile('scripts/WhyWalk/Caravans/caravans_path.lua')

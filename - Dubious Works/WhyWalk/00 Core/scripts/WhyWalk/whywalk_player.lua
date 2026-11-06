@@ -143,6 +143,27 @@ local held = { forward = false, back = false, left = false, right = false,
                gallop = false }
 local lastSent = nil
 
+
+-- ---------------------------------------------------------------------------
+-- PARKOURWIND FLOW
+-- ---------------------------------------------------------------------------
+-- FLOW reads any not-grounded player as mid-jump. A rider is never grounded
+-- (placed every frame), so without this FLOW ran its airborne ladder on
+-- the rider: the mount's jump (the same key) grabbed a ledge off
+-- the saddle, and a mount leaping off a cliff played Skydive on the rider
+-- and landed it as a knockdown. I.Flow.yield stands it down
+-- for the hold. Optional: absent FLOW, nothing happens.
+--
+-- YIELD BEFORE TAKING THE OVERRIDE. overrideMovementControls is one flag
+-- shared by every mod; FLOW releases its own hold on it as it stands down,
+-- and that write must land before ours, not over it.
+local FLOW_OWNER = 'WhyWalk.Core'
+local function flowYield(on)
+    local F = I.Flow
+    if not (F and F.yield and F.resume) then return end
+    if on then F.yield(FLOW_OWNER) else F.resume(FLOW_OWNER) end
+end
+
 -- ---------------------------------------------------------------------------
 -- CONTROL LOCK
 -- ---------------------------------------------------------------------------
@@ -309,6 +330,7 @@ local function onMounted(data)
     held.gallop             = false
     lastSent = nil
 
+    flowYield(true)
     lockControls()
     addLevitation()
 
@@ -330,6 +352,7 @@ local function onDismounted()
 
     releaseControls()
     removeLevitation()
+    flowYield(false)
     self.object:sendEvent('WhyWalk_AnimDismounted', {})
 end
 
@@ -451,6 +474,7 @@ local function onLoad(data)
     levitationAdded = data and data.levitationAdded == true or false
     releaseControls()
     removeLevitation()
+    flowYield(false)
 
     -- The global script re-sends WhyWalk_Mounted after a load if the ride was
     -- still active, which re-enters onMounted above.

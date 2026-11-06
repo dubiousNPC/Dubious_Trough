@@ -324,6 +324,7 @@ local P_self = {
 local settingsStore = { STEERING = 'rudder', TURN_VIEW_WITH_BOAT = true, BOAT_MOTION = true,
                         CLAIM_SCENERY = true, SHOW_HELP = false, MUTE_WATER_STEPS = true }
 local overrides = {}
+local flowLog, flowOwners = {}, {}
 local triggerHandlers, actionHandlers = {}, {}
 local P = loadScript('scripts/WhyWalk/Boats/boats_player.lua', {
     ['openmw.self'] = P_self, ['openmw.core'] = core, ['openmw.types'] = types, ['openmw.util'] = util,
@@ -342,8 +343,18 @@ local P = loadScript('scripts/WhyWalk/Boats/boats_player.lua', {
     ['openmw.ui'] = { showMessage = function(m) log.message = m end },
     ['openmw.interfaces'] = {
         Settings = { registerGroup = function(g) log.group = g end },
-        Controls = { overrideMovementControls = function(v) overrides[#overrides + 1] = v end },
+        Controls = { overrideMovementControls = function(v)
+            overrides[#overrides + 1] = v
+            flowLog[#flowLog + 1] = 'override ' .. tostring(v)
+        end },
         UI = { isHudVisible = function() return true end },
+        -- Parkourwind FLOW, as the helm sees it: the yield must come BEFORE
+        -- the override write (FLOW's stand-down releases its own hold on the
+        -- shared flag), and every voyage must end in a resume.
+        Flow = {
+            yield = function(o) flowOwners[o] = true; flowLog[#flowLog + 1] = 'yield' end,
+            resume = function(o) flowOwners[o] = nil; flowLog[#flowLog + 1] = 'resume' end,
+        },
     },
 })
 
@@ -358,6 +369,9 @@ P.eventHandlers.WWBoats_Boarded({ boat = log.copy, vesselId = 'rowboat', heading
                                   anchor = { x = 0, y = 0, z = 0 }, waterLevel = 0, waterOffset = 2,
                                   hull = { bow = 200, stern = 200, halfBeam = 60, draft = 30 } })
 check('boarding locks movement', overrides[#overrides] == true)
+check('boarding yields FLOW, before taking the override',
+      flowOwners['WhyWalk.Boats'] == true and flowLog[1] == 'yield' and flowLog[2] == 'override true',
+      table.concat(flowLog, ', '))
 local function lastPlayerEvent(name)
     for i = #log.playerEvents, 1, -1 do
         if log.playerEvents[i].name == name then return log.playerEvents[i].data end
@@ -462,6 +476,9 @@ P.eventHandlers.WWBoats_Left({ reason = 'player' })
 check('leaving releases movement', overrides[#overrides] == false and #overrides == nOverrides + 1)
 check('leaving removes water walking', log.effect == 0)
 check('leaving stops the vessel pose', lastPlayerEvent('WhyWalk_AnimVesselStop') ~= nil)
+check('leaving resumes FLOW, after releasing the override',
+      flowOwners['WhyWalk.Boats'] == nil and flowLog[#flowLog] == 'resume'
+      and flowLog[#flowLog - 1] == 'override false', table.concat(flowLog, ', '))
 
 -- Core hand-off: mounting from the boat must not release Core's lock
 P.eventHandlers.WWBoats_Boarded({ boat = log.copy, vesselId = 'gondola', heading = 0,
@@ -473,12 +490,14 @@ check('Core mount reported to the global', lastGlobal('WWBoats_PilotState').moun
 P.eventHandlers.WWBoats_Left({ reason = 'mounted', handOff = true })
 check('hand-off leaves the movement override to Core', #overrides == nOverrides)
 check('hand-off still removes water walking', log.effect == 0)
+check('hand-off resumes FLOW for Boats (Core holds its own yield)', flowOwners['WhyWalk.Boats'] == nil)
 
 -- load releases what the save recorded
 nOverrides = #overrides
 P.engineHandlers.onLoad({ controlsLocked = true, waterWalkAdded = true })
 check('load releases a recorded lock', overrides[#overrides] == false and #overrides == nOverrides + 1)
 check('load removes recorded water walking', log.effect == -1)
+check('load leaves FLOW resumed', flowOwners['WhyWalk.Boats'] == nil)
 
 -- ---------------------------------------------------------------------------
 -- POSE SPEED BAND (hysteresis)

@@ -254,6 +254,10 @@ sh tools/check_all.sh [cod3x-dir]
 - **WhyWalk Core.** You can't board while mounted. Mounting a creature
   from the boat hands control to Core cleanly: Core's movement override is
   left alone, and the boat stays where it was.
+- **Parkourwind FLOW.** Stood down while you pilot (`I.Flow.yield`, before
+  the movement lock), so Space at the helm doesn't run FLOW's vault, mantle or
+  ledge grab against the hull. A hand-off to Core releases Boats' yield and
+  keeps Core's own.
 - **Immersive Travel, Stormrider.** Their boats are never touched (see
   `boats_db.RECORDS`). Scenery boats are separate references, so taking one
   over doesn't affect their routes.

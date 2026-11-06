@@ -538,6 +538,28 @@ local function onGuideLatched(data)
     end
 end
 
+
+-- ---------------------------------------------------------------------------
+-- PARKOURWIND FLOW
+-- ---------------------------------------------------------------------------
+-- FLOW reads any not-grounded player as mid-jump. A passenger is never grounded
+-- (placed every frame), so without this FLOW ran its airborne ladder on
+-- the passenger: Jump at the howdah wall went to LedgeHang, which
+-- levitates and snaps the player while caravans_global pins them to the slot.
+-- Caravans takes no control lock, so the ordering note below is for FLOW's
+-- own hold. I.Flow.yield stands it down
+-- for the hold. Optional: absent FLOW, nothing happens.
+--
+-- YIELD BEFORE TAKING THE OVERRIDE. overrideMovementControls is one flag
+-- shared by every mod; FLOW releases its own hold on it as it stands down,
+-- and that write must land before ours, not over it.
+local FLOW_OWNER = 'WhyWalk.Caravans'
+local function flowYield(on)
+    local F = I.Flow
+    if not (F and F.yield and F.resume) then return end
+    if on then F.yield(FLOW_OWNER) else F.resume(FLOW_OWNER) end
+end
+
 local function onQuote(data)
     -- Kept whole: prepareMenu checks quote.guide against the guide in front
     -- of the player, so a late reply for an earlier guide is never used.
@@ -546,6 +568,7 @@ end
 
 local function onStarted(data)
     travelling = true
+    flowYield(true)
     dismissMenu()
     -- Drop every UI mode, which means the DIALOGUE window underneath.
     --
@@ -586,6 +609,7 @@ end
 
 local function onArrived(data)
     travelling = false
+    flowYield(false)
     self.object:sendEvent(POSE.STOP, {})
     ui.showMessage(string.format(l10n('msg_arrived'),
         tostring(data and data.displayName or '')))
@@ -600,6 +624,7 @@ local REASONS = {
 
 local function onAborted(data)
     travelling = false
+    flowYield(false)
     -- Unconditional, and before the message: an abort for ANY reason has to
     -- clear the pose, or a journey cut short leaves the player sitting
     -- cross-legged in mid-stride for the rest of the save.
@@ -623,6 +648,7 @@ end
 
 local function onLoad()
     travelling = false
+    flowYield(false)
     latchedGuide, quote, closeMenu = nil, nil, nil
     intercepting = false
     -- A save taken mid-journey reloads with the player on the ground (the

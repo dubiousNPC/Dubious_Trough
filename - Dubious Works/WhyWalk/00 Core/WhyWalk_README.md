@@ -501,6 +501,15 @@ WhyWalk already contains an equivalent).
 Compatible by design with anything using SharedRay, since that is a shared
 service rather than a fork.
 
+**Parkourwind FLOW** is stood down for the ride through `I.Flow.yield`. A rider
+is never grounded, and without the yield FLOW read the ride as a jump: Space,
+which is the mount's jump, grabbed a ledge off the saddle, and a mount leaping
+off a cliff played FLOW's Skydive on the rider and landed it as a knockdown.
+The yield comes before the control lock is taken and the resume after it is
+released, because the movement override is one flag shared by every mod.
+`tools/test_riderflow.lua` checks the order. Without FLOW installed nothing
+changes.
+
 The mount records from the Boar, Nix, Strident and Sky Render riding ESPs are
 recognised, so those creatures work as WhyWalk mounts if their ESPs are loaded.
 

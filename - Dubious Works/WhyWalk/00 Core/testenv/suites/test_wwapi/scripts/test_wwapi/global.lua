@@ -89,6 +89,9 @@ testing.registerGlobalTest('wwapi: teleport twice in one frame', function()
         ok and 'ALLOWED' or ('raises: ' .. tostring(err))))
     testing.expect(not ok,
         'if this ever becomes allowed, the deferred teardown can be simplified')
+    -- Not in this frame: the teleport is pending, and the engine refuses to
+    -- remove an object it has not placed yet ("Can't remove 0 of 0 items").
+    coroutine.yield()
     obj:remove()
 end)
 
@@ -110,6 +113,7 @@ testing.registerGlobalTest('wwapi: teleport worldspace argument', function()
     testing.expect(byCell, 'a Cell must be accepted')
     print('[wwapi]   (an empty string names the default EXTERIOR worldspace,'
           .. ' which this interior-only game cannot exercise)')
+    coroutine.yield()
     obj:remove()
 end)
 

@@ -102,7 +102,8 @@ end)
 -- The caravan vehicle is an activator. Whether an activator can animate at
 -- all was inferred three different ways before the game was asked.
 testing.registerLocalTest('wwapi: animation on an activator', function()
-    local world = require('openmw.world')
+    -- (no openmw.world here: it is global-only, and requiring it in a player
+    -- script raises "module not found")
     print(string.format('[wwapi]   hasAnimation(player) = %s',
         tostring(anim.hasAnimation(self))))
     testing.expect(anim.hasAnimation(self), 'the player must have animation')

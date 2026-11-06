@@ -128,6 +128,26 @@ local WATER_STEPS = { 'FootWaterLeft', 'FootWaterRight' }
 -- Same handshake as Core's lock and levitation: one call each way, recorded
 -- in the save, undone on load.
 
+
+-- ---------------------------------------------------------------------------
+-- PARKOURWIND FLOW
+-- ---------------------------------------------------------------------------
+-- FLOW reads any not-grounded player as mid-jump. A pilot at the helm is never grounded
+-- (placed every frame), so without this FLOW ran its airborne ladder on
+-- the pilot: Space at the helm ran Vault/Mantle/LedgeHang against
+-- the hull and rigging, and a ledge grab teleported the pilot off the deck. I.Flow.yield stands it down
+-- for the hold. Optional: absent FLOW, nothing happens.
+--
+-- YIELD BEFORE TAKING THE OVERRIDE. overrideMovementControls is one flag
+-- shared by every mod; FLOW releases its own hold on it as it stands down,
+-- and that write must land before ours, not over it.
+local FLOW_OWNER = 'WhyWalk.Boats'
+local function flowYield(on)
+    local F = I.Flow
+    if not (F and F.yield and F.resume) then return end
+    if on then F.yield(FLOW_OWNER) else F.resume(FLOW_OWNER) end
+end
+
 -- See the report in the helm update: one line, once, a second into the first
 -- voyage of a session.
 local movementReported = false
@@ -353,6 +373,7 @@ local function onBoarded(data)
     muteSteps = settings:get('MUTE_WATER_STEPS') ~= false
 
     seedHeld()
+    flowYield(true)
     lockControls()
     addWaterWalking()
     animTurn, animThrottle, animFast = 0, 0, false
@@ -396,6 +417,7 @@ local function onLeft(data)
     end
     handingOff = false
     removeWaterWalking()
+    flowYield(false)
     self.object:sendEvent(ANIM.STOP, {})
 end
 
@@ -595,6 +617,7 @@ local function onLoad(data)
     waterWalkAdded = data and data.waterWalkAdded == true or false
     releaseControls()
     removeWaterWalking()
+    flowYield(false)
     sendPilotState()
     -- boats_global re-sends WWBoats_Boarded if the save was made afloat.
 end

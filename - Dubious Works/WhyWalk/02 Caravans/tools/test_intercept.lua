@@ -44,10 +44,15 @@
 -- test here while computing atan(dx) in the game, and the strider faced the
 -- wrong way through every build. Emulated before any module loads, so that
 -- spelling now fails here exactly as it misbehaves there.
+-- On real LuaJIT both are native already: atan2 exists and atan is
+-- one-argument. Only a 5.3+ host lacks atan2, and only there is atan
+-- two-argument, so only there is anything replaced.
 do
-    local atan54 = math.atan
-    math.atan = function(y) return atan54(y) end
-    math.atan2 = function(y, x) return atan54(y, x) end
+    local hostAtan, hostAtan2 = math.atan, math.atan2
+    if not hostAtan2 then
+        math.atan2 = function(y, x) return hostAtan(y, x) end
+        math.atan = function(y) return hostAtan(y) end
+    end
 end
 
 package.path = './?.lua;' .. package.path
@@ -250,9 +255,16 @@ package.loaded['openmw.storage'] = {
     end,
 }
 local activationHandlers = {}
+local flowOwners = {}
 package.loaded['openmw.interfaces'] = {
     Settings = Isettings, UI = UI, UIToolkit = UIToolkit,
     Activation = { addHandlerForType = function(t, fn) activationHandlers[#activationHandlers + 1] = fn end },
+    -- Parkourwind FLOW: a passenger is placed every frame and never grounded,
+    -- so FLOW is stood down for the journey (caravans_player flowYield).
+    Flow = {
+        yield = function(o) flowOwners[o] = true end,
+        resume = function(o) flowOwners[o] = nil end,
+    },
 }
 package.loaded['openmw.world'] = {}
 -- Which files the VFS has. The in-place strider (meshes/whywalk/caravans/) is
@@ -466,6 +478,7 @@ log = {}
 ev.WWCaravans_Started({ displayName = 'Ald-ruhn' })
 check('departing clears every UI mode, dialogue included',
       sequence():find('setMode:nil') ~= nil, sequence())
+check('departing stands FLOW down for the journey', flowOwners['WhyWalk.Caravans'] == true)
 
 -- ---------------------------------------------------------------------------
 -- NO TRAVEL WHILE TRAVELLING
@@ -487,6 +500,7 @@ check('the player is told why rather than left with a window that blinks',
 
 -- End that journey, or every later stand-down test runs as though aboard.
 ev.WWCaravans_Arrived({ displayName = 'Ald-ruhn' })
+check('arriving hands the player back to FLOW', flowOwners['WhyWalk.Caravans'] == nil)
 log = {}
 modeStack, uiMode = { 'Dialogue', 'Travel' }, 'Travel'
 ev.UiModeChanged({ oldMode = 'Dialogue', newMode = 'Travel' })
@@ -1247,6 +1261,19 @@ P.engineHandlers.onLoad({})
 check('loading a save clears the pose', #poseLog == 1
       and poseLog[1].name == 'WhyWalk_AnimVesselStop', #poseLog)
 
+
+-- ---------------------------------------------------------------------------
+-- FLOW IS HANDED BACK HOWEVER A JOURNEY ENDS
+-- ---------------------------------------------------------------------------
+-- Last, because an abort and a load both reset the module.
+ev.WWCaravans_Started({ displayName = 'Ald-ruhn' })
+ev.WWCaravans_Aborted({ reason = 'died' })
+check('an aborted journey hands the player back to FLOW too', flowOwners['WhyWalk.Caravans'] == nil)
+ev.WWCaravans_Started({ displayName = 'Ald-ruhn' })
+P.engineHandlers.onLoad()
+check('loading mid-journey leaves FLOW resumed', flowOwners['WhyWalk.Caravans'] == nil)
+
 print(('\n%d passed, %d failed'):format(passed, failed))
 if failed > 0 then os.exit(1) end
+
 print('ALL PASS')

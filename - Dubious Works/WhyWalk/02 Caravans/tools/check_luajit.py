@@ -12,14 +12,19 @@ Flagged:
   math.atan with two arguments  -> use math.atan2 (or `local atan2 = math.atan2 or math.atan`)
   //                            -> 5.3 integer division; LuaJIT: syntax error
   & | ~ << >> (binary)          -> 5.3 bitwise operators; LuaJIT: syntax error (use bit.*)
-  math.type math.tointeger math.ult utf8. string.pack string.unpack string.packsize table.move
+  math.type math.tointeger math.ult string.pack string.unpack string.packsize
                                 -> absent in LuaJIT: nil, raising only when reached
+
+NOT flagged, because they exist in the engine: table.move (a LuaJIT 2.1 built-in),
+table.unpack (5.2 compat), and utf8 (OpenMW provides it). Measured in OpenMW 0.52.
+An earlier version of this list flagged table.move and utf8, which was wrong:
+it reported Hookshot's hookshot_util.lua for a call that works.
 """
 import re
 import sys
 
-ABSENT = re.compile(r'\b(math\.type|math\.tointeger|math\.ult|utf8\.[A-Za-z_]+|string\.pack|'
-                    r'string\.unpack|string\.packsize|table\.move)\b')
+ABSENT = re.compile(r'\b(math\.type|math\.tointeger|math\.ult|string\.pack|'
+                    r'string\.unpack|string\.packsize)\b')
 
 
 def strip(src):
