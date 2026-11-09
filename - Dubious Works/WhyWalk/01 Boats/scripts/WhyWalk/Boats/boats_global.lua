@@ -319,6 +319,15 @@ local function board(player, target, motionOn)
     end
 
     session = newSession(player, boat, vessel, entry, modelKey, heading, waterLevel, motionOn)
+    -- Boarding runs in an event handler, and the same frame's onUpdate would
+    -- teleport the boat (and read the pilot) again: a copy made by takeOver is
+    -- already mid-teleport, and the engine refuses a second one in that frame
+    -- ("Object is either removed or already in the process of teleporting",
+    -- logged on every boarding of a static in OpenMW 0.52). The pilot's own
+    -- teleport also lands next frame. Nothing to place until then. Keyed on
+    -- the simulation time, which is the same throughout one frame, so only
+    -- THIS frame is skipped however the events and updates interleave.
+    session.boardedAt = core.getSimulationTime()
     -- From the TARGET's transform: a copy's own teleport lands next frame.
     local station = pilotStation(session, target.position) + util.vector3(0, 0, 2)
     player:teleport(player.cell, station, util.transform.rotateZ(YAW_SIGN * heading))
@@ -402,6 +411,10 @@ end)
 local function onUpdate(dt)
     local s = session
     if not s then return end
+    if s.boardedAt then
+        if core.getSimulationTime() == s.boardedAt then return end
+        s.boardedAt = nil
+    end
 
     -- Routed through endSession rather than clearing the session here.
     --

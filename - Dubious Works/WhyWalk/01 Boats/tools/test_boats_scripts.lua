@@ -43,6 +43,7 @@ local util = {
 
 -- ---------------------------------------------------------------- world
 local log = { globalEvents = {}, playerEvents = {}, teleports = {}, sounds = {} }
+local strictTeleport = false
 local frame = 0
 
 local cellExt = { isExterior = true, hasWater = true, waterLevel = 0, name = 'ext' }
@@ -63,6 +64,16 @@ local function newObject(fields)
 end
 function Obj:isValid() return true end
 function Obj:teleport(cell, pos, opts)
+    -- The engine refuses a second teleport of one object in one frame (measured
+    -- in OpenMW 0.52: "Object is either removed or already in the process of
+    -- teleporting"). Boarding a static teleports the new copy in the event
+    -- handler, and that frame's onUpdate teleported it again.
+    -- Enforced only where a test walks real frame order (`strictTeleport`):
+    -- elsewhere these tests run unrelated steps without advancing `frame`.
+    if strictTeleport and self.teleportFrame == frame then
+        error('Object is either removed or already in the process of teleporting', 2)
+    end
+    self.teleportFrame = frame
     local rot = opts
     if type(opts) == 'table' and getmetatable(opts) ~= Tr then rot = opts.rotation end
     log.teleports[#log.teleports + 1] = { obj = self, cell = cell, pos = pos, rot = rot, frame = frame }
@@ -146,6 +157,7 @@ local I = {
 }
 
 local core = {
+    getSimulationTime = function() return frame end,   -- constant within a frame, as in the engine
     isWorldPaused = function() return false end,
     sendGlobalEvent = function(name, data) log.globalEvents[#log.globalEvents + 1] = { name = name, data = data } end,
     land = { getHeightAt = function() return LAND end },
@@ -172,6 +184,8 @@ local G = loadScript('scripts/WhyWalk/Boats/boats_global.lua', {
 
 -- ---------------------------------------------------------------- boarding
 log.playerEvents = {}
+-- Engine order within one frame: events, then onUpdate.
+strictTeleport = true
 G.eventHandlers.WWBoats_RequestBoard({ player = player, target = staticBoat })
 
 local boarded
@@ -199,6 +213,11 @@ check('unmeasured hull taken from the bounding box', boarded.hull and near(board
 check('sound started on the copy', log.sounds['Boat Creak'] == log.copy)
 local st = player.position
 check('pilot stands on the anchor (rowboat: the boat origin)', near(st.x, 200) and near(st.y, 100) and near(st.z, 4))
+
+-- The frame boarding happened in still runs the global onUpdate.
+check('the boarding frame\'s onUpdate does not re-teleport the new copy',
+      pcall(G.engineHandlers.onUpdate, 1 / 60), 'threw: already teleporting')
+strictTeleport = false
 
 -- ---------------------------------------------------------------- following
 local function boatPosAndYaw()

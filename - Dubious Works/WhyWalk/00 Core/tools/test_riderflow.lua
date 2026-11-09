@@ -21,13 +21,14 @@ package.loaded['openmw.self'] = {
     position = { x = 0, y = 0, z = 0 },
     cell = { isExterior = true },
 }
+local globalEvents, triggers = {}, {}
 package.loaded['openmw.core'] = {
-    sendGlobalEvent = function() end,
+    sendGlobalEvent = function(name, data) globalEvents[#globalEvents + 1] = { name = name, data = data } end,
     magic = { EFFECT_TYPE = any },
     l10n = function() return function(k) return k end end,
 }
 package.loaded['openmw.input'] = {
-    registerTriggerHandler = function() end,
+    registerTriggerHandler = function(name, cb) triggers[name] = cb end,
     registerActionHandler = function() end,
     isShiftPressed = function() return false end,
     isActionPressed = function() return false end,
@@ -77,6 +78,28 @@ check('levitation balanced across the ride', effects == 0, effects)
 ev.WhyWalk_Mounted({ mountType = 'guar', freeRide = true })
 P.engineHandlers.onLoad({ controlsLocked = true, levitationAdded = true })
 check('a load resumes FLOW', owners['WhyWalk.Core'] == nil, seq())
+
+-- The mount's jump is the Jump action. Space is Activate in Morrowind's
+-- default bindings, and a literal-Space jump dismounted the rider in-engine.
+local function sent(name, field)
+    for _, e in ipairs(globalEvents) do
+        if e.name == name and (not field or e.data[field]) then return true end
+    end
+    return false
+end
+ev.WhyWalk_Mounted({ mountType = 'guar', freeRide = true })
+globalEvents = {}
+check('a Jump trigger handler is registered', triggers.Jump ~= nil)
+if triggers.Jump then triggers.Jump() end
+check('Jump while mounted asks the mount to jump', sent('WhyWalk_Control', 'jump'))
+check('and does not dismount', not sent('WhyWalk_RequestDismount'))
+globalEvents = {}
+P.engineHandlers.onKeyPress({ symbol = 'space' })
+check('the literal Space key no longer sends a jump', not sent('WhyWalk_Control', 'jump'))
+ev.WhyWalk_Dismounted({})
+globalEvents = {}
+if triggers.Jump then triggers.Jump() end
+check('Jump while not mounted sends nothing', #globalEvents == 0, #globalEvents)
 
 -- Without FLOW installed nothing changes and nothing throws.
 package.loaded['openmw.interfaces'].Flow = nil

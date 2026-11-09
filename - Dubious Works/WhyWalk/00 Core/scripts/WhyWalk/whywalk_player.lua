@@ -407,6 +407,17 @@ end
 
 input.registerTriggerHandler("Activate", async:callback(requestMount))
 
+-- The mount's jump is the JUMP action, read like Activate through the trigger
+-- system, so it follows the player's binding. It used to be the literal Space
+-- key - which in Morrowind's default bindings IS Activate (Jump is E), so one
+-- press sent a jump and, through requestMount above, a dismount. Measured in
+-- OpenMW 0.52 with vanilla bindings: Space on a guar dismounted the rider.
+local function requestJump()
+    if not mounted or hudHidden() then return end
+    core.sendGlobalEvent(EV.CONTROL, { player = self.object, jump = true })
+end
+input.registerTriggerHandler("Jump", async:callback(requestJump))
+
 local KEYMAP = {
     w = "forward", s = "back", a = "left", d = "right",
 }
@@ -428,9 +439,6 @@ local function onKeyPress(key)
         held[slot] = true
     elseif sym == "x" then
         core.sendGlobalEvent(EV.REQUEST_DISMOUNT, { player = self.object })
-        return
-    elseif sym == "space" or sym == " " then
-        core.sendGlobalEvent(EV.CONTROL, { player = self.object, jump = true })
         return
     else
         -- Shift has no portable symbol, so gallop is read fresh on any key

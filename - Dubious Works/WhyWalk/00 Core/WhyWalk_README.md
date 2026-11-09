@@ -82,11 +82,13 @@ What it deliberately does *not* do:
 | **W / S** | — | Forward / reverse |
 | **A / D** | — | Steer left / right |
 | **Shift** | — | Gallop (held with W) |
-| **Space** | — | Jump (ground mounts only) |
+| **Jump** (your bound key, E by default) | — | Jump (ground mounts only) |
 | **X** | — | Dismount |
 
-Activate is read through OpenMW's trigger system, so it follows whatever you
-have that action bound to. It is ignored while the HUD is hidden, so it won't
+Activate and Jump are read through OpenMW's trigger system, so they follow
+whatever you have those actions bound to. (Jump used to be the literal Space
+key, which in Morrowind's default bindings is Activate: pressing it to jump
+also dismounted you.) It is ignored while the HUD is hidden, so it won't
 fire through menus and dialogue.
 
 ---
@@ -502,8 +504,8 @@ Compatible by design with anything using SharedRay, since that is a shared
 service rather than a fork.
 
 **Parkourwind FLOW** is stood down for the ride through `I.Flow.yield`. A rider
-is never grounded, and without the yield FLOW read the ride as a jump: Space,
-which is the mount's jump, grabbed a ledge off the saddle, and a mount leaping
+is never grounded, and without the yield FLOW read the ride as a jump: the mount's
+jump, on the same Jump key, grabbed a ledge off the saddle, and a mount leaping
 off a cliff played FLOW's Skydive on the rider and landed it as a knockdown.
 The yield comes before the control lock is taken and the resume after it is
 released, because the movement override is one flag shared by every mod.
@@ -516,6 +518,15 @@ recognised, so those creatures work as WhyWalk mounts if their ESPs are loaded.
 ---
 
 ## Known limitations
+
+- **The mount's jump does nothing (OpenMW 0.52).** The mount script sets
+  `controls.jump` and leaves the arc to the engine, but the engine gives
+  creatures no jump: `MWWorld::Class::getJump` returns 0 and only `Npc`
+  overrides it (`apps/openmw/mwclass/npc.cpp`), and `CharacterController`
+  zeroes the vertical push when that height is 0. Measured on a real `guar`
+  and `guar_feral` ridden on flat ground: the Jump key and a direct
+  `WhyWalk_Control {jump}` both raised the mount 0 units. A working jump needs
+  a scripted arc again.
 
 - **Animation groups outside horse and guar are placeholders.** The mod will
   run, but unresourced mounts fall back to the generic set, which is also a
