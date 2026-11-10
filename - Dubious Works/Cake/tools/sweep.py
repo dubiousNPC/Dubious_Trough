@@ -7,7 +7,7 @@ globalcake.lua/playergear.lua, so they get checked mechanically.
 """
 import re, os, sys, json, collections
 
-PKG = sys.argv[1] if len(sys.argv) > 1 else 'out/pkg/CAKE'
+PKG = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '00 Core')
 SC = os.path.join(PKG, 'scripts/cake')
 
 def read(p):
@@ -30,8 +30,7 @@ def bad(kind, msg):
 
 # ---------------------------------------------------------------- categories
 shared = files['cake_shared.lua']
-cats = set(re.findall(r'^    (\w+)\s*=\s*\{$', shared, re.M))
-cats = {c for c in cats if ("'cake_%s'" % c) in shared}
+cats = set(re.findall(r'^    (\w+)\s*=\s*\{ vfxId', shared, re.M))
 print('categories defined (%d): %s' % (len(cats), ', '.join(sorted(cats))))
 
 for f, s in code.items():
@@ -65,16 +64,7 @@ for k in sorted(declared - read_keys):
 for k in sorted(read_keys - declared):
     bad('settings', 'read but never declared: %s' % k)
 
-# ------------------------------------------------ skeleton profile agreement
-prof = set(re.findall(r'^    (\w+)\s*=\s*\{ label', shared, re.M))
-sel = re.search(r'SKELETON_ORDER\s*=\s*\{([^}]*)\}', code.get('cake_settings.lua', ''))
-sel_items = set(re.findall(r"'(\w+)'", sel.group(1))) if sel else set()
-print('\nskeleton profiles in shared:   %s' % ', '.join(sorted(prof)))
-print('skeleton options in settings:  %s' % ', '.join(sorted(sel_items)))
-for k in sorted(sel_items - prof):
-    bad('skeleton', "settings offers '%s' but cake_shared has no such profile" % k)
-for k in sorted(prof - sel_items):
-    bad('skeleton', "cake_shared defines '%s' but settings never offers it" % k)
+sel_items = set()
 
 # -------------------------------------------------------------------- events
 sent = set()
@@ -90,6 +80,10 @@ print('\nevents sent:    %s' % ', '.join(sorted(sent)))
 print('events handled: %s' % ', '.join(sorted(handled)))
 for e in sorted(sent - handled):
     bad('events', 'sent but no handler in this package: %s' % e)
+# Engine events, and events other mods are documented to send.
+EXTERNAL = {'UiModeChanged', 'Cake_RefreshNpc'}
+for e in sorted(handled - sent - EXTERNAL):
+    bad('events', 'handled but never sent: %s' % e)
 
 # ------------------------------------------------------------ dead requires
 for f, s in code.items():
@@ -100,7 +94,7 @@ reqd = set()
 for f, s in code.items():
     reqd |= set(m.group(1) for m in re.finditer(REQ, s))
 manifest = read(os.path.join(PKG, 'CAKE.omwscripts'))
-registered = set(re.findall(r'scripts/cake/(\w+)\.lua', manifest))
+registered = set(re.findall(r'scripts/cake/(\w+)\.lua', re.sub(r'#[^\n]*', '', manifest)))
 for f in files:
     stem = f[:-4]
     if stem not in registered and stem not in reqd:

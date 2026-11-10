@@ -177,13 +177,16 @@ https://www.nexusmods.com/morrowind/mods/56176
 #  **Various tweaks and fixes**
 https://www.nexusmods.com/morrowind/mods/43795
 *
+ -- **BetterColovianFurHelms**
  -- **CompleteArmorJointsAdditions**
  -- **ilver_armor_improvements**
  -- **FamiliarFacesGlowingKhajiitEyes**
+ -- **familiar_faces_fixes**
  -- **glowing_dremora_eyes**
  -- **artifact_mesh_improvements_sheath**
  -- **golden_saint_glowing_eyes**
  -- **nwah_salts_tweaks**
+ -- **horker_mesh_fixed**
  -- **imperial_moth_cuirass_icon**
  -- **imi_sheath**
  -- **shield_sheathing_fix**
@@ -200,11 +203,9 @@ https://www.nexusmods.com/morrowind/mods/43795
  -- **RR_Better_Redoran_Architecture_GitD_Update**
  -- **InteriorWindowsUVFix**
  -- **VSBR 1.0 pluginless mesh fixes**
- -- **BetterColovianFurHelms**
  -- **morrowind_interiors_project_hd**
  -- **PherimComberryRecolored**
  -- **PherimComberryBushFixOpenMW**
- -- **familiar_faces_fixes**
  -- **Pluginless NoGlow Lite**
  -- **Pluginless Khajiit Head Pack - Vampires**
 *
@@ -683,6 +684,8 @@ https://www.nexusmods.com/morrowind/mods/53305
 https://www.nexusmods.com/morrowind/mods/53022
 #  **Thickle-Lo Grove**
 https://www.nexusmods.com/morrowind/mods/51689
+#  **Urshilaku Outskirts - Glass and Shalk**
+https://www.nexusmods.com/morrowind/mods/60815
 *    
 #  **Katya's Patches and mod recommendations**
 https://www.nexusmods.com/morrowind/mods/56060
@@ -952,6 +955,7 @@ https://www.nexusmods.com/morrowind/mods/59591
     -- **Set Bonus**  https://www.nexusmods.com/morrowind/mods/52911
     -- **Enchanted Items don't recharge over time**  https://www.nexusmods.com/morrowind/mods/53452
     -- **Tiny Mods and Fixes**  https://www.nexusmods.com/morrowind/mods/57929
+    -- **PIE** - Patches Improvements Extras  https://www.nexusmods.com/morrowind/mods/60359
 *
 
 
@@ -1086,54 +1090,88 @@ https://www.nexusmods.com/morrowind/mods/60689
  -- **MM** - Enhanced Invisibility
  -- https://www.nexusmods.com/morrowind/mods/47565
 *
-#  **Profitable Enchanting (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/60724
-#  **Truly Constant Effects (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/57175
-#  **It Beats (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/57396
-#  **Dead Mer Tell No Tales (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/57431
+#  **Ammo Count HUD (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58307
+#  **Arrow Stick (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58299
 #  **Argonian Full Helms Lore Integrated v1.1** - Cleaned
-https://www.nexusmods.com/morrowind/mods/57437
-#  **Shelf Control (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/57441
-#  **Canonical Gear (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/57661
+https://www.nexusmods.com/morrowind/mods/57437             -- Incorporated in Death & Taxes
+#  **Athleticism** - Movement Exhaustion (OpenMW)
+https://www.nexusmods.com/morrowind/mods/59422
+#  **Better Armor Training (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/59863
+#  **Boons and Burdens** - OpenMW Background Pack
+https://www.nexusmods.com/morrowind/mods/59130
+#  **Boots Wear Down (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58891
+#  **Bullseye - Marksman Overhaul (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58511
 #  **Brute Force** - Lockpicking for Barbarians (OpenMW)
 https://www.nexusmods.com/morrowind/mods/57841
-#  **Merits of Service (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/57952
+#  **Character Traits Framework (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58703
+#  **Configurable Gold Weight (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/59902
+#  **Community Traits Ported (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58704
+#  **Canonical Gear (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/57661
+#  **Cursed Tombs (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58258
+#  **Dead Mer Tell No Tales (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/57431
+#  **Disobedient Summons (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58542
+#  **Distinct Elemental Damage (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/60286
+#  **Even Ground** - Racial Powers and Birthsigns for NPCs (OpenMW)
+https://www.nexusmods.com/morrowind/mods/60179
 #  **Friendlier Fire (OpenMW)**
 https://www.nexusmods.com/morrowind/mods/57975
 #  **Follower Detection Util (OpenMW)**
 https://www.nexusmods.com/morrowind/mods/58053
 #  **Heart Attack (OpenMW)**
 https://www.nexusmods.com/morrowind/mods/58069
+#  **Hole in the Pocket (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/59272
+#  **Inventory Camera (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/59968
+#  **It Beats (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/57396
 #  **Lucky Strike (OpenMW)**
 https://www.nexusmods.com/morrowind/mods/58071
 #  **Best Friends Forever (OpenMW)**
 https://www.nexusmods.com/morrowind/mods/59384
 #  **Follower Commands (OpenMW)**
 https://www.nexusmods.com/morrowind/mods/58818
-#  **Target the Leader (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58076
 #  **Lua-powered Artifacts (OpenMW)**
 https://www.nexusmods.com/morrowind/mods/58115
-#  **Cursed Tombs (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58258
+#  **Merits of Service (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/57952
+#  **NPC Powers Framework (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/60178
 #  **Pet the Scribs** - Lua Edition (OpenMW)
 https://www.nexusmods.com/morrowind/mods/58294
-#  **Arrow Stick (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58299
-#  **Ammo Count HUD (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58307
+#  **Practice Dummies (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58992
+#  **Profitable Enchanting (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/60724
+#  **Ring a Bell (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58866
+#  **Rock in the Shoe (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/59271
 #  **Sneak Fatigue Drain (OpenMW)**
 https://www.nexusmods.com/morrowind/mods/58433
-#  **Bullseye - Marksman Overhaul (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58511
-#  **Disobedient Summons (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58542
+#  **Shelf Control (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/57441
+#  **Start Saver (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/59509
+#  **Stranger in a Hostile Land (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/59550
+#  **Truly Constant Effects (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/57175
+#  **Target the Leader (OpenMW)**
+https://www.nexusmods.com/morrowind/mods/58076
 #  **Bor's Patch Hub**
 https://www.nexusmods.com/morrowind/mods/58744
 *
@@ -1141,41 +1179,7 @@ https://www.nexusmods.com/morrowind/mods/58744
  -- **Tel Meskoa And Tel Matouigius** - Removed Birthsigns
  -- **Web of Mephala** - Entrance Patch (OpenMW)
 *
-#  **Character Traits Framework (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58703
-#  **Community Traits Ported (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58704
-#  **Boons and Burdens** - OpenMW Background Pack
-https://www.nexusmods.com/morrowind/mods/59130
-#  **Ring a Bell (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58866
-#  **Boots Wear Down (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58891
-#  **Practice Dummies (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/58992
-#  **Rock in the Shoe (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/59271
-#  **Hole in the Pocket (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/59272
-#  **Athleticism** - Movement Exhaustion (OpenMW)
-https://www.nexusmods.com/morrowind/mods/59422
-#  **Start Saver (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/59509
-#  **Stranger in a Hostile Land (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/59550
-#  **Better Armor Training (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/59863
-#  **Configurable Gold Weight (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/59902
-#  **Inventory Camera (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/59968
-#  **NPC Powers Framework (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/60178
-#  **Even Ground** - Racial Powers and Birthsigns for NPCs (OpenMW)
-https://www.nexusmods.com/morrowind/mods/60179
-#  **Distinct Elemental Damage (OpenMW)**
-https://www.nexusmods.com/morrowind/mods/60286
-*
+
 
 
 \--- Zenocite
@@ -1566,7 +1570,7 @@ https://www.nexusmods.com/morrowind/mods/52199
 
 
 
-\---*Recommended/Related links:*
+\--- **Recommended/Related links:**
 *
 
 

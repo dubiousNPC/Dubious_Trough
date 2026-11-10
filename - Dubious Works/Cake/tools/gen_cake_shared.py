@@ -1,252 +1,167 @@
-"""Emit cake_shared.lua from the CAKE plugins themselves.
+#!/usr/bin/env python3
+"""gen_cake_shared.py -- write 00 Core/scripts/cake/cake_shared.lua from the plugins.
 
-Supersedes gen_shared.py, which built the registry from OMWFW's record id
-tables. Those ids turned out to describe different content entirely: not one
-of the 50 ids in globalcake.lua exists in CAKE.esp/CAKE34.esp. The authority
-is the plugin, so the plugin is what gets read.
+The plugins are the authority. Every MISC record whose id ends in `_eq` is a
+worn record; its base is the same id without the suffix, unless PAIRS names a
+different one. The category is decided by the model path (CATEGORY_RULES), and
+an item whose path matches no rule fails the run rather than being guessed at.
+
+Run from the package root:   python3 tools/gen_cake_shared.py
 """
-import json, io, re, collections
+import collections
+import os
+import re
+import sys
 
-recs = json.load(open('cake_records.json'))
-assign = json.load(open('cake_assign.json'))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import tes3  # noqa: E402
 
-# Bones confirmed present in meshes/dbs/xbase_anim_dbs.nif.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PLUGINS = [
+    '00 Core/Cake_Gear.omwaddon',
+    '01 Lanterns Belts Bags/cake_v4.2.esp',
+]
+OUT = os.path.join(ROOT, '00 Core/scripts/cake/cake_shared.lua')
+
+# Worn records whose base does not follow the `<base>_eq` rule.
+# Cake_Gear's Argonian scarves: base dbs_ADMScarfBlack, worn dbs_A_ScarfBlack_eq.
+# (Paired here so the plugin checks pass; they are excluded below.)
+PAIRS = {'dbs_a_scarf%s_eq' % c: 'dbs_admscarf%s' % c for c in (
+    'black', 'blue', 'deepblue', 'green', 'grey', 'orange', 'original', 'purple', 'red', 'rose', 'yellow')}
+
+# Bones injected by animations/<skeleton>/dubiousBones.nif, read from the file.
 DBS_BONES = ['Bip01 beltDBS', 'Bip01 R hipDBS', 'Bip01 L hipDBS', 'Bip01 chestDBS',
              'Bip01 backpackDBS', 'Bip01 capeDBS', 'Bip01 mouthDBS', 'Bip01 eyesDBS',
-             'Bip01 earsDBS', 'Bip01 hornsDBS', 'Bip01 scarfDBS', 'Bip01 pendantDBS']
+             'Bip01 earsDBS', 'Bip01 hornsDBS', 'Bip01 scarfDBS', 'Bip01 pendantDBS',
+             'Bip01 R Smokebone', 'Bip01 L Smokebone']
 
+# category -> (DBS bone, vanilla fallback bone, conflicting categories)
 CATEGORIES = collections.OrderedDict([
-    ('lanterns', ('Bip01 L hipDBS',  'Bip01 Pelvis')),
-    ('eyewear',  ('Bip01 eyesDBS',   'head')),
-    ('masks',    ('Bip01 mouthDBS',  'head')),
-    ('scarves',  ('Bip01 scarfDBS',  'Bip01 Neck')),
-    ('belts',    ('Bip01 beltDBS',   'Bip01 Pelvis')),
-    ('bags',     ('Bip01 beltDBS',   'Bip01 Pelvis')),
-    ('smokes',   ('Bip01 mouthDBS',  'head')),
-    ('ears',     ('Bip01 earsDBS',   'head')),
+    ('lanterns', ('Bip01 L hipDBS', 'Bip01 Pelvis', [])),
+    ('eyewear',  ('Bip01 eyesDBS',  'Head', [])),
+    ('masks',    ('Bip01 mouthDBS', 'Head', ['smokes'])),
+    ('scarves',  ('Bip01 scarfDBS', 'Bip01 Neck', [])),
+    ('belts',    ('Bip01 beltDBS',  'Bip01 Pelvis', [])),
+    ('bags',     ('Bip01 beltDBS',  'Bip01 Pelvis', [])),
+    ('smokes',   ('Bip01 mouthDBS', 'Head', ['masks'])),
 ])
 
-CONFLICTS = {'masks': ['smokes'], 'smokes': ['masks']}
+# First match wins, on the lowercased model path with forward slashes.
+# A rule naming no category excludes the item, for the reason given.
+CATEGORY_RULES = [
+    (r'^armoredtails/', None, 'tails: dubiousBones.nif adds no tail bone'),
+    (r'^ak/a_cloth_helm', None, 'Argonian scarves: skinned meshes, which draw nothing as an attachment'),
+    (r'^rv/scarf', 'scarves'),
+    (r'^rv/(ashmask|daedramask|facewrap|orcishmask)', 'masks'),
+    (r'^rv/(blindfold|eyepatch|glasses|goggles|lenses)', 'eyewear'),
+    (r'^ep/', 'smokes'),
+    (r'(^|/)l/', 'lanterns'),
+    (r'^belts/|^frummyonda/fy_utilitybelt', 'belts'),
+    (r'^frummyonda/', 'bags'),
+]
 
-# Tails are deliberately excluded. They belong on the beast skeleton
-# (xbase_animkna), and CAKE ships only xbase_anim_dbs.nif, which has no tail
-# bone -- confirmed by reading all 123 nodes. Rather than point 33 items at a
-# bone that does not exist, as playergear.lua did, they are left out of the
-# registry entirely until a kna variant exists.
-EXCLUDED = {'tails'}
 
-items = {}
-excluded_count = 0
-for eqid, a in assign.items():
-    if a['category'] in EXCLUDED:
-        excluded_count += 1
-        continue
-    base = eqid[:-3]
-    if base not in recs:
-        continue
-    items[base] = {
-        'eq': eqid,
-        'category': a['category'],
-        'model': recs[eqid].get('model') or recs[base].get('model') or '',
-        'name': recs[eqid].get('name') or recs[base].get('name') or '',
-    }
+def category_of(model):
+    m = model.lower().replace('\\', '/')
+    for rule in CATEGORY_RULES:
+        if re.search(rule[0], m):
+            return rule[1], rule[2] if len(rule) > 2 else None
+    raise AssertionError('model %r matches no CATEGORY_RULES entry' % model)
 
-out = io.StringIO()
-W = out.write
 
-W('''---@omw-context none
---[[
-    cake_shared.lua -- single source of truth for CAKE
+def read_misc(path):
+    out = {}
+    for tag, blob in tes3.records(path):
+        if tag != 'MISC':
+            continue
+        rec = {}
+        for st, b in tes3.subrecords(blob):
+            if st in ('NAME', 'MODL', 'FNAM'):
+                rec[st] = tes3.zstr(b)
+        out[rec['NAME'].lower()] = rec
+    return out
 
-    `none`, not `shared`: `shared` is not a valid ---@omw-context token and the
-    Cod3x plugin poisons an invalid annotation exactly as it poisons a missing
-    one. `none` is right here because this file requires no openmw.* module at
-    all -- meshFor takes `types` as a parameter rather than requiring it, which
-    is what keeps that true.
 
-    Generated from the corrected CAKE402 plugin and from the node names in
-    meshes/dbs/xbase_anim_dbs.nif. Nothing in this file is typed by hand, so
-    the registry cannot drift from the plugins and skeleton it describes.
+def main():
+    misc, source = {}, {}
+    for rel in PLUGINS:
+        for rid, rec in read_misc(os.path.join(ROOT, rel)).items():
+            if rid in misc:
+                assert misc[rid].get('MODL') == rec.get('MODL'), \
+                    '%s: %s and %s disagree on the model' % (rid, source[rid], rel)
+            else:
+                misc[rid], source[rid] = rec, rel
 
-    RECORD SCHEME
-    -------------
-    Every wearable is a types.Miscellaneous pair:
+    items, skipped = {}, collections.Counter()
+    for rid, rec in misc.items():
+        if not rid.endswith('_eq'):
+            continue
+        base = PAIRS.get(rid, rid[:-3])
+        assert base in misc, '%s: no base record %s' % (rid, base)
+        cat, reason = category_of(rec.get('MODL', ''))
+        if cat is None:
+            skipped[reason] += 1
+            continue
+        items[base] = (rid, cat)
 
-        dbs_<thing>        the item that sits in the inventory
-        dbs_<thing>_eq     the item that replaces it while worn
+    bases = [rid for rid in misc if not rid.endswith('_eq')]
+    orphans = [b for b in bases if b not in items and b + '_eq' not in misc
+               and b not in PAIRS.values()]
+    assert not orphans, 'base records with no worn record: %s' % orphans
+    for cat, (bone, _fb, conflicts) in CATEGORIES.items():
+        assert bone in DBS_BONES, '%s: %s is not a bone dubiousBones.nif adds' % (cat, bone)
+        for other in conflicts:
+            assert other in CATEGORIES and cat in CATEGORIES[other][2], \
+                'conflict %s/%s is not symmetric' % (cat, other)
 
-    Using the base record destroys it and creates the _eq record; using the
-    _eq record converts it back. This is Sun's Dusk's backpack mechanism, and
-    it is what makes CAKE non-invasive: a Miscellaneous item occupies no
-    equipment slot at all, so unlike the OMWFW approach nothing has to be
-    blocked from equipping and no helmet or pauldron is displaced. It also
-    means the worn state is visible in the inventory as a distinct item with
-    its own icon, rather than living only in script state.
+    counts = collections.Counter(c for _e, c in items.values())
+    L = []
+    w = L.append
+    w('---@omw-context none')
+    w('-- cake_shared.lua -- GENERATED by tools/gen_cake_shared.py from:')
+    for rel in PLUGINS:
+        w('--   %s' % rel)
+    w('-- Do not edit by hand; edit the generator or the plugins and re-run it.')
+    w('--')
+    w('-- Loaded by the global script and the player script only. NPC scripts are sent')
+    w('-- what to draw, so a crowd never pays for this table.')
+    w('')
+    w('local M = {}')
+    w('')
+    w('M.version = 3')
+    w('')
+    w('-- category -> where it attaches. `bone` comes from dubiousBones.nif; `fallback`')
+    w('-- is a vanilla bone for skeletons the file is not injected into.')
+    w('M.CATEGORIES = {')
+    for cat, (bone, fb, conflicts) in CATEGORIES.items():
+        w("    %-9s = { vfxId = 'cake_%s', bone = '%s', fallback = '%s', conflicts = { %s } },  -- %d items"
+          % (cat, cat, bone, fb, ', '.join("'%s'" % c for c in conflicts), counts[cat]))
+    w('}')
+    w('')
+    w('-- base record id -> { eq = worn record id, category = ... }, all lowercase.')
+    w('M.ITEMS = {')
+    for cat in CATEGORIES:
+        for base in sorted(b for b, (_e, c) in items.items() if c == cat):
+            w("    ['%s'] = { eq = '%s', category = '%s' }," % (base, items[base][0], cat))
+    w('}')
+    w('')
+    w('M.EQ_TO_BASE = {}')
+    w('for base, entry in pairs(M.ITEMS) do M.EQ_TO_BASE[entry.eq] = base end')
+    w('')
+    w('---Entry for a base record id, or nil.')
+    w('function M.get(recordId) return M.ITEMS[recordId:lower()] end')
+    w('')
+    w('---Base record id for a worn record id, or nil if it is not a worn CAKE item.')
+    w('function M.baseOf(recordId) return M.EQ_TO_BASE[recordId:lower()] end')
+    w('')
+    w('return M')
+    open(OUT, 'w', newline='\n').write('\n'.join(L) + '\n')
+    print('%s: %d pairs in %d categories (%s)' % (
+        os.path.relpath(OUT, ROOT), len(items), len(counts),
+        ', '.join('%s %d' % (c, counts[c]) for c in CATEGORIES)))
+    for reason, n in skipped.items():
+        print('  excluded %d: %s' % (n, reason))
 
-    BOTH halves of the pair carry the same model. The _eq record's model is
-    what gets attached as a VFX.
 
-    BONES
-    -----
-    The DBS bones below are the twelve confirmed present in
-    xbase_anim_dbs.nif. Each category also names a vanilla `fallback` bone
-    for players running without that skeleton, because attaching to a missing
-    bone is a silent no-show rather than an error.
-
-    NO TAILS
-    --------
-    The plugins define 33 tail pairs and playergear.lua pointed all of them at
-    `Bip01 tailsDBS`. That bone does not exist -- all 123 nodes of
-    xbase_anim_dbs.nif were read and none is a tail -- so every tail failed
-    hasBone and rendered nothing.
-
-    Tails belong on the beast skeleton (xbase_animkna), which CAKE does not
-    ship. They are therefore excluded from this registry rather than pointed
-    at a substitute: a wrong bone is worse than an absent entry, because it
-    looks like a working feature that silently does nothing. Re-add them by
-    dropping the `tails` entry from EXCLUDED in tools/gen_cake_shared.py once
-    a kna skeleton with a tail bone is in the package.
-]]
-
-local M = {}
-
-M.version = 2
-
--- Suffix appended to a base record id to get its worn counterpart.
-M.EQ_SUFFIX = '_eq'
-
--- ---------------------------------------------------------------------------
--- SKELETON
--- ---------------------------------------------------------------------------
-
--- Node names read directly out of meshes/dbs/xbase_anim_dbs.nif.
-M.DBS_BONES = {
-''')
-for b in DBS_BONES:
-    W("    ['%s'] = true,\n" % b)
-W('''}
-
-M.SKELETON = {
-    auto    = { label = 'Auto-detect', probe = true },
-    dbs     = { label = 'xbase_anim_dbs.nif', probe = false, bones = M.DBS_BONES },
-    vanilla = { label = 'Vanilla skeleton only', probe = false, bones = {} },
-}
-
-M.DEFAULT_SKELETON = 'auto'
-
--- ---------------------------------------------------------------------------
--- CATEGORIES
--- ---------------------------------------------------------------------------
--- One vfxId per category, so categories sharing a bone do not evict each
--- other. `conflicts` names categories that cannot be worn together.
-
-M.CATEGORIES = {
-''')
-# A category with no items is dead weight, and worse than dead: cake_anim.lua
-# validates its group keys against CATEGORIES and errors on an unknown one, so
-# an empty category left behind by a reclassification is a load failure waiting
-# to happen. Drop them here rather than remembering to prune by hand.
-EMPTY = [c for c in CATEGORIES if not any(v['category'] == c for v in items.values())]
-for c in EMPTY:
-    del CATEGORIES[c]
-if EMPTY:
-    print('dropped empty categories: %s' % ', '.join(EMPTY))
-
-for cat, (bone, fb) in CATEGORIES.items():
-    n = sum(1 for v in items.values() if v['category'] == cat)
-    W("    %-9s = {\n" % cat)
-    W("        label        = '%s',\n" % cat.capitalize())
-    W("        vfxId        = 'cake_%s',\n" % cat)
-    assert bone in DBS_BONES, 'category %s points at non-existent bone %s' % (cat, bone)
-    W("        bone         = '%s',\n" % bone)
-    W("        boneFallback = '%s',\n" % fb)
-    W("        conflicts    = { %s },\n" % ', '.join("'%s'" % c for c in CONFLICTS.get(cat, [])))
-    W("        count        = %d,\n" % n)
-    W("    },\n")
-
-W('''}
-
--- ---------------------------------------------------------------------------
--- ITEMS
--- ---------------------------------------------------------------------------
--- Keyed by the BASE record id (lowercase, because OpenMW compares record ids
--- lowercase). `eq` is the worn record. `model` is reproduced verbatim from the
--- record, case and separators untouched: most of these meshes are supplied by
--- other mods and the path belongs to them.
-
-M.ITEMS = {
-''')
-for cat in CATEGORIES:
-    sel = sorted(k for k, v in items.items() if v['category'] == cat)
-    W("    -- %s (%d)\n" % (cat, len(sel)))
-    for k in sel:
-        v = items[k]
-        # Model path is emitted EXACTLY as the record states it -- original
-        # case, original backslashes. Most of these meshes ship with other
-        # mods (Tamriel_Data, OAAB, Project Cyrodiil and others), so the path
-        # is their property, not ours to normalise. Lua needs the backslash
-        # escaped in a quoted string; that is the only change made.
-        model = v['model'].replace('\\', '\\\\')
-        W("    ['%s']%s= { eq = '%s', category = '%s', model = '%s' },\n"
-          % (k.lower(), ' ' * max(1, 26 - len(k)), v['eq'].lower(), cat, model))
-    W("\n")
-
-W('''}
-
--- ---------------------------------------------------------------------------
--- DERIVED
--- ---------------------------------------------------------------------------
-
--- Reverse index: worn record id -> base record id.
-M.EQ_TO_BASE = {}
-for baseId, entry in pairs(M.ITEMS) do
-    M.EQ_TO_BASE[entry.eq] = baseId
-end
-
-M.allBones = {}
-for _, cat in pairs(M.CATEGORIES) do
-    if cat.bone then M.allBones[cat.bone] = true end
-    M.allBones[cat.boneFallback] = true
-end
-
--- ---------------------------------------------------------------------------
--- HELPERS
--- ---------------------------------------------------------------------------
-
----Entry for a base record id.
-function M.get(recordId)
-    if type(recordId) ~= 'string' then return nil end
-    return M.ITEMS[recordId:lower()]
-end
-
----Base record id for a worn record id, or nil if this is not a worn CAKE item.
----Uses the reverse index rather than string surgery: the old code did
----`id:sub(1, -4)`, which silently produced a non-existent id for anything
----whose naming did not match its assumption.
-function M.baseOf(equippedId)
-    if type(equippedId) ~= 'string' then return nil end
-    return M.EQ_TO_BASE[equippedId:lower()]
-end
-
----Worn record id for a base record id.
-function M.eqOf(baseId)
-    local entry = M.get(baseId)
-    return entry and entry.eq or nil
-end
-
-function M.isBaseItem(recordId) return M.get(recordId) ~= nil end
-function M.isWornItem(recordId) return M.baseOf(recordId) ~= nil end
-
----Category definition for either half of a pair.
-function M.categoryOf(recordId)
-    local entry = M.get(recordId) or M.get(M.baseOf(recordId))
-    return entry and M.CATEGORIES[entry.category] or nil
-end
-
-return M
-''')
-
-open('out/cake_shared.lua', 'w').write(out.getvalue())
-print('items: %d pairs (%d excluded: %s)' % (len(items), excluded_count, ', '.join(sorted(EXCLUDED))))
-for c in CATEGORIES:
-    print('  %-9s %3d' % (c, sum(1 for v in items.values() if v['category'] == c)))
+if __name__ == '__main__':
+    main()

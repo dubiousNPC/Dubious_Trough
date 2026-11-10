@@ -1,155 +1,84 @@
 # CAKE — Cosmetic Attachment Kit for Equipment
 
-Wearable accessories — lanterns, masks, eyewear, scarves, belts, bags — that
-occupy no equipment slot and cost nothing per frame.
+Wearable accessories that take no equipment slot: masks, eyewear, scarves,
+lanterns, belts, bags and cigars. Drag one onto your character in the inventory
+to put it on; do the same with the worn one to take it off.
 
----
+Requires OpenMW 0.52.
 
-## How wearing works
+## Install
 
-Every accessory is a pair of `types.Miscellaneous` records:
+| folder | content files | needs |
+|---|---|---|
+| `00 Core` | `Cake_Gear.omwaddon`, `CAKE.omwscripts` | nothing; ships its own meshes and icons |
+| `01 Lanterns Belts Bags` (optional) | `cake_v4.2.esp` | Tamriel_Data (27 lanterns use its meshes), OAAB_Data (2 lanterns) |
+| `02 Balmora Outfitter` (optional) | `cake_npc.esp` | both folders above |
 
-```
-dbs_<thing>        sits in the inventory
-dbs_<thing>_eq     replaces it while worn
-```
+Add each folder you use as a data directory and enable its content files.
+`02` stocks Clagius Clanler's shop in Balmora with everything.
 
-Using the base record destroys it and creates the `_eq` record. Using the
-`_eq` record converts it back. Because a Miscellaneous item occupies no
-equipment slot, nothing has to be blocked from equipping and no helmet,
-pauldron or belt is displaced. Swapping within a category, or putting on
-something that conflicts, returns the previous item to the inventory first.
+Two sets of models are not shipped by any folder here: the 13 belts in
+`meshes/Belts/` and the 2 cigars in `meshes/ep/`. Without them those items
+show the yellow error marker. `tools/check_meshes.py` lists what is missing.
 
-The worn state lives **in the inventory**, not in a saved variable. That is
-the design's main benefit: there is nothing to persist, nothing to reconcile
-on load, and no way for the display and the inventory to disagree. Every
-script here reads worn state fresh rather than tracking it.
+## What you can wear
 
-This is Sun's Dusk's backpack mechanism, generalised across eight categories.
-
----
-
-## Contents
-
-| Category | Items | Bone | Vanilla fallback |
+| category | items | attaches to | on skeletons without the CAKE bones |
 |---|---|---|---|
-| lanterns | 46 | `Bip01 L hipDBS` | `Bip01 Pelvis` |
-| eyewear | 20 | `Bip01 eyesDBS` | `head` |
-| masks | 17 | `Bip01 mouthDBS` | `head` |
+| masks | 17 | `Bip01 mouthDBS` | `Head` |
+| eyewear | 20 | `Bip01 eyesDBS` | `Head` |
 | scarves | 16 | `Bip01 scarfDBS` | `Bip01 Neck` |
+| smokes | 2 | `Bip01 mouthDBS` | `Head` |
+| lanterns | 46 | `Bip01 L hipDBS` | `Bip01 Pelvis` |
 | belts | 14 | `Bip01 beltDBS` | `Bip01 Pelvis` |
 | bags | 13 | `Bip01 beltDBS` | `Bip01 Pelvis` |
-| smokes | 2 | `Bip01 mouthDBS` | `head` |
-| ears | 1 | `Bip01 earsDBS` | `head` |
 
-129 pairs. Masks and smokes conflict; everything else stacks.
+One item per category. A mask and a cigar take each other off.
 
-**Tails are not included.** The plugins define 34 tail pairs, but they belong
-on the beast skeleton (`xbase_animkna`) and CAKE ships only
-`xbase_anim_dbs.nif`, which has no tail bone — all 123 of its nodes were read
-and none is a tail. Pointing them somewhere plausible would produce a feature
-that looks like it works and silently does nothing, so they are left out until
-a beast skeleton with a tail bone exists. See HANDOFF.md §6.
+The CAKE bones come from `animations/<skeleton>/dubiousBones.nif`, which OpenMW
+grafts onto the six humanoid skeletons. WhyWalk ships the same file at the same
+path. Four of its 14 bones are never added, because their parent in the file
+(`Bip01 Spine00`, `Bip01 Neck1`) is not a bone of the game's skeletons:
+`Bip01 L hipDBS`, `Bip01 R hipDBS`, `Bip01 capeDBS` and `Bip01 pendantDBS`. So
+lanterns hang from `Bip01 Pelvis` for now. `tools/nif_bones.py` shows this.
 
----
+Not wearable, and left out on purpose:
 
-## Bones
+- **Tails** (32 in `cake_v4.2.esp`): there is no tail bone to attach them to.
+- **Argonian scarves** (11 in `Cake_Gear.omwaddon`): the meshes are skinned
+  body-part meshes. Attached to a bone they draw nothing, so they would be worn
+  invisibly.
 
-The DBS bones come from `xbase_anim_dbs.nif` and are simply absent without it,
-so every category also names a vanilla fallback. Attaching to a bone that does
-not exist is a **silent no-show, not an error**, which is why the player script
-probes with `animation.hasBone` before committing and retries once after 0.1s —
-right after a perspective switch the rebuilt skeleton may not be ready yet.
+## Settings
 
-The skeleton setting offers auto-detect (probe and fall back), `dbs` (trust the
-skeleton, skip the probe), and vanilla (pin everything to fallbacks).
+- **NPCs wear accessories** (on): show what other characters wear.
+- **Show in first person** (off): face items clip through the camera.
 
----
+## Cost
 
-## Layout
+Nothing runs per frame. Drawing happens when you put something on, when the
+player model is rebuilt (through AnimRefresh), and when an NPC that wears
+something comes into view. NPCs that wear nothing get no script at all.
 
-```
-CAKE/
-  CAKE.omwscripts
-  README.md
-  HANDOFF.md                             engineering notes and open questions
-  l10n/CAKE/en.yaml
-  scripts/cake/
-    cake_shared.lua                      generated registry: ids, bones, categories
-    cake_global.lua                      the equip/unequip swap (GLOBAL)
-    cake_player.lua                      attachment on the player (PLAYER)
-    cake_npc.lua                         attachment on other actors (NPC)
-    cake_settings.lua                    settings page (MENU)
-    cake_anim.lua                        optional equip gestures, off by default
-  scripts/AnimRefresh/
-    AnimRefresh_v3.lua                   bundled, version-guarded, shared path
-  scripts/SuperSettingsRenderers/
-    SuperSelect3.lua                     bundled verbatim, optional
-  tools/                                 parser, generator, checkers, tests
-```
+## For other mods
 
-`cake_shared.lua` is the only file that names an item id, and it is
-**generated** from the plugins rather than maintained by hand.
+- `I.CAKE.getWorn()` returns `category -> base record id` for the player.
+- `I.CAKE.refresh()` redraws the player's items.
+- After changing an NPC's CAKE items, send
+  `core.sendGlobalEvent('Cake_RefreshNpc', { actor = npc })`.
 
----
+## Development
 
-## Bundled libraries
-
-`AnimRefresh_v3.lua` and `SuperSelect3.lua` ship alongside rather than being
-copied into CAKE's own files, the same way SharedRay is bundled.
-
-`SuperSelect3` provides the dropdown for the skeleton setting. It is **optional**:
-it advertises itself through the session-lifetime `InstalledSettingsRenderers`
-storage section as it loads, and `cake_settings.lua` falls back to the engine's
-built-in `select` renderer when that flag is absent. Deleting
-`scripts/SuperSettingsRenderers/` degrades the dropdown to arrows and changes
-nothing else.
-
-It must load **before** `cake_settings.lua`, which is why the manifest lists it
-first — entries in one `.omwscripts` run in written order. If you also have
-SuperSettingsRenderers installed standalone, delete the bundled folder and its
-manifest line; CAKE will find the standalone copy.
-
----
-
-## Performance
-
-No `onFrame` and no `onUpdate` anywhere in the mod. Nothing polls camera mode
-and nothing polls inventories.
-
-- Perspective changes arrive through `AnimRefresh`, subscribed **only while
-  something is worn**. A player wearing nothing pays a single empty-table check.
-- Equip and unequip arrive as events from the global script.
-- Items leaving the inventory are caught on UI-mode exit (Inventory, Barter,
-  Container, Companion) and on the menus that rebuild the player model (Rest,
-  Travel, Training).
-- NPCs do one inventory walk on `onActive`, covering all eight categories, and
-  nothing after that.
-
----
-
-## Regenerating and testing
+`tools/` is not part of the mod; don't add it as a data directory.
 
 ```
-python3 tools/tes3.py <plugins>       # parse records -> cake_records.json
-python3 tools/gen_cake_shared.py      # -> cake_shared.lua
-python3 tools/luacheck.py   scripts/cake/*.lua
-python3 tools/check_names.py scripts/cake/*.lua
-python3 tools/sweep.py                # cross-reference sweep, see below
-python3 tools/luarun.py scripts/cake/cake_shared.lua tools/test_shared.lua
-python3 tools/luarun.py tools/test_integration.lua
+tools/check_all.sh              # every check below; set LUAJIT, COD3X, MW_DATA to add more
+tools/gen_cake_shared.py        # rebuild scripts/cake/cake_shared.lua from the plugins
+tools/test_integration.lua      # the scripts + real AnimRefresh v6 on a simulated engine
+tools/check_meshes.py           # every worn model exists and is not skinned
+tools/check_manifest.py         # every script in the manifest exists, flags and contexts agree
+tools/nif_bones.py              # which bones dubiousBones.nif adds, and which it cannot
 ```
 
-`luacheck.py` and `luarun.py` drive the system `liblua5.4.so.0` through ctypes,
-so no Lua interpreter needs installing.
-
-`sweep.py` is the one that matters. Syntax checking cannot see a settings key
-nothing reads, a category name that no longer exists, a skeleton option the
-player script does not understand, or an event with no handler — and every one
-of those shipped in the original `globalcake.lua` / `playergear.lua`. The sweep
-cross-references all of them plus l10n keys and orphaned modules.
-
-`test_integration.lua` mocks the OpenMW API and runs the real global, player,
-NPC and anim scripts through equip, swap, conflict, unequip, first-person
-hiding, `AnimRefresh` re-attachment, bone fallback, the single retry, the
-vanilla profile, item loss and the NPC toggle.
+`cake_shared.lua` is generated. A model path that matches no category rule
+fails generation, as does a worn record without its base.

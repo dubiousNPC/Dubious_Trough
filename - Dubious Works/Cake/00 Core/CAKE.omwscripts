@@ -1,0 +1,14 @@
+# CAKE -- Cosmetic Attachment Kit for Equipment
+
+MENU: scripts/cake/cake_settings.lua
+
+GLOBAL: scripts/cake/cake_global.lua
+
+# AnimRefresh v6 is shared with DED, FLOW, WhyWalk, Hookshot Redux and Take a
+# Seat at this same path; whichever copy loads, the newest version publishes
+# the interface. It must come before cake_player.lua, which uses it on load.
+PLAYER: scripts/AnimRefresh/AnimRefresh_v6.lua
+PLAYER: scripts/cake/cake_player.lua
+
+# Not attached to every NPC: cake_global adds it to the ones wearing something.
+CUSTOM: scripts/cake/cake_npc.lua

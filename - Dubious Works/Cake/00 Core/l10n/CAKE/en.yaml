@@ -1,0 +1,10 @@
+settings_modName: "CAKE"
+settings_modDesc: "Cosmetic Attachment Kit for Equipment. Wearable accessories that occupy no equipment slot. Use an accessory to put it on, use it again to take it off."
+
+settings_general: "General"
+
+setting_shownpcs: "NPCs wear accessories"
+setting_shownpcs_desc: "Show the CAKE accessories other characters wear. Turning this off removes them at once; your own are unaffected."
+
+setting_showfirstperson: "Show in first person"
+setting_showfirstperson_desc: "Face-worn accessories clip through the camera in first person, which is why this is off by default."
