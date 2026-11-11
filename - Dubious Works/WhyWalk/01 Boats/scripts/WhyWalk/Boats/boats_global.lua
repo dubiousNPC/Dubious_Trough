@@ -40,22 +40,15 @@ local EV = {
 
 local DEBUG = false
 
--- rotateZ's sign convention is not documented (RESEARCH 3.7). Read it off the
--- transform itself instead of guessing: an object teleported with rotation R
--- reports R:getYaw(), so this is the sign that round-trips.
 local YAW_SIGN = (util.transform.rotateZ(0.5):getYaw() > 0) and 1 or -1
 
 local TWO_PI = 2 * math.pi
 
 local session = nil
 
--- Created activator record per mesh, and the set of those record ids, so a
--- copy is recognised as ours when activated again. Persisted.
 local copyRecordByModel = {}
 local copyRecordIds = {}
 
--- Reported by the pilot's player script, which owns the settings and hears
--- Core WhyWalk's mount events; a global script can read neither.
 local riderMounted = false
 local motionPreferred = true
 
@@ -80,8 +73,6 @@ local function recordOf(object)
     return nil, nil
 end
 
--- A plain nil when the object is not a boat this module may take; otherwise
--- (entry, record, kind, modelKey). `why` explains a refusal.
 local function classify(object)
     local record, kind = recordOf(object)
     if not record then return nil, 'notboat' end
@@ -119,22 +110,6 @@ end
 -- THE COPY
 -- ---------------------------------------------------------------------------
 
--- THE DRAFT NEEDS THE `meshes/` PREFIX. This passed `modelKey` bare, on a note
--- in api-findings saying createRecord adds the prefix itself. It does not, on
--- this build, and the call does not merely store the wrong thing -- it throws:
---
---     Global[.../boats_global.lua] eventHandler[WWBoats_RequestBoard] failed.
---     Lua error: Path should start with 'meshes\'
---       [C]: in function 'createRecordDraft'
---       boats_global.lua:130: in function 'copyRecordFor'
---
--- so boarding failed outright, nine times in one session's log. The check
--- below could never have caught it, because nothing after the throw ran.
---
--- Forward slashes are fine despite the message naming a backslash: Caravans
--- has been spawning its vehicle from 'meshes/' .. mesh since 2026-10-22 and
--- the activator renders. `modelKey` is deliberately kept prefix-free, since
--- it is also the key for db.MODELS lookups.
 local function copyRecordFor(modelKey, displayName)
     local existing = copyRecordByModel[modelKey]
     if existing then return existing end
@@ -165,15 +140,18 @@ end
 -- ---------------------------------------------------------------------------
 -- HULL FROM THE BOUNDING BOX (vessels the database has no measurement for)
 -- ---------------------------------------------------------------------------
--- Horizontal extents depend on how the box is axis-aligned (Core's
--- saddleFromBoundingBox note), so the long side is taken as the length and the
--- short side as the beam: right for a boat at any heading within a few units,
--- conservative at 45 degrees. The draft uses only the vertical extent, which
--- no yaw changes.
 local function hullFromBox(object, waterLevel, modelKey)
     local box = object:getBoundingBox()
     if not box or not box.halfSize or not (box.halfSize.z > 0) then return nil end
     local hx, hy = box.halfSize.x, box.halfSize.y
+    local yaw = object.rotation and object.rotation:getYaw() or 0
+    local c, s = math.abs(math.cos(yaw)), math.abs(math.sin(yaw))
+    local det = c * c - s * s
+    if math.abs(det) > 0.25 then
+        local a = (hx * c - hy * s) / det
+        local b = (hy * c - hx * s) / det
+        if a > 1 and b > 1 then hx, hy = a, b end
+    end
     local hull = {
         bow = math.max(hx, hy), stern = math.max(hx, hy),
         halfBeam = math.min(hx, hy),
@@ -283,11 +261,6 @@ local function board(player, target, motionOn)
     if not cell.hasWater then return refuse(player, 'nowater') end
     local waterLevel = cell.waterLevel or 0
 
-    -- Nil-guarded, like hullFromBox below. getBoundingBox returns nothing for
-    -- an object with no renderable geometry, and indexing `box.halfSize` then
-    -- throws from inside an activation handler. hullFromBox already checked
-    -- for it; this call did not, which made the guard a matter of which line
-    -- the object reached first.
     local box = target:getBoundingBox()
     if not box or not box.halfSize or not box.center then return end
     local reach = T.claimRange + math.max(box.halfSize.x, box.halfSize.y)
@@ -302,8 +275,6 @@ local function board(player, target, motionOn)
     local vessel = db.vessel(entry.vessel)
     local originZ = entry.origin and entry.origin.z or 0
 
-    -- Respect the level designer: a boat already floating within reach of the
-    -- database height keeps the height it was placed at.
     local placedOffset = target.position.z - waterLevel - originZ
     if math.abs(placedOffset - vessel.waterOffset) <= 40 then
         vessel.waterOffset = placedOffset
@@ -319,14 +290,6 @@ local function board(player, target, motionOn)
     end
 
     session = newSession(player, boat, vessel, entry, modelKey, heading, waterLevel, motionOn)
-    -- Boarding runs in an event handler, and the same frame's onUpdate would
-    -- teleport the boat (and read the pilot) again: a copy made by takeOver is
-    -- already mid-teleport, and the engine refuses a second one in that frame
-    -- ("Object is either removed or already in the process of teleporting",
-    -- logged on every boarding of a static in OpenMW 0.52). The pilot's own
-    -- teleport also lands next frame. Nothing to place until then. Keyed on
-    -- the simulation time, which is the same throughout one frame, so only
-    -- THIS frame is skipped however the events and updates interleave.
     session.boardedAt = core.getSimulationTime()
     -- From the TARGET's transform: a copy's own teleport lands next frame.
     local station = pilotStation(session, target.position) + util.vector3(0, 0, 2)
@@ -342,9 +305,6 @@ local function board(player, target, motionOn)
     end
 end
 
--- Leaves the boat level where it last was. Placed from the last pilot position
--- in the boat's own cell, never the pilot's current one: a pilot who left
--- through a door is already in an interior.
 local function endSession(reason, handOff)
     local s = session
     if not s then return end
@@ -391,8 +351,6 @@ local function onPilotState(data)
     if data.motion ~= nil then motionPreferred = data.motion == true end
 end
 
--- Activators come through activation; statics cannot be activated, so the
--- player script raycasts for those and sends REQUEST_BOARD.
 I.Activation.addHandlerForType(types.Activator, function(object, actor)
     if not types.Player.objectIsInstance(actor) then return end
     if session and object == session.boat then
@@ -416,18 +374,6 @@ local function onUpdate(dt)
         s.boardedAt = nil
     end
 
-    -- Routed through endSession rather than clearing the session here.
-    --
-    -- [BUGFIX] This used to set `session = nil` and send LEFT by hand, which
-    -- skipped stopSound. When the BOAT goes invalid that is harmless -- its
-    -- attached sound goes with it -- but this guard also fires when the PLAYER
-    -- goes invalid while the boat is still there, and then a looping hull
-    -- creak played on `{ loop = true }` was left running on an abandoned boat
-    -- with nothing holding its name. Same shape as the looping animation that
-    -- survived a save in Core's build review.
-    --
-    -- endSession guards every step on isValid individually, so it is safe for
-    -- either object being gone, and it also re-places the boat properly.
     if not s.boat:isValid() or not s.player:isValid() then
         return endSession('invalid')
     end
@@ -496,8 +442,6 @@ local function onLoad(data)
     session = newSession(saved.player, saved.boat, vessel, entry, saved.modelKey,
                          saved.heading, saved.waterLevel, saved.motionOn)
     startSound(session)
-    -- The player scripts do not persist a voyage; this re-enters it, after
-    -- their own onLoad has released whatever the save recorded.
     announce(session)
 end
 

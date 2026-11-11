@@ -87,9 +87,6 @@ function M.stepSpeed(speed, throttle, v, dt, cap, capAstern)
     return speed
 end
 
----Fastest speed from which the hull can still stop `distance` away with the
----given brake. The bumper caps speed to this, which is what makes a boat
----slide to a halt at a jetty instead of striking it.
 function M.stoppingCap(distance, brake, margin)
     local room = distance - (margin or 0)
     if room <= 0 then return 0 end
@@ -106,8 +103,6 @@ function M.authority(speed, v)
     return v.pivot + (1 - v.pivot) * way
 end
 
----Advance the yaw rate (rad/s, + to starboard) toward the rudder's demand.
----Going astern the rudder acts the other way, as it does on any boat.
 function M.stepYawRate(yawRate, rudder, speed, v, dt)
     local sense = speed < -1 and -1 or 1
     local target = rudder * v.turnRate * M.authority(speed, v) * sense
@@ -115,9 +110,6 @@ function M.stepYawRate(yawRate, rudder, speed, v, dt)
     return yawRate + (target - yawRate) * k
 end
 
----View-follow steering (Your Own Gondola's model): rudder toward the camera
----yaw, with hysteresis so a near-straight course does not hunt.
----Returns rudder, engaged.
 function M.viewRudder(boatYaw, viewYaw, engaged, t)
     local d = M.angleDiff(boatYaw, viewYaw)
     local mag = abs(d)
@@ -132,15 +124,6 @@ end
 -- ---------------------------------------------------------------------------
 -- DELIVERY -- turning a world velocity into the pilot's movement controls
 -- ---------------------------------------------------------------------------
--- The pilot is moved by the engine, so the boat's velocity has to be phrased
--- as controls relative to where the PILOT faces (mouse-look is free). OpenMW
--- moves the player along the normalised (sideMovement, movement) direction
--- at speed * max(|movement|, |sideMovement|), and doubles analogue values
--- <= 0.5 while walking. Running avoids the doubling, so the mapping is:
---     walking:  factor = speed / (2 * walkSpeed)       (<= 0.5 by construction)
---     running:  factor = speed / runSpeed
--- `gain` is the closed-loop correction (stepGain) for any engine mapping that
--- turns out to differ; 1 when the above holds.
 
 ---@return number movement, number sideMovement, boolean run, number achievable
 function M.controlsFor(vx, vy, pilotYaw, walkSpeed, runSpeed, gain)
@@ -170,8 +153,6 @@ function M.controlsFor(vx, vy, pilotYaw, walkSpeed, runSpeed, gain)
     return f * k, s * k, run, achievable
 end
 
----Closed-loop gain: nudge so the speed achieved matches the speed asked for.
----Frozen while bumping, so a wall does not wind it up.
 function M.stepGain(gain, asked, achieved, dt, t)
     if asked < 20 then return gain end
     local ratio = achieved / asked
@@ -184,8 +165,6 @@ end
 -- MOTION (cosmetic)
 -- ---------------------------------------------------------------------------
 
----Triangle wave in [-1, 1] with the given period: Your Own Gondola's
----"up for 1, down for 2, up for 1".
 function M.triangle(t, period)
     local p = (t % period) / period
     if p < 0.25 then return p * 4 end

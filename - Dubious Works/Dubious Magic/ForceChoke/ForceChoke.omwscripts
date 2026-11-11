@@ -10,4 +10,12 @@ PLAYER: scripts/SharedRay/SharedRay_v2.lua
 
 GLOBAL: scripts/forcechoke/global.lua
 PLAYER: scripts/forcechoke/player.lua
-NPC CREATURE: scripts/forcechoke/target.lua
+# CUSTOM, not NPC: target.lua is attached by global.lua on grab and removed
+# again once the actor has finished with its pose. It therefore exists only on
+# actors actually being choked -- usually none, at most one -- instead of on
+# every NPC and creature in the cell, each with a per-frame onUpdate.
+#
+# CUSTOM is required, not merely tidier: addScript refuses a path that is not
+# declared with this flag, and removeScript cannot remove an auto-started
+# script, so an NPC: line here would attach fine and then never detach.
+CUSTOM: scripts/forcechoke/target.lua

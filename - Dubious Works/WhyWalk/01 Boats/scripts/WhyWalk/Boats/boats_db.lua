@@ -226,14 +226,6 @@ M.PROVENANCE = {
 -- ---------------------------------------------------------------------------
 -- MODELS -- which meshes are which vessel, and how they face
 -- ---------------------------------------------------------------------------
--- Keyed by normalizeModel(): lower case, forward slashes, no leading meshes/.
--- yawOffset: object yaw = bow heading + yawOffset. Vanilla-orientation meshes
--- have the bow at -Y (Stormrider: object angle = travel - 180), Immersive
--- Travel's _rot copies have it at +Y; the _rot meshes are the vanilla ones
--- turned 180 degrees about the origin (KS_SR_Ship.nif vs Ex_DE_ship_rot.nif
--- negate exactly).
--- origin: where the mesh origin sits in the vessel frame; nil = at the
--- vessel origin.
 M.MODELS = {
     ['x/ex_de_rowboat.nif']          = { vessel = 'rowboat',        yawOffset = PI },
     ['x/ex_gondola_01.nif']          = { vessel = 'gondola',        yawOffset = PI },
@@ -250,9 +242,6 @@ M.MODELS = {
 -- ---------------------------------------------------------------------------
 -- RECORDS -- activators decided by id, before any model match
 -- ---------------------------------------------------------------------------
--- claim = true: take it over even though it carries an MWScript.
--- claim = false: never touch it; another mod drives it.
--- Ids are lower case (Object.recordId always is).
 local IMMERSIVE_TRAVEL = 'an Immersive Travel mount; that mod moves it along its routes'
 local STORMRIDER = 'Stormrider drives this boat from its own scripts and globals'
 
@@ -330,8 +319,6 @@ for key, entry in pairs(M.MODELS) do
     end
 end
 
----Model entry for a record's model path; exact relative path first, then a
----unique basename (another mod may ship the same mesh in a different folder).
 function M.modelEntry(path)
     local p = M.normalizeModel(path)
     if not p then return nil end
@@ -349,8 +336,6 @@ end
 
 local BOATLIKE = { 'boat', 'gondola', 'longboat', 'ship', 'raft', 'canoe', 'skiff' }
 
----True for an unlisted mesh that is probably a boat, so the player can be told
----which path to add to MODELS.
 function M.isBoatLikeModel(path)
     local p = M.normalizeModel(path)
     if not p or M.modelEntry(p) then return false end
@@ -368,9 +353,6 @@ local function copy(t)
     return out
 end
 
----A FRESH copy of a vessel profile. The session writes measured hull values
----into it; handing out the module table would leak them into every later boat
----(Core's profileFor learned this the hard way).
 function M.vessel(vesselId)
     local v = vesselId and M.VESSELS[vesselId]
     if not v then return nil end

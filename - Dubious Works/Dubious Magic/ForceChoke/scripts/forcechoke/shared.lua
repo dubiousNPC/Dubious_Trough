@@ -5,13 +5,6 @@
     Pure data. No engine handlers, no interface, no side effects, and NO
     requires: global.lua, player.lua and target.lua all load this file, so
     it must be legal in every one of those contexts.
-
-    It used to require openmw.animation for the priority/blend-mask enums.
-    That module exists only in local and player scripts, so global.lua died
-    at startup with "module not found: openmw.animation" and the whole mod
-    was inert. The header said `any`, which is not a Cod3x context, so the
-    context checker never saw the conflict. Anything that needs
-    openmw.animation lives in poses.lua, which only the actor scripts load.
 ]]--
 
 local M = {}
@@ -19,23 +12,14 @@ local M = {}
 -- ============================================================
 -- RECORD IDS
 -- ============================================================
--- Fixed, because load.lua declares them via openmw.content. Nothing is
--- generated at runtime and nothing needs to be told what its id turned out
--- to be.
 M.EFFECT_ID     = "forcechoke"
 M.SPELL_ID      = "forcechoke_spell"
 M.HOLD_SPELL_ID = "forcechoke_hold"
 
--- The skill a successful cast trains. forcechoke is templated from paralyze,
--- which is ALTERATION. An earlier revision asserted Mysticism here and would
--- have filtered out every real cast.
-M.SCHOOL = "alteration"
 
 -- ============================================================
 -- ANIMATION GROUPS
 -- ============================================================
--- Verified against the shipped xForce.kf and Force.nif. Both files agree and
--- all four groups below define Start / Loop Start / Loop Stop / Stop.
 M.GROUPS = {
     HOLD = "fchokeidle",   -- target: suspended and choking
     FLY  = "fchokefly",    -- target: in flight after a throw
@@ -46,22 +30,6 @@ M.GROUPS = {
 -- ============================================================
 -- TEXT KEYS
 -- ============================================================
--- START_KEY / STOP_KEY are "start" / "stop" for every group, NOT
--- "loop start" / "loop stop".
---
--- This was wrong in previous revisions and is worth stating plainly, because
--- the mistake is invisible in play -- the pose appears, so it looks correct.
--- startKey/stopKey delimit the whole segment the engine plays. The loop
--- points are found by the engine from the clip's own "loop start"/"loop stop"
--- keys once loops is non-zero. Passing the loop keys as the segment bounds
--- means the intro and outro frames are never played at all, and a group asked
--- to stop at "loop stop" is cut at the loop boundary rather than the clip's
--- real end.
---
--- Because it is now one pair for every group, there is no per-group table.
--- The previous per-group STOP_KEY table existed to special-case fchokedrop,
--- which in an older asset build genuinely lacked a "Stop" key. The current
--- asset has it, so the special case is gone with it.
 M.START_KEY = "start"
 M.STOP_KEY  = "stop"
 
@@ -85,14 +53,24 @@ M.TUNING = {
     -- Throw (a second successful cast)
     throwFatigueDamage  = 90,   -- on landing, instead of dropFatigueDamage
     throwHealthDamage   = 25,
-    throwMagnitude      = 42,   -- initial speed
-    throwVerticalFactor = 0.55, -- upward bias added to the away-vector
-    throwFriction       = 0.5,
-    throwGravity        = 2.0,
-    throwMaxFallSpeed   = 120,
-    throwMaxBounces     = 3,
-    throwRayRadius      = 45,
-    throwMaxSeconds     = 6,    -- hard cap so a stuck actor always lands
+    throwSpeed          = 1260, -- u/s   (was 42/step)
+     throwVerticalFactor = 0.55, -- upward bias added to the away-vector
+     throwFriction       = 450,  -- u/s^2 horizontal drag (was 0.5/step; x30 for /s, x30 again for /s^2)
+     throwGravity        = 1800, -- u/s^2 (was 2.0/step; an acceleration scales by 30^2)
+     throwMaxFallSpeed   = 3600, -- u/s   (was 120/step)
+     throwSpinDecay      = 9,    -- rad/s^2 (was 0.01/step, x30^2)
+     throwRestSpeed      = 150,  -- u/s below which a grounded actor has landed
+     throwMaxBounces     = 3,
+     throwRayRadius      = 45,
+    -- Detach
+    dropSettleGrace     = 0.15, -- s; isPlaying is false until the engine has
+                                -- actually started the group
+    dropSettleTimeout   = 4,    -- s; detach anyway if the clip never reports
+                                -- finishing, so a script can never be stuck on
+
+    throwMaxStep        = 0.1,  -- s; integration steps are clamped to this so
+                                -- a long stall cannot teleport an actor
+                                -- through geometry in one jump
 }
 
 return M

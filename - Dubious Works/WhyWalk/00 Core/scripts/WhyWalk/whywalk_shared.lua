@@ -56,28 +56,12 @@ local S = M.STATE
 -- ---------------------------------------------------------------------------
 -- RIDER ANIMATION GROUPS
 -- ---------------------------------------------------------------------------
--- Value is a group name, a LIST (pick one at random on state entry), or
--- `false` meaning "this mount has no such state, do NOT fall back to the
--- generic clip". `nil` means unspecified and DOES fall back.
--- The horse set, declared on its own because it is also the FALLBACK. These
--- five groups are the only straddling rider clips this package actually ships
--- (xHorseDBSRide2.kf, all six skeleton folders), which is what makes them the
--- only honest thing to fall back TO.
 local HORSE_ANIM = {
     [S.IDLE] = "rideh1", [S.WALK] = "rideh2", [S.GALLOP] = "rideh3",
     [S.REVERSE] = "rideh4", [S.JUMP] = "rideh5",
 }
 
 M.RIDE_ANIM = {
-    -- HORSE and GUAR are verified against the shipped .kf text keys, not just
-    -- against the mods that supply them:
-    --   xHorseDBSRide2.kf  -> rideh1 rideh2 rideh3 rideh4 rideh5
-    --   xGuarDBSRide1.kf   -> rideg1 rideg2 rideg3 rideg4 rideg5
-    -- present in all three skeleton variants (xbase_anim, .1st, kna), each
-    -- with matching `: start` / `: stop` keys. Everything below is still a
-    -- placeholder: the group names are structurally correct but no .kf in this
-    -- package defines them, so playBlended will find nothing and the fallback
-    -- set is what actually plays.
     [T.HORSE] = HORSE_ANIM,   -- VERIFIED: Devilish Horse Riding
     [T.GUAR] = {    -- VERIFIED: Devilish Guar Riding
         [S.IDLE] = "rideg1", [S.WALK] = "rideg2", [S.GALLOP] = "rideg3",
@@ -117,35 +101,11 @@ M.RIDE_ANIM = {
     },
 }
 
--- THE FALLBACK IS THE HORSE SET, and it used to be five group names that did
--- not exist.
---
--- It was ride_generic_idle / _walk / _gallop / _reverse / _jump -- structurally
--- correct placeholders that no .kf in this package, or any other, defines.
--- playBlended on a group the skeleton does not have is a SILENT no-op
--- (RESEARCH 3.2; it is the first thing tools/check_anims.py's own header
--- warns about): no error, no clip, and the actor keeps whatever pose it had.
---
--- So every creature the type table does not recognise got a fallback that
--- resolved to a name, passed the `if not group then return end` check, was
--- handed to playBlendedAnimation, and played nothing. That is the reported
--- "no animation on unusual creatures", and it was silent by construction.
---
--- The horse set is the only straddling rider clip this package ships, so it
--- is the only thing a fallback can honestly point at. ALIASED rather than
--- copied, deliberately: two tables of the same five names would drift, and
--- adding a variant list to the horse set should reach the fallback too.
---
--- READ ONLY. Nothing may mutate RIDE_ANIM or FALLBACK_ANIM -- they are the
--- same table, and profileFor already taught this codebase what handing out a
--- shared module table does when somebody writes to it.
 M.FALLBACK_ANIM = HORSE_ANIM
 
 -- ---------------------------------------------------------------------------
 -- CREATURE -> MOUNT TYPE
 -- ---------------------------------------------------------------------------
--- Exact record IDs win over patterns: record names lie often enough that
--- substrings alone misfile mounts. Keys lowercase (Object.recordId always is).
 M.MOUNT_TYPE_BY_RECORD = {
     ["ttd_horseride"]        = T.HORSE,      -- VERIFIED: Horse config HORSE_ID
     ["detd_guarride1"]       = T.GUAR,       -- VERIFIED: Guar config GUAR_ID
@@ -161,9 +121,6 @@ M.MOUNT_TYPE_BY_RECORD = {
     ["placeholder_netchride"]   = T.NETCH,         -- PLACEHOLDER
 }
 
--- Ordered fallback for creatures not listed above. ORDER IS SIGNIFICANT where
--- substrings nest ("siltstrider" contains "strider"; "strident" does not, but
--- keeping the long forms first is the safe habit). First match wins.
 M.MOUNT_TYPE_PATTERNS = {
     { mount = T.SILT_STRIDER, patterns = { "siltstrider", "silt_strider" } },
     { mount = T.SKYRENDER,    patterns = { "skyrender", "skybug", "sky_render" } },
@@ -176,16 +133,6 @@ M.MOUNT_TYPE_PATTERNS = {
     { mount = T.HORSE,        patterns = { "horse", "pony", "steed" } },
 }
 
--- Never mountable, even under free ride.
--- The CODE-level exclusion list: creatures this mod will never make
--- rideable, whatever the player's settings say. Lower case, matched against
--- recordId.
---
--- Deliberately almost empty. The entry below is a placeholder and names
--- nothing real -- there is no vanilla creature that must be excluded, and
--- guessing at other mods' quest creatures would be worse than useless. The
--- list players actually need is BLACKLIST_IDS in the settings menu, which
--- isBlacklisted consults alongside this one.
 M.BLACKLIST = {
     ["placeholder_questcreature_01"] = true,
 }
@@ -193,36 +140,6 @@ M.BLACKLIST = {
 -- ---------------------------------------------------------------------------
 -- PER-TYPE TUNING
 -- ---------------------------------------------------------------------------
--- saddle: where the rider sits relative to the mount, in mount-local axes.
---         ONE pose, both perspectives, matching Devilish Guar Riding's
---         PLAYER_OFFSET { right = 0, forward = -10, z = 130 } exactly.
---
---         A `saddleFP` first-person override used to live here, lowering the
---         body to ~0.6x height on the theory that the first person camera
---         sits at the head so the body must drop to bring the view down. It
---         was removed after in-game testing: it is the direct cause of the
---         reported "position is too low", and it was never justified by the
---         reference mod. DGR uses a SINGLE offset for both views and is the
---         one that feels right.
---
---         First-person framing is the CAMERA's job here, not the body's.
---         ridingAnim.lua already exposes FP_OFFSET_V / FP_OFFSET_H for it,
---         defaulting to 0. Adjust those if the view needs moving; moving the
---         body instead desynchronises what third person shows from where the
---         rider actually is.
--- turnRate: radians/sec at full steer. Scaled by dt and written to
---         controls.yawChange by whywalk_mount.lua. This is the one movement
---         number still set here, because turn rate is the only part of riding
---         the engine does not already have an opinion about.
--- flying: marks mounts whose locomotion is airborne. Informational now -- the
---         engine picks the locomotion type from the creature's own record.
---
--- WHAT USED TO BE HERE: speed, walkMul, revMul and a jump table (up, gravity,
--- maxFall). All four are gone with the controls port. Speed is the creature's
--- own Speed stat, scaled by the throttle magnitude passed to
--- controls.movement; the jump is the engine's. Shipping the numbers anyway
--- would mean four fields per mount that nothing reads and that would quietly
--- drift away from the behaviour they appear to describe.
 local DEFAULT_PROFILE = {
     saddle   = { forward = -10, right = 0, up = 130 },
     turnRate = 2.6,
@@ -239,12 +156,6 @@ M.PROFILE = {
     [T.KAGOUTI]  = { saddle = { forward = -10, right = 0, up = 120 },  turnRate = 2.8 },
     [T.SKYRENDER]= { saddle = { forward = 0,   right = 0, up = 90  },  turnRate = 1.8, flying = true },
     [T.NETCH]    = { saddle = { forward = 0,   right = 0, up = 200 },  turnRate = 1.2, flying = true },
-    -- MEASURED, not estimated: from Immersive Travel's a_siltstrider.json,
-    -- whose front passenger slot sits at (0, 80, 1223) relative to the "Body"
-    -- niNode. The earlier 1300 here was a guess off a different mod.
-    -- Caveat: that data defines THREE passenger slots spread +/-81 on X, plus
-    -- a separate guide slot. PROFILE can only express one saddle, so this is
-    -- the front seat only -- see SILTSTRIDER_NOTES.md, SCHEMA GAP.
     [T.SILT_STRIDER] = {
         saddle = { forward = 80, right = 0, up = 1223 }, turnRate = 0.6,
     },
@@ -256,69 +167,23 @@ M.PROFILE = {
 M.TUNING = {
     useFallbackAnim = true,
 
-    -- Free ride: mount any creature with no script added to it. No steering --
-    -- the creature keeps its own AI and the rider goes along. Cheapest mode
-    -- here: no control bridge, no mount script, no movement integration.
     freeRideEnabled = true,
     freeRideRange   = 400,
 
-    -- Levitation removes rider gravity so it stops fighting placement between
-    -- pin updates. It does NOT move the player -- nothing in the OpenMW Lua
-    -- API parents one object to another, so the pin is still required.
-    --
-    -- Applied by modifying the Levitate effect magnitude directly (see
-    -- addLevitation in whywalk_player.lua), so there is no spell record and
-    -- therefore no id to configure. The former levitationSpellId was a
-    -- placeholder that could never resolve; it has been removed rather than
-    -- left as a field that does nothing.
     useLevitation      = true,
 
-    -- Preferred rider-placement backend.
-    --   "mwscript" : Lua writes globals, a compiled MWScript does SetPos.
-    --                Needs the ESP. Devilish uses this and warns that a
-    --                per-frame Lua player teleport loop triggers an engine bug
-    --                around nearby NPCs.
-    --   "teleport" : pure Lua, no ESP needed. Works, but inherits that bug.
     riderBackend = "mwscript",
 
-    -- MWScript global variable names the bridge writes.
-    -- MWScript global variable names the bridge writes. `angle` is in DEGREES
-    -- (SetAngle takes degrees) and the MWScript must gate applying it on
-    -- PCGet3rdPerson -- see placeRiderMWScript in whywalk_global.lua.
     mwGlobals = {
         active = "whywalk_active",
         x = "whywalk_x", y = "whywalk_y", z = "whywalk_z",
         yawDelta = "whywalk_yawdelta",
     },
 
-    -- Suppress the ridden creature's own AI while it is being steered.
-    --
-    -- THIS IS THE ONE SWITCH TO TRY FIRST IF A MOUNT WILL NOT MOVE AT ALL.
-    --
-    -- The controls port rests on an assumption that could not be tested
-    -- outside the game: that self:enableAI(false) disables the AI DECISION
-    -- layer only, leaving the character controller free to act on controls
-    -- written by script. Cod3x's wording supports it -- "Enables or disables
-    -- standard AI" -- and it is the only way to stop the creature's own AI
-    -- fighting every steering input.
-    --
-    -- What the two reference mods prove, separately and not together:
-    --   * p37z writes controls on a creature and never disables AI, so
-    --     controls demonstrably work with AI ENABLED.
-    --   * Devilish Guar Riding calls enableAI(false), but teleports rather
-    --     than driving, so it proves nothing about controls.
-    --
-    -- So if the mount stands still with the controls being written, set this
-    -- to false. Steering will work; the creature's AI will also be free to
-    -- wander, which looks like the mount drifting or turning on its own. That
-    -- combination identifies the cause immediately, which a silent failure
-    -- would not.
     suppressMountAI = true,
 
     dismountClearance = 115,   -- sideways offset when stepping off
     maxRiderDrift     = 700,   -- hard resync distance
-    -- groundProbeUp is gone with groundZ. Nothing probes the ground any more;
-    -- the engine does.
 }
 
 -- ---------------------------------------------------------------------------
@@ -348,17 +213,6 @@ function M.getMountType(recordId)
     return result or nil
 end
 
----Is this creature excluded from being ridden?
----
----Two lists, both consulted. M.BLACKLIST below is the CODE-level one, for a
----mod author shipping an exclusion with the mod. `extra` is the PLAYER's own,
----from the BLACKLIST_IDS setting -- a set of lower-cased record ids, which is
----the shape the textSet renderer stores, so it is passed straight in with no
----conversion.
----
----`extra` is a parameter rather than something this file reads, because a
----setting lives in player storage and this file requires no openmw module at
----all -- the global script could not read it even if it wanted to.
 ---@param recordId string|nil
 ---@param extra table|nil set of lower-cased ids, e.g. { ["guar"] = true }
 function M.isBlacklisted(recordId, extra)
@@ -366,9 +220,6 @@ function M.isBlacklisted(recordId, extra)
     local id = recordId:lower()
     if M.BLACKLIST[id] == true then return true end
     if extra ~= nil and extra[id] == true then return true end
-    -- The compiled profile's verdict, for the 917 records it covers. A live
-    -- record check (below) covers everything else, including creatures added
-    -- by mods this profile has never seen.
     local known = creatures.get(id)
     return known ~= nil and known.ride == false
 end
@@ -376,20 +227,6 @@ end
 -- ---------------------------------------------------------------------------
 -- BIPEDS AND WEAPON CARRIERS ARE NOT MOUNTS
 -- ---------------------------------------------------------------------------
--- A biped takes its animation from the NPC rig: it has no mount cycle, and
--- seating a rider on one produces a person standing inside another person. A
--- weapon carrier has a `Weapon Bone` and is built to fight, not to be sat on.
--- Both are flags on the CREA record, so this is the record's own verdict
--- rather than a judgement about the model.
---
--- 161 of the 917 compiled records are barred this way: 112 bipeds and 160
--- weapon carriers, overlapping in 111.
---
--- TWO SOURCES, DELIBERATELY. The compiled table answers instantly for
--- everything shipped by Morrowind, Tribunal, Bloodmoon, Tamriel Data and
--- OAAB. For anything else -- and a riding mod's own mount record is always
--- "anything else" -- the live record carries `isBiped` and `canUseWeapons`,
--- so a mod-added biped is barred just as firmly without being in the table.
 --
 ---@param recordId string|nil
 ---@param record table|nil the live CreatureRecord, when the caller has one
@@ -406,13 +243,6 @@ function M.barredFromRiding(recordId, record)
     return false, nil
 end
 
----Where the rider sits on a creature the compiled profile knows, or nil.
----
----PROFILE WINS OVER THIS. Its entries were measured from the riding mods'
----own configs; this is derived from the collision box the engine builds, and
----the generator's header shows it landing within 12% of each measured value.
----Good enough for a creature nobody has tuned, not good enough to overrule
----one somebody has.
 ---@param recordId string|nil
 ---@return table|nil saddle `{forward, right, up}`
 function M.saddleFromProfile(recordId)
@@ -421,18 +251,6 @@ function M.saddleFromProfile(recordId)
     return { forward = 0, right = 0, up = known.up }
 end
 
--- ALWAYS returns a FRESH table, including on the fallback path.
---
--- It used to `return DEFAULT_PROFILE` directly, which handed out the shared
--- module-level table by reference. That was harmless only as long as nobody
--- wrote to the result -- and whywalk_global now does exactly that, replacing
--- `profile.saddle` with one derived from an unknown creature's bounding box.
--- With the old form, riding one unrecognised creature would have rewritten the
--- default saddle for every later ride in the session: mount a silt strider
--- once and every subsequent unknown mount seats its rider 1000 units in the
--- air.
---
--- Copying costs one table per mount, which happens on a key press.
 function M.profileFor(mountType)
     local p = mountType and M.PROFILE[mountType]
     if not p then
@@ -446,17 +264,6 @@ function M.profileFor(mountType)
             flying   = DEFAULT_PROFILE.flying,
         }
     end
-    -- Fill gaps from the default rather than requiring every profile to spell
-    -- out every field.
-    --
-    -- speed / walkMul / revMul / jump are deliberately NOT carried any more.
-    -- The engine owns movement since the controls port: a creature's speed is
-    -- its own Speed stat and its jump is the engine's jump. Keeping the fields
-    -- would mean shipping four numbers that nothing reads -- see
-    -- PROFILE's own note.
-    -- The saddle is copied too, for the same reason: PROFILE's tables are
-    -- module-level and a caller that adjusts one would change it for every
-    -- future mount of that type.
     local sd = p.saddle or DEFAULT_PROFILE.saddle
     return {
         saddle   = { forward = sd.forward, right = sd.right, up = sd.up },
@@ -468,69 +275,24 @@ end
 -- ---------------------------------------------------------------------------
 -- SADDLE FROM THE BOUNDING BOX
 -- ---------------------------------------------------------------------------
--- For a creature PROFILE has never heard of. Every mount added by another mod
--- lands here, and the alternative is dropping the rider at the creature's
--- origin -- which for a quadruped is ground level between its feet.
---
--- WHAT IS SAFE TO READ, AND WHAT IS NOT
---
--- Object:getBoundingBox() returns a util.Box with `center`, `halfSize`,
--- `transform` and `vertices`. Cod3x documents `vertices` as "taking rotation
--- into account", which means the rotation lives in `transform` and `halfSize`
--- is therefore in the BODY's own axes, not the world's.
---
--- That reading matters for only one of the two numbers wanted here, so this
--- function is built to be correct either way:
---
---   * VERTICAL is taken from halfSize.z, which is yaw-invariant under BOTH
---     readings -- creatures rotate about Z only, so no amount of turning
---     changes the box's vertical extent. This is the number that decides
---     whether the rider sits on the creature or inside it, and it is the one
---     that can be trusted.
---
---   * FORWARD is left at zero rather than derived from halfSize.y. Under the
---     body-axes reading halfSize.y is half the body length; under the other it
---     is a yaw-dependent mix of length and width, and at 45 degrees there is
---     no way to separate them. Zero is not a cop-out: the eight measured
---     profiles use forward offsets of -6 to -12 units on bodies 100+ units
---     long, so sitting at the box's centre is within a few units of every
---     hand-tuned value in the table.
---
--- The vertical fraction is the one judgement call. A quadruped's bounding box
--- top is its head or its dorsal fin, not its back, so the saddle sits below
--- the top of the box. 0.72 of the half-height above centre reproduces the
--- guar's measured up = 130 for a body whose box is about 90 units to the
--- shoulder -- but it IS a fit to one animal, which is why the derived value is
--- printed once per new creature. Read it out of the log and promote it into
--- PROFILE to stop guessing.
 local SADDLE_TOP_FRACTION = 0.72
 
 local reportedBoxes = {}
 
----Derive a saddle offset for a creature with no profile entry.
 ---@param mount any a creature object (any context -- getBoundingBox is on Object)
 ---@return table|nil saddle `{forward, right, up}`, or nil if the box is unusable
 function M.saddleFromBoundingBox(mount)
     if not mount then return nil end
 
     local box = mount:getBoundingBox()
-    -- A box with no vertical extent means the model failed to load or has no
-    -- geometry. Guessing an offset from it would put the rider at the
-    -- creature's feet with no indication why, so refuse and let the caller
-    -- fall back to the default profile.
     if not box or not box.halfSize or not box.center then return nil end
     if not (box.halfSize.z > 0) then return nil end
 
-    -- center is world-space; the offset wanted is relative to the object's
-    -- own origin, which for a creature sits at ground level.
     local centreAboveOrigin = box.center.z - mount.position.z
     local up = centreAboveOrigin + box.halfSize.z * SADDLE_TOP_FRACTION
 
     local saddle = { forward = 0, right = 0, up = up }
 
-    -- Once per record, not per mount and not per frame. This is the only way
-    -- the real number ever reaches a human, and a creature ridden repeatedly
-    -- should not reprint it.
     local id = mount.recordId
     if id and not reportedBoxes[id] then
         reportedBoxes[id] = true
@@ -546,30 +308,6 @@ function M.saddleFromBoundingBox(mount)
     return saddle
 end
 
--- Resolve one state to a concrete group name the skeleton can actually play,
--- or nil when the mount genuinely has no clip for it.
---
--- `hasGroup` IS THE POINT OF THIS FUNCTION'S SECOND FIX.
---
--- Repointing FALLBACK_ANIM at the horse set only helps a creature the type
--- table does not recognise. Six types it DOES recognise -- boar, nix,
--- strident, kagouti, skyrender, netch -- carry placeholder group names of
--- their own (rideb1, riden1, rides1, ridek1, ridefly1, ridenetch1), and
--- because a set WAS found for them, the old per-state fallback never fired:
--- it only triggered on a missing table KEY, never on a group the skeleton
--- does not define. Those six played nothing for the same silent reason, and
--- repointing the fallback alone would not have fixed one of them.
---
--- Testing each candidate against the skeleton is the only thing that can tell
--- "this mount has no clip" from "this name is a placeholder". The pattern is
--- already in this file -- resolveVesselGroup takes an injected hasGroup for
--- exactly this reason -- so this is that pattern applied to the rider.
---
--- Injected, not required: this file pulls in no openmw module, which is what
--- lets global, player and local scripts all share it.
---
--- `rng` is injected for the same purity reason (math.random by default).
---
 ---@param mountType string|nil
 ---@param state string
 ---@param rng function|nil
@@ -579,14 +317,8 @@ end
 function M.resolveAnim(mountType, state, rng, hasGroup)
     local set = mountType and M.RIDE_ANIM[mountType]
 
-    -- An explicit `false` means THIS MOUNT HAS NO SUCH STATE, and it outranks
-    -- every fallback: a netch has no reverse and no jump, and handing it the
-    -- horse's would be worse than handing it nothing.
     if set and set[state] == false then return nil end
 
-    -- One state's value -> a playable group. Accepts a single name or a
-    -- variant list, and with hasGroup keeps only the names that exist before
-    -- choosing between them, so a half-resourced variant list still works.
     local function pick(value)
         if value == nil or value == false then return nil end
         local list = type(value) == "table" and value or { value }
@@ -611,8 +343,6 @@ function M.resolveAnim(mountType, state, rng, hasGroup)
     if group then return group end
 
     if not M.TUNING.useFallbackAnim then return nil end
-    -- FALLBACK_ANIM is HORSE_ANIM, so this is a no-op for a horse and the
-    -- reason a boar now straddles like one instead of standing in bind pose.
     return pick(M.FALLBACK_ANIM[state])
 end
 
@@ -633,15 +363,6 @@ end
 -- ---------------------------------------------------------------------------
 -- VESSEL STANCES (WhyWalk Boats)
 -- ---------------------------------------------------------------------------
--- The pilot's pose aboard a boat. Played by ridingAnim.lua on
--- WhyWalk_AnimVesselStart / _AnimVesselHelm / _AnimVesselStop, which the
--- Boats module sends. Same shape as Take a Seat's and ErnGlider's _shared
--- tables: group names, key candidates, a validated stance table, and a layer
--- profile built from the injected animation module.
-
--- xGondola1.kf (all six skeleton folders). Each group is start, loop start,
--- loop stop, stop. The loop keys were authored as "godola1" and renamed by
--- tools/fix_textkeys.py; tools/check_anims.py now rejects a split group.
 M.VESSEL_GROUP = {
     GONDOLA       = "gondola1",   -- poling, straight ahead
     GONDOLA_RIGHT = "gondolar",   -- poling, turning to starboard
@@ -656,13 +377,6 @@ M.VESSEL_GROUP = {
     --    13.733-16.333  rowingl      port oar              loop 14.500-15.833
     --    16.667-19.300  rowslow      pulling ahead, gently loop 17.467-18.800
     --
-    -- rowingl shipped MISNAMED: both turn segments were called `rowingr`, so
-    -- the group had two start keys, only one segment was reachable, and the
-    -- port stroke had no name at all. Renamed in place with
-    -- tools/fix_textkeys.py rowingr rowingl --from 13.72 --to 16.40, and
-    -- tools/check_anims.py now reports a group declared twice -- it used to
-    -- collect keys into a set, which hid this exactly as the set hid nothing
-    -- about the godola1 split. Fix the .blend export too.
     ROW_IDLE      = "rowingidle",
     ROW_STROKE    = "rowing1",
     ROW_SLOW      = "rowslow",
@@ -671,9 +385,6 @@ M.VESSEL_GROUP = {
 }
 local VG = M.VESSEL_GROUP
 
--- Tried in order per group; the first pair the clip actually has is used
--- (animation.getTextKeyTime). "loop start" first, so the pose starts inside
--- its loop rather than replaying the lead-in on every turn change.
 M.VESSEL_KEY_CANDIDATES = {
     { start = "loop start", stop = "loop stop" },
     { start = "start",      stop = "stop" },
@@ -699,8 +410,6 @@ local VESSEL_STANCE_BY_NAME = {
         base = { "idle" },
     },
 
-    -- Floor sitting where an animation pack provides it, else standing.
-    -- "vasittingfloor" is not vanilla (Rideable Silt Striders plays it).
     sit = {
         base = { "vasittingfloor", "idle" },
     },
@@ -708,18 +417,6 @@ local VESSEL_STANCE_BY_NAME = {
     -- -----------------------------------------------------------------------
     -- RIDING AS A PASSENGER
     -- -----------------------------------------------------------------------
-    -- Carried on something somebody else is driving: a silt strider's bench.
-    -- Nothing to steer, so `base` is the whole stance.
-    --
-    -- rasit2 comes from the xRAsit1 animation pack, which declares rasit1-8,
-    -- rasitup1 and rasitf/f1/f2 in xdbsRAsitting1.kf across all six skeleton
-    -- folders. That pack is NOT a dependency, so the list falls through to
-    -- the floor sit and then to vanilla idle; `resolveVesselGroup` filters on
-    -- animation.hasGroup before choosing, which matters because playBlended
-    -- on a group the skeleton lacks is a silent no-op rather than an error.
-    --
-    -- A LIST and not a bare name for the same reason `sit` is one: the group
-    -- that reads best is the one from a pack that may not be installed.
     passenger = {
         base = { "rasit2", "vasittingfloor", "idle" },
     },
@@ -727,25 +424,6 @@ local VESSEL_STANCE_BY_NAME = {
     -- -----------------------------------------------------------------------
     -- ROWING
     -- -----------------------------------------------------------------------
-    -- Oared craft: the pilot pulls on the oars rather than poling or steering.
-    -- Group names are the ones xRowing1.kf actually declares, which are NOT
-    -- the names this block reserved while it was a stub (rowidle / rowstroke /
-    -- rowl / rowr) -- the clip calls them rowingidle / rowing1 / rowingl /
-    -- rowingr, plus a fifth the stub did not anticipate.
-    --
-    -- NO `back`. The clip has no backing-water stroke, and the nearest thing
-    -- to one would be playing a forward stroke while the boat slides astern --
-    -- the same mismatch as a creature playing walkforward while moving
-    -- backwards, which this project has twice treated as a bug. Backing
-    -- therefore falls through to base: oars shipped, drifting astern, which is
-    -- how a rowboat usually goes backwards anyway.
-    --
-    -- `slow` is what became of the stub's `paced = true`. The idea was that
-    -- stroke rate should follow boat speed; the clip supplies that as a second,
-    -- gentler stroke rather than as a playback-rate change, so it is a stance
-    -- field and the helm event carries a speed band. Two groups is coarser
-    -- than scaling `speed`, but it is the animator's own timing in both, which
-    -- scaling is not.
     rowing = {
         base   = VG.ROW_IDLE,
         stroke = VG.ROW_STROKE,
@@ -790,29 +468,9 @@ end
 M.VESSEL_STANCE = validateVesselStances(VESSEL_STANCE_BY_NAME)
 
 M.VESSEL_TUNING = {
-    -- Minimum seconds a pose is held before switching to another, so a
-    -- tapped rudder does not flicker between loops (ErnGlider's minPoseTime).
     minPoseTime = 0.3,
 }
 
----Vessel layer: the legs hold the pose while the engine walks the pilot across
----the water; the upper body stays below Weapon, Block, Knockdown and Torch, so
----fighting, casting and a raised torch still read.
----
----This was uniform PRIORITY.Hit, which is exactly the tuple the engine plays a
----hit reaction with (character.cpp:448, :453). A uniform priority is DELETED by
----any animation sharing it, not merely outranked (animation.cpp:905-911), so
----taking a hit on a boat removed the vessel pose outright.
----
----Splitting the legs to Weapon fixes that and is arbitration-neutral except
----against a hit: nothing else competes at Weapon on LowerBody, and the legs
----holding through a hit is what "above Movement" was already aiming at. The
----upper body stays at Hit, so Animation::upperBodyReady() is unchanged.
----
----Not Scripted -- but note the old note's reason was wrong: Scripted does not
----pause other animations. That comes from mPlayScriptedOnly, which the engine
----sets only from the MWScript anim queue (character.cpp:1951).
----@param anim any the openmw.animation module, injected so this file requires nothing
 function M.buildVesselLayer(anim)
     local BG, P = anim.BONE_GROUP, anim.PRIORITY
     return {
@@ -826,12 +484,6 @@ function M.buildVesselLayer(anim)
     }
 end
 
----Which stance field a helm state selects: turning wins, then the ahead
----strokes, then astern, then base. Fields a stance lacks fall through.
----
----Turning deliberately outranks throttle. On an oared boat that is not a
----compromise but the actual technique: you turn by pulling one oar, so
----`rowingr` while holding ahead-and-starboard is what a rower does.
 ---@param stance table an entry of M.VESSEL_STANCE
 ---@param turn number -1 port, 0, 1 starboard
 ---@param throttle number -1 astern, 0, 1 ahead
@@ -850,9 +502,6 @@ function M.vesselField(stance, turn, throttle, fast)
     return "base"
 end
 
----Resolve a stance field to a concrete group, honouring lists. `hasGroup` is
----injected (animation.hasGroup bound to the actor) to keep this file pure.
----Returns nil only when not even the fallback stance resolves.
 function M.resolveVesselGroup(stanceName, field, hasGroup)
     local stance = M.VESSEL_STANCE[stanceName] or M.VESSEL_STANCE.stand
     local value = stance[field] or stance.base

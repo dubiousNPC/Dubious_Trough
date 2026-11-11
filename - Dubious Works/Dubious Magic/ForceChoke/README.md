@@ -168,7 +168,91 @@ scripts/SharedRay/SharedRay_v2.lua
 animations/xbase_anim{,_female,kna}/
 ```
 
+## v4 — post-test-run fixes (2026-11-10)
+
+Three fixes from the in-game run (`forcechoke-fixes.patch`), plus five more
+found while assessing it. Both are folded into this build;
+`forcechoke-further-fixes.patch` holds the second set alone.
+
+### From the test run
+- **School.** The filter named the wrong school, so no cast ever reached the
+  mod. It is now read off the effect record, not named — see below.
+- **Targeting.** `SharedRay.get()` is clipped to activation distance and the
+  ray is only fired that far. Now `requestDistance(maxReach)` at init plus
+  `getUnclipped()`.
+- **Stat writes.** 0.52 forbids a global script writing another actor's
+  stats; the raise also took the state machine down mid-transition. Amounts
+  are now sent to `target.lua` as `ForceChoke_Damage`.
+
+### Found while assessing the patch
+- **`autoDisable` must track `looping`.** It was `false` for both held loops
+  and one-shots. The one-shot `fchokedrop` therefore sat in the active list
+  at `PRIORITY.Scripted` forever, and Scripted pauses every other animation
+  on that actor — which is why released NPCs never got up. Now `not looping`.
+- **Four of six keyed animation files were the stale build.**
+  `xForcechoke.kf` and `xForceEffect.kf` are byte-identical to each other and
+  both predate the `fchokedrop: Stop` fix (25 keys, not 26), as do
+  `Forcechoke.nif` and `ForceEffect.nif`. All three `.kf` define the same five
+  groups, so which `fchokedrop` won was load-order dependent — a second,
+  independent cause of the stranded drop pose. Only `xForce.kf`/`Force.nif`
+  are kept; the package drops from 2.8 MB to 1.0 MB.
+- **Throw physics are now per-second.** Velocity, drag and gravity were
+  applied per integration step. A naive `dt` multiply would still have been
+  wrong, because `onUpdate` returns early while a teleport round-trip is in
+  flight and those frames' `dt` was dropped; time is now banked across the
+  wait and the step clamped to `throwMaxStep`.
+- **`CREATURE` dropped from the manifest.** `global.lua` filters targets with
+  `types.NPC.objectIsInstance`, so creature instances could never do anything.
+- **School read, not named.** `core.magic.effects.records[EFFECT_ID].school`.
+  The constant was wrong twice; the engine already holds the answer, and
+  reading it also tracks the `load.lua` template.
+
+### target.lua is now attached on demand
+
+`target.lua` is declared `CUSTOM` and attached by `global.lua` on grab, then
+removed once the actor has finished with its pose. It exists only on actors
+actually being choked — usually none, at most one — instead of on every NPC
+and creature in the cell, each carrying a per-frame `onUpdate`.
+
+`CUSTOM` is required rather than tidier: `addScript` refuses a path not
+declared with that flag, and `removeScript` cannot remove an auto-started
+script, so an `NPC:` line would attach fine and then never detach.
+
+Two ordering traps, both closed:
+
+- **The grab travels as `initData`, not as an event.** A `sendEvent` issued in
+  the same frame as `addScript` is delivered before the new script runs its
+  `onInit`, so the grab would be lost. Only an actor already carrying the
+  script (a re-grab before its last detach landed) takes the event path.
+- **The detach is requested by `target.lua`, not decided by `global.lua`.**
+  Releasing an actor deliberately leaves `fchokedrop` running. Removing the
+  script at that moment would strand the pose with nothing left able to cancel
+  it — the exact failure `autoDisable` just closed. `target.lua` instead waits
+  out its own clip (`anim.isPlaying`, with a grace window because the group is
+  not playing for a frame or two after the call, and a timeout so a script can
+  never be stuck on) and then sends `ForceChoke_Detach`.
+
+`land()` sends `ForceChoke_Landed` *before* starting the settle, because
+`global.lua` answers it with the damage event, which the script must still be
+attached to receive.
+
+A script attached when the game was saved survives into the save while
+`global.lua`'s state does not, so `onActive` sheds it after undoing the
+stranded pose — otherwise every actor ever choked would carry it for the rest
+of the playthrough.
+
+### First-person pose added
+
+`animations/xbase_anim.1st/` now carries the same clip, so the grip pose shows
+in first person.
+
+### Still open
+- **Throw constants need re-tuning in game.** They are the old per-step
+  values scaled by 30, which should land near the old 60-70 fps feel, but the
+  number was not measured.
+
 ## Verification
+
 
 Checked with the project toolchain before delivery:
 
@@ -177,13 +261,18 @@ Checked with the project toolchain before delivery:
 | `luacheck.py` (liblua5.4 parser) | 6 files, 0 failed |
 | Per-context load simulation | global, player, local entry points all start |
 | `tools/test_target.lua` (save/load) | 10/10 |
+| `tools/test_detach.lua` (attach/settle/detach) | 18/18 |
 | `ctxcheck.py` vs Cod3x 0.4 policy | 7 files, 0 issues (was: `shared.lua` INVALID-TOKEN `any`) |
 | `globalcheck.py` | 0 undeclared global reads |
 | `api_sweep.py` vs Cod3x stubs | nothing unrecognised |
 | pcall audit | 0 in code |
-| Event send/handle symmetry | 13 events, 0 orphans |
-| `S.` / `T.` reference resolution | 0 unresolved |
+| Event send/handle symmetry | 14 events, 0 orphans |
+| `S.` / `T.` / `P.` reference resolution | 0 unresolved (caught `T.throwMagnitude` left dangling by the retune) |
+| Animation text keys vs controller groups | all 5 groups, 26 keys, no stale build |
 
-Not verified: in-game behaviour. Static analysis cannot confirm that
-`activeSpells:add` accepts an Ability-type record for the hold spell, nor that
-`onPlayerAdded` fires in your build — both are worth watching on first run.
+The two open questions from v3 are answered by the test run: `activeSpells:add`
+does accept the Ability record and the hold stayed at one instance across
+refreshes; `onPlayerAdded` does fire and the spell was granted.
+
+Not verified in this pass: in-game behaviour of the v4 fixes. The throw
+constants in particular are a conversion, not a measurement.

@@ -14,38 +14,6 @@
     Animates the RIDER only. The MOUNT's gait belongs to the engine's character
     controller on purpose.
 
-    WHAT CHANGED IN THIS REVISION, and why each mattered:
-
-    1. LOCOMOTION STATE SURVIVES A JUMP. Previously the jump's stop key called
-       playLoop(IDLE) unconditionally, and the pre-jump state was already gone
-       because playOnce had overwritten currentState. Combined with global
-       sending state only on CHANGE and this file discarding state events while
-       jumpActive, a gallop -> jump -> land sequence could leave the rider
-       galloping in an idle pose indefinitely: the landing event arrived while
-       jumpActive was still true and was dropped, then the stop key forced IDLE,
-       and global never resent because its lastRiderState already said GALLOP.
-       `lastLocomotion` is now tracked separately and is what a jump returns to.
-
-    2. ONE-SHOTS CANNOT HANG. A group the skeleton does not define is a silent
-       no-op: playBlended neither errors nor fires the ended handler. The old
-       jump path waited solely on a 'stop' text key, so a missing or mis-keyed
-       jump clip left jumpActive true forever and every subsequent state event
-       was discarded -- the rider froze in whatever pose preceded the jump.
-       Every one-shot now runs through playOneShot(), which guarantees its
-       completion callback via a timeout backstop. Technique taken from Take a
-       Seat's playOneShot, including the `finished` latch that stops the ended
-       handler and the timeout from both firing.
-
-    3. THE ANIMREFRESH RETRY IS ACTUALLY USED. v3 asks a subscriber to return
-       false when the model was not ready so it can deliver again. The old
-       callback returned nothing, so it always counted as delivered and the
-       retry never engaged -- the exact failure the retry exists to fix.
-
-    4. THE BURST GUARD REPORTS. Its message was behind `if DEBUG`, which is
-       false in shipping config, so a bad group name produced no pose and no
-       explanation. A tripped burst guard is always a real fault, never trace
-       noise, so it prints unconditionally and then stops retrying until the
-       next mount rather than re-arming every second.
 ]]
 
 local self    = require('openmw.self')
@@ -59,62 +27,16 @@ local I       = require('openmw.interfaces')
 
 local shared = require('scripts.WhyWalk.whywalk_shared')
 
--- Declared HERE, above every use, because both the rider pose and the vessel
--- pose need it and the rider comes first in this file. It used to sit in the
--- vessel section, 130 lines below the rider's playLoop -- which is fine for a
--- function (Lua resolves the local at call time, and playLoop is only ever
--- CALLED later) but is exactly the shape check_declorder.py exists to flag,
--- and it would have become a silent global read the moment anything at file
--- scope touched it.
 local function hasGroup(group) return anim.hasGroup(self, group) end
 
 local STATE = shared.STATE
 
--- Tracing only. Anything that indicates a FAULT prints regardless of this.
 local DEBUG = false
 
--- Longest a one-shot may hold the pose before the controller moves on. Long
--- enough for a real clip, short enough that an unshipped group name is a blink
--- rather than a rider frozen for the rest of the ride.
 local ONE_SHOT_TIMEOUT = 1.5
 
--- Teleports land next frame, so the mount pin has not placed the rider yet at
--- the instant the mounted event arrives. Playing the pose into the old
--- position is what produces the "pose starts, then the rider snaps" hitch.
 local MOUNT_SETTLE = 0.05
 
--- Lower body carries the actual sitting pose -- it is the part that makes the
--- rider look seated rather than standing in mid-air -- so it must be in both
--- the blend mask and the priority table. The torso stays at Weapon priority so
--- weapon and spell animations keep control of the upper body.
---
--- Two different value spaces here, which is easy to get wrong:
---   BLEND_MASK is a BITMASK  -- LowerBody 1, Torso 2, LeftArm 4, RightArm 8
---   BONE_GROUP is an ENUM    -- LowerBody 1, Torso 2, LeftArm 3, RightArm 4
--- so the mask is summed while the priority table is keyed. Added rather than
--- bitwise-or'd because OpenMW runs LuaJIT (Lua 5.1), which has no `|`.
---
--- Arms are deliberately left out of the mask entirely, so weapon and spell arm
--- animations play untouched.
--- THERE IS NO `Arms` BONE GROUP. The members are LowerBody, Torso, LeftArm
--- and RightArm, exactly as the table above this comment lists them, and
--- BONE_GROUP is an engine enum that RAISES on a name it does not have rather
--- than returning nil:
---
---     Can't start L@0x1[scripts/whywalk/ridinganim.lua]; Lua error:
---     [string "scripts/whywalk/ridinganim.lua"]:102: Key not found: Arms
---
--- That is a load failure, not a warning: the whole controller never started,
--- so nothing animated at all -- no rider pose, no vessel pose, no caravan
--- passenger. One bad key cost every animation in the suite.
---
--- The two arm entries below are INERT as written, and deliberately so. A
--- priority is only consulted for a bone group the blend mask includes, and
--- the mask is LowerBody + Torso. To make them take effect the mask needs
--- `+ anim.BLEND_MASK.LeftArm + anim.BLEND_MASK.RightArm` as well -- but that
--- is the thing this file is built not to do. It would put the riding clip in
--- charge of the arms, and free hands for weapons and spells while mounted is
--- the requirement this controller started from.
 local RIDE_PRIORITY = {
     [anim.BONE_GROUP.LowerBody] = anim.PRIORITY.Scripted,
     [anim.BONE_GROUP.Torso]     = anim.PRIORITY.Weapon,
@@ -123,8 +45,6 @@ local RIDE_PRIORITY = {
 }
 local RIDE_BLEND_MASK = anim.BLEND_MASK.LowerBody + anim.BLEND_MASK.Torso
 
--- playBlended's `loops` is "a number >= 0" (Cod3x); -1 is out of range, not
--- infinite (controls-port note). Devilish Guar Riding's value for "forever".
 local LOOPS = 999999
 
 -- ---------------------------------------------------------------------------
@@ -136,29 +56,12 @@ local mountType    = nil
 local currentState = nil
 local currentGroup = nil
 
--- The locomotion state the rider should return to once a one-shot ends. Kept
--- separate from currentState precisely because a one-shot overwrites that.
 local lastLocomotion = STATE.IDLE
 
--- A one-shot owns the pose while it runs. Named for what it does rather than
--- for jump specifically, since mount/dismount clips use the same path.
 local oneShotActive = false
 
--- DECLARED HERE, ABOVE ITS FIRST USE. It used to sit next to the handler that
--- increments it, 90 lines further down -- which in Lua means onAnimMounted and
--- onAnimDismounted, both defined above that point, were reading and writing
--- GLOBALS of the same name instead. The handler incremented the local; the
--- dismount report read the global, which onAnimMounted had just set to 0. So
--- the condition was always `0 > 0` and this diagnostic could never fire.
---
--- Nothing in the toolchain catches this: luacheck accepts it, globalcheck only
--- reports undeclared READS, and no checker models declaration ORDER. The one
--- defence is keeping a local's declaration above every function that touches
--- it.
 local reissueTotal, rideStartedAt = 0, 0
 
--- Set when the burst guard trips. Cleared on the next mount, so a broken group
--- name costs one burst per ride instead of one burst per second forever.
 local replayDisabled = false
 
 -- ---------------------------------------------------------------------------
@@ -167,13 +70,8 @@ local replayDisabled = false
 
 local function playLoop(state)
     if not mounted then return end
-    -- Compare STATE, not the resolved group name: with variant lists the name
-    -- differs between entries into the same state, so comparing names would
-    -- restart the clip on every refresh.
     if currentState == state then return end
 
-    -- hasGroup passed: without it a placeholder group name resolves fine,
-    -- plays nothing, and leaves the rider in bind pose with no error anywhere.
     local group = shared.resolveAnim(mountType, state, nil, hasGroup)
     if not group then return end   -- mount has no clip for this state
 
@@ -185,14 +83,8 @@ local function playLoop(state)
     currentState, currentGroup = state, group
 end
 
--- The one-shot currently awaiting completion: { group = <name>, finish = fn }.
--- A single slot rather than a table keyed by group, because only one one-shot
--- can own the pose at a time -- oneShotActive enforces that.
 local pendingOneShot = nil
 
----Complete the in-flight one-shot, if `group` is the one we are waiting on.
----Latched by clearing the slot, so the text key, the ended handler and the
----timeout can all fire without the callback running more than once.
 local function finishOneShot(group)
     local p = pendingOneShot
     if not p then return end
@@ -201,12 +93,6 @@ local function finishOneShot(group)
     p.done()
 end
 
--- Registered ONCE at load, for every one-shot group any mount type can use.
--- Per-play registration would leak two handlers per jump, and OpenMW offers no
--- way to remove one -- over a long ride that is hundreds of live closures all
--- testing the same condition. This is also why the handlers have to bind to a
--- fixed name at load: the handler must already exist when the clip's stop key
--- fires, so it cannot be created lazily at play time either.
 for _, group in ipairs(shared.allJumpGroups()) do
     I.AnimationController.addTextKeyHandler(group, function(groupname, key)
         if key == "stop" then finishOneShot(groupname) end
@@ -218,16 +104,6 @@ I.AnimationController.addAnimationEndedHandler(function(groupname)
     finishOneShot(groupname)
 end)
 
----Play a one-shot and call `done` exactly once when it finishes.
----
----`done` is guaranteed to run. Three things can end a one-shot and all three
----converge on the same latch:
----   * the clip's own 'stop' text key (the normal path),
----   * the animation-ended handler (a clip with no 'stop' key still ends),
----   * the timeout (a group the skeleton does not define never starts, so it
----     never ends either -- this is the only thing that covers that case).
----Without the timeout a typo in a group name is indistinguishable from a
----permanently stuck rider.
 local function playOneShot(state, done)
     local group = shared.resolveAnim(mountType, state, nil, hasGroup)
     if not group then return done() end   -- no clip for this state: proceed
@@ -241,8 +117,6 @@ local function playOneShot(state, done)
     })
     currentState, currentGroup = state, group
 
-    -- Backstop. Captures the slot it was created for, so a timeout belonging
-    -- to an earlier one-shot cannot complete a later one.
     local mine = pendingOneShot
     async:newUnsavableSimulationTimer(ONE_SHOT_TIMEOUT, function()
         if pendingOneShot ~= mine then return end
@@ -250,26 +124,17 @@ local function playOneShot(state, done)
     end)
 end
 
----Drop an in-flight one-shot without running its completion callback. Used on
----dismount, load, and perspective change -- anywhere the thing the callback
----would resume no longer applies.
 local function cancelOneShot()
     pendingOneShot = nil
     oneShotActive  = false
 end
 
--- animation.cancel is on the base openmw.animation module, NOT on
--- I.AnimationController, and is only valid on self.
 local function stopAnim()
     if not currentGroup then return end
     anim.cancel(self, currentGroup)
     currentGroup, currentState = nil, nil
 end
 
----Return to the locomotion pose a one-shot interrupted. currentState is
----cleared first because playLoop early-outs on an unchanged state, so without
----this the re-issue would be a no-op whenever the one-shot's own state had
----already been overwritten.
 local function resumeLocomotion()
     oneShotActive = false
     currentState = nil
@@ -279,16 +144,6 @@ end
 -- ---------------------------------------------------------------------------
 -- VESSEL POSE
 -- ---------------------------------------------------------------------------
--- The pilot's pose aboard a WhyWalk Boats vessel, from
--- whywalk_shared.VESSEL_STANCE: gondola poling (gondola1, turning on
--- gondolar / gondolal), standing, sitting, and a reserved rowing set.
---
--- Separate from the riding state above -- a pilot is never mounted -- and it
--- leaves the camera alone: the pilot stands at water level, not in a saddle.
--- The helm arrives as an event on CHANGE only (turn and throttle signs), so
--- this costs nothing per frame; a change inside minPoseTime of the last
--- switch is deferred by a one-shot timer rather than dropped, so the pose
--- always ends on the latest helm state.
 
 local VESSEL_LAYER = shared.buildVesselLayer(anim)
 local VESSEL_TUNING = shared.VESSEL_TUNING
@@ -296,17 +151,11 @@ local VESSEL_TUNING = shared.VESSEL_TUNING
 local aboard = nil              -- stance name while piloting
 local vesselGroup = nil         -- the group actually playing
 local helmTurn, helmThrottle = 0, 0
--- Speed band from the helm event: false means below hull speed, which picks a
--- stance's `slow` stroke where it has one. Defaults to true so a Boats build
--- that predates the band behaves exactly as before.
 local helmFast = true
 local vesselSwitchedAt = 0
 local vesselGeneration = 0      -- invalidates a pending deferred switch
 local vesselReported = {}
 
--- hasGroup moved up; see its declaration above the rider pose section.
-
--- First key pair the clip really has. Text keys are stored lower-case.
 local function vesselKeys(group)
     local candidates = shared.VESSEL_KEY_CANDIDATES
     for _, c in ipairs(candidates) do
@@ -368,39 +217,12 @@ end
 -- ---------------------------------------------------------------------------
 -- CAMERA OFFSET
 -- ---------------------------------------------------------------------------
--- The player's chosen perspective is honoured -- this never switches the view.
--- Instead each view gets its own offset, because they need different framing
--- and use different APIs:
---
---   first person : camera.setFirstPersonOffset, a 3d vector measured from the
---                  character's head (x right, y forward, z up)
---   third person : camera.setFocalPreferredOffset, a 2d vector from the tracked
---                  position (x right, y up)
---
--- Vertical defaults are 0 in first person and -75 in third: the first person
--- camera already sits at head height so it usually needs nothing, while the
--- third person focal point frames riding from too high without help.
---
--- The built-in camera script manages the third person offset too, so it is
--- told to stand down for the duration via disableThirdPersonOffsetControl. The
--- tag is this mod's name, so it cannot clash with another mod holding its own.
 
 local L10N_CONTEXT   = "WhyWalk"
 local SETTINGS_PAGE  = "WhyWalk"
 local SETTINGS_GROUP = "SettingsWhyWalkCamera"
 local CAMERA_TAG     = "WhyWalk"
 
--- Strings live in l10n/WhyWalk/<locale>.yaml. `name` and `description` below
--- are KEYS resolved through that context, not display text. OpenMW returns the
--- key itself when a context is missing, which is why the previous
--- l10n = "none" appeared to work -- the English text was acting as its own
--- key. That echoes rather than translates, so a real context is used here.
---
--- THE PAGE IS NOT REGISTERED HERE. It is registered in whywalk_player.lua,
--- which the manifest loads BEFORE this file, so the page a group attaches to
--- is guaranteed to exist by the time this runs. Registering it in both places
--- would be a duplicate key; registering it only here made the ordering a
--- coincidence of which file happened to load first.
 I.Settings.registerGroup {
     key              = SETTINGS_GROUP,
     page             = SETTINGS_PAGE,
@@ -482,10 +304,6 @@ local function applyCameraOffset()
         cameraOffsetHeld = true
     end
 
-    -- Only the active view is offset and the other is zeroed, so a stale value
-    -- cannot survive a perspective change. Vanity and preview modes are
-    -- third-person-shaped, so anything that is not FirstPerson takes the third
-    -- person offset.
     if camera.getMode() == camera.MODE.FirstPerson then
         camera.setFirstPersonOffset(util.vector3(
             cameraSettings:get("FP_OFFSET_H") or 0,
@@ -500,8 +318,6 @@ local function applyCameraOffset()
     end
 end
 
--- Live update: changing a value in the settings menu applies immediately
--- instead of waiting for the next riding session.
 cameraSettings:subscribe(async:callback(function()
     applyCameraOffset()
 end))
@@ -509,18 +325,7 @@ end))
 -- ---------------------------------------------------------------------------
 -- PERSPECTIVE CHANGE
 -- ---------------------------------------------------------------------------
--- Switching perspective rebuilds the player's animation object and drops
--- scripted animations with it. The reference riding mods avoid this by pinning
--- the camera to first person; that is not acceptable here, since the whole
--- point of a rider animation is being able to look at it.
---
--- Returning false tells AnimRefresh the model was not ready and asks it to
--- deliver again. That contract is the entire reason v2 added a retry and v3
--- added a confirmation pass, and a subscriber that never returns false opts
--- out of both -- which is what the previous version did.
 local function onPerspectiveChanged()
-    -- Runs even when unmounted so a lingering offset is released if the ride
-    -- ended while the notification was still settling.
     applyCameraOffset()
     if aboard then
         playVessel(true)
@@ -529,20 +334,10 @@ local function onPerspectiveChanged()
     end
     if not mounted then return end
 
-    -- A one-shot cannot be resumed part-way through, so a perspective change
-    -- mid-clip drops to locomotion rather than replaying the whole thing.
-    -- Going through resumeLocomotion (rather than forcing IDLE) is what keeps
-    -- a rider who switches view mid-jump from landing in an idle pose while
-    -- still galloping -- global will not resend, so this is the only chance to
-    -- get it right.
     cancelOneShot()
     currentState = nil
     playLoop(lastLocomotion)
 
-    -- Readiness check. The pose was just issued; if it did not take, the
-    -- animation object is still being rebuilt and this change needs
-    -- redelivering. currentState is cleared so the retry's playLoop is not
-    -- swallowed by the unchanged-state early-out.
     if currentGroup and not anim.isPlaying(self, currentGroup) then
         currentState = nil
         return false
@@ -551,13 +346,6 @@ end
 
 local function subscribeRefresh()
     if I.AnimRefresh and I.AnimRefresh.subscribe then
-        -- `verify` is the opt-in to the CONFIRMATION pass, and it is separate
-        -- from the retry. Returning false from the callback gets the retry on
-        -- its own -- dispatchOne re-dispatches on a false return whatever the
-        -- options say -- but the confirmation pass that catches a pose which
-        -- took at the time and was then rebuilt out from under us only runs
-        -- for subscribers registered with verify = true. The note above
-        -- onPerspectiveChanged values both, and this asked for only one.
         I.AnimRefresh.subscribe("WhyWalk", onPerspectiveChanged, { verify = true })
     end
 end
@@ -573,8 +361,6 @@ end
 -- ---------------------------------------------------------------------------
 
 local function onAnimMounted(data)
-    -- Boats hands off to Core when the pilot mounts from the boat; the
-    -- vessel stop may land after this, so clear the pose here first.
     if aboard then stopVessel() end
     mounted        = true
     mountType      = data and data.mountType or nil
@@ -591,8 +377,6 @@ local function onAnimMounted(data)
     subscribeRefresh()
     applyCameraOffset()
 
-    -- Let the pin place the rider before posing them. Re-checked inside the
-    -- timer because a mount can be aborted within a frame or two of starting.
     async:newUnsavableSimulationTimer(MOUNT_SETTLE, function()
         if not mounted then return end
         playLoop(STATE.IDLE)
@@ -600,8 +384,6 @@ local function onAnimMounted(data)
 end
 
 local function onAnimDismounted()
-    -- Report before clearing, and only when it actually happened. One or two
-    -- over a long ride is normal recovery; several per second is the flicker.
     if mounted and reissueTotal > 0 then
         local secs = math.max(0.001, core.getSimulationTime() - rideStartedAt)
         local rate = reissueTotal / secs
@@ -619,8 +401,6 @@ local function onAnimDismounted()
     mounted       = false
     mountType     = nil
     cancelOneShot()
-    -- Unsubscribing is what keeps AnimRefresh free when nobody is riding: with
-    -- no subscribers its onUpdate is a single count check.
     if not aboard then unsubscribeRefresh() end
     clearCameraOffset()
     stopAnim()
@@ -634,16 +414,10 @@ local function onAnimState(data)
     if state == STATE.JUMP then
         if oneShotActive then return end
         oneShotActive = true
-        -- resumeLocomotion returns to lastLocomotion, NOT to idle, and
-        -- playOneShot guarantees it runs even if the jump clip is missing.
         playOneShot(STATE.JUMP, resumeLocomotion)
         return
     end
 
-    -- Recorded even while a one-shot owns the pose. This is the fix for the
-    -- dropped-landing case: global sends state on CHANGE only, so the GALLOP
-    -- that arrives mid-jump is the last one it will ever send for that gallop.
-    -- Discarding it outright is what used to strand the rider in an idle pose.
     lastLocomotion = state
 
     if oneShotActive then return end   -- the one-shot owns the pose until it ends
@@ -677,8 +451,6 @@ end
 local function onAnimVesselHelm(data)
     if not aboard then return end
     local turn, throttle = sign(data and data.turn), sign(data and data.throttle)
-    -- `fast` absent means fast, so a Boats build that does not send the speed
-    -- band keeps selecting `stroke` rather than silently dropping to `slow`.
     local fast = not (data and data.fast == false)
     if turn == helmTurn and throttle == helmThrottle and fast == helmFast then return end
     helmTurn, helmThrottle, helmFast = turn, throttle, fast
@@ -694,13 +466,6 @@ end
 -- ---------------------------------------------------------------------------
 -- RECOVERY
 -- ---------------------------------------------------------------------------
--- A pinned/levitating rider counts as airborne, so the engine's falling
--- animation interrupts the scripted pose. Sturdy Steed re-asserts every frame
--- to fix this; an ended-handler does the same job as an event.
---
--- Burst-guarded: a poll is implicitly rate-limited by the frame rate, an
--- ended-handler is not, so a clip that ends immediately (bad group name,
--- missing text keys) would otherwise replay in a tight loop.
 local REPLAY_BURST_LIMIT  = 5
 local REPLAY_BURST_WINDOW = 1.0
 local replayCount, replayWindowStart = 0, 0
@@ -732,9 +497,6 @@ I.AnimationController.addAnimationEndedHandler(function(groupname)
     end
     replayCount = replayCount + 1
     if replayCount > REPLAY_BURST_LIMIT then
-        -- Unconditional: a tripped burst guard is always a real fault, and
-        -- this is the only place it is visible. Latching replayDisabled stops
-        -- the retry until the next mount instead of re-arming every second.
         print("[WhyWalk] '" .. tostring(currentGroup) ..
               "' keeps ending immediately; check the group name and its"
               .. " start/stop text keys. Rider pose disabled for this ride.")
@@ -752,9 +514,6 @@ end)
 -- SAVE / LOAD
 -- ---------------------------------------------------------------------------
 
--- Looping poses survive a save/load while this script's memory of them does
--- not (build review section 3), so their names are saved and cancelled on
--- load. Core and Boats re-send their start events if the save was mid-ride.
 local function onSave()
     return { group = currentGroup, vessel = vesselGroup }
 end
@@ -771,8 +530,6 @@ local function onLoad(data)
     lastLocomotion = STATE.IDLE
     unsubscribeRefresh()
     clearCameraOffset()
-    -- whywalk_global re-sends WhyWalk_Mounted after a load if the ride was
-    -- active, which reaches whywalk_player and lands back here.
 end
 
 return {

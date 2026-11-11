@@ -9,21 +9,6 @@
       3. Acquire the target under the crosshair via SharedRay.
       4. Show messages -- global.lua has no ui module.
 
-    CAST DETECTION
-    --------------
-    The engine casts the spell; this file only reacts. I.SkillProgression
-    fires on a SUCCESSFUL cast, which means magicka, the real success roll,
-    the cast animation, the VFX and skill progression are all vanilla
-    behaviour. A failed cast never reaches here, which IS the "grip slips"
-    outcome. Nothing in this mod charges or rolls anything.
-
-    THE 0.05s DEFERRAL
-    ------------------
-    The crosshair ray is read one timer tick after the cast, never inline.
-    Two independent reasons, and the reference mods hit both: camera/viewport
-    state has not settled when the skill-used handler runs (Banishing names
-    its variable viewportBugfixDelay), and SharedRay's cast is async, so an
-    inline read returns what was under the crosshair BEFORE the cast.
 ]]--
 
 local self   = require('openmw.self')
@@ -54,8 +39,6 @@ local DEDUPE_WINDOW = 0.15
 -- ============================================================
 local function startPose()
     if posePlaying then return end
-    -- A missing animation asset is a supported state, as in target.lua: the
-    -- grip still works, it just is not posed. Checked rather than attempted.
     if not anim.hasGroup(self, S.GROUPS.CAST) then return end
     anim.playBlended(self, S.GROUPS.CAST, P.playerPoseOptions())
     posePlaying = true
@@ -70,10 +53,6 @@ end
 -- ============================================================
 -- REACH
 -- ============================================================
--- Vanilla reach rules, matching Banishing: activation distance plus the
--- third-person camera offset, extended by active Telekinesis. castRange is a
--- floor, not a cap -- the spell should never reach less far than a plain
--- activation, and Telekinesis only ever adds.
 local function castReach()
     local reach = (core.getGMST("iMaxActivateDist") or 192)
                 + camera.getThirdPersonDistance()
@@ -91,12 +70,10 @@ end
 -- TARGET ACQUISITION
 -- ============================================================
 local function lookedAtNPC(reach)
-    local result = I.SharedRay.get()
+    local result = I.SharedRay.getUnclipped()
     if not result or not result.hit then return nil end
 
     local obj = result.hitObject
-    -- SharedRay validates hitObject at delivery, but delivery was last frame,
-    -- so re-check: an object invalidated since then is a normal occurrence.
     if not obj or not obj:isValid() then return nil end
     if result.distance and result.distance > reach then return nil end
     if not types.NPC.objectIsInstance(obj) then return nil end
@@ -121,19 +98,15 @@ local function doGrab()
     })
 end
 
+local school = core.magic.effects.records[S.EFFECT_ID].school
+
 I.SkillProgression.addSkillUsedHandler(function(skillId, params)
-    if skillId ~= S.SCHOOL then return end
+    if skillId ~= school then return end
     if params.useType ~= I.SkillProgression.SKILL_USE_TYPES.Spellcast_Success then return end
 
     local spell = types.Player.getSelectedSpell(self)
     if not spell then return end
 
-    -- Matched on EFFECT id, not spell record id, so any spell carrying the
-    -- effect works -- including ones the player builds at a spellmaker. This
-    -- is the pattern Ablution Intervention, Banishing and NiftySpellPack all
-    -- use. It is only safe because load.lua declares a dedicated custom
-    -- effect: matching on raw "paralyze" would fire on every paralyze spell
-    -- in the game.
     local match = false
     for _, eff in ipairs(spell.effects) do
         if eff.id == S.EFFECT_ID then
@@ -144,9 +117,6 @@ I.SkillProgression.addSkillUsedHandler(function(skillId, params)
     if not match then return end
 
     if holding then
-        -- Already gripping: this cast is the squeeze-and-throw. No ray and no
-        -- deferral -- the target is the one already held, and global.lua
-        -- still owns it.
         core.sendGlobalEvent('ForceChoke_ThrowRequest', { player = self.object })
         return
     end
@@ -157,10 +127,6 @@ end)
 -- ============================================================
 -- SHEATHE -> DROP
 -- ============================================================
--- An input handler, because sheathing is not a cast and so never reaches the
--- skill-used path. Both the trigger API and the onInputAction engine handler
--- are wired: which one carries the built-in bindings varies by build, and the
--- dedupe window collapses a double delivery to one request.
 local function requestDrop()
     if not holding then return end
     local t = core.getRealTime()
@@ -189,10 +155,6 @@ end
 -- ============================================================
 -- CONSOLE
 -- ============================================================
--- Testing aid, following the template's ablution_give. Typing
---   luap
---   forcechoke_give
--- in the console grants the spell without hunting for a teacher.
 local function onConsoleCommand(mode, command)
     local cmd = command:lower():gsub("^lua%s+", ""):gsub("^%s+", ""):gsub("%s+$", "")
     if cmd ~= "forcechoke_give" then return end
@@ -205,6 +167,7 @@ end
 -- ============================================================
 local registered = false
 local function onInit()
+    I.SharedRay.requestDistance(T.maxReach)
     if registered then return end
     registered = true
     input.registerTriggerHandler('ToggleSpell', async:callback(requestDrop))

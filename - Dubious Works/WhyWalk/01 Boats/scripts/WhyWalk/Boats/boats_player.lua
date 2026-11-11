@@ -59,9 +59,8 @@ local TWO_PI = 2 * math.pi
 -- ---------------------------------------------------------------------------
 -- SETTINGS
 -- ---------------------------------------------------------------------------
--- A group on Core WhyWalk's page, which Core's whywalk_player.lua registers;
--- this module loads after Core, so the page exists.
 
+local L10N_CONTEXT   = "WhyWalk"
 local L10N = 'WhyWalkBoats'
 local GROUP = 'SettingsWhyWalkBoats'
 
@@ -132,15 +131,6 @@ local WATER_STEPS = { 'FootWaterLeft', 'FootWaterRight' }
 -- ---------------------------------------------------------------------------
 -- PARKOURWIND FLOW
 -- ---------------------------------------------------------------------------
--- FLOW reads any not-grounded player as mid-jump. A pilot at the helm is never grounded
--- (placed every frame), so without this FLOW ran its airborne ladder on
--- the pilot: Space at the helm ran Vault/Mantle/LedgeHang against
--- the hull and rigging, and a ledge grab teleported the pilot off the deck. I.Flow.yield stands it down
--- for the hold. Optional: absent FLOW, nothing happens.
---
--- YIELD BEFORE TAKING THE OVERRIDE. overrideMovementControls is one flag
--- shared by every mod; FLOW releases its own hold on it as it stands down,
--- and that write must land before ours, not over it.
 local FLOW_OWNER = 'WhyWalk.Boats'
 local function flowYield(on)
     local F = I.Flow
@@ -193,8 +183,6 @@ end))
 -- ---------------------------------------------------------------------------
 -- INPUT
 -- ---------------------------------------------------------------------------
--- Action handlers rather than keys: they follow the player's bindings and the
--- gamepad, and fire on change (RESEARCH 1.12). Values may be analogue.
 
 local function amount(value)
     if type(value) == 'number' then return value end
@@ -259,9 +247,6 @@ local function vesselOrigin(pos)
     return pos.x - ax, pos.y - ay
 end
 
--- Port, starboard, bow, stern: the first with something to stand on above the
--- water wins, the side the pilot is looking toward first. With nothing to
--- stand on, the pilot goes over the side into the water.
 local function exitPoint()
     local hull = vessel.hull
     local clear = T.exitClearance
@@ -297,11 +282,6 @@ end
 -- ---------------------------------------------------------------------------
 -- THE BUMPER
 -- ---------------------------------------------------------------------------
--- Look-ahead from Skyships (terrain sampled ahead of the hull), applied as a
--- speed cap: the hull may only go as fast as it can still stop before what is
--- in front of it. A ray at probe height catches docks and walls, one below
--- the waterline catches rocks under the surface, and the heightmap catches
--- shoals and beaches.
 
 local function obstacleCap(direction)
     local hull = vessel.hull
@@ -385,10 +365,6 @@ local function onBoarded(data)
     if DEBUG then print('[WhyWalk Boats] piloting ' .. vessel.id) end
 end
 
--- Once per game: the speed gain settles far from 1 only if OpenMW maps
--- movement controls to speed differently from boats_physics.controlsFor's
--- model. The boat still sails right (that is what the gain is for), but the
--- model is then wrong and should be corrected.
 local gainReported = false
 local function reportGain()
     if gainReported then return end
@@ -408,8 +384,6 @@ local function onLeft(data)
     reportGain()
     piloting = false
     boat, vessel = nil, nil
-    -- On a hand-off Core WhyWalk has already taken the movement override;
-    -- releasing it here would undo Core's lock.
     if (data and data.handOff) or handingOff then
         controlsLocked = false
     else
@@ -431,8 +405,6 @@ local function onRefused(data)
     if key then ui.showMessage(l10n(key)) end
 end
 
--- Core WhyWalk mounted the pilot on a creature (from the boat, or anywhere).
--- Core now owns the movement override, so leaving must not release it.
 local function onCoreMounted()
     coreMounted = true
     sendPilotState()
@@ -467,14 +439,6 @@ local function onUpdate(dt)
         rudder = phys.clamp(held.right - held.left, -1, 1)
     end
 
-    -- The pose follows the pilot's hands -- the rudder and throttle they are
-    -- giving -- not the hull's response, and only on a change of sign.
-    --
-    -- The one thing taken from the hull is the SPEED BAND, which an oared
-    -- stance uses to pick a gentle stroke over a driving one. That is the
-    -- hull's business rather than the pilot's hands: the oars are what made
-    -- the boat fast, so the stroke should match the way it is actually
-    -- moving, not the key being held.
     local dz = T.animDeadzone
     local turnSign = (rudder > dz and 1) or (rudder < -dz and -1) or 0
     local throttleSign = (throttle > dz and 1) or (throttle < -dz and -1) or 0
@@ -499,9 +463,6 @@ local function onUpdate(dt)
         capAstern = (speed <= 0 or throttle < 0) and obstacleCap(-1) or nil
     end
 
-    -- How far the engine actually carried the pilot along last frame's
-    -- command. Far short means something stopped them the bumper did not
-    -- foresee; otherwise it trims the speed gain (boats_physics.stepGain).
     local achieved = nil
     if settle > 0 then
         settle = settle - 1
@@ -516,9 +477,6 @@ local function onUpdate(dt)
         end
     end
 
-    -- Faster than the pilot walks means running, and running drains fatigue
-    -- (rowing is work). Near exhaustion the boat is held to walking pace, so
-    -- a long crossing ends slow rather than with the pilot knocked down.
     local walk = types.Actor.getWalkSpeed(self)
     local ahead, astern = capAhead, capAstern
     local fatigue = types.Actor.stats.dynamic.fatigue(self)
@@ -532,8 +490,6 @@ local function onUpdate(dt)
     local turned = yawRate * dt
     heading = (heading + turned) % TWO_PI
 
-    -- The pilot stands at the anchor, so a turn about the hull's middle moves
-    -- them sideways: v = forward * speed + omega x r.
     local fx, fy = phys.forward(heading)
     local rx, ry = phys.toWorld(anchor.x, anchor.y, heading)
     local vx = fx * speed + yawRate * ry
@@ -550,19 +506,6 @@ local function onUpdate(dt)
     controls.sideMovement = side
     controls.run = running
 
-    -- ONE REPORT, A SECOND INTO THE FIRST VOYAGE.
-    --
-    -- Boarding threw on an unprefixed model path until 2026-10-31, so this
-    -- function had never run in a game: "boats are finally registering, but no
-    -- movement was possible" is the first report from code nothing had
-    -- exercised. Rather than guess at which link is broken, it says what it
-    -- asked for and what it got.
-    --
-    -- The four things that can each produce no movement, and which this
-    -- separates: the throttle never reaching here (`held`/`throttle`), the
-    -- model returning nothing (`mv`), the override not being taken
-    -- (`locked`), or the engine refusing the controls (`speed` staying at
-    -- zero while `mv` is non-zero).
     if not movementReported then
         reportAt = (reportAt or 0) + dt
         if reportAt > 1.0 then
@@ -588,8 +531,6 @@ local function onUpdate(dt)
         core.sendGlobalEvent(EV.HELM, { player = self.object, heading = heading, turn = heelSign })
     end
 
-    -- Walking on water splashes; Your Own Gondola stops these sounds every
-    -- frame for the same reason.
     if muteSteps then
         for _, id in ipairs(WATER_STEPS) do
             if core.sound.isSoundPlaying(id, self) then core.sound.stopSound3d(id, self) end

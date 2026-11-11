@@ -7,16 +7,6 @@
     The player-side one exists in both purely to poll held movement keys and
     re-send the same control values every frame.
 
-    That poll is avoidable. Held state is tracked from onKeyPress/onKeyRelease
-    and a control event is sent only when the intent actually CHANGES -- which
-    for a rider is a handful of events per journey, not 60/sec. The global
-    script integrates movement from the last-known intent.
-
-    What is NOT avoidable is the rider pin itself: nothing in the OpenMW Lua
-    API parents one object's transform to another, so something has to place
-    the rider every frame. That lives in whywalk_global.lua behind a single
-    early-out, and is the only per-frame cost in the whole mod.
-
     WHEN NOT MOUNTED THIS FILE COSTS: nothing. No handler runs until a key is
     pressed or the activate trigger fires.
 ]]
@@ -48,19 +38,6 @@ local DEBUG = false
 -- ---------------------------------------------------------------------------
 -- SETTINGS
 -- ---------------------------------------------------------------------------
--- THE PAGE IS REGISTERED HERE, NOT IN ridingAnim.lua, AND THE REASON IS LOAD
--- ORDER.
---
--- registerGroup takes `page = <key>`, so the page has to exist first. Both
--- files are PLAYER scripts and the manifest lists this one before
--- ridingAnim.lua, so declaring the page here makes "page before group" a
--- property of the manifest rather than a coincidence. The camera group stays
--- in ridingAnim.lua, which owns the camera.
---
--- Strings are KEYS into l10n/WhyWalk/<locale>.yaml, never display text.
--- OpenMW echoes an unresolved key back as-is, so literal English here would
--- look like it worked while foreclosing translation.
-local L10N_CONTEXT   = "WhyWalk"
 local SETTINGS_PAGE  = "WhyWalk"
 local SETTINGS_GROUP = "SettingsWhyWalkRiding"
 
@@ -88,15 +65,6 @@ I.Settings.registerGroup {
             default     = false,
         },
         {
-            -- The renderer is vendored at scripts/WhyWalk/renderers/textSet.lua
-            -- and registered MENU, which the manifest loads before this group,
-            -- so it is always present. See that file's header for why the key
-            -- is WhyWalk-scoped rather than upstream's `textSet_V1`.
-            --
-            -- `lower = true` normalises what the player types, because record
-            -- ids are matched lower-cased (shared.isBlacklisted). Default is
-            -- empty: shipping a guess at other mods' creature ids would be
-            -- worse than useless.
             key         = "BLACKLIST_IDS",
             name        = "riding_blacklist_name",
             description = "riding_blacklist_description",
@@ -109,20 +77,10 @@ I.Settings.registerGroup {
 
 local ridingSettings = storage.playerSection(SETTINGS_GROUP)
 
--- Read at mount time and sent with the request, not watched. A global script
--- cannot read player storage, and the value only matters at the moment of
--- mounting and on a cell change -- both of which already send or hold it. No
--- subscription, no per-frame read.
 local function allowInteriors()
     return ridingSettings:get("ALLOW_INTERIORS") == true
 end
 
--- The player's own exclusion list, as the textSet renderer stores it: a set
--- keyed by lower-cased record id. Read at target time, which is a key press,
--- so there is no subscription and nothing per frame.
---
--- Always a table. A setting that has never been touched can come back nil,
--- and isBlacklisted would then silently stop consulting it.
 local function blacklistedIds()
     local set = ridingSettings:get("BLACKLIST_IDS")
     if type(set) ~= "table" then return {} end
@@ -147,16 +105,6 @@ local lastSent = nil
 -- ---------------------------------------------------------------------------
 -- PARKOURWIND FLOW
 -- ---------------------------------------------------------------------------
--- FLOW reads any not-grounded player as mid-jump. A rider is never grounded
--- (placed every frame), so without this FLOW ran its airborne ladder on
--- the rider: the mount's jump (the same key) grabbed a ledge off
--- the saddle, and a mount leaping off a cliff played Skydive on the rider
--- and landed it as a knockdown. I.Flow.yield stands it down
--- for the hold. Optional: absent FLOW, nothing happens.
---
--- YIELD BEFORE TAKING THE OVERRIDE. overrideMovementControls is one flag
--- shared by every mod; FLOW releases its own hold on it as it stands down,
--- and that write must land before ours, not over it.
 local FLOW_OWNER = 'WhyWalk.Core'
 local function flowYield(on)
     local F = I.Flow
@@ -167,20 +115,6 @@ end
 -- ---------------------------------------------------------------------------
 -- CONTROL LOCK
 -- ---------------------------------------------------------------------------
--- One-shot, not per-frame writes to self.controls.
---
--- I.Controls.overrideMovementControls rather than CONTROL_SWITCH.Controls: the
--- control-switch route ALSO disables third-person camera zoom (it is routed
--- through the built-in camera script), which is unacceptable on a mod whose
--- point is watching the rider. Sturdy Steed documents this in two places.
---
--- One call replaces two: overrideMovementControls suppresses jump and sneak
--- along with movement, so the separate Jumping switch is redundant.
---
--- Still recorded in the save and undone on load. The override lives in the
--- built-in playercontrols script rather than in engine actor state, but a
--- half-restored lock is bad enough that the handshake is worth keeping either
--- way.
 
 local function lockControls()
     if controlsLocked then return end
@@ -197,22 +131,6 @@ end
 -- ---------------------------------------------------------------------------
 -- LEVITATION
 -- ---------------------------------------------------------------------------
--- Suppresses rider gravity so it stops dragging the rider down between pin
--- updates -- the artefact both reference mods work around. It does not move
--- anything; the pin still does the moving.
---
--- Applied by modifying the Levitate effect magnitude directly rather than by
--- adding a spell. The spell route needed a record in the ESP, which meant a
--- placeholder id that could not resolve, which in turn meant wrapping both
--- add and remove in pcall to absorb the guaranteed failure -- a pcall standing
--- in for a missing asset. p37z demonstrates the record-free form; this is that
--- technique. Cod3x types activeEffects(actor) as taking an openmw.Object and
--- documents modify(value, effectId) as a permanent magnitude change, so it is
--- legal on self from a player script.
---
--- Symmetric by construction: +1 on mount, -1 on dismount, gated by the
--- levitationAdded flag so the pair can never drift out of balance and leave a
--- permanently levitating player.
 
 local function addLevitation()
     if not TUNING.useLevitation or levitationAdded then return end
@@ -229,8 +147,6 @@ end
 -- ---------------------------------------------------------------------------
 -- CONTROL INTENT
 -- ---------------------------------------------------------------------------
--- Sent only on change. A rider holding W across a valley generates one event,
--- not one per frame.
 
 local function intentKey(throttle, steer, gallop)
     return tostring(throttle) .. ":" .. tostring(steer) .. ":" .. tostring(gallop)
@@ -262,22 +178,6 @@ end
 -- ---------------------------------------------------------------------------
 -- (PERSPECTIVE REPORTING -- REMOVED)
 -- ---------------------------------------------------------------------------
--- This file used to relay camera mode to the global script, and hold a second
--- AnimRefresh subscription ("WhyWalkPerspective") for the whole ride to do it.
--- The global script stored the result in session.firstPerson.
---
--- Nothing read it. The consumer was placeRider's first-person gate, and that
--- gate was removed on 2026-10-04 when rider yaw became a DELTA -- a delta is
--- correct in both perspectives, so there is nothing left to branch on.
---
--- It was not free. It held an AnimRefresh subscriber open for every ride,
--- which under v5 means a delivery on every first-person boundary crossing,
--- each one relaying a global event that nothing consumed. The service's whole
--- cost model is "no subscribers, one count check" -- so a dead subscriber is
--- the one kind of leftover that actually shows up in a profile.
---
--- Removed with it: the openmw.camera require, lastFirstPerson, sendPerspective,
--- subscribePerspective/unsubscribePerspective and EV.PERSPECTIVE.
 
 -- ---------------------------------------------------------------------------
 -- TARGETING
@@ -295,17 +195,10 @@ local function findMountTarget()
     if not result or not result.hit then return nil end
 
     local obj = result.hitObject
-    -- SharedRay validates hitObject at delivery, but the cast is async so
-    -- delivery was last frame; any access to an invalidated object raises.
     if not obj or not obj:isValid() then return nil end
     if result.distance and result.distance > TUNING.freeRideRange then return nil end
     if not types.Creature.objectIsInstance(obj) then return nil end
 
-    -- Returns a REASON for the blacklist, where everything above just returns
-    -- nil. The difference matters: looking at a wall and getting nothing is
-    -- self-explanatory, but looking at a creature the player blacklisted
-    -- themselves and getting nothing reads as a broken mod. The caller turns
-    -- this into a message naming the setting.
     if shared.isBlacklisted(obj.recordId, blacklistedIds()) then
         return nil, "blacklisted"
     end
@@ -334,8 +227,6 @@ local function onMounted(data)
     lockControls()
     addLevitation()
 
-    -- Hand off to the animation controller, which is a separate player script
-    -- on the same object and needs no reference to this one.
     self.object:sendEvent('WhyWalk_AnimMounted', {
         mount = data and data.mount, mountType = mountType, freeRide = freeRiding,
     })
@@ -356,11 +247,6 @@ local function onDismounted()
     self.object:sendEvent('WhyWalk_AnimDismounted', {})
 end
 
--- The global script refused the mount. Only one reason exists today, but the
--- event carries one so a second does not need a new event.
---
--- A message rather than silence: activating a guar and having nothing happen
--- reads as a broken mod. This says which setting to change.
 local function onMountRefused(data)
     local reason = data and data.reason
     if reason == 'interior' then
@@ -374,8 +260,6 @@ end
 -- INPUT
 -- ---------------------------------------------------------------------------
 
----True when a menu, dialogue or cutscene has the player's attention.
----Same gate SunsDusk puts on its interaction actions.
 local function hudHidden()
     return I.UI and I.UI.isHudVisible and not I.UI.isHudVisible()
 end
@@ -390,9 +274,6 @@ local function requestMount()
 
     local target, mt, free = findMountTarget()
     if not target then
-        -- `mt` carries the reason when there is no target. Only the blacklist
-        -- produces one, because it is the only refusal the player configured
-        -- and so the only one worth explaining.
         if mt == "blacklisted" then
             ui.showMessage(core.l10n(L10N_CONTEXT)("msg_blacklisted"))
         end
@@ -407,11 +288,6 @@ end
 
 input.registerTriggerHandler("Activate", async:callback(requestMount))
 
--- The mount's jump is the JUMP action, read like Activate through the trigger
--- system, so it follows the player's binding. It used to be the literal Space
--- key - which in Morrowind's default bindings IS Activate (Jump is E), so one
--- press sent a jump and, through requestMount above, a dismount. Measured in
--- OpenMW 0.52 with vanilla bindings: Space on a guar dismounted the rider.
 local function requestJump()
     if not mounted or hudHidden() then return end
     core.sendGlobalEvent(EV.CONTROL, { player = self.object, jump = true })
@@ -422,12 +298,6 @@ local KEYMAP = {
     w = "forward", s = "back", a = "left", d = "right",
 }
 
--- PRESS is gated, RELEASE deliberately is not. The asymmetry is the point:
--- gating both would strand a key that was physically held when the menu opened,
--- because the release that clears it would be the event thrown away -- the
--- rider would keep galloping on a key nobody is holding. Ignoring presses
--- stops a menu from steering the mount; processing every release can only ever
--- clear state, which is safe in any UI mode.
 local function onKeyPress(key)
     if not mounted then return end
     if hudHidden() then return end
@@ -441,8 +311,6 @@ local function onKeyPress(key)
         core.sendGlobalEvent(EV.REQUEST_DISMOUNT, { player = self.object })
         return
     else
-        -- Shift has no portable symbol, so gallop is read fresh on any key
-        -- event rather than matched by name. Re-read below covers it.
     end
 
     held.gallop = input.isShiftPressed()
@@ -476,8 +344,6 @@ local function onLoad(data)
     held.left, held.right   = false, false
     held.gallop             = false
 
-    -- Undo only what we recorded holding, rather than blanket-clearing: a
-    -- blanket clear would stomp a lock another mod legitimately holds.
     controlsLocked  = data and data.controlsLocked == true or false
     levitationAdded = data and data.levitationAdded == true or false
     releaseControls()
@@ -491,23 +357,6 @@ end
 -- ---------------------------------------------------------------------------
 -- COMPETING RIDING MOD DETECTION
 -- ---------------------------------------------------------------------------
--- WhyWalk REPLACES Devilish Horse/Guar Riding and Sturdy Steed. It does not
--- layer on them. Running both is not a degraded experience, it is two mods
--- driving one creature with different conventions, and the symptoms are
--- bizarre rather than obviously duplicated:
---
---   * Devilish re-asserts camera.setMode(FirstPerson, true) every 0.10s while
---     ITS ride is active, so pressing the POV key appears to do nothing --
---     "the camera will not change to third person while riding". WhyWalk
---     never touches camera mode; it cannot win that fight and should not try.
---   * Both pin the rider, at different offsets, on different frames.
---   * WhyWalk claims `detd_guarride1` and `ttd_horseride` by record id, the
---     exact creatures those mods add, so activating one starts BOTH rides.
---
--- Detected behaviourally rather than by content-file name: these mods ship
--- their Lua separately from their plugin, and a renamed ESP would defeat a
--- filename check. Their mount events are the reliable tell, and an event
--- handler that never fires costs nothing.
 local RIVAL_MOUNT_EVENTS = {
     "DETD_GuarRiding_Mounted",
     "DETD_HorseRiding_Mounted",

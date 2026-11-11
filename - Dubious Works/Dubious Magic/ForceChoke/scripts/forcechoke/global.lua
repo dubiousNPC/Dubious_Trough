@@ -10,15 +10,6 @@
       HOLDING --(player casts it again)--> THROWN --> land --> IDLE
       HOLDING --(cast fails)-------------------------> HOLDING
 
-    Record creation is NOT here. load.lua declares the effect and both spells
-    through openmw.content with fixed ids, so this file names them directly.
-    Gone with the old runtime-record approach: makeSpell, ensureRecords, the
-    cached ids in save state, and the ForceChoke_SpellId handshake event.
-
-    Magicka and the success roll are NOT here either. player.lua reacts to a
-    cast the engine already resolved successfully, so a failed cast never
-    reaches this file -- that is the "grip slips" outcome, delivered by the
-    engine's own failure sound.
 ]]--
 
 local core  = require('openmw.core')
@@ -29,9 +20,33 @@ local S = require('scripts.forcechoke.shared')
 local T = S.TUNING
 
 -- ============================================================
+-- TARGET SCRIPT ATTACHMENT
+-- ============================================================
+local TARGET_SCRIPT = 'scripts/forcechoke/target.lua'
+
+local state
+
+local function attachTarget(target)
+    if target:hasScript(TARGET_SCRIPT) then
+        target:sendEvent('ForceChoke_Grab')
+    else
+        target:addScript(TARGET_SCRIPT, { grab = true })
+    end
+end
+
+local function onDetachRequest(data)
+    local actor = data and data.actor
+    if not (actor and actor:isValid()) then return end
+    if state.active and actor == state.target then return end
+    if actor:hasScript(TARGET_SCRIPT) then
+        actor:removeScript(TARGET_SCRIPT)
+    end
+end
+
+-- ============================================================
 -- STATE
 -- ============================================================
-local state = {
+state = {
     active      = false,
     player      = nil,
     target      = nil,
@@ -46,10 +61,6 @@ local function clearState()
     state.player = nil
 end
 
--- Global scripts have no `ui` module, so messages are handed to player.lua.
--- This used to send 'Ui_ShowMessage', which was an SF+ INTERNAL convention
--- handled in magexp_player.lua. Once the SF+ dependency was dropped nothing
--- was left listening and every message this mod produced was discarded.
 local function notify(player, msg)
     if player and player:isValid() then
         player:sendEvent('ForceChoke_Notify', { message = msg })
@@ -91,13 +102,11 @@ end
 -- STAT DAMAGE
 -- ============================================================
 local function damageFatigue(target, amount)
-    local f = types.Actor.stats.dynamic.fatigue(target)
-    f.current = math.max(0, f.current - amount)
+    target:sendEvent('ForceChoke_Damage', { fatigue = amount })
 end
 
 local function damageHealth(target, amount)
-    local h = types.Actor.stats.dynamic.health(target)
-    h.current = h.current - amount
+    target:sendEvent('ForceChoke_Damage', { health = amount })
 end
 
 -- ============================================================
@@ -124,7 +133,7 @@ local function beginChoke(player, target)
     state.lastRefresh = core.getSimulationTime()
 
     applyHold(target)
-    target:sendEvent('ForceChoke_Grab')
+    attachTarget(target)
     player:sendEvent('ForceChoke_HoldStart')
 end
 
@@ -142,9 +151,6 @@ local function onDropRequest()
         state.player:sendEvent('ForceChoke_HoldEnd')
     end
 
-    -- The DROP pose is left running deliberately: it settles on its collapsed
-    -- frame and is replaced when the actor is next grabbed, or cleared on
-    -- load. Sending Clear here would snap them upright on landing.
     clearState()
 end
 
@@ -158,18 +164,9 @@ local function onThrowRequest()
         return
     end
 
-    -- Away from the player, flattened, then re-lifted so the throw always
-    -- carries upward regardless of where the player is looking.
     local away = target.position - player.position
     away = util.vector3(away.x, away.y, 0)
     if away:length() < 1 then
-        -- Standing exactly on top of the target: fall back to facing.
-        --
-        -- Previously this was util.vector3(math.cos(yaw), math.sin(yaw), 0),
-        -- which is wrong on two counts -- OpenMW's yaw is a compass bearing
-        -- (0 = +Y) so the components are swapped, and the sign convention is
-        -- not the trig one either. Rotating the unit forward vector asks the
-        -- engine for its own answer and cannot drift from it.
         away = player.rotation * util.vector3(0, 1, 0)
         away = util.vector3(away.x, away.y, 0)
     end
@@ -179,7 +176,7 @@ local function onThrowRequest()
     clearHold(target)   -- a paralyzed actor should not stay rigid mid-flight
     target:sendEvent('ForceChoke_Throw', {
         dir       = util.vector3(away.x, away.y, T.throwVerticalFactor):normalize(),
-        magnitude = T.throwMagnitude,
+        magnitude = T.throwSpeed,
     })
     player:sendEvent('ForceChoke_HoldEnd')
 end
@@ -204,9 +201,6 @@ end
 -- ============================================================
 -- CAST -> GRAB
 -- ============================================================
---- Raised by player.lua once the engine resolved a SUCCESSFUL cast and the
---- deferred crosshair read found an NPC. Everything security-relevant is
---- re-checked here regardless: a global handler must not trust a payload.
 local function onCastRequest(data)
     if not data then return end
 
@@ -219,11 +213,6 @@ local function onCastRequest(data)
     if target == player then return end
     if types.Actor.stats.dynamic.health(target).current <= 0 then return end
 
-    -- Range is re-derived rather than trusted: the payload could be stale by
-    -- a frame, and player.lua measures from the CAMERA while the grip is
-    -- maintained from the PLAYER. The reported reach is accepted as an upper
-    -- bound -- Telekinesis legitimately extends it -- but clamped, so a stale
-    -- or forged payload cannot grant unlimited range.
     local reach = math.min(tonumber(data.reach) or T.castRange, T.maxReach)
     if reach < T.castRange then reach = T.castRange end
     if (target.position - player.position):length() > reach then
@@ -237,9 +226,6 @@ end
 -- ============================================================
 -- MAINTENANCE
 -- ============================================================
--- Throttled to holdRefreshInterval rather than running every frame: this only
--- refreshes a multi-second paralysis and checks a distance, neither of which
--- needs frame resolution.
 local function onUpdate()
     if not state.active or state.thrown then return end
 
@@ -267,10 +253,6 @@ end
 -- ============================================================
 -- LIFECYCLE
 -- ============================================================
--- No onSave/onLoad payload: there is nothing left worth persisting now that
--- record ids are fixed. A choke in progress is deliberately NOT restored --
--- target.lua's own onLoad cancels every ForceChoke pose, so the actor comes
--- back free rather than stranded in a Scripted-priority hold.
 local function onPlayerAdded(player)
     local spells = types.Actor.spells(player)
     if not spells[S.SPELL_ID] then
@@ -291,5 +273,6 @@ return {
         ForceChoke_ThrowRequest = onThrowRequest,
         ForceChoke_ThrowStep    = onThrowStep,
         ForceChoke_Landed       = onLanded,
+        ForceChoke_Detach       = onDetachRequest,
     },
 }
