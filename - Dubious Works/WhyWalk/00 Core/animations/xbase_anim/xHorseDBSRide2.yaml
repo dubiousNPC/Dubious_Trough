@@ -1,0 +1,8 @@
+blending_rules:
+  # Into a riding pose. Only the way IN from WhyWalk's transition clips is
+  # set here (local rules govern transitions into this file's groups); every
+  # other transition keeps the engine's global config.
+  - from: "ww*"
+    to: "*"
+    easing: "sineOut"
+    duration: 0.2

@@ -1,0 +1,39 @@
+blending_rules:
+  # WhyWalk mounting transitions (xmounting1.kf): FLOW's vault / mantle /
+  # boost, adapted and renamed ww*. Local rules only govern transitions INTO
+  # this file's groups; the way out (into a riding pose) is in the riding
+  # .kf's own .yaml.
+  #
+  # Base, for anything not named below.
+  - from: "*"
+    to: "*"
+    easing: "sineOut"
+    duration: 0.2
+
+  # Bottom-most rule wins. WhyWalk plays these scaled to the climb (0.5 s for
+  # a vault, 0.6 s a mantle, 0.9 s or more a boost: whywalk_shared
+  # MOUNT_TRANSITION), so a blend of about a quarter of that.
+  - from: "*"
+    to: "wwvault1: *"
+    easing: "sineOut"
+    duration: 0.12
+  - from: "*"
+    to: "wwvault2: *"
+    easing: "sineOut"
+    duration: 0.15   # dismount: out of a riding pose, a little softer
+  - from: "*"
+    to: "wwmantle1: *"
+    easing: "sineOut"
+    duration: 0.15
+  - from: "*"
+    to: "wwmantle2: *"
+    easing: "sineOut"
+    duration: 0.15
+  - from: "*"
+    to: "wwmantle3: *"
+    easing: "sineOut"
+    duration: 0.15
+  - from: "*"
+    to: "wwboostup: *"
+    easing: "sineOut"
+    duration: 0.2

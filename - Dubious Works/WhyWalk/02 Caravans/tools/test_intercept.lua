@@ -97,6 +97,7 @@ lastGlobal = nil
 
 -- ---------------------------------------------------------------- engine
 local guideRecord = {
+    class = 'Caravaner',
     servicesOffered = { Travel = true },
     travelDestinations = {
         -- Opaque ids on purpose: nothing may resolve a place from cellId.
@@ -541,6 +542,23 @@ check('without UI Toolkit the vanilla menu is left alone',
       not sequence():find('removeMode') and not sequence():find('popup:show'),
       sequence())
 package.loaded['openmw.interfaces'].UIToolkit = savedToolkit
+
+-- A SHIPMASTER standing at a caravan stop is not offered a strider
+-- (2026-11-12). Measured on vanilla data, Ano Andaram (Vivec Foreign Quarter)
+-- was quoted a strider to Molag Mar for a sea ticket. Immersive Travel's rule
+-- is the class: only Caravaners, plus its named exceptions.
+do
+    guideRecord.class = 'Shipmaster'
+    ev.WWCaravans_GuideLatched({ actor = guide })
+    local q = roundTrip()
+    check('a shipmaster at a caravan stop is quoted no strider route',
+          q.from == nil and next(q.byDest) == nil, tostring(q.from))
+    guideRecord.class = 'Caravaner'
+    ev.WWCaravans_GuideLatched({ actor = guide })
+    q = roundTrip()
+    check('the caravaner at the same stop still is', q.from ~= nil and next(q.byDest) ~= nil,
+          tostring(q.from))
+end
 
 -- No travel-selling actor anywhere: likewise.
 log = {}
@@ -1232,7 +1250,8 @@ do
         local t = type(v)
         local plain = t == 'string' or t == 'number' or t == 'boolean'
         local vector = t == 'table' and getmetatable(v) == V
-        if not (plain or vector or k == 'guide') then
+        -- The two GameObjects: the guide, and the player to put down.
+        if not (plain or vector or k == 'guide' or k == 'putDownPlayer') then
             bad[#bad + 1] = ('%s is %s'):format(k, t)
         end
     end
@@ -1253,6 +1272,20 @@ check('loading puts the guide back on their post',
       and math.abs(placed.guide.x - guideHome.x) < 1e-6
       and math.abs(placed.guide.y - guideHome.y) < 1e-6,
       placed.guide and ('%.0f,%.0f'):format(placed.guide.x, placed.guide.y))
+
+-- A mid-journey save must also put the PASSENGER down after the load
+-- (2026-11-12): measured in OpenMW 0.52, nothing did, and the player stayed
+-- where the slot had been -- inside a Bitter Coast rock, 145 units under its
+-- surface. The first frame after the load does it, on the ground.
+check('a mid-journey save records where to put the passenger down',
+      saved.putDownPlayer == playerObj and getmetatable(saved.putDownAt) == V,
+      tostring(saved.putDownPlayer))
+placed.player = nil
+frame()
+check('the first frame after the load puts the passenger down, on the ground',
+      placed.player ~= nil and placed.player.onGround == true
+      and math.abs(placed.player.x - saved.putDownAt.x) < 1e-6,
+      placed.player and tostring(placed.player.onGround))
 
 -- And a load, because the global puts the player on the ground in its own
 -- onLoad and a surviving pose would outlive the journey.

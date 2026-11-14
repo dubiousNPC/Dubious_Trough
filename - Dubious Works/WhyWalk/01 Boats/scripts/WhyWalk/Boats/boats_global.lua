@@ -144,6 +144,11 @@ local function hullFromBox(object, waterLevel, modelKey)
     local box = object:getBoundingBox()
     if not box or not box.halfSize or not (box.halfSize.z > 0) then return nil end
     local hx, hy = box.halfSize.x, box.halfSize.y
+    -- getBoundingBox() is world-aligned. On a rotated static it is the box of
+    -- the rotated hull, which inflates the beam (a rowboat at 0.86 rad measured
+    -- half beam 166 instead of about 68). Undo the yaw where it is solvable:
+    --   hx = a*|cos| + b*|sin|,  hy = a*|sin| + b*|cos|
+    -- Near 45 degrees the two are not separable; keep the world box there.
     local yaw = object.rotation and object.rotation:getYaw() or 0
     local c, s = math.abs(math.cos(yaw)), math.abs(math.sin(yaw))
     local det = c * c - s * s
@@ -244,10 +249,16 @@ local function announce(s)
     })
 end
 
+-- Take a Seat holds the player (seated, lying or getting up): reported by
+-- WhyWalk Core's player script (WhyWalk_PlayerSeated). Take a Seat
+-- docs/tickets/0010.
+local seatedPlayers = {}
+
 local function board(player, target, motionOn)
     if session then return refuse(player, 'busy') end
     if not types.Player.objectIsInstance(player) then return end
     if riderMounted then return refuse(player, 'mounted') end
+    if seatedPlayers[player.id] then return refuse(player, 'seated') end
     if not target or not target:isValid() or not target.enabled then return end
 
     local entry, recordOrWhy, kind, modelKey, ours, scripted = classify(target)
@@ -447,6 +458,7 @@ end
 
 return {
     eventHandlers = {
+        WhyWalk_PlayerSeated = function(d) if d and d.player then seatedPlayers[d.player.id] = d.seated == true or nil end end,
         [EV.REQUEST_BOARD] = onRequestBoard,
         [EV.REQUEST_LEAVE] = onRequestLeave,
         [EV.HELM]          = onHelm,

@@ -108,3 +108,4 @@ riding_blacklist_description: |-
   does not make sense as a mount.
 
 msg_blacklisted: "You have set this creature as one you never ride. Change that in WhyWalk's settings."
+msg_seated_refused: "Get up first."

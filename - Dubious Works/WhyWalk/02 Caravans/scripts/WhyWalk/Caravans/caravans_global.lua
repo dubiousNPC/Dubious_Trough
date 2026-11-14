@@ -666,6 +666,30 @@ end
 -- like the record's travelDestinations, so the player script pairs them by
 -- index and never compares names or cell ids.
 local warnedGuide = {}
+
+-- ONLY CARAVANERS (2026-11-12).
+--
+-- Places are matched by position, so ANY travel seller standing within reach
+-- of a caravan stop was offered a strider ride to every destination near
+-- another stop. Measured on vanilla data: Rindral Dralor, who sells boat
+-- passage from Molag Mar, was quoted a strider to Vivec, and Ano Andaram, the
+-- Vivec Foreign Quarter shipmaster, a strider to Molag Mar -- overland, for a
+-- sea ticket, with every other destination they sell dropped from the menu.
+-- With WhyWalk Shipping installed both modules would also take the same
+-- window.
+--
+-- Immersive Travel's rule decides who drives what: the NPC's class names the
+-- service, and services/Caravaner.json's override_npc adds named exceptions.
+local CARAVANER_CLASS = 'caravaner'
+local CARAVANER_NPCS = { ['tr_m2_valna sippusoti'] = true, ['valna sippusoti'] = true }
+
+local function sellsCaravans(guide)
+    if not types.NPC.objectIsInstance(guide) then return false end
+    local rec = types.NPC.record(guide)
+    if rec and rec.class and rec.class:lower() == CARAVANER_CLASS then return true end
+    return CARAVANER_NPCS[guide.recordId:lower()] == true
+end
+
 local function onRequestQuote(data)
     local player = data and data.player
     local guide = data and data.guide
@@ -690,7 +714,7 @@ local function onRequestQuote(data)
     -- worse than that -- the quote never arrives, so the destination menu is
     -- empty with one line in the log to say why.
     local gcell = guide.cell
-    local fromKey = gcell and gcell.isExterior
+    local fromKey = gcell and gcell.isExterior and sellsCaravans(guide)
         and stops.at(STOP_CENTRES, guide.position.x, guide.position.y) or nil
     local byDest = {}
     local grec = nil
@@ -724,7 +748,7 @@ local function onRequestQuote(data)
             '[WhyWalk Caravans] %s: no animated route (%s); vanilla travel used',
             guide.recordId,
             fromKey and ('origin ' .. fromKey .. ', no destination has a route')
-                or 'not at a known stop'))
+                or (sellsCaravans(guide) and 'not at a known stop' or 'not a caravaner')))
     end
     player:sendEvent(EV.QUOTE, { guide = guide, from = fromKey, byDest = byDest })
 end
@@ -752,7 +776,31 @@ end)
 -- THE PER-FRAME HANDLER
 -- ---------------------------------------------------------------------------
 
+-- A SAVE TAKEN MID-JOURNEY PUTS THE PASSENGER DOWN ON LOAD (2026-11-12).
+--
+-- The note in onLoad said the global "releases them" and the player script
+-- that the player "reloads on the ground". Nothing did either: the saved
+-- player position is wherever the slot was -- up on a strider's back, or, on
+-- stretches where the route runs through the terrain, inside the hill -- and
+-- nothing moved them. Measured in OpenMW 0.52 on Seyda Neen -> Balmora,
+-- saved 15 s in: after the load the passenger stood at z 938 inside the
+-- Bitter Coast hillside, whose surface there is at 1083, and stayed. (Before
+-- Core's 2026-11-12 fix the MWScript pin went on holding them at the saved
+-- target instead, which is no better.)
+--
+-- So the last vehicle position is saved, and the first frame after the load
+-- puts the player down there, on the ground -- the same spot an abort would.
+-- Not in onLoad: the player is not guaranteed to be placeable there.
+local pendingPutDown = nil
+
 local function onUpdate(dt)
+    if pendingPutDown then
+        local p = pendingPutDown
+        pendingPutDown = nil
+        if p.player and p.player:isValid() then
+            p.player:teleport('', util.vector3(p.x, p.y, p.z), { onGround = true })
+        end
+    end
     local s = session
     if not s then return end
 
@@ -891,6 +939,12 @@ local function onSave()
         vehicleInPlace = vehicleInPlace,
     }
     local s = session
+    if s and s.player and s.player:isValid() and s.lastX then
+        -- Flat fields: the save test holds every value to the types the
+        -- engine is known to accept, and a GameObject and numbers are those.
+        saved.putDownPlayer = s.player
+        saved.putDownAt = util.vector3(s.lastX, s.lastY, bodyOrigin(s, s.lastZ))
+    end
     if s and s.guide and s.guide:isValid() and s.guideHome then
         saved.guide = s.guide
         saved.guideHome = s.guideHome
@@ -941,6 +995,10 @@ local function onLoad(data)
             s.vehicle:teleport(worldspaceOf(s), util.vector3(0, 0, -30000))
         end
     end
+
+    pendingPutDown = (data and data.putDownPlayer and data.putDownAt)
+        and { player = data.putDownPlayer, x = data.putDownAt.x, y = data.putDownAt.y, z = data.putDownAt.z }
+        or nil
 
     -- Put the guide back on their post, from the saved position rather than
     -- from the session -- the session may not exist on this side of the load

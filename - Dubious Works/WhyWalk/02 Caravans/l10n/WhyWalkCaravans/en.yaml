@@ -29,6 +29,14 @@ caravans_speed_description: |-
 
 caravans_clock_name: "Advance the clock to match"
 caravans_clock_description: |-
+  On by default.
+
+  Ordinary travel advances the clock by the distance travelled. An animated
+  journey passes real time instead, which is far less -- so with this on, the
+  remainder is added when you arrive, and travelling by strider costs the
+  same hours it always did.
+
+  Turn it off if you would rather the journey cost only the time it took.
 
 caravans_pose_name: "Seat the passenger"
 caravans_pose_description: |-
@@ -39,15 +47,6 @@ caravans_pose_description: |-
   (xRAsit1's rasit2, or a floor sit); without one it falls back to the idle
   anyway. In play the standing idle reads better against the strider's own
   walk, which is why this is opt-in.
-
-  On by default.
-
-  Ordinary travel advances the clock by the distance travelled. An animated
-  journey passes real time instead, which is far less -- so with this on, the
-  remainder is added when you arrive, and travelling by strider costs the
-  same hours it always did.
-
-  Turn it off if you would rather the journey cost only the time it took.
 
 
 # --- Messages ------------------------------------------------------------

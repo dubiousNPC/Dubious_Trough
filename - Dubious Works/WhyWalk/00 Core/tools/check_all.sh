@@ -22,5 +22,6 @@ python3 -I tools/luarun.py tools/test_ridinganim.lua
 python3 -I tools/luarun.py tools/test_saddlebox.lua
 python3 -I tools/luarun.py tools/test_mountcontrols.lua
 python3 -I tools/luarun.py tools/test_riderflow.lua
+python3 -I tools/luarun.py tools/test_transitions.lua
 # Regenerating whywalk_creatures.lua needs the compiled profile; see CREATURES.md
 python3 -I tools/gen_creatures.py tools/creatures_all.csv > /dev/null

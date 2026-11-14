@@ -155,7 +155,10 @@ M.PROFILE = {
     [T.STRIDENT] = { saddle = { forward = -12, right = 0, up = 150 },  turnRate = 2.2 },
     [T.KAGOUTI]  = { saddle = { forward = -10, right = 0, up = 120 },  turnRate = 2.8 },
     [T.SKYRENDER]= { saddle = { forward = 0,   right = 0, up = 90  },  turnRate = 1.8, flying = true },
-    [T.NETCH]    = { saddle = { forward = 0,   right = 0, up = 200 },  turnRate = 1.2, flying = true },
+    -- One height cannot serve a betty (back ~320) and a bull (~755); the
+    -- per-creature table and the measured back know which is which.
+    [T.NETCH]    = { saddle = { forward = 0,   right = 0, up = 200 },  turnRate = 1.2, flying = true,
+                     preferCompiled = true },
     [T.SILT_STRIDER] = {
         saddle = { forward = 80, right = 0, up = 1223 }, turnRate = 0.6,
     },
@@ -185,6 +188,97 @@ M.TUNING = {
     dismountClearance = 115,   -- sideways offset when stepping off
     maxRiderDrift     = 700,   -- hard resync distance
 }
+
+-- ---------------------------------------------------------------------------
+-- MOUNTING TRANSITIONS (2026-11-12)
+-- ---------------------------------------------------------------------------
+-- Getting on and off is animated with the clips in animations/*/xmounting1.kf
+-- (wwvault1/2, wwmantle1-3, wwboostup: FLOW's vault/mantle/boost, adapted and
+-- renamed for WhyWalk) and xdbsWWsitT1.kf (wwsitd1/2, wwsitu1/2: Take a Seat's
+-- sit-down / stand-up, adapted). Blending is in the .yaml beside each .kf.
+--
+-- WHICH CLIP is chosen the way FLOW chooses a move: by how high the target is
+-- above the player's feet, as a fraction of the player's height. FLOW's bands
+-- are vault 0.18-0.58 and mantle to 0.95 (Flow/core/sensor.lua); a saddle is
+-- climbed onto rather than over, so the bands here end higher:
+--     rise <= 0.58 body   wwvault1   a hop onto a low back (scrib, wolf)
+--     rise <= 1.10 body   wwmantle1  a climb onto a guar, a kagouti
+--     above that          wwboostup  a boost onto a netch's bell
+--
+-- WHO MOVES THE PLAYER: whywalk_global, on the rider pin, along an arc from
+-- where they stood to the saddle, over `duration`. The clip is only the body;
+-- ridingAnim plays it scaled so it lasts exactly `duration`.
+M.MOUNT_TRANSITION = {
+    enabled = true,
+    body    = 128,   -- player height the bands are fractions of
+    bands = {
+        { maxRise = 0.58,      group = "wwvault1",  duration = 0.50 },
+        { maxRise = 1.10,      group = "wwmantle1", duration = 0.60 },
+        { maxRise = math.huge, group = "wwboostup", duration = 0.90 },
+    },
+    -- A climb of many body heights takes longer than one, and so does a step
+    -- in from further away (Activate reaches 400; the clips cover about 120).
+    perExtraBody = 0.15,
+    reach        = 120,
+    perExtraUnit = 1 / 600,
+    maxDuration  = 1.6,
+    dismount = { group = "wwvault2", duration = 0.50 },
+    -- the player's feet clear the back by this much at the top of the arc
+    arcClearance = 18,
+}
+
+-- Seated vessel stances get a sit-down on boarding and a stand-up on leaving.
+-- A rowboat's thwart is a bench, so it takes the bench pair (TaS: BENCH ->
+-- tassitd2); a passenger on the floor takes the chair pair.
+M.VESSEL_SEAT_TRANSITION = {
+    rowing    = { enter = "wwsitd2", exit = "wwsitu2" },
+    sit       = { enter = "wwsitd1", exit = "wwsitu1" },
+    passenger = { enter = "wwsitd1", exit = "wwsitu1" },
+}
+
+-- The transition clips, for ridingAnim's ended handler.
+M.TRANSITION_GROUPS = {
+    "wwvault1", "wwvault2", "wwmantle1", "wwmantle2", "wwmantle3", "wwboostup",
+    "wwsitd1", "wwsitd2", "wwsitu1", "wwsitu2",
+}
+
+---Clip and duration for climbing `rise` units from the player's feet to the
+---saddle, `across` units away horizontally. Pure.
+---@param rise number
+---@param across number|nil
+---@return string group, number duration
+function M.mountTransition(rise, across)
+    local T = M.MOUNT_TRANSITION
+    local frac = (rise or 0) / T.body
+    for _, b in ipairs(T.bands) do
+        if frac <= b.maxRise then
+            local extra = math.max(0, frac - 1) * T.perExtraBody
+                        + math.max(0, (across or 0) - T.reach) * T.perExtraUnit
+            return b.group, math.min(T.maxDuration, b.duration + extra)
+        end
+    end
+    local last = T.bands[#T.bands]
+    return last.group, last.duration
+end
+
+---Where the player's feet are `k` (0..1) of the way from `from` to `to`.
+---Rises first and moves across late, so the player climbs up the flank and
+---then swings onto the back instead of sliding through the body; the top of
+---the arc clears the back by `clearance`. Pure; vectors as {x, y, z}.
+function M.mountArc(from, to, k, clearance)
+    k = math.max(0, math.min(1, k))
+    local up = 1 - (1 - k) * (1 - k)          -- fast rise
+    -- A climb of more than a body height (a boost onto a netch) eases in
+    -- instead: a fast rise there starts at twice the average climbing speed.
+    if (to.z - from.z) > M.MOUNT_TRANSITION.body then up = k * k * (3 - 2 * k) end
+    local across = k * k * (3 - 2 * k)        -- smoothstep: late, eased
+    local lift = (clearance or 0) * 4 * k * (1 - k)
+    return {
+        x = from.x + (to.x - from.x) * across,
+        y = from.y + (to.y - from.y) * across,
+        z = from.z + (to.z - from.z) * up + lift,
+    }
+end
 
 -- ---------------------------------------------------------------------------
 -- PURE HELPERS
@@ -251,6 +345,39 @@ function M.saddleFromProfile(recordId)
     return { forward = 0, right = 0, up = known.up }
 end
 
+---Is this the riding mod's own creature (an exact record id), whose saddle
+---and animations were authored together? Then its PROFILE saddle stands.
+function M.isAuthoredMount(recordId)
+    return recordId ~= nil and M.MOUNT_TYPE_BY_RECORD[recordId:lower()] ~= nil
+end
+
+-- A measured back is trusted inside these bounds (units above the origin);
+-- anything else is a ray that missed the body and hit something under it.
+M.MEASURED_SADDLE = { min = 8, max = 2000, clearance = 2 }
+
+---The saddle to use. In order:
+---  1. the riding mod's own creature: its PROFILE (authored together)
+---  2. the back measured with a rendering ray when mounting: the rider sits ON
+---     the creature, fliers included
+---  3. PROFILE by name pattern, the compiled table, the bounding box, default
+---Pure; `measuredUp` is nil when nothing was measured.
+---@return table saddle {forward, right, up}, string source
+function M.chooseSaddle(recordId, mountType, measuredUp, compiled, boxed)
+    local prof = M.profileFor(mountType)
+    if mountType and M.isAuthoredMount(recordId) then
+        return prof.saddle, "authored"
+    end
+    local m = M.MEASURED_SADDLE
+    if type(measuredUp) == "number" and measuredUp >= m.min and measuredUp <= m.max then
+        local fwd = mountType and prof.saddle.forward or 0
+        return { forward = fwd, right = 0, up = measuredUp + m.clearance }, "measured"
+    end
+    if mountType and not (prof.preferCompiled and compiled) then return prof.saddle, "profile" end
+    if compiled then return compiled, "compiled" end
+    if boxed then return boxed, "box" end
+    return prof.saddle, "default"
+end
+
 function M.profileFor(mountType)
     local p = mountType and M.PROFILE[mountType]
     if not p then
@@ -269,6 +396,7 @@ function M.profileFor(mountType)
         saddle   = { forward = sd.forward, right = sd.right, up = sd.up },
         turnRate = p.turnRate or DEFAULT_PROFILE.turnRate,
         flying   = p.flying == true,
+        preferCompiled = p.preferCompiled == true,
     }
 end
 

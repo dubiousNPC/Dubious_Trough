@@ -272,13 +272,13 @@ check('with forward left at zero, as the box-derived one is',
 check('an unknown creature gets nil, so the box read still happens',
       shared.saddleFromProfile('detd_guarride1') == nil)
 
--- A FLIER IS MEASURED FROM THE BOTTOM OF ITS BOX. A netch's box starts 348
--- units above its origin and the rider hangs under the bell; the walker rule
--- would seat them 660 units up, inside the sky.
+-- A FLIER'S RIDER SITS ON TOP (2026-11-12). The old rule took the bottom of
+-- the box, which put a netch's rider among its tentacles, 556 units under the
+-- bell measured in game. Now 0.98 of the box top: the bell's top is 755.
 local netch = creatures.get('netch_bull')
 check('a netch is flagged as flying', netch.fly == true)
-check('and its ride height is the bottom of its box, not a fraction of the top',
-      netch.up > 300 and netch.up < 400, netch.up)
+check('and its rider sits on the bell (0.98 of the box top), not under it',
+      netch.up > 700 and netch.up < 770, netch.up)
 
 -- A flier whose box starts at ground level is a flier in name only.
 local racer = creatures.get('cliff racer')

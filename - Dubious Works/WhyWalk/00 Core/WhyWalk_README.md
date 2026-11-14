@@ -21,6 +21,7 @@ though one unlocks the preferred rider-placement backend (see
 - [Free ride](#free-ride)
 - [Camera offset](#camera-offset)
 - [Rider placement](#rider-placement)
+- [Getting on and off](#getting-on-and-off)
 - [Camera freedom](#camera-freedom)
 - [Configuration](#configuration)
 - [File layout](#file-layout)
@@ -402,6 +403,55 @@ path, not to nothing.
 **Levitation** (`TUNING.useLevitation`) suppresses rider gravity so it stops
 dragging you down between placements. It does **not** move anything; it removes
 a force that fights the placement. Recorded in the save and undone on load.
+
+---
+
+## Getting on and off
+
+**Mounting is animated.** Look at a creature and press Activate. The player climbs onto it instead of appearing in the saddle.
+
+1. **Where the saddle is.** The player script casts three rendering rays (they hit the drawn, animated mesh, not the collision box) straight down at the saddle point and 20 units either side of it. It takes the middle of the three hits on the creature and sends that height in the mount request. Riders sit **on top of every creature, fliers included**: a netch's bell, not among its tentacles.
+2. **Which clip.** The height of the saddle above the player's feet, as a fraction of the player's height (128), picks the clip. These are FLOW's bands, ending a little higher because a saddle is climbed onto rather than over.
+
+   | rise | clip | duration |
+   |---|---|---|
+   | up to 0.58 | `wwvault1`, a hop (scrib, wolf, boar) | 0.5 s |
+   | up to 1.10 | `wwmantle1`, a climb (guar, alit, mudcrab) | 0.6 s |
+   | higher | `wwboostup`, a boost (kagouti, netch) | 0.9 s |
+
+   A longer climb, or a start further than 120 units away, takes longer, up to 1.6 s.
+3. **The motion.** The global script carries the player on the rider pin, along an arc from where they stood to the saddle. The arc rises first and moves across late, so the player goes up the flank and then over the back. A climb taller than one body eases in instead. The clip is scaled to last exactly as long as the arc.
+4. **Riding.** When the arc ends, the riding pose starts and the mount takes the controls.
+
+**Activate again** climbs off. The mount stops, `wwvault2` plays, and the player is carried down to the ground 115 units to the mount's right. That is the same spot an instant dismount uses. A mount that dies, or a ride that ends for any other reason, still puts you down at once.
+
+**Which saddle wins** (`whywalk_shared.chooseSaddle`):
+1. **The riding mod's own creature** (an exact id in `MOUNT_TYPE_BY_RECORD`): its PROFILE. Its saddle and its animations were authored together.
+2. **The measured back.**
+3. **When nothing was measured:**
+   - PROFILE by name pattern. Netches skip their shared 200 and take their own per-creature height.
+   - Then the compiled table. Fliers there now use 0.98 of the box top, not its bottom.
+   - Then the bounding box, then the default.
+
+**Boats.** A seated vessel stance sits down when you board and stands up when you leave. `rowing` uses the bench pair, `wwsitd2` / `wwsitu2`. `sit` and `passenger` use the chair pair, `wwsitd1` / `wwsitu1`. Standing stances (`stand`, `gondola`) have none. See `VESSEL_SEAT_TRANSITION`.
+
+**The clips** are in `animations/<skeleton>/xmounting1.kf` (wwvault1/2, wwmantle1-3, wwboostup) and `xdbsWWsitT1.kf` (wwsitd1/2, wwsitu1/2). They are FLOW's and Take a Seat's clips, adapted and renamed `ww*` so they can be reused for anything similar.
+
+**Blending:**
+- `xmounting1.yaml` and `xdbsWWsitT1.yaml` cover the transitions *into* these clips.
+- The ways *out*, into a riding or rowing pose, are in `xGuarDBSRide1.yaml`, `xHorseDBSRide2.yaml`, `xRowing1.yaml` and the kna copies.
+- OpenMW applies a .kf's local rules only to transitions into that file's groups.
+- These need "smooth animation transitions" turned on.
+
+**Not covered:**
+- There are no first-person copies. In first person the player still climbs, but without a clip.
+- `wwrun1` has a `stop` key and no `start`, so it cannot play. It is not used.
+
+**Take a Seat.** While Take a Seat (v0.44+) holds the player (`I.TakeASeat.isBusy()`: seated, lying, or still getting up):
+- an Activate press is Take a Seat's, which stands you up, and WhyWalk does not also mount on it;
+- a mount request from any other mod is refused with `WhyWalk_MountRefused { reason = 'seated' }` ("Get up first."), and boarding a boat with `WWBoats_Refused { reason = 'seated' }`.
+
+The player script follows `TakeASeat_Seated` and `TakeASeat_StandComplete` and tells the global scripts (`WhyWalk_PlayerSeated`). It reports again after every load. Without Take a Seat nothing changes.
 
 ---
 

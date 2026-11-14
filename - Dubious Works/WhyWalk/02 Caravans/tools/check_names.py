@@ -76,3 +76,5 @@ for path in sys.argv[1:]:
         print('%s: clean' % label)
 
 print('\n%d file(s) with findings' % problems)
+
+sys.exit(1 if problems else 0)

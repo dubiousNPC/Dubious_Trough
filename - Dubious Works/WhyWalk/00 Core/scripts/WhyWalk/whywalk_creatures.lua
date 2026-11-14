@@ -11,9 +11,10 @@
 
     up        where the rider sits, in units above the creature's own
               origin. For a walker, 0.86 of the top of the collision box
-              the engine builds from the mesh. For a flier, the BOTTOM
-              of that box -- a netch's box starts 348 units up and its
-              rider hangs under the bell rather than sitting on it.
+              the engine builds from the mesh. For a flier that floats,
+              0.98 of the box top: riders sit ON a flier too (a netch's
+              bell, not among its tentacles). Core prefers the back
+              measured with a rendering ray when mounting.
               nil where the mesh was not available to measure.
 
     ride      false when the record sets the biped flag or the
@@ -65,7 +66,7 @@ M.SHAPES = {
     { up = 127, ride = true, fly = false },
     { up = 134, ride = false, fly = false },
     { up = 70, ride = true, fly = false },
-    { up = 144, ride = true, fly = true },
+    { up = 430, ride = true, fly = true },
     { up = 105, ride = true, fly = false },
     { up = 138, ride = true, fly = false },
     { up = 161, ride = true, fly = false },
@@ -85,8 +86,8 @@ M.SHAPES = {
     { up = 42, ride = true, fly = false },
     { up = 147, ride = true, fly = false },
     { up = 83, ride = true, fly = false },
-    { up = 145, ride = true, fly = true },
-    { up = 348, ride = true, fly = true },
+    { up = 317, ride = true, fly = true },
+    { up = 753, ride = true, fly = true },
     { up = 99, ride = true, fly = false },
     { up = 165, ride = true, fly = false },
     { up = 35, ride = true, fly = false },
@@ -97,9 +98,9 @@ M.SHAPES = {
     { up = 182, ride = true, fly = false },
     { up = 112, ride = true, fly = false },
     { up = 133, ride = true, fly = false },
-    { up = 137, ride = true, fly = true },
+    { up = 236, ride = true, fly = true },
     { up = 139, ride = true, fly = false },
-    { up = 95, ride = true, fly = true },
+    { up = 106, ride = true, fly = true },
     { up = 96, ride = true, fly = false },
     { up = 86, ride = true, fly = false },
     { up = 4, ride = true, fly = false },
@@ -117,7 +118,7 @@ M.SHAPES = {
     { up = 79, ride = true, fly = false },
     { up = 173, ride = true, fly = false },
     { up = 126, ride = true, fly = false },
-    { up = 168, ride = false, fly = true },
+    { up = 341, ride = false, fly = true },
     { up = 117, ride = true, fly = false },
     { up = 67, ride = false, fly = false },
     { up = 159, ride = true, fly = false },
@@ -126,11 +127,11 @@ M.SHAPES = {
     { up = 65, ride = true, fly = false },
     { up = 160, ride = true, fly = false },
     { up = 214, ride = true, fly = true },
-    { up = 33, ride = true, fly = true },
-    { up = 57, ride = true, fly = true },
-    { up = 30, ride = true, fly = true },
+    { up = 78, ride = true, fly = true },
+    { up = 123, ride = true, fly = true },
+    { up = 62, ride = true, fly = true },
     { up = 49, ride = true, fly = false },
-    { up = 480, ride = true, fly = true },
+    { up = 510, ride = true, fly = true },
     { up = 26, ride = true, fly = true },
     { up = 129, ride = true, fly = false },
     { up = 100, ride = true, fly = false },
@@ -157,12 +158,12 @@ M.SHAPES = {
     { up = 58, ride = true, fly = false },
     { up = 87, ride = true, fly = false },
     { up = 120, ride = true, fly = true },
-    { up = 82, ride = true, fly = true },
+    { up = 147, ride = true, fly = true },
     { up = 172, ride = true, fly = true },
-    { up = 35, ride = true, fly = true },
+    { up = 599, ride = true, fly = true },
     { up = 24, ride = true, fly = false },
     { up = 21, ride = true, fly = false },
-    { up = 68, ride = true, fly = true },
+    { up = 129, ride = true, fly = true },
     { up = 310, ride = true, fly = false },
     { up = 172, ride = true, fly = false },
     { up = 111, ride = true, fly = false },
@@ -583,7 +584,7 @@ M.INDEX = {
     ["t_sky_fau_raki_01"]=136, ["t_sky_fau_rakids_01"]=136,
     ["t_sky_fau_sabcat_01"]=137, ["t_sky_fau_sabcat_02"]=137,
     ["t_sky_fau_sabcatds_01"]=137, ["t_sky_fau_sabcatds_02"]=137,
-    ["t_sky_fau_snowray_01"]=126, ["t_sky_fau_snowrayds_01"]=126,
+    ["t_sky_fau_snowray_01"]=91, ["t_sky_fau_snowrayds_01"]=91,
     ["t_sky_fau_wolfbla_01"]=17, ["t_sky_fau_wolfblads_01"]=17,
     ["t_sky_fau_wolfblasml_01"]=17, ["t_sky_fau_wolfgr_01"]=17,
     ["t_sky_fau_wolfgr_dis_01"]=17, ["t_sky_fau_wolfred_01"]=17,

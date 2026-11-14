@@ -1,0 +1,60 @@
+# WhyWalk Shipping -- English strings. Keys, not source strings (see Core).
+
+shipping_group_name: "Shipping"
+shipping_group_description: |-
+  Animated ship travel. Talking to a shipmaster offers the same destinations as
+  usual; where a route exists, the voyage is sailed rather than skipped.
+
+shipping_enabled_name: "Animated voyages"
+shipping_enabled_description: |-
+  On by default.
+
+  Turn this off to get the ordinary travel menu back. Destinations with no
+  route stay reachable either way, through "Other destinations" in the menu.
+
+shipping_speed_name: "Sailing speed"
+shipping_speed_description: |-
+  World units per second at sea. Default 1600.
+
+  Ships leave and arrive slowly and slow for tight turns; this is the speed in
+  open water. The shipmaster routes have a median length of about 100,000
+  units, so 1600 is roughly a minute; the longest, Ebonheart to Sadrith Mora,
+  is about five minutes.
+
+shipping_clock_name: "Advance the clock to match"
+shipping_clock_description: |-
+  On by default.
+
+  Ordinary travel advances the clock by the distance travelled. A voyage
+  passes real time instead, which is far less, so with this on the remainder
+  is added when you arrive -- the same hours the ordinary ticket costs.
+
+shipping_deckwalk_name: "Walk the deck"
+shipping_deckwalk_description: |-
+  On by default.
+
+  Move about the ship while it sails: walk, jump, climb to the quarterdeck.
+  The ship carries you as long as you stand on it. Go over the side and the
+  crew haul you back aboard after a couple of seconds.
+
+  Off puts you on the bow deck for the whole voyage, as before.
+
+shipping_pose_name: "Seat the passenger"
+shipping_pose_description: |-
+  Sit on deck instead of standing. Needs an animation pack that provides a
+  seated pose (xRAsit1's rasit2, or a floor sit); without one you stand.
+  Only while "Walk the deck" is off.
+
+menu_title: "Passage"
+menu_cancel: "Cancel"
+menu_other: "Other destinations (%d)..."
+
+msg_departing: "The %s casts off for %s. Press X to go ashore."
+msg_arrived: "You arrive at %s."
+msg_already_travelling: "You are already aboard. Wait until the ship makes port."
+msg_cannot_afford: "You cannot afford that passage."
+msg_no_route: "No ship sails that way."
+msg_no_vehicle: "There is no vessel here to carry you."
+msg_interrupted: "Your voyage ends here."
+msg_disembarked: "You go ashore."
+msg_rescued: "The crew haul you back aboard."

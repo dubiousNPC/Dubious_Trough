@@ -1,0 +1,13 @@
+# WhyWalk Shipping -- sail the shipmasters' routes instead of skipping them
+#
+# A WhyWalk module: load it AFTER "00 Core". Its settings sit on Core's
+# WhyWalk page, and the passenger is carried by Core's WhyWalkRiderPin and
+# posed by Core's ridingAnim.lua. Without Core it still sails; the passenger
+# is then carried by teleport and not posed.
+#
+# REQUIRES UI Toolkit (https://www.nexusmods.com/morrowind/mods/60303) for the
+# destination menu, as Caravans does. Without it the module stands down and
+# vanilla ship travel is untouched.
+
+GLOBAL: scripts/WhyWalk/Shipping/shipping_global.lua
+PLAYER: scripts/WhyWalk/Shipping/shipping_player.lua

@@ -142,6 +142,58 @@ local function resumeLocomotion()
 end
 
 -- ---------------------------------------------------------------------------
+-- TRANSITIONS: getting on, getting off, sitting down aboard
+-- ---------------------------------------------------------------------------
+-- One-shot clips from xmounting1.kf / xdbsWWsitT1.kf (whywalk_shared:
+-- MOUNTING TRANSITIONS), full body, above every riding and vessel layer, and
+-- scaled so the clip lasts exactly as long as the global script takes to move
+-- the player (the clip is the body; the pin is the motion). A skeleton
+-- without the group (first person has no copy) skips straight to the pose.
+local TRANSITION_PRIORITY = anim.PRIORITY.Scripted
+local transitionGen = 0
+local transitionGroup = nil
+
+local function clipLength(group)
+    local a = anim.getTextKeyTime(self, group .. ": start")
+    local b = anim.getTextKeyTime(self, group .. ": stop")
+    if a and b and b > a then return b - a end
+    return nil
+end
+
+---Play `group` once over `duration` seconds (its own length when nil), then
+---call `after` -- unless another transition or a stop superseded it.
+local function playTransition(group, duration, after)
+    transitionGen = transitionGen + 1
+    local mine = transitionGen
+    if not (group and hasGroup(group)) then
+        transitionGroup = nil
+        if after then after() end
+        return false
+    end
+    local len = clipLength(group) or duration or 0.5
+    duration = duration or len
+    if transitionGroup and transitionGroup ~= group then anim.cancel(self, transitionGroup) end
+    transitionGroup = group
+    I.AnimationController.playBlendedAnimation(group, {
+        startKey = "start", stopKey = "stop",
+        priority = TRANSITION_PRIORITY, blendMask = anim.BLEND_MASK.All,
+        loops = 0, speed = len / math.max(0.05, duration), autoDisable = true,
+    })
+    async:newUnsavableSimulationTimer(duration, function()
+        if mine ~= transitionGen then return end
+        transitionGroup = nil
+        if after then after() end
+    end)
+    return true
+end
+
+local function cancelTransition()
+    transitionGen = transitionGen + 1
+    if transitionGroup then anim.cancel(self, transitionGroup) end
+    transitionGroup = nil
+end
+
+-- ---------------------------------------------------------------------------
 -- VESSEL POSE
 -- ---------------------------------------------------------------------------
 
@@ -327,6 +379,10 @@ end))
 -- ---------------------------------------------------------------------------
 local function onPerspectiveChanged()
     applyCameraOffset()
+    -- A transition (climbing on, sitting down) owns the body until it ends,
+    -- and then starts the pose itself. AnimRefresh's first verify fires
+    -- inside the climb and started the riding loop under it.
+    if transitionGroup then return end
     if aboard then
         playVessel(true)
         if vesselGroup and not anim.isPlaying(self, vesselGroup) then return false end
@@ -377,10 +433,32 @@ local function onAnimMounted(data)
     subscribeRefresh()
     applyCameraOffset()
 
+    local tr = data and data.transition
+    if tr and tr.group then
+        oneShotActive = true          -- AnimState waits for the climb
+        playTransition(tr.group, tr.duration, function()
+            if not mounted then return end
+            oneShotActive = false
+            currentState = nil
+            playLoop(lastLocomotion)
+        end)
+        return
+    end
+
     async:newUnsavableSimulationTimer(MOUNT_SETTLE, function()
         if not mounted then return end
         playLoop(STATE.IDLE)
     end)
+end
+
+-- Climbing off: the riding pose ends and the dismount clip plays while the
+-- global script carries the player down; WhyWalk_AnimDismounted follows.
+local function onAnimDismountStart(data)
+    if not mounted then return end
+    cancelOneShot()
+    oneShotActive = true
+    stopAnim()
+    playTransition(data and data.group, data and data.duration, nil)
 end
 
 local function onAnimDismounted()
@@ -404,6 +482,9 @@ local function onAnimDismounted()
     if not aboard then unsubscribeRefresh() end
     clearCameraOffset()
     stopAnim()
+    -- a dismount clip still playing finishes on its own (autoDisable); a
+    -- mount clip interrupted by an instant dismount does not
+    if transitionGroup and not transitionGroup:find("^wwvault2") then cancelTransition() end
 end
 
 local function onAnimState(data)
@@ -440,11 +521,20 @@ local function onAnimVesselStart(data)
     aboard = data and data.stance or "stand"
     replayDisabled = false
     subscribeRefresh()
-    -- Boarding teleports the pilot; pose after it lands (MOUNT_SETTLE).
+    -- Boarding teleports the pilot; pose after it lands (MOUNT_SETTLE). A
+    -- seated stance sits down first (VESSEL_SEAT_TRANSITION).
     local mine = vesselGeneration
+    local seat = shared.VESSEL_SEAT_TRANSITION[aboard]
     async:newUnsavableSimulationTimer(MOUNT_SETTLE, function()
         if mine ~= vesselGeneration or not aboard then return end
-        playVessel(true)
+        if seat and seat.enter then
+            playTransition(seat.enter, nil, function()
+                if mine ~= vesselGeneration or not aboard then return end
+                playVessel(true)
+            end)
+        else
+            playVessel(true)
+        end
     end)
 end
 
@@ -459,8 +549,10 @@ end
 
 local function onAnimVesselStop()
     if not aboard then return end
+    local seat = shared.VESSEL_SEAT_TRANSITION[aboard]
     stopVessel()
     if not mounted then unsubscribeRefresh() end
+    if seat and seat.exit then playTransition(seat.exit, nil, nil) end
 end
 
 -- ---------------------------------------------------------------------------
@@ -530,12 +622,14 @@ local function onLoad(data)
     lastLocomotion = STATE.IDLE
     unsubscribeRefresh()
     clearCameraOffset()
+    cancelTransition()
 end
 
 return {
     eventHandlers = {
         WhyWalk_AnimMounted    = onAnimMounted,
         WhyWalk_AnimDismounted = onAnimDismounted,
+        WhyWalk_AnimDismountStart = onAnimDismountStart,
         WhyWalk_AnimState      = onAnimState,
         WhyWalk_AnimVesselStart = onAnimVesselStart,
         WhyWalk_AnimVesselHelm  = onAnimVesselHelm,

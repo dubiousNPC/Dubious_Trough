@@ -52,10 +52,13 @@ twice, and the 0.72 fitted to one animal happened to be right. What the table
 adds is the lookup instead of the read, the fliers handled separately, and a
 place to put a corrected value.
 
-FLIERS get `up = box_bottom_z` and `fly = true`. A netch's box starts 348
-units up; its measured saddle of 200 is BELOW that, because the rider hangs
-under the bell rather than sitting on it. The fraction is meaningless there,
-so the bottom of the box is reported and the rider is placed relative to it.
+FLIERS get `up = FLIER_FRACTION * box_top_z` and `fly = true`: the rider sits
+ON TOP of a flier, as on anything else (decided 2026-11-12; the earlier rule
+put them at the bottom of the box, hanging under a netch's bell, which in game
+read as a rider standing among the tentacles). A flier's box top is its back
+(netch bull: box top 768, bell top measured 755; cliff racer 292 / 288), so
+the fraction is close to 1. Core measures the back with a rendering ray at
+mount time and prefers that; this is the fallback when nothing is drawn.
 
 BM_frost_boar is excluded from the fit because its measured saddle of 95 is
 19 units ABOVE its box top of 76. Either the riding mod scales its boar or
@@ -70,6 +73,8 @@ SADDLE_FRACTION = 0.86
 # A box bottom above this counts as actually floating. The netch is at 348
 # and the skylamp at 35; a cliff racer is at 0.
 FLOAT_CLEARANCE = 20.0
+# Fliers: the box top is the back (bell, wings folded over the body).
+FLIER_FRACTION = 0.98
 
 
 def num(row, key):
@@ -114,7 +119,7 @@ def main(argv):
         # at its feet. The bottom is only meaningful when the box actually
         # floats, so the walker rule covers the rest.
         if flies and bottom is not None and bottom > FLOAT_CLEARANCE:
-            up = bottom
+            up = FLIER_FRACTION * top
         else:
             up = SADDLE_FRACTION * top
         entries[rid] = (round(up), rideable, flies)
@@ -146,9 +151,10 @@ def main(argv):
     w('    up        where the rider sits, in units above the creature\'s own')
     w('              origin. For a walker, %s of the top of the collision box'
       % SADDLE_FRACTION)
-    w('              the engine builds from the mesh. For a flier, the BOTTOM')
-    w('              of that box -- a netch\'s box starts 348 units up and its')
-    w('              rider hangs under the bell rather than sitting on it.')
+    w('              the engine builds from the mesh. For a flier that floats,')
+    w('              0.98 of the box top: riders sit ON a flier too (a netch\'s')
+    w('              bell, not among its tentacles). Core prefers the back')
+    w('              measured with a rendering ray when mounting.')
     w('              nil where the mesh was not available to measure.')
     w('')
     w('    ride      false when the record sets the biped flag or the')

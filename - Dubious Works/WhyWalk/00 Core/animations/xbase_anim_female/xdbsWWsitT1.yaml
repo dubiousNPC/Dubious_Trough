@@ -1,0 +1,13 @@
+blending_rules:
+  # WhyWalk sit-down / stand-up transitions (xdbsWWsitT1.kf): Take a Seat's
+  # chair and bench clips, adapted and renamed ww*. Played on boarding and
+  # leaving a seated vessel stance (whywalk_shared VESSEL_SEAT_TRANSITION).
+  # Clips are about 1 s (wwsitd1 1.00, wwsitd2 0.97, wwsitu1/2 1.03).
+  - from: "*"
+    to: "*"
+    easing: "sineOut"
+    duration: 0.25
+  - from: "*"
+    to: "wwsitu*"
+    easing: "sineOut"
+    duration: 0.3    # out of a seated loop: the pose is far from the clip's start

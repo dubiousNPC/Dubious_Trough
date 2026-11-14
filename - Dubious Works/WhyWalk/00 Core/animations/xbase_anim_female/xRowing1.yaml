@@ -1,0 +1,7 @@
+blending_rules:
+  # Into a seated vessel pose from WhyWalk's sit-down clips (wwsitd*): the
+  # clip ends seated, the pose starts seated, so a short ease.
+  - from: "ww*"
+    to: "*"
+    easing: "sineOut"
+    duration: 0.3

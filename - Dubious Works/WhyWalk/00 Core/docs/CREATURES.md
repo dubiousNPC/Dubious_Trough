@@ -66,12 +66,15 @@ same thing written twice, and the 0.72 that was fitted to one animal happened
 to be right. What the table adds is the lookup instead of the read, fliers
 handled separately, and somewhere to put a corrected value.
 
-### Fliers are measured from the bottom
+### Fliers: the rider sits on top (changed 2026-11-12)
 
-A netch's box starts 348 units up and its rider hangs under the bell rather
-than sitting on it, so `up` is the box bottom. A flier whose box starts at
-ground level — a cliff racer — is a flier in name only and uses the walker
-rule; the threshold is 20 units.
+The rider sits on top of every creature, fliers included. A flier whose box floats more than 20 units off the ground gets `up = 0.98 × box top`: the top of a netch's box is the top of its bell (bull: box top 768, bell measured at 755).
+
+The old rule, `up` = the box bottom, hung the rider under the bell. In game a bull's rider stood among its tentacles, 556 units below the bell.
+
+A flier whose box starts at ground level, such as a cliff racer, uses the walker rule as before.
+
+Since this change, Core measures the back at mount time with rendering rays and prefers that measurement. This table is the fallback when nothing was hit. See *Getting on and off* in the README.
 
 ## Bipeds and weapon carriers
 

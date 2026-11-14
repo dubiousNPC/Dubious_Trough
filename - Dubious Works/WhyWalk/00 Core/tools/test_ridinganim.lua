@@ -161,6 +161,8 @@ package.loaded['scripts.WhyWalk.whywalk_shared'] = {
         return m[state]
     end,
     allJumpGroups = function() return { 'rideh5' } end,
+    VESSEL_SEAT_TRANSITION = realShared.VESSEL_SEAT_TRANSITION,
+    TRANSITION_GROUPS = realShared.TRANSITION_GROUPS,
 }
 
 -- --- load the controller --------------------------------------------------

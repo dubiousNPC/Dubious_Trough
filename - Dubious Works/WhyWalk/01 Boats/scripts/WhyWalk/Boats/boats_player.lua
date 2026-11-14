@@ -59,8 +59,9 @@ local TWO_PI = 2 * math.pi
 -- ---------------------------------------------------------------------------
 -- SETTINGS
 -- ---------------------------------------------------------------------------
+-- A group on Core WhyWalk's page, which Core's whywalk_player.lua registers;
+-- this module loads after Core, so the page exists.
 
-local L10N_CONTEXT   = "WhyWalk"
 local L10N = 'WhyWalkBoats'
 local GROUP = 'SettingsWhyWalkBoats'
 
@@ -224,6 +225,12 @@ end
 
 local function onActivate()
     if piloting or coreMounted or hudHidden() then return end
+    -- The press is Take a Seat's while it holds the player (it stands you up).
+    local T = I.TakeASeat
+    if T and T.isBusy then
+        local ok, busy = pcall(T.isBusy)
+        if ok and busy then return end
+    end
     if settings:get('CLAIM_SCENERY') == false then return end
     local target = lookedAt()
     if not target or not target:isValid() then return end
@@ -397,7 +404,7 @@ end
 
 local REFUSAL_MESSAGES = {
     beached = 'msg_beached', nowater = 'msg_nowater', far = 'msg_far',
-    mounted = 'msg_mounted', foreign = 'msg_foreign',
+    mounted = 'msg_mounted', foreign = 'msg_foreign', seated = 'msg_seated',
 }
 
 local function onRefused(data)
